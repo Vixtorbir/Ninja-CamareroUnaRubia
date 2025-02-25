@@ -2,6 +2,11 @@
 
 #include "Module.h"
 #include "Player.h"
+#include "Enemy.h"
+#include <vector>
+#include "GuiControlButton.h"
+
+struct SDL_Texture;
 
 class Scene : public Module
 {
@@ -30,10 +35,33 @@ public:
 	// Called before quitting
 	bool CleanUp();
 
-	// Load Parameters from config file
-	bool LoadParameters(xml_node parameters);
+	// Return the player position
+	Vector2D GetPlayerPosition();
+
+	//L15 TODO 1: Implement the Load function
+	void LoadState();
+	//L15 TODO 2: Implement the Save function
+	void SaveState();
+
+	// Handles multiple Gui Event methods
+	bool OnGuiMouseClickEvent(GuiControl* control);
+
+public:
+	// Get tilePosDebug value
+	std::string GetTilePosDebug() {
+		return tilePosDebug;
+
+	}
 
 private:
+	SDL_Texture* mouseTileTex = nullptr;
+	std::string tilePosDebug = "[0,0]";
+	bool once = false;
+
+	//L03: TODO 3b: Declare a Player attribute
 	Player* player;
-	xml_node configParameters;
+	std::vector<Enemy*> enemyList;
+
+	// L16: TODO 2: Declare a GUI Control Button 
+	GuiControlButton* guiBt;
 };

@@ -2,6 +2,7 @@
 #include "Window.h"
 #include "Render.h"
 #include "Log.h"
+#include "tracy/Tracy.hpp"
 
 #define VSYNC true
 
@@ -26,8 +27,11 @@ bool Render::Awake()
 
 	Uint32 flags = SDL_RENDERER_ACCELERATED;
 
-	flags |= SDL_RENDERER_PRESENTVSYNC;
-	LOG("Using vsync");
+	//L05 TODO 5 - Load the configuration of the Render module
+	if (configParameters.child("vsync").attribute("value").as_bool() == true) {
+		flags |= SDL_RENDERER_PRESENTVSYNC;
+		LOG("Using vsync");
+	}
 	int scale = Engine::GetInstance().window.get()->GetScale();
 
 	SDL_Window* window = Engine::GetInstance().window.get()->window;
@@ -46,6 +50,12 @@ bool Render::Awake()
 		camera.y = 0;
 	}
 
+	//initialise the SDL_ttf library
+	TTF_Init();
+
+	//load a font into memory
+	font = TTF_OpenFont("Assets/Fonts/arial/arial.ttf", 25);
+
 	return ret;
 }
 
@@ -61,6 +71,9 @@ bool Render::Start()
 // Called each loop iteration
 bool Render::PreUpdate()
 {
+	ZoneScoped;
+	// Code you want to profile
+
 	SDL_RenderClear(renderer);
 	return true;
 }
@@ -72,6 +85,9 @@ bool Render::Update(float dt)
 
 bool Render::PostUpdate()
 {
+	ZoneScoped;
+	// Code you want to profile
+
 	SDL_SetRenderDrawColor(renderer, background.r, background.g, background.g, background.a);
 	SDL_RenderPresent(renderer);
 	return true;
@@ -223,3 +239,24 @@ bool Render::DrawCircle(int x, int y, int radius, Uint8 r, Uint8 g, Uint8 b, Uin
 
 	return ret;
 }
+
+bool Render::DrawText(const char* text, int posx, int posy, int w, int h) const
+{
+
+	SDL_Color color = { 255, 255, 255 };
+	SDL_Surface* surface = TTF_RenderText_Solid(font, text, color);
+	SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
+
+	int texW = 0;
+	int texH = 0;
+	SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
+	SDL_Rect dstrect = { posx, posy, w, h };
+
+	SDL_RenderCopy(renderer, texture, NULL, &dstrect);
+
+	SDL_DestroyTexture(texture);
+	SDL_FreeSurface(surface);
+
+	return true;
+}
+

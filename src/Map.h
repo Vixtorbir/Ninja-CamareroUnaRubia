@@ -2,66 +2,102 @@
 
 #include "Module.h"
 #include <list>
+#include <vector>
 
-// Create a struct needed to hold the information to Map node
-struct TileSet
+// L10: TODO 2: Define a property to store the Map Orientation and Load it from the map
+enum MapOrientation
 {
-    int firstgid;
-    std::string name;
-    int tilewidth;
-    int tileheight;
-    int spacing;
-    int margin;
-    int tilecount;
-    int columns;
+    ORTOGRAPHIC = 0,
+    ISOMETRIC
+};
 
-    SDL_Texture* texture;
+// L09: TODO 5: Add attributes to the property structure
+struct Properties
+{
+    struct Property
+    {
+        std::string name;
+        bool value; //We assume that we are going to work only with bool for the moment
+    };
 
-    // Implement the method that receives the gid and returns a Rect
+    std::list<Property*> propertyList;
 
-    SDL_Rect GetRect(unsigned int gid) {
-        SDL_Rect rect = { 0 };
+    ~Properties()
+    {
+        for (const auto& property : propertyList)
+        {
+            delete property;
+        }
 
-        int relativeIndex = gid - firstgid;
-        rect.w = tilewidth;
-        rect.h = tileheight;
-        rect.x = margin + (tilewidth + spacing) * (relativeIndex % columns);
-        rect.y = margin + (tileheight + spacing) * (relativeIndex / columns);
-
-        return rect;
+        propertyList.clear();
     }
+
+    // L09: DONE 7: Method to ask for the value of a custom property
+    Property* GetProperty(const char* name);
+
 };
 
 struct MapLayer
 {
-    // Add the info to the MapLayer Struct
+    // L07: TODO 1: Add the info to the MapLayer Struct
     int id;
     std::string name;
     int width;
     int height;
-    unsigned int* tiles;
+    std::vector<int> tiles;
+    Properties properties;
 
-    // Short function to get the gid value of x,y
-    unsigned int Get(int x, int y) const
+    // L07: TODO 6: Short function to get the gid value of i,j
+    int Get(int i, int j) const
     {
-        return tiles[(y * width) + x];
+        return tiles[(j * width) + i];
     }
 };
 
-struct MapData
-{
-    int width;
-    int height;
-    int tilewidth;
-    int tileheight;
-    std::list<TileSet*> tilesets;
+// L06: TODO 2: Create a struct to hold information for a TileSet
+// Ignore Terrain Types and Tile Types for now, but we want the image!
 
-    //Add a list/array of layers to the map
-    std::list<MapLayer*> layers;
+struct TileSet
+{
+    int firstGid;
+    std::string name;
+    int tileWidth;
+    int tileHeight;
+    int spacing;
+    int margin;
+    int tileCount;
+    int columns;
+    SDL_Texture* texture;
+
+    // L07: TODO 7: Implement the method that receives the gid and returns a Rect
+    SDL_Rect GetRect(unsigned int gid) {
+        SDL_Rect rect = { 0 };
+
+        int relativeIndex = gid - firstGid;
+        rect.w = tileWidth;
+        rect.h = tileHeight;
+        rect.x = margin + (tileWidth + spacing) * (relativeIndex % columns);
+        rect.y = margin + (tileHeight + spacing) * (relativeIndex / columns);
+
+        return rect;
+    }
+
 };
 
-// Create a struct to hold information for a TileSet
-// Ignore Terrain Types and Tile Types for now, but we want the image!
+// L06: TODO 1: Create a struct needed to hold the information to Map node
+struct MapData
+{
+	int width;
+	int height;
+	int tileWidth;
+	int tileHeight;
+    std::list<TileSet*> tilesets;
+    // L10: TODO 2: Define a property to store the Map Orientation and Load it from the map
+    MapOrientation orientation;
+
+    // L07: TODO 2: Add the info to the MapLayer Struct
+    std::list<MapLayer*> layers;
+};
 
 class Map : public Module
 {
@@ -73,7 +109,7 @@ public:
     virtual ~Map();
 
     // Called before render is available
-    bool Awake(pugi::xml_node config);
+    bool Awake();
 
     // Called before the first frame
     bool Start();
@@ -85,17 +121,45 @@ public:
     bool CleanUp();
 
     // Load new map
-    bool Load(std::string mapFileName);
+    bool Load(std::string path, std::string mapFileName);
 
-    //Create a method that translates x,y coordinates from map positions to world positions
+    // L07: TODO 8: Create a method that translates x,y coordinates from map positions to world positions
     Vector2D MapToWorld(int x, int y) const;
 
+    // L10: TODO 5: Add method WorldToMap to obtain  map coordinates from screen coordinates 
+    Vector2D WorldToMap(int x, int y);
+
+    // L09: TODO 2: Implement function to the Tileset based on a tile id
+    TileSet* GetTilesetFromTileId(int gid) const;
+
+    // L09: TODO 6: Load a group of properties 
+    bool LoadProperties(pugi::xml_node& node, Properties& properties);
+
+    int GetWidth() {
+        return mapData.width;
+    }
+
+    int GetHeight() {
+        return mapData.height;
+    }
+
+    int GetTileWidth() {
+        return mapData.tileWidth;
+    }
+
+    int GetTileHeight() {
+        return mapData.tileHeight;
+    }
+
+    MapLayer* GetNavigationLayer();
+
+
 public: 
-    std::string mapName;
+    std::string mapFileName;
     std::string mapPath;
 
 private:
-    // L05: DONE 1: Declare a variable data of the struct MapData
-    MapData mapData;
     bool mapLoaded;
+    // L06: DONE 1: Declare a variable data of the struct MapData
+    MapData mapData;
 };

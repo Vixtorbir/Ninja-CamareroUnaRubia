@@ -26,15 +26,24 @@ bool Window::Awake()
 	}
 	else
 	{
-
 		// Create window
 		Uint32 flags = SDL_WINDOW_SHOWN;
+		bool fullscreen = configParameters.child("fullscreen").attribute("value").as_bool();
+		bool borderless = configParameters.child("borderless").attribute("value").as_bool();
+		bool resizable = configParameters.child("resizable").attribute("value").as_bool();
+		bool fullscreen_window = configParameters.child("fullscreen_window").attribute("value").as_bool();
+
+		//TODO Get the values from the config file
+		width = configParameters.child("resolution").attribute("width").as_int();
+		height = configParameters.child("resolution").attribute("height").as_int();
+		scale = configParameters.child("resolution").attribute("scale").as_int();
+
 		if(fullscreen == true) flags |= SDL_WINDOW_FULLSCREEN;
 		if(borderless == true) flags |= SDL_WINDOW_BORDERLESS;
 		if(resizable == true) flags |= SDL_WINDOW_RESIZABLE;
 		if(fullscreen_window == true) flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
 
-		window = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, flags);
+		window = SDL_CreateWindow("Platform Game", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, flags);
 
 		if(window == NULL)
 		{
@@ -77,23 +86,4 @@ void Window::GetWindowSize(int& width, int& height) const
 int Window::GetScale() const
 {
 	return scale;
-}
-
-bool Window::LoadParameters(xml_node parameters)
-{
-	bool ret = true;
-
-	// Load all required configurations from config.xml
-	// Tip: get the name of the child and the attribute value
-	// Get values of fullscreen, borderless, resizable,fullscreen_window, width, height and scale from config files
-	fullscreen = parameters.child("fullscreen").attribute("value").as_bool(false);
-	borderless = parameters.child("borderless").attribute("value").as_bool(false);
-	resizable = parameters.child("resizable").attribute("value").as_bool(false);
-	fullscreen_window = parameters.child("fullscreen_window").attribute("value").as_bool(false);
-
-	width = parameters.child("resolution").attribute("width").as_int(1280);
-	height = parameters.child("resolution").attribute("height").as_int(720);
-	scale = parameters.child("resolution").attribute("scale").as_int(1);
-
-	return ret;
 }

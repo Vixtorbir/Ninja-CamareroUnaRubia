@@ -4,6 +4,9 @@
 #include "Textures.h"
 #include "Scene.h"
 #include "Log.h"
+#include "Item.h"
+#include "Enemy.h"
+#include "tracy/Tracy.hpp"
 
 EntityManager::EntityManager() : Module()
 {
@@ -65,11 +68,17 @@ Entity* EntityManager::CreateEntity(EntityType type)
 {
 	Entity* entity = nullptr; 
 
-	//L03: TODO 3a: Instantiate entity according to the type and add the new entity to the list of Entities
+	//L04: TODO 3a: Instantiate entity according to the type and add the new entity to the list of Entities
 	switch (type)
 	{
 	case EntityType::PLAYER:
 		entity = new Player();
+		break;
+	case EntityType::ITEM:
+		entity = new Item();
+		break;
+	case EntityType::ENEMY:
+		entity = new Enemy();
 		break;
 	default:
 		break;
@@ -100,6 +109,8 @@ void EntityManager::AddEntity(Entity* entity)
 
 bool EntityManager::Update(float dt)
 {
+	ZoneScoped;
+	// Code you want to profile
 	bool ret = true;
 	for(const auto entity : entities)
 	{
