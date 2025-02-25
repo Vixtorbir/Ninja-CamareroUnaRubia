@@ -82,7 +82,7 @@ public:
 	void DeletePhysBody(PhysBody* physBody);
 	bool IsPendingToDelete(PhysBody* physBody);
 
-private:
+public:
 
 	// Debug mode
 	bool debug;
