@@ -59,6 +59,24 @@ bool Player::Update(float dt)
 {
 	ZoneScoped;
 	// Code you want to profile
+
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_E) == KEY_DOWN) {
+		ShootShuriken();
+	}
+
+	// Actualizar los shurikens activos
+	for (auto it = shurikens.begin(); it != shurikens.end();) {
+		(*it)->Update();
+
+		// Si el shuriken ya no existe en el mundo físico, lo eliminamos del vector
+		if ((*it)->pbody == nullptr) {
+			delete* it;
+			it = shurikens.erase(it);
+		}
+		else {
+			++it;
+		}
+	}
 	
 	// L08 TODO 5: Add physics to the player - updated player position using physics
 	b2Vec2 velocity = b2Vec2(0, pbody->body->GetLinearVelocity().y);
@@ -109,6 +127,7 @@ bool Player::Update(float dt)
 
 	Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
 	currentAnimation->Update();
+
 	return true;
 }
 
@@ -159,4 +178,15 @@ Vector2D Player::GetPosition() {
 	b2Vec2 bodyPos = pbody->body->GetTransform().p;
 	Vector2D pos = Vector2D(METERS_TO_PIXELS(bodyPos.x), METERS_TO_PIXELS(bodyPos.y));
 	return pos;
+}
+
+void Player::ShootShuriken() {
+	float shurikenSpeed = 5.0f;  // Velocidad del shuriken
+	float spawnX = position.getX() + (texW / 2); // Posición inicial
+	float spawnY = position.getY() + (texH / 2);
+
+	float direction = (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_A) == KEY_REPEAT) ? -shurikenSpeed : shurikenSpeed;
+
+	Shuriken* newShuriken = new Shuriken(spawnX, spawnY, direction);
+	shurikens.push_back(newShuriken);
 }

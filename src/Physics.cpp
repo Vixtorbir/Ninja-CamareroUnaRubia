@@ -354,6 +354,10 @@ void Physics::BeginContact(b2Contact* contact)
 	PhysBody* physA = (PhysBody*)contact->GetFixtureA()->GetBody()->GetUserData().pointer;
 	PhysBody* physB = (PhysBody*)contact->GetFixtureB()->GetBody()->GetUserData().pointer;
 
+	if (physA->ctype == ColliderType::SHURIKEN || physB->ctype == ColliderType::SHURIKEN) {
+		Engine::GetInstance().physics.get()->DeletePhysBody(physA);
+	}
+
 	if (physA && physA->listener != NULL && !IsPendingToDelete(physB)) {
 		if (physB) // Ensure physB is also valid
 		{
