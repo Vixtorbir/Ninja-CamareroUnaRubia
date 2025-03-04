@@ -82,7 +82,7 @@ Entity* EntityManager::CreateEntity(EntityType type)
 		entity = new Enemy();
 		break;
 	case EntityType::SHURIKENS:
-		entity = new Shuriken();
+		entity = new Shuriken(5);
 	default:
 		break;
 	}

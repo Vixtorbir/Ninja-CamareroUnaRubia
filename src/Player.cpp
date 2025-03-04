@@ -59,6 +59,10 @@ bool Player::Update(float dt)
 {
 	ZoneScoped;
 	// Code you want to profile
+
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_E) == KEY_DOWN) {
+		ShootShuriken();
+	}
 	
 	// L08 TODO 5: Add physics to the player - updated player position using physics
 	b2Vec2 velocity = b2Vec2(0, pbody->body->GetLinearVelocity().y);
@@ -160,4 +164,21 @@ Vector2D Player::GetPosition() {
 	b2Vec2 bodyPos = pbody->body->GetTransform().p;
 	Vector2D pos = Vector2D(METERS_TO_PIXELS(bodyPos.x), METERS_TO_PIXELS(bodyPos.y));
 	return pos;
+}
+
+void Player::ShootShuriken() {
+	const int maxShurikens = 12;
+
+	if (shurikens.size() >= maxShurikens) {
+		return;
+	}
+
+	float shurikenSpeed = 5.0f;
+	float spawnX = position.getX() + (texW / 2);
+	float spawnY = position.getY() + (texH / 2);
+
+	float direction = (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_A) == KEY_REPEAT) ? -shurikenSpeed : shurikenSpeed;
+
+	Shuriken* newShuriken = (Shuriken*)Engine::GetInstance().entityManager->CreateEntity(EntityType::SHURIKENS);
+	shurikens.push_back(newShuriken);
 }

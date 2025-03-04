@@ -7,7 +7,7 @@
 
 class Shuriken : public Entity {
 public:
-    Shuriken(float x, float y, float speed);
+    Shuriken(float speed);
     virtual ~Shuriken();
 
     bool Start();

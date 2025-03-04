@@ -4,10 +4,17 @@
 #include "Render.h"
 #include "Log.h"
 
-Shuriken::Shuriken(float x, float y, float speed) : Entity(EntityType::ITEM), speed(speed) {
-    position.setX(x);
-    position.setY(y);
+Shuriken::Shuriken(float speed) : Entity(EntityType::SHURIKENS), speed(speed) {
+    
+
     name = "shuriken";
+    texture = Engine::GetInstance().textures.get()->Load("Assets/Textures/goldCoin.png");
+
+    pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX(), (int)position.getY(), 5, bodyType::DYNAMIC);
+    pbody->listener = this;
+    pbody->ctype = ColliderType::SHURIKEN;
+
+    pbody->body->SetLinearVelocity(b2Vec2(speed, 0));
 
 
 
@@ -16,13 +23,7 @@ Shuriken::Shuriken(float x, float y, float speed) : Entity(EntityType::ITEM), sp
 Shuriken::~Shuriken() {}
 
 bool Shuriken::Start() {
-    texture = Engine::GetInstance().textures.get()->Load("Assets/Textures/shuriken.png");
-
-    pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX(), (int)position.getY(), 5, bodyType::DYNAMIC);
-    pbody->listener = this;
-    pbody->ctype = ColliderType::ITEM;
-
-    pbody->body->SetLinearVelocity(b2Vec2(speed, 0));
+    
 
     return true;
 }
