@@ -1,25 +1,22 @@
 #pragma once
 
-#include "Entity.h"
 #include "SDL2/SDL.h"
-#include "Animation.h"
-#include "Physics.h"
+#include "Projectile.h"
 
-class Shuriken : public Entity {
+class Shuriken : public Projectile {
 public:
-    Shuriken(float speed);
-    virtual ~Shuriken();
+    Shuriken(float x, float y, float velocityX);
+    ~Shuriken() {}
 
-    bool Start();
-    bool Update(float dt);
-    bool CleanUp();
+    bool Update(float dt) override;
 
-    void OnCollision(PhysBody* physA, PhysBody* physB);
+    void SetPosition(Vector2D pos);
 
-public:
+    Vector2D GetPosition();
+
+    void SetDirection(float direction); 
+
+private:
     SDL_Texture* texture;
-    float speed;
-    PhysBody* pbody;
-    Animation* currentAnimation;
-    Animation spinning;
+    float direction; 
 };
