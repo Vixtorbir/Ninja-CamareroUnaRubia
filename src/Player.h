@@ -38,7 +38,6 @@ public:
 
 	Vector2D GetPosition();
 
-//	void ShootShuriken();
 
 public:
 

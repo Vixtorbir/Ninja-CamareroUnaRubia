@@ -8,7 +8,8 @@ enum class EntityType
 	PLAYER,
 	ITEM,
 	ENEMY,
-	UNKNOWN
+	UNKNOWN,
+	SHURIKENS
 };
 
 class PhysBody;

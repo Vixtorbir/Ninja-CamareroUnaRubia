@@ -7,6 +7,7 @@
 #include "Item.h"
 #include "Enemy.h"
 #include "tracy/Tracy.hpp"
+#include "Shurikens.h"
 
 EntityManager::EntityManager() : Module()
 {
@@ -80,6 +81,8 @@ Entity* EntityManager::CreateEntity(EntityType type)
 	case EntityType::ENEMY:
 		entity = new Enemy();
 		break;
+	case EntityType::SHURIKENS:
+		entity = new Shuriken();
 	default:
 		break;
 	}

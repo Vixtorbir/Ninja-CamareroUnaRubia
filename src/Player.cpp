@@ -59,22 +59,7 @@ bool Player::Update(float dt)
 {
 	ZoneScoped;
 	// Code you want to profile
-
-	/*ShootShuriken();
-
-	for (auto it = shurikens.begin(); it != shurikens.end();) {
-		(*it)->Update(dt);
-
-		// Remove shurikens that are no longer valid (e.g., collided or out of screen)
-		if ((*it)->pbody == nullptr) {
-			delete* it;
-			it = shurikens.erase(it);
-		}
-		else {
-			++it;
-		}
-	}
-	*/
+	
 	// L08 TODO 5: Add physics to the player - updated player position using physics
 	b2Vec2 velocity = b2Vec2(0, pbody->body->GetLinearVelocity().y);
 
@@ -176,22 +161,3 @@ Vector2D Player::GetPosition() {
 	Vector2D pos = Vector2D(METERS_TO_PIXELS(bodyPos.x), METERS_TO_PIXELS(bodyPos.y));
 	return pos;
 }
-
-/*void Player::ShootShuriken() {
-
-	const int maxShurikens = 12;
-
-	if (shurikens.size() >= maxShurikens) {
-		return;
-	}
-
-	float shurikenSpeed = 5.0f;
-	float spawnX = position.getX() + (texW / 2);
-	float spawnY = position.getY() + (texH / 2);
-
-	float direction = (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_E) == KEY_REPEAT) ? -shurikenSpeed : shurikenSpeed;
-
-	Shuriken* newShuriken = new Shuriken(spawnX, spawnY, direction);
-	shurikens.push_back(newShuriken);
-}
-*/
