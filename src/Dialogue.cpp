@@ -80,7 +80,15 @@ bool Dialogue::Update(float dt)
             break;
         }
 
-        Engine::GetInstance().render->DrawText(displayText.c_str(), bounds.x, bounds.y, bounds.w, bounds.h);
+        int textW = 0, textH = 0;
+        TTF_SizeText(Engine::GetInstance().render->font, displayText.c_str(), &textW, &textH);
+
+        if (textW > bounds.w) textW = bounds.w;
+
+        int textX = bounds.x + (bounds.w - textW) / 2;
+        int textY = bounds.y + (bounds.h - textH) / 2;
+
+        Engine::GetInstance().render->DrawText(displayText.c_str(), textX, textY, textW, textH);
     }
 
     return false;
