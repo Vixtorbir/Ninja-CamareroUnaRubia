@@ -4,7 +4,7 @@
 #include "SDL2/SDL.h"
 #include "Box2D/Box2D.h"
 #include "Animation.h"
-#include "Shuriken.h"
+#include "Shurikens.h"
 #include <vector>
 
 struct SDL_Texture;
@@ -38,7 +38,7 @@ public:
 
 	Vector2D GetPosition();
 
-	void ShootShuriken();
+//	void ShootShuriken();
 
 public:
 
