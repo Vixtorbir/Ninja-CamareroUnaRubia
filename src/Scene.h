@@ -6,11 +6,9 @@
 #include <vector>
 #include "GuiControlButton.h"
 #include "Dialogue.h"
+#include "DialogueManager.h"
 
 struct SDL_Texture;
-
-
-
 
 class Scene : public Module
 {
@@ -71,5 +69,6 @@ public:
 	GuiControlButton* guiBt;
 
 	Dialogue* dialogue;
+	DialogueManager* dialogueManager;
 };
 

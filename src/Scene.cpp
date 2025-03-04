@@ -14,6 +14,7 @@
 #include "Enemy.h"
 #include "GuiControl.h"
 #include "GuiManager.h"
+#include "DialogueManager.h"
 
 Scene::Scene() : Module()
 {
@@ -29,7 +30,7 @@ bool Scene::Awake()
 {
 	LOG("Loading Scene");
 	bool ret = true;
-
+	dialogueManager = new DialogueManager();
 	//L04: TODO 3b: Instantiate the player using the entity manager
 	player = (Player*)Engine::GetInstance().entityManager->CreateEntity(EntityType::PLAYER);
 	player->SetParameters(configParameters.child("entities").child("player"));
@@ -54,10 +55,12 @@ bool Scene::Awake()
 	guiBt = (GuiControlButton*) Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 1, "MyButton", btPos, this);
 	
 
-	SDL_Rect btPos2 = { 0, 700, 1920,300};
-	dialogue = (Dialogue*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::DIALOGUE, 1, "dialogo moment", btPos2, this);
+	//SDL_Rect btPos2 = { 0, 700, 1920,300 };
+	//dialogue = (Dialogue*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::DIALOGUE, 1, "dialogo moment", btPos2, this);
+	//
+	dialogueManager->SetModule(this);
 
-
+	dialogueManager->CastDialogue(DialogueEngine::RAIDEDVILLAGE);
 	return ret;
 }
 

@@ -2,7 +2,8 @@
 <dialogues>
 	<RAIDEDVILLAGE>
 		<dialogues>
-			<dialogue character="Ren" y="0" w="32" h="32" />
+			<dialogue1 character="Ren" text="Hello mundo!" />
+			<dialogue2 character="Hachiko" text="mmm"/>
 		</dialogues>
 	</RAIDEDVILLAGE>
 </dialogues>
