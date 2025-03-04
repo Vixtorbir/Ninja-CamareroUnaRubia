@@ -8,7 +8,7 @@
 #include "Log.h"
 #include "Physics.h"
 #include "EntityManager.h"
-#include "tracy/Tracy.hpp"
+//#include "tracy/Tracy.hpp"
 
 Player::Player() : Entity(EntityType::PLAYER)
 {
@@ -57,7 +57,7 @@ bool Player::Start() {
 
 bool Player::Update(float dt)
 {
-	ZoneScoped;
+	//ZoneScoped;
 	// Code you want to profile
 
 	/*ShootShuriken();
@@ -85,12 +85,12 @@ bool Player::Update(float dt)
 	// Move left
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_A) == KEY_REPEAT) {
 		velocity.x = -0.2 * 16;
-		flipHorizontally = true;
+		playerDirection = EntityDirections::LEFT;
 	}
 
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_D) == KEY_REPEAT) {
 		velocity.x = 0.2 * 16;
-		flipHorizontally = false;
+		playerDirection = EntityDirections::RIGHT;
 	}
 	// Move Up
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_W) == KEY_REPEAT) {
@@ -123,7 +123,7 @@ bool Player::Update(float dt)
 	position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 2);
 	position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
 
-	Engine::GetInstance().render.get()->DrawEntity(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame(),1,0,0,0,0);
+	Engine::GetInstance().render.get()->DrawEntity(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame(), 1, 0, 0, 0, (int)playerDirection);
 	currentAnimation->Update();
 
 	return true;

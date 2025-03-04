@@ -2,7 +2,7 @@
 #include "Window.h"
 #include "Render.h"
 #include "Log.h"
-#include "tracy/Tracy.hpp"
+//#include "tracy/Tracy.hpp"
 
 #define VSYNC true
 
@@ -71,7 +71,7 @@ bool Render::Start()
 // Called each loop iteration
 bool Render::PreUpdate()
 {
-	ZoneScoped;
+	//ZoneScoped;
 	// Code you want to profile
 
 	SDL_RenderClear(renderer);
@@ -85,7 +85,7 @@ bool Render::Update(float dt)
 
 bool Render::PostUpdate()
 {
-	ZoneScoped;
+	//ZoneScoped;
 	// Code you want to profile
 
 	SDL_SetRenderDrawColor(renderer, background.r, background.g, background.g, background.a);
@@ -191,10 +191,10 @@ bool Render::DrawEntity(SDL_Texture* texture, int x, int y, const SDL_Rect* sect
 	SDL_RendererFlip flip = SDL_FLIP_HORIZONTAL;
 	if (direction == 0)
 	{
-		flip = SDL_FLIP_HORIZONTAL;
+		flip = SDL_FLIP_NONE;
 	}
 	else {
-		flip = SDL_FLIP_VERTICAL;
+		flip = SDL_FLIP_HORIZONTAL;
 	}
 	if (SDL_RenderCopyEx(renderer, texture, section, &rect, angle, p, flip) != 0)
 	{
