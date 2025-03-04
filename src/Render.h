@@ -51,3 +51,4 @@ public:
 	SDL_Color background;
 	TTF_Font* font;
 };
+

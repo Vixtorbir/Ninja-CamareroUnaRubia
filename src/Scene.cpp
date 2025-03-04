@@ -59,7 +59,6 @@ bool Scene::Awake()
 // Called before the first frame
 bool Scene::Start()
 {
-
 	//L06 TODO 3: Call the function to load the map. 
 	Engine::GetInstance().map->Load(configParameters.child("map").attribute("path").as_string(), configParameters.child("map").attribute("name").as_string());
 
@@ -115,6 +114,8 @@ bool Scene::Update(float dt)
 													highlightTile.getX(),
 													highlightTile.getY(),
 													&rect);
+
+
 
 	// saves the tile pos for debugging purposes
 	if (mouseTile.getX() >= 0 && mouseTile.getY() >= 0 || once) {

@@ -8,6 +8,9 @@
 
 struct SDL_Texture;
 
+
+
+
 class Scene : public Module
 {
 public:
@@ -62,6 +65,8 @@ public:
 	Player* player;
 	std::vector<Enemy*> enemyList;
 
+
 	// L16: TODO 2: Declare a GUI Control Button 
 	GuiControlButton* guiBt;
 };
+
