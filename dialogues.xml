@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<dialogues>
+	<RAIDEDVILLAGE>
+		<dialogues>
+			<dialogue character="Ren" y="0" w="32" h="32" />
+		</dialogues>
+	</RAIDEDVILLAGE>
+</dialogues>

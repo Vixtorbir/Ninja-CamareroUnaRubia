@@ -5,6 +5,7 @@
 #include "Enemy.h"
 #include <vector>
 #include "GuiControlButton.h"
+#include "Dialogue.h"
 
 struct SDL_Texture;
 
@@ -68,5 +69,7 @@ public:
 
 	// L16: TODO 2: Declare a GUI Control Button 
 	GuiControlButton* guiBt;
+
+	Dialogue* dialogue;
 };
 
