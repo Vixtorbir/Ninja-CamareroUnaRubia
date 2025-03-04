@@ -9,6 +9,7 @@
 
 struct SDL_Texture;
 
+
 class Player : public Entity
 {
 public:
@@ -54,11 +55,14 @@ public:
 	PhysBody* pbody;
 	float jumpForce = 2.5f; // The force to apply when jumping
 	bool isJumping = false; // Flag to check if the player is currently jumping
+	int hasAlreadyJumpedOnce = 0;
+	bool isRolling = false;
+	float rollTime = 0;
 
 	pugi::xml_node parameters;
 	Animation* currentAnimation = nullptr;
 	Animation idle;
 
 	std::vector<Shuriken*> shurikens;
-
+	EntityDirections playerDirection = EntityDirections::LEFT;
 };

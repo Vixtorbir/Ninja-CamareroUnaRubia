@@ -3,6 +3,11 @@
 #include "Input.h"
 #include "Render.h"
 
+enum class EntityDirections
+{
+	RIGHT, LEFT
+};
+
 enum class EntityType
 {
 	PLAYER,
@@ -70,6 +75,8 @@ public:
 	std::string name;
 	EntityType type;
 	bool active = true;
+	bool flipHorizontally = false;
+	bool flipVertically = false;
 
 	// Possible properties, it depends on how generic we
 	// want our Entity class, maybe it's not renderable...
