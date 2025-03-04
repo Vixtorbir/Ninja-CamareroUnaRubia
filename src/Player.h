@@ -24,6 +24,8 @@ public:
 
 	bool Update(float dt);
 
+	float Lerp(float start, float end, float factor);
+
 	bool CleanUp();
 
 	// L08 TODO 6: Define OnCollision function for the player. 
@@ -57,12 +59,21 @@ public:
 	bool isJumping = false; // Flag to check if the player is currently jumping
 	int hasAlreadyJumpedOnce = 0;
 	bool isRolling = false;
-	float rollTime = 0;
 
+	bool canDash = true;
+	bool isDashing = false;
+	float dashDuration = 2;
+	float dashCooldown = 1; 
+	float dashTimer = 0.0f;
+	float dashSpeed = 10;
+	float dashElapsedTime = 0;
+	float dashLerpSpeed = 10.0f;
+	float currentDashSpeed = 0.0f;
+	float targetDashVelocity = 0;
 	pugi::xml_node parameters;
 	Animation* currentAnimation = nullptr;
 	Animation idle;
 
 	std::vector<Shuriken*> shurikens;
-	EntityDirections playerDirection = EntityDirections::LEFT;
+	EntityDirections playerDirection = EntityDirections::RIGHT;
 };

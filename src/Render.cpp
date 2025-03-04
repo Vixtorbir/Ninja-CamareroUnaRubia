@@ -33,7 +33,7 @@ bool Render::Awake()
 		LOG("Using vsync");
 	}
 	int scale = Engine::GetInstance().window.get()->GetScale();
-
+	float camera_zoom = Engine::GetInstance().window.get()->GetCameraZoom();
 	SDL_Window* window = Engine::GetInstance().window.get()->window;
 	renderer = SDL_CreateRenderer(window, -1, flags);
 

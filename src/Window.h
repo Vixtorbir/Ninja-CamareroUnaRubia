@@ -28,6 +28,8 @@ public:
 	// Retrieve window scale
 	int GetScale() const;
 
+	int GetCameraZoom() const;
+
 public:
 	// The window we'll be rendering to
 	SDL_Window* window;
@@ -35,5 +37,8 @@ public:
 	std::string title;
 	int width = 1280;
 	int height = 720;
-	int scale = 1;
+	int scale = 3;
+
+	float zoom;
+
 };

@@ -57,6 +57,13 @@ bool Player::Start() {
 
 bool Player::Update(float dt)
 {
+	if (!canDash) {
+		dashTimer += dt / 1000;
+		if (dashTimer >= dashCooldown) {
+			canDash = true; // Dash is ready again
+			dashTimer = 0.0f;
+		}
+	}
 	//ZoneScoped;
 	// Code you want to profile
 
@@ -79,7 +86,7 @@ bool Player::Update(float dt)
 	b2Vec2 velocity = b2Vec2(0, pbody->body->GetLinearVelocity().y);
 
 	if (!parameters.attribute("gravity").as_bool()) {
-		velocity = b2Vec2(0,0);
+		velocity = b2Vec2(0, 0);
 	}
 
 	// Move left
@@ -101,7 +108,7 @@ bool Player::Update(float dt)
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) {
 		velocity.y = 0.2 * 16;
 	}
-	
+
 	//Jump
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN && (isJumping == false || hasAlreadyJumpedOnce <= 1)) {
 		// Apply an initial upward force
@@ -110,8 +117,33 @@ bool Player::Update(float dt)
 		isJumping = true;
 	}
 
-	// If the player is jumpling, we don't want to apply gravity, we use the current velocity prduced by the jump
-	if(isJumping == true)
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_LSHIFT) == KEY_DOWN && canDash) {
+		if (playerDirection == EntityDirections::RIGHT) {
+			targetDashVelocity = dashSpeed * dt;
+		}
+		else if (playerDirection == EntityDirections::LEFT) {
+			targetDashVelocity = -dashSpeed * dt;
+		}
+		canDash = false;
+		dashTimer = 0.0f;
+		isDashing = true;
+		dashElapsedTime = 0.0f;
+	}
+
+	if (isDashing) {
+		float lerpFactor = .4f;
+		velocity.x = Lerp(velocity.x, targetDashVelocity, lerpFactor);
+
+		dashElapsedTime += dt;
+
+		if (dashElapsedTime >= dashDuration) {
+			isDashing = false;
+			targetDashVelocity = 0.0f;
+		}
+	}
+
+
+	if (isJumping == true)
 	{
 		velocity.y = pbody->body->GetLinearVelocity().y;
 	}
@@ -128,7 +160,9 @@ bool Player::Update(float dt)
 
 	return true;
 }
-
+float Player::Lerp(float start, float end, float factor) {
+	return start + factor * (end - start);
+}
 bool Player::CleanUp()
 {
 	LOG("Cleanup player");
@@ -170,7 +204,7 @@ void Player::SetPosition(Vector2D pos) {
 	pos.setX(pos.getX() + texW / 2);
 	pos.setY(pos.getY() + texH / 2);
 	b2Vec2 bodyPos = b2Vec2(PIXEL_TO_METERS(pos.getX()), PIXEL_TO_METERS(pos.getY()));
-	pbody->body->SetTransform(bodyPos,0);
+	pbody->body->SetTransform(bodyPos, 0);
 }
 
 Vector2D Player::GetPosition() {

@@ -9,6 +9,7 @@
 	</render>
 	<window>
 		<resolution width="1280" height="720" scale="1" />
+		<camera zoom="1" />
 		<fullscreen value="false" />
 		<borderless value="false" />
 		<resizable value="false" />
