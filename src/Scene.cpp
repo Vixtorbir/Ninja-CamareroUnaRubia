@@ -138,6 +138,8 @@ bool Scene::Update(float dt)
 		enemyList[0]->ResetPath();
 	}
 
+	dialogueManager->Update();
+
 	return true;
 }
 

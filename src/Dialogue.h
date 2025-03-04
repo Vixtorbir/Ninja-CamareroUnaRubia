@@ -2,22 +2,24 @@
 
 #include "GuiControl.h"
 #include "Vector2D.h"
+#include <string>
 
 class Dialogue : public GuiControl
 {
-
 public:
+    Dialogue(int id, SDL_Rect bounds, const char* text);
+    virtual ~Dialogue();
 
-	Dialogue(int id, SDL_Rect bounds, const char* text);
-	virtual ~Dialogue();
-
-	// Called each loop iteration
-	bool Update(float dt);
+    bool Update(float dt);
 
 private:
+    bool canClick = true;
+    bool drawBasic = false;
 
-	bool canClick = true;
-	bool drawBasic = false;
+    std::string text;
+    std::string displayText;
+    int charIndex = 0;
+    float textSpeed = 0.0001f;
+    float timer = 0.0f;
+    bool fullTextDisplayed = false;
 };
-
-#pragma once
