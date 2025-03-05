@@ -27,8 +27,6 @@ public:
 
 	const char* GetText(DialogueEngine dialogueEngine);
 
-	SDL_Rect namePos = { 0, 100, 300,150 };
-	SDL_Rect dialoguePos = { 0, 700, 1920,300 };
 
 	pugi::xml_node dialogueParameters;
 
@@ -40,7 +38,13 @@ public:
 
 	Module* module;
 
+	int screenWidth;
+	int screnHeight;
+
 private:
+	SDL_Rect namePos = { 100, 400, 300,150 };
+	SDL_Rect dialoguePos = { 0, 700, 1920,300 };
+
 	pugi::xml_document dialogFile;
 	std::vector<std::pair<std::string, std::string>> dialogues;
 	int currentDialogueIndex = 0;

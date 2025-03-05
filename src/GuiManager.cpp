@@ -4,6 +4,7 @@
 
 #include "GuiControlButton.h"
 #include "Dialogue.h"
+#include "Portrait.h"
 
 #include "Audio.h"
 
@@ -32,6 +33,9 @@ GuiControl* GuiManager::CreateGuiControl(GuiControlType type, int id, const char
 		break;
 	case GuiControlType::DIALOGUE:
 		guiControl = new Dialogue(id, bounds, text);
+		break;
+	case GuiControlType::PORTRAIT:
+		guiControl = new Portrait(id, bounds, text);
 		break;
 	}
 

@@ -59,7 +59,7 @@ bool Scene::Awake()
 	//dialogue = (Dialogue*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::DIALOGUE, 1, "dialogo moment", btPos2, this);
 	//
 	dialogueManager->SetModule(this);
-
+	
 	dialogueManager->CastDialogue(DialogueEngine::RAIDEDVILLAGE);
 	return ret;
 }
