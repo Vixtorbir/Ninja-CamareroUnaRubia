@@ -61,17 +61,17 @@ void DialogueManager::Update()
 
 void DialogueManager::ShowNextDialogue()
 {
+    Engine::GetInstance().guiManager->ClearControlsOfType(GuiControlType::DIALOGUE);
+
     if (currentDialogueIndex < dialogues.size())
     {
         std::string character = dialogues[currentDialogueIndex].first;
         std::string text = dialogues[currentDialogueIndex].second;
 
-
         Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::DIALOGUE, 1, character.c_str(), namePos, module);
         Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::DIALOGUE, 1, text.c_str(), dialoguePos, module);
-        
 
-        currentDialogueIndex++; 
+        currentDialogueIndex++;
     }
     else
     {

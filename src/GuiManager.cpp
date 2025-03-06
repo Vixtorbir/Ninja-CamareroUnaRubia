@@ -20,12 +20,12 @@ bool GuiManager::Start()
 	return true;
 }
 
-// L16: TODO 1: Implement CreateGuiControl function that instantiates a new GUI control and add it to the list of controls
+// Create a new GUI control and add it to the list of controls
 GuiControl* GuiManager::CreateGuiControl(GuiControlType type, int id, const char* text, SDL_Rect bounds, Module* observer, SDL_Rect sliderBounds)
 {
 	GuiControl* guiControl = nullptr;
 
-	//Call the constructor according to the GuiControlType
+	// Call the constructor according to the GuiControlType
 	switch (type)
 	{
 	case GuiControlType::BUTTON:
@@ -39,17 +39,26 @@ GuiControl* GuiManager::CreateGuiControl(GuiControlType type, int id, const char
 		break;
 	}
 
-	//Set the observer
+	// Set the observer
 	guiControl->observer = observer;
 
-	// Created GuiControls are add it to the list of controls
+	// Add the created GuiControl to the list of controls
 	guiControlsList.push_back(guiControl);
 
 	return guiControl;
 }
 
+// Clear all GUI controls of a specific type
+void GuiManager::ClearControlsOfType(GuiControlType type)
+{
+	auto it = guiControlsList.begin();
+	delete* it;
+	it = guiControlsList.erase(it);
+
+}
+
 bool GuiManager::Update(float dt)
-{	
+{
 	for (const auto& control : guiControlsList)
 	{
 		control->Update(dt);
@@ -64,9 +73,7 @@ bool GuiManager::CleanUp()
 	{
 		delete control;
 	}
+	guiControlsList.clear();
 
 	return true;
 }
-
-
-

@@ -19,6 +19,8 @@ Dialogue::~Dialogue()
 bool Dialogue::Start()
 {
     Hanzo = Engine::GetInstance().textures.get()->Load("Assets/Portraits/Hanzo.png");
+    Mikado = Engine::GetInstance().textures.get()->Load("Assets/Portraits/Mikado.png");
+
     started = true;
     return true;
 }
@@ -105,7 +107,11 @@ bool Dialogue::Update(float dt)
 
             Engine::GetInstance().render.get()->DrawTexture(Hanzo, 100, 100, &portraitPos);
         }
-        else if (buttonText == "Ren") {
+        else if (buttonText == "Mikado") {
+            SDL_QueryTexture(Mikado, NULL, NULL, &textureWidth, &textureHeight);
+            SDL_Rect portraitPos = { 0, 0, textureWidth, textureHeight };
+
+            Engine::GetInstance().render.get()->DrawTexture(Mikado, 100, 100, &portraitPos);
         }
         else {
         }

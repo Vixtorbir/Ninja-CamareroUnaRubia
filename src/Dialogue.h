@@ -19,12 +19,16 @@ private:
     bool drawBasic = false;
     int textureWidth, textureHeight;
     SDL_Rect portraitPos;
-    SDL_Texture* Hanzo;
+
     bool started = false;
+
     std::string text;
     std::string displayText;
     int charIndex = 0;
     float textSpeed = 0.0001f;
     float timer = 0.0f;
     bool fullTextDisplayed = false;
+
+    SDL_Texture* Hanzo;
+    SDL_Texture* Mikado;
 };

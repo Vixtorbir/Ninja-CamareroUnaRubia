@@ -3,6 +3,7 @@
 	<RAIDEDVILLAGE>
 		<dialogues size="1">
 			<dialogue1 character="Hanzo" text="Hello mundo!" />
+			<dialogue1 character="Mikado" text="Dude, my ass is on FIRE" />
 			<dialogue2 character="Hachiko" text="mmm"/>
 		</dialogues>
 	</RAIDEDVILLAGE>
