@@ -60,7 +60,6 @@ bool Scene::Awake()
 	//
 	dialogueManager->SetModule(this);
 	
-	dialogueManager->CastDialogue(DialogueEngine::RAIDEDVILLAGE);
 	return ret;
 }
 
@@ -72,6 +71,8 @@ bool Scene::Start()
 
 	// Texture to highligh mouse position 
 	mouseTileTex = Engine::GetInstance().textures.get()->Load("Assets/Maps/MapMetadata.png");
+
+	LoadTextures();
 
 	// Initalize the camera position
 	int w, h;
@@ -231,4 +232,12 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 	LOG("Press Gui Control: %d", control->id);
 
 	return true;
+}
+
+void Scene::LoadTextures()
+{
+	Hanzo = Engine::GetInstance().textures.get()->Load("Assets/Portraits/Hanzo.png");
+	dialogueManager->Hanzo = Hanzo;
+	dialogueManager->CastDialogue(DialogueEngine::RAIDEDVILLAGE);
+
 }

@@ -48,6 +48,8 @@ public:
 	// Handles multiple Gui Event methods
 	bool OnGuiMouseClickEvent(GuiControl* control);
 
+	void LoadTextures();
+
 public:
 	// Get tilePosDebug value
 	std::string GetTilePosDebug() {
@@ -57,6 +59,8 @@ public:
 
 public:
 	SDL_Texture* mouseTileTex = nullptr;
+	SDL_Texture* Hanzo = nullptr;
+
 	std::string tilePosDebug = "[0,0]";
 	bool once = false;
 

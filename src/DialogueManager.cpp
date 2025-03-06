@@ -56,6 +56,7 @@ void DialogueManager::Update()
     {
         ShowNextDialogue();
     }
+
 }
 
 void DialogueManager::ShowNextDialogue()
@@ -68,6 +69,7 @@ void DialogueManager::ShowNextDialogue()
 
         Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::DIALOGUE, 1, character.c_str(), namePos, module);
         Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::DIALOGUE, 1, text.c_str(), dialoguePos, module);
+        
 
         currentDialogueIndex++; 
     }

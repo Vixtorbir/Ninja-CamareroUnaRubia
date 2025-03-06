@@ -40,10 +40,12 @@ public:
 
 	int screenWidth;
 	int screnHeight;
+	SDL_Texture* Hanzo = nullptr;
 
 private:
 	SDL_Rect namePos = { 100, 400, 300,150 };
 	SDL_Rect dialoguePos = { 0, 700, 1920,300 };
+
 
 	pugi::xml_document dialogFile;
 	std::vector<std::pair<std::string, std::string>> dialogues;

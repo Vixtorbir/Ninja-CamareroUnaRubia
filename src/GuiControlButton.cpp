@@ -2,11 +2,12 @@
 #include "Render.h"
 #include "Engine.h"
 #include "Audio.h"
-
+#include "Textures.h"
 GuiControlButton::GuiControlButton(int id, SDL_Rect bounds, const char* text) : GuiControl(GuiControlType::BUTTON, id)
 {
 	this->bounds = bounds;
 	this->text = text;
+	Hanzo = Engine::GetInstance().textures.get()->Load("Assets/Portraits/Hanzo.png");
 
 	canClick = true;
 	drawBasic = false;
@@ -59,6 +60,13 @@ bool GuiControlButton::Update(float dt)
 		}
 
 		Engine::GetInstance().render->DrawText(text.c_str(), bounds.x, bounds.y, bounds.w, bounds.h);
+	
+
+
+		SDL_QueryTexture(Hanzo, NULL, NULL, &textureWidth, &textureHeight);
+		SDL_Rect portraitPos = { 0, 0, textureWidth, textureHeight };
+
+		Engine::GetInstance().render.get()->DrawTexture(Hanzo, 100, 100, &portraitPos);
 
 	}
 

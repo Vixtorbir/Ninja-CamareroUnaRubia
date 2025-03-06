@@ -15,6 +15,9 @@ public:
 	bool Update(float dt);
 
 private:
+	int textureWidth, textureHeight;
+	SDL_Rect portraitPos;
+	SDL_Texture* Hanzo;
 
 	bool canClick = true;
 	bool drawBasic = false;
