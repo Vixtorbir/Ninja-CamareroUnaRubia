@@ -2,6 +2,7 @@
 #include "Render.h"
 #include "Engine.h"
 #include "Audio.h"
+#include "Textures.h"
 
 Dialogue::Dialogue(int id, SDL_Rect bounds, const char* text) : GuiControl(GuiControlType::BUTTON, id)
 {
@@ -15,9 +16,15 @@ Dialogue::Dialogue(int id, SDL_Rect bounds, const char* text) : GuiControl(GuiCo
 Dialogue::~Dialogue()
 {
 }
-
+bool Dialogue::Start()
+{
+    Hanzo = Engine::GetInstance().textures.get()->Load("Assets/Portraits/Hanzo.png");
+    started = true;
+    return true;
+}
 bool Dialogue::Update(float dt)
 {
+    if (!started) Start();
     if (state != GuiControlState::DISABLED)
     {
         if (!fullTextDisplayed)
@@ -89,6 +96,20 @@ bool Dialogue::Update(float dt)
         int textY = bounds.y + (bounds.h - textH) / 2;
 
         Engine::GetInstance().render->DrawText(displayText.c_str(), textX, textY, textW, textH);
+
+        std::string buttonText = text;
+
+        if (buttonText == "Hanzo") {
+            SDL_QueryTexture(Hanzo, NULL, NULL, &textureWidth, &textureHeight);
+            SDL_Rect portraitPos = { 0, 0, textureWidth, textureHeight };
+
+            Engine::GetInstance().render.get()->DrawTexture(Hanzo, 100, 100, &portraitPos);
+        }
+        else if (buttonText == "Ren") {
+        }
+        else {
+        }
+
     }
 
     return false;

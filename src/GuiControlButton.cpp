@@ -7,7 +7,6 @@ GuiControlButton::GuiControlButton(int id, SDL_Rect bounds, const char* text) : 
 {
 	this->bounds = bounds;
 	this->text = text;
-	Hanzo = Engine::GetInstance().textures.get()->Load("Assets/Portraits/Hanzo.png");
 
 	canClick = true;
 	drawBasic = false;
@@ -17,7 +16,10 @@ GuiControlButton::~GuiControlButton()
 {
 
 }
-
+bool GuiControlButton::Start()
+{
+	return false;
+}
 bool GuiControlButton::Update(float dt)
 {
 	if (state != GuiControlState::DISABLED)
@@ -60,13 +62,7 @@ bool GuiControlButton::Update(float dt)
 		}
 
 		Engine::GetInstance().render->DrawText(text.c_str(), bounds.x, bounds.y, bounds.w, bounds.h);
-	
 
-
-		SDL_QueryTexture(Hanzo, NULL, NULL, &textureWidth, &textureHeight);
-		SDL_Rect portraitPos = { 0, 0, textureWidth, textureHeight };
-
-		Engine::GetInstance().render.get()->DrawTexture(Hanzo, 100, 100, &portraitPos);
 
 	}
 

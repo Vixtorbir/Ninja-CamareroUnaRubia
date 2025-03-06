@@ -10,12 +10,17 @@ public:
     Dialogue(int id, SDL_Rect bounds, const char* text);
     virtual ~Dialogue();
 
+    bool Start();
+
     bool Update(float dt);
 
 private:
     bool canClick = true;
     bool drawBasic = false;
-
+    int textureWidth, textureHeight;
+    SDL_Rect portraitPos;
+    SDL_Texture* Hanzo;
+    bool started = false;
     std::string text;
     std::string displayText;
     int charIndex = 0;
