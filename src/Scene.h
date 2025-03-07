@@ -7,6 +7,7 @@
 #include "GuiControlButton.h"
 #include "Dialogue.h"
 #include "DialogueManager.h"
+#include "Parallax.h"
 
 struct SDL_Texture;
 
@@ -74,5 +75,9 @@ public:
 
 	Dialogue* dialogue;
 	DialogueManager* dialogueManager;
+
+private:
+	Parallax* parallax = nullptr;
+
 };
 

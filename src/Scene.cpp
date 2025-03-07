@@ -28,6 +28,8 @@ Scene::~Scene()
 // Called before render is available
 bool Scene::Awake()
 {
+	parallax = Engine::GetInstance().parallax.get();
+
 	LOG("Loading Scene");
 	bool ret = true;
 	dialogueManager = new DialogueManager();
