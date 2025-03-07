@@ -8,7 +8,7 @@
 #include "Log.h"
 #include "Physics.h"
 #include "EntityManager.h"
-#include "tracy/Tracy.hpp"
+//#include "tracy/Tracy.hpp"
 
 Player::Player() : Entity(EntityType::PLAYER)
 {
@@ -57,7 +57,14 @@ bool Player::Start() {
 
 bool Player::Update(float dt)
 {
-	ZoneScoped;
+	if (!canDash) {
+		dashTimer += dt / 1000;
+		if (dashTimer >= dashCooldown) {
+			canDash = true; // Dash is ready again
+			dashTimer = 0.0f;
+		}
+	}
+	//ZoneScoped;
 	// Code you want to profile
 
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_E) == KEY_DOWN) {
@@ -68,19 +75,19 @@ bool Player::Update(float dt)
 	b2Vec2 velocity = b2Vec2(0, pbody->body->GetLinearVelocity().y);
 
 	if (!parameters.attribute("gravity").as_bool()) {
-		velocity = b2Vec2(0,0);
+		velocity = b2Vec2(0, 0);
 	}
 
 	// Move left
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_A) == KEY_REPEAT) {
 		velocity.x = -0.2 * 16;
+		playerDirection = EntityDirections::LEFT;
 	}
 
-	// Move right
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_D) == KEY_REPEAT) {
 		velocity.x = 0.2 * 16;
+		playerDirection = EntityDirections::RIGHT;
 	}
-
 	// Move Up
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_W) == KEY_REPEAT) {
 		velocity.y = -0.2 * 16;
@@ -90,16 +97,42 @@ bool Player::Update(float dt)
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) {
 		velocity.y = 0.2 * 16;
 	}
-	
+
 	//Jump
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN && isJumping == false) {
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN && (isJumping == false || hasAlreadyJumpedOnce <= 1)) {
 		// Apply an initial upward force
 		pbody->body->ApplyLinearImpulseToCenter(b2Vec2(0, -jumpForce), true);
+		hasAlreadyJumpedOnce++;
 		isJumping = true;
 	}
 
-	// If the player is jumpling, we don't want to apply gravity, we use the current velocity prduced by the jump
-	if(isJumping == true)
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_LSHIFT) == KEY_DOWN && canDash) {
+		if (playerDirection == EntityDirections::RIGHT) {
+			targetDashVelocity = dashSpeed * dt;
+		}
+		else if (playerDirection == EntityDirections::LEFT) {
+			targetDashVelocity = -dashSpeed * dt;
+		}
+		canDash = false;
+		dashTimer = 0.0f;
+		isDashing = true;
+		dashElapsedTime = 0.0f;
+	}
+
+	if (isDashing) {
+		float lerpFactor = .4f;
+		velocity.x = Lerp(velocity.x, targetDashVelocity, lerpFactor);
+
+		dashElapsedTime += dt;
+
+		if (dashElapsedTime >= dashDuration) {
+			isDashing = false;
+			targetDashVelocity = 0.0f;
+		}
+	}
+
+
+	if (isJumping == true)
 	{
 		velocity.y = pbody->body->GetLinearVelocity().y;
 	}
@@ -111,12 +144,14 @@ bool Player::Update(float dt)
 	position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 2);
 	position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
 
-	Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
+	Engine::GetInstance().render.get()->DrawEntity(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame(), 1, 0, 0, 0, (int)playerDirection);
 	currentAnimation->Update();
 
 	return true;
 }
-
+float Player::Lerp(float start, float end, float factor) {
+	return start + factor * (end - start);
+}
 bool Player::CleanUp()
 {
 	LOG("Cleanup player");
@@ -130,6 +165,7 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 	{
 	case ColliderType::PLATFORM:
 		isJumping = false;
+		hasAlreadyJumpedOnce = 0;
 		break;
 	case ColliderType::ITEM:
 		Engine::GetInstance().audio.get()->PlayFx(pickCoinFxId);
@@ -157,7 +193,7 @@ void Player::SetPosition(Vector2D pos) {
 	pos.setX(pos.getX() + texW / 2);
 	pos.setY(pos.getY() + texH / 2);
 	b2Vec2 bodyPos = b2Vec2(PIXEL_TO_METERS(pos.getX()), PIXEL_TO_METERS(pos.getY()));
-	pbody->body->SetTransform(bodyPos,0);
+	pbody->body->SetTransform(bodyPos, 0);
 }
 
 Vector2D Player::GetPosition() {

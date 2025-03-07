@@ -9,6 +9,7 @@
 
 struct SDL_Texture;
 
+
 class Player : public Entity
 {
 public:
@@ -22,6 +23,8 @@ public:
 	bool Start();
 
 	bool Update(float dt);
+
+	float Lerp(float start, float end, float factor);
 
 	bool CleanUp();
 
@@ -55,11 +58,23 @@ public:
 	PhysBody* pbody;
 	float jumpForce = 2.5f; // The force to apply when jumping
 	bool isJumping = false; // Flag to check if the player is currently jumping
+	int hasAlreadyJumpedOnce = 0;
+	bool isRolling = false;
 
+	bool canDash = true;
+	bool isDashing = false;
+	float dashDuration = 2;
+	float dashCooldown = 1; 
+	float dashTimer = 0.0f;
+	float dashSpeed = 10;
+	float dashElapsedTime = 0;
+	float dashLerpSpeed = 10.0f;
+	float currentDashSpeed = 0.0f;
+	float targetDashVelocity = 0;
 	pugi::xml_node parameters;
 	Animation* currentAnimation = nullptr;
 	Animation idle;
 
 	std::vector<Shuriken*> shurikens;
-
+	EntityDirections playerDirection = EntityDirections::RIGHT;
 };

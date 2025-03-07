@@ -14,6 +14,7 @@
 #include "Enemy.h"
 #include "GuiControl.h"
 #include "GuiManager.h"
+#include "DialogueManager.h"
 
 Scene::Scene() : Module()
 {
@@ -29,7 +30,7 @@ bool Scene::Awake()
 {
 	LOG("Loading Scene");
 	bool ret = true;
-
+	dialogueManager = new DialogueManager();
 	//L04: TODO 3b: Instantiate the player using the entity manager
 	player = (Player*)Engine::GetInstance().entityManager->CreateEntity(EntityType::PLAYER);
 	player->SetParameters(configParameters.child("entities").child("player"));
@@ -52,19 +53,26 @@ bool Scene::Awake()
 	// L16: TODO 2: Instantiate a new GuiControlButton in the Scene
 	SDL_Rect btPos = { 520, 350, 120,20 };
 	guiBt = (GuiControlButton*) Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 1, "MyButton", btPos, this);
+	
 
+	//SDL_Rect btPos2 = { 0, 700, 1920,300 };
+	//dialogue = (Dialogue*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::DIALOGUE, 1, "dialogo moment", btPos2, this);
+	//
+	dialogueManager->SetModule(this);
+	
 	return ret;
 }
 
 // Called before the first frame
 bool Scene::Start()
 {
-
 	//L06 TODO 3: Call the function to load the map. 
 	Engine::GetInstance().map->Load(configParameters.child("map").attribute("path").as_string(), configParameters.child("map").attribute("name").as_string());
 
 	// Texture to highligh mouse position 
 	mouseTileTex = Engine::GetInstance().textures.get()->Load("Assets/Maps/MapMetadata.png");
+
+	LoadTextures();
 
 	// Initalize the camera position
 	int w, h;
@@ -116,6 +124,8 @@ bool Scene::Update(float dt)
 													highlightTile.getY(),
 													&rect);
 
+
+
 	// saves the tile pos for debugging purposes
 	if (mouseTile.getX() >= 0 && mouseTile.getY() >= 0 || once) {
 		tilePosDebug = "[" + std::to_string((int)mouseTile.getX()) + "," + std::to_string((int)mouseTile.getY()) + "] ";
@@ -128,6 +138,8 @@ bool Scene::Update(float dt)
 		enemyList[0]->SetPosition(Vector2D(highlightTile.getX(), highlightTile.getY()));
 		enemyList[0]->ResetPath();
 	}
+
+	dialogueManager->Update();
 
 	return true;
 }
@@ -220,4 +232,12 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 	LOG("Press Gui Control: %d", control->id);
 
 	return true;
+}
+
+void Scene::LoadTextures()
+{
+	Hanzo = Engine::GetInstance().textures.get()->Load("Assets/Portraits/Hanzo.png");
+	dialogueManager->Hanzo = Hanzo;
+	dialogueManager->CastDialogue(DialogueEngine::EMPTY);
+
 }

@@ -7,7 +7,7 @@
 #include "Physics.h"
 
 #include <math.h>
-#include "tracy/Tracy.hpp"
+//#include "tracy/Tracy.hpp"
 
 Map::Map() : Module(), mapLoaded(false)
 {
@@ -34,7 +34,7 @@ bool Map::Start() {
 
 bool Map::Update(float dt)
 {
-    ZoneScoped;
+    //ZoneScoped;
     // Code you want to profile
 
     bool ret = true;
@@ -52,7 +52,7 @@ bool Map::Update(float dt)
 				if (camPos.getY() < 0) camPos.setY(0);
 				Vector2D camPosTile = WorldToMap(camPos.getX(), camPos.getY());
 
-				Vector2D camSize = Vector2D(Engine::GetInstance().render->camera.w, Engine::GetInstance().render->camera.h);
+				Vector2D camSize = Vector2D(Engine::GetInstance().render->camera.w + 200, Engine::GetInstance().render->camera.h + 200);
 				Vector2D camSizeTile = WorldToMap(camSize.getX(), camSize.getY());
 
 				Vector2D limits = Vector2D(camPosTile.getX() + camSizeTile.getX(), camPosTile.getY() + camSizeTile.getY());

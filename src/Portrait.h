@@ -3,18 +3,18 @@
 #include "GuiControl.h"
 #include "Vector2D.h"
 
-class GuiControlButton : public GuiControl
+
+class Portrait : public GuiControl
 {
 
 public:
 
-	GuiControlButton(int id, SDL_Rect bounds, const char* text);
-	virtual ~GuiControlButton();
-
-	bool Start();
+	Portrait(int id, SDL_Rect bounds, const char* text);
+	virtual ~Portrait();
 
 	// Called each loop iteration
 	bool Update(float dt);
+	SDL_Texture* Hanzo = NULL;
 
 private:
 
