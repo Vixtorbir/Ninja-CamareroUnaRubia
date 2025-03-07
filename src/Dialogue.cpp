@@ -44,6 +44,19 @@ bool Dialogue::Update(float dt)
                 }
             }
         }
+        std::string buttonText = text;
+        if (buttonText == "Hanzo") {
+            SDL_QueryTexture(Hanzo, NULL, NULL, &textureWidth, &textureHeight);
+            SDL_Rect portraitPos = { 0, 0, textureWidth, textureHeight };
+
+            Engine::GetInstance().render.get()->DrawTexture(Hanzo, 100, 100, &portraitPos);
+        }
+        else if (buttonText == "Mikado") {
+            SDL_QueryTexture(Mikado, NULL, NULL, &textureWidth, &textureHeight);
+            SDL_Rect portraitPos = { 0, 0, textureWidth, textureHeight };
+
+            Engine::GetInstance().render.get()->DrawTexture(Mikado, 0, 100, &portraitPos);
+        }
 
         if (Engine::GetInstance().input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
         {
@@ -99,22 +112,8 @@ bool Dialogue::Update(float dt)
 
         Engine::GetInstance().render->DrawText(displayText.c_str(), textX, textY, textW, textH);
 
-        std::string buttonText = text;
 
-        if (buttonText == "Hanzo") {
-            SDL_QueryTexture(Hanzo, NULL, NULL, &textureWidth, &textureHeight);
-            SDL_Rect portraitPos = { 0, 0, textureWidth, textureHeight };
 
-            Engine::GetInstance().render.get()->DrawTexture(Hanzo, 100, 100, &portraitPos);
-        }
-        else if (buttonText == "Mikado") {
-            SDL_QueryTexture(Mikado, NULL, NULL, &textureWidth, &textureHeight);
-            SDL_Rect portraitPos = { 0, 0, textureWidth, textureHeight };
-
-            Engine::GetInstance().render.get()->DrawTexture(Mikado, 100, 100, &portraitPos);
-        }
-        else {
-        }
 
     }
 

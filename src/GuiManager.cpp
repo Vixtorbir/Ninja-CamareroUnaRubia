@@ -42,15 +42,13 @@ GuiControl* GuiManager::CreateGuiControl(GuiControlType type, int id, const char
 	// Set the observer
 	guiControl->observer = observer;
 
-	// Add the created GuiControl to the list of controls
 	guiControlsList.push_back(guiControl);
 
 	return guiControl;
 }
 
-// Clear all GUI controls of a specific type
 void GuiManager::ClearControlsOfType(GuiControlType type)
-{
+{ 
 	auto it = guiControlsList.begin();
 	delete* it;
 	it = guiControlsList.erase(it);

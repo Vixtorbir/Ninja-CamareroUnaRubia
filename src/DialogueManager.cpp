@@ -29,31 +29,56 @@ void DialogueManager::SetModule(Module* module)
 
 void DialogueManager::CastDialogue(DialogueEngine dialogueEngine)
 {
+    // Convert the enum to a string representation
+    std::string dialogueType;
     switch (dialogueEngine)
     {
     case DialogueEngine::RAIDEDVILLAGE:
+        dialogueType = "RAIDEDVILLAGE";
+        break;
+    case DialogueEngine::EMPTY:
+        dialogueType = "EMPTY";
+        break;
+
+    default:
+        LOG("Unknown dialogue type");
+        return;
+    }
+
+    pugi::xml_node dialoguesNode = dialogFile.child("dialogues").child(dialogueType.c_str()).child("dialogues");
+
+    if (!dialoguesNode)
     {
-        pugi::xml_node dialoguesNode = dialogFile.child("dialogues").child("RAIDEDVILLAGE").child("dialogues");
+        LOG("Dialogue type '%s' not found in XML!", dialogueType.c_str());
+        return;
+    }
 
-        for (pugi::xml_node dialogue = dialoguesNode.first_child(); dialogue; dialogue = dialogue.next_sibling())
-        {
-            std::string character = dialogue.attribute("character").as_string();
-            std::string text = dialogue.attribute("text").as_string();
-            dialogues.push_back({ character, text });
-        }
+    dialogues.clear();
 
+    for (pugi::xml_node dialogue = dialoguesNode.first_child(); dialogue; dialogue = dialogue.next_sibling())
+    {
+        std::string character = dialogue.attribute("character").as_string();
+        std::string text = dialogue.attribute("text").as_string();
+        dialogues.push_back({ character, text });
+    }
+
+    if (!dialogues.empty())
+    {
         currentDialogueIndex = 0;
         ShowNextDialogue();
-
-        break;
     }
+    else
+    {
+        LOG("No dialogues found for '%s'!", dialogueType.c_str());
     }
 }
 
+
 void DialogueManager::Update()
 {
-    if (Engine::GetInstance().input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
+    if (!dialogueEnded && Engine::GetInstance().input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
     {
+        Engine::GetInstance().guiManager->ClearControlsOfType(GuiControlType::DIALOGUE);
         ShowNextDialogue();
     }
 
@@ -76,5 +101,6 @@ void DialogueManager::ShowNextDialogue()
     else
     {
         LOG("No more dialogues to display!");
+        dialogueEnded = true;
     }
 }

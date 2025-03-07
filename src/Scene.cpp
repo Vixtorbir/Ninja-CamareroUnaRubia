@@ -238,6 +238,6 @@ void Scene::LoadTextures()
 {
 	Hanzo = Engine::GetInstance().textures.get()->Load("Assets/Portraits/Hanzo.png");
 	dialogueManager->Hanzo = Hanzo;
-	dialogueManager->CastDialogue(DialogueEngine::RAIDEDVILLAGE);
+	dialogueManager->CastDialogue(DialogueEngine::EMPTY);
 
 }
