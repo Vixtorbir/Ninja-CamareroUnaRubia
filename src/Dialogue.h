@@ -18,6 +18,9 @@ private:
     bool canClick = true;
     bool drawBasic = false;
     int textureWidth, textureHeight;
+    int textureWidthOverlay, textureHeightOverlay;
+    int textureWidthOverlay2, textureHeightOverlay2;
+
     SDL_Rect portraitPos;
 
     bool started = false;
@@ -28,6 +31,9 @@ private:
     float textSpeed = 0.0001f;
     float timer = 0.0f;
     bool fullTextDisplayed = false;
+    
+    SDL_Texture* Overlay;
+    SDL_Texture* OverlayPortrait;
 
     SDL_Texture* Hanzo;
     SDL_Texture* Mikado;

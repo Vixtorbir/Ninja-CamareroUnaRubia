@@ -21,6 +21,9 @@ bool Dialogue::Start()
     Hanzo = Engine::GetInstance().textures.get()->Load("Assets/Portraits/Hanzo.png");
     Mikado = Engine::GetInstance().textures.get()->Load("Assets/Portraits/Mikado.png");
 
+    Overlay = Engine::GetInstance().textures.get()->Load("Assets/Portraits/VNAssets/TextBox.png");
+    OverlayPortrait = Engine::GetInstance().textures.get()->Load("Assets/Portraits/VNAssets/Button.png");
+
     started = true;
     return true;
 }
@@ -44,7 +47,9 @@ bool Dialogue::Update(float dt)
                 }
             }
         }
+
         std::string buttonText = text;
+
         if (buttonText == "Hanzo") {
             SDL_QueryTexture(Hanzo, NULL, NULL, &textureWidth, &textureHeight);
             SDL_Rect portraitPos = { 0, 0, textureWidth, textureHeight };
@@ -85,14 +90,21 @@ bool Dialogue::Update(float dt)
         {
             state = GuiControlState::NORMAL;
         }
-
+        SDL_QueryTexture(OverlayPortrait, NULL, NULL, &textureWidthOverlay, &textureHeightOverlay);
+        SDL_Rect overlayPos = { 0, 0, textureWidthOverlay, textureHeightOverlay };
+        SDL_QueryTexture(Overlay, NULL, NULL, &textureWidthOverlay2, &textureHeightOverlay2);
+        SDL_Rect overlayPos2 = { 0, 0, textureWidthOverlay2, textureHeightOverlay2 };
         switch (state)
         {
         case GuiControlState::DISABLED:
             Engine::GetInstance().render->DrawRectangle(bounds, 200, 200, 200, 255, true, false);
             break;
         case GuiControlState::NORMAL:
-            Engine::GetInstance().render->DrawRectangle(bounds, 0, 0, 0, 255, true, false);
+            Engine::GetInstance().render->DrawRectangle(bounds, 0, 0, 0, 0, true, false);
+     
+            Engine::GetInstance().render.get()->DrawTexture(OverlayPortrait, 50, 440, &overlayPos);
+            Engine::GetInstance().render.get()->DrawTexture(Overlay, 400, 700, &overlayPos2);
+
             break;
         case GuiControlState::FOCUSED:
             Engine::GetInstance().render->DrawRectangle(bounds, 0, 0, 20, 255, true, false);
