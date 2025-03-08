@@ -50,7 +50,8 @@ public:
 	float speed = 5.0f;
 	SDL_Texture* texture = NULL;
 	int texW, texH;
-
+	int camX, camY;
+	float smoothFactor = 0.1f;
 	//Audio fx
 	int pickCoinFxId;
 
@@ -74,6 +75,7 @@ public:
 	pugi::xml_node parameters;
 	Animation* currentAnimation = nullptr;
 	Animation idle;
+	Animation walk;
 
 	std::vector<Shuriken*> shurikens;
 	EntityDirections playerDirection = EntityDirections::RIGHT;

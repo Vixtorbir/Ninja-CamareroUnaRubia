@@ -7,6 +7,7 @@
 #include "GuiControlButton.h"
 #include "Dialogue.h"
 #include "DialogueManager.h"
+#include "Parallax.h"
 
 struct SDL_Texture;
 
@@ -59,7 +60,7 @@ public:
 
 public:
 	SDL_Texture* mouseTileTex = nullptr;
-	SDL_Texture* Hanzo = nullptr;
+	SDL_Texture* textureBuffer = nullptr;
 
 	std::string tilePosDebug = "[0,0]";
 	bool once = false;
@@ -74,5 +75,9 @@ public:
 
 	Dialogue* dialogue;
 	DialogueManager* dialogueManager;
+
+private:
+	Parallax* parallax = nullptr;
+
 };
 

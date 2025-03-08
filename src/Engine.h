@@ -15,6 +15,7 @@ class Textures;
 class Audio;
 class Scene;
 class EntityManager;
+class Parallax;
 class Map;
 //L08 TODO 2: Add Physics module
 class Physics;
@@ -99,6 +100,7 @@ public:
 	std::shared_ptr<Scene> scene;
 	// L04: TODO 1: Add the EntityManager Module to the Engine
 	std::shared_ptr<EntityManager> entityManager;
+	std::shared_ptr<Parallax> parallax;
 	std::shared_ptr<Map> map;
 	// L08: TODO 2: Add Physics module
 	std::shared_ptr<Physics> physics;

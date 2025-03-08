@@ -35,6 +35,8 @@ bool Player::Start() {
 
 	//Load animations
 	idle.LoadAnimations(parameters.child("animations").child("idle"));
+	walk.LoadAnimations(parameters.child("animations").child("walk"));
+
 	currentAnimation = &idle;
 
 	// L08 TODO 5: Add physics to the player - initialize physics body
@@ -87,6 +89,13 @@ bool Player::Update(float dt)
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_D) == KEY_REPEAT) {
 		velocity.x = 0.2 * 16;
 		playerDirection = EntityDirections::RIGHT;
+	}
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_A) == KEY_REPEAT ||
+		Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_D) == KEY_REPEAT) {
+		currentAnimation = &walk;
+	}
+	else {
+		currentAnimation = &idle;
 	}
 	// Move Up
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_W) == KEY_REPEAT) {
@@ -147,6 +156,11 @@ bool Player::Update(float dt)
 	Engine::GetInstance().render.get()->DrawEntity(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame(), 1, 0, 0, 0, (int)playerDirection);
 	currentAnimation->Update();
 
+	camX = -(float)position.getX() + (Engine::GetInstance().render.get()->camera.w / 2);
+	camY = -(float)position.getY() + (Engine::GetInstance().render.get()->camera.h / 2);
+
+	Engine::GetInstance().render.get()->camera.x += (camX - Engine::GetInstance().render.get()->camera.x) * smoothFactor;
+	Engine::GetInstance().render.get()->camera.y += (camY - Engine::GetInstance().render.get()->camera.y) * smoothFactor;
 	return true;
 }
 float Player::Lerp(float start, float end, float factor) {
