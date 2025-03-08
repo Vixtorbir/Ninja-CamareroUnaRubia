@@ -47,6 +47,16 @@ bool Dialogue::Update(float dt)
                 }
             }
         }
+        int textW = 0, textH = 0;
+        TTF_SizeText(Engine::GetInstance().render->font, displayText.c_str(), &textW, &textH);
+
+        if (textW > bounds.w) textW = bounds.w;
+
+        int textX = bounds.x + (bounds.w - textW) / 2;
+        int textY = bounds.y + (bounds.h - textH) / 2;
+
+
+
 
         std::string buttonText = text;
 
@@ -54,13 +64,13 @@ bool Dialogue::Update(float dt)
             SDL_QueryTexture(Hanzo, NULL, NULL, &textureWidth, &textureHeight);
             SDL_Rect portraitPos = { 0, 0, textureWidth, textureHeight };
 
-            Engine::GetInstance().render.get()->DrawTexture(Hanzo, 100, 100, &portraitPos);
+            Engine::GetInstance().render.get()->DrawTexture(Hanzo, textX, textY, &portraitPos);
         }
         else if (buttonText == "Mikado") {
             SDL_QueryTexture(Mikado, NULL, NULL, &textureWidth, &textureHeight);
             SDL_Rect portraitPos = { 0, 0, textureWidth, textureHeight };
 
-            Engine::GetInstance().render.get()->DrawTexture(Mikado, 0, 100, &portraitPos);
+            Engine::GetInstance().render.get()->DrawTexture(Mikado, (textX - 300)  - Engine::GetInstance().render->camera.x, (textY - 400)  - Engine::GetInstance().render->camera.y, &portraitPos);
         }
 
         if (Engine::GetInstance().input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
@@ -102,8 +112,8 @@ bool Dialogue::Update(float dt)
         case GuiControlState::NORMAL:
             Engine::GetInstance().render->DrawRectangle(bounds, 0, 0, 0, 0, true, false);
      
-            Engine::GetInstance().render.get()->DrawTexture(OverlayPortrait, 50, 440, &overlayPos);
-            Engine::GetInstance().render.get()->DrawTexture(Overlay, 400, 700, &overlayPos2);
+            Engine::GetInstance().render.get()->DrawTexture(OverlayPortrait, 50 - Engine::GetInstance().render->camera.x, 440 - Engine::GetInstance().render->camera.y, &overlayPos);
+            Engine::GetInstance().render.get()->DrawTexture(Overlay, 400 - Engine::GetInstance().render->camera.x, 700 - Engine::GetInstance().render->camera.y, &overlayPos2);
 
             break;
         case GuiControlState::FOCUSED:
@@ -114,17 +124,7 @@ bool Dialogue::Update(float dt)
             break;
         }
 
-        int textW = 0, textH = 0;
-        TTF_SizeText(Engine::GetInstance().render->font, displayText.c_str(), &textW, &textH);
-
-        if (textW > bounds.w) textW = bounds.w;
-
-        int textX = bounds.x + (bounds.w - textW) / 2;
-        int textY = bounds.y + (bounds.h - textH) / 2;
-
         Engine::GetInstance().render->DrawText(displayText.c_str(), textX, textY, textW, textH);
-
-
 
 
     }
