@@ -52,6 +52,9 @@ bool Player::Start() {
 	//initialize audio effect
 	pickCoinFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/retro-video-game-coin-pickup-38299.ogg");
 
+	Engine::GetInstance().input.get()->BindAction(HORIZONTAL_LEFT, SDL_SCANCODE_A, -1, -1);
+	Engine::GetInstance().input.get()->BindAction(HORIZONTAL_RIGHT, SDL_SCANCODE_D, -1, -1);
+	Engine::GetInstance().input.get()->BindAction(JUMP, SDL_SCANCODE_SPACE, -1, -1);
 	return true;
 }
 
@@ -78,13 +81,18 @@ bool Player::Update(float dt)
 		velocity = b2Vec2(0, 0);
 	}
 
+
+
+
+
+
 	// Move left
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_A) == KEY_REPEAT) {
+	if ((Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)||Engine::GetInstance().input.get()->GetActionState(HORIZONTAL_LEFT) == KEY_REPEAT) {
 		velocity.x = -0.2 * 16;
 		playerDirection = EntityDirections::LEFT;
 	}
 
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_D) == KEY_REPEAT) {
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_D) == KEY_REPEAT||Engine::GetInstance().input.get()->GetActionState(HORIZONTAL_RIGHT) == KEY_REPEAT) {
 		velocity.x = 0.2 * 16;
 		playerDirection = EntityDirections::RIGHT;
 	}
@@ -99,7 +107,7 @@ bool Player::Update(float dt)
 	}
 
 	//Jump
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN && (isJumping == false || hasAlreadyJumpedOnce <= 1)) {
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN && (isJumping == false || hasAlreadyJumpedOnce <= 1)||(Engine::GetInstance().input.get()->GetActionState(JUMP) == KEY_REPEAT)&& (isJumping == false || hasAlreadyJumpedOnce <= 1)) {
 		// Apply an initial upward force
 		pbody->body->ApplyLinearImpulseToCenter(b2Vec2(0, -jumpForce), true);
 		hasAlreadyJumpedOnce++;
@@ -113,6 +121,7 @@ bool Player::Update(float dt)
 		else if (playerDirection == EntityDirections::LEFT) {
 			targetDashVelocity = -dashSpeed * dt;
 		}
+
 		canDash = false;
 		dashTimer = 0.0f;
 		isDashing = true;
