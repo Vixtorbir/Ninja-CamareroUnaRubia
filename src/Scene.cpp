@@ -80,6 +80,8 @@ bool Scene::Start()
 	Engine::GetInstance().render.get()->camera.x = 0;
 	Engine::GetInstance().render.get()->camera.y = 0;
 
+	currentState = GameState::MAIN_MENU;
+
 	return true;
 }
 
@@ -140,6 +142,25 @@ bool Scene::Update(float dt)
 	}
 
 	dialogueManager->Update();
+
+	switch (currentState) {
+	case GameState::MAIN_MENU:
+		UpdateMainMenu();
+		break;
+
+	case GameState::PLAYING:
+		UpdateGameplay(dt);
+		break;
+
+	case GameState::PAUSED:
+		UpdatePauseMenu();
+		break;
+
+	case GameState::GAME_OVER:
+		UpdateGameOver();
+		break;
+	}
+
 
 	return true;
 }
@@ -240,4 +261,46 @@ void Scene::LoadTextures()
 	dialogueManager->Hanzo = Hanzo;
 	dialogueManager->CastDialogue(DialogueEngine::EMPTY);
 
+}
+
+void Scene::SetState(GameState newState) {
+	currentState = newState;
+}
+
+
+GameState Scene::GetState() const {
+	return currentState;
+}
+
+void Scene::UpdateMainMenu() {
+	Engine::GetInstance().render.get()->DrawText("Press ENTER to Start", 600, 400, 750, 255);
+
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_RETURN) == KEY_DOWN) {
+		SetState(GameState::PLAYING);
+	}
+}
+
+
+void Scene::UpdateGameplay(float dt) {
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_P) == KEY_DOWN) {
+		SetState(GameState::PAUSED);
+	}
+}
+
+
+void Scene::UpdatePauseMenu() {
+	Engine::GetInstance().render.get()->DrawText("PAUSED - Press ESC to Resume",600, 400, 750, 255);
+
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_P) == KEY_DOWN) {
+		SetState(GameState::PLAYING);
+	}
+}
+
+
+void Scene::UpdateGameOver() {
+	Engine::GetInstance().render.get()->DrawText("GAME OVER - Press R to Restart", 100, 100, 20, { 255});
+
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_R) == KEY_DOWN) {
+		SetState(GameState::MAIN_MENU);
+	}
 }

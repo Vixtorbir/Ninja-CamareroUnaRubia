@@ -10,6 +10,13 @@
 
 struct SDL_Texture;
 
+enum class GameState {
+	MAIN_MENU,
+	PLAYING,
+	PAUSED,
+	GAME_OVER
+};
+
 class Scene : public Module
 {
 public:
@@ -50,6 +57,9 @@ public:
 
 	void LoadTextures();
 
+	void SetState(GameState newState); 
+	GameState GetState() const;        
+
 public:
 	// Get tilePosDebug value
 	std::string GetTilePosDebug() {
@@ -74,5 +84,12 @@ public:
 
 	Dialogue* dialogue;
 	DialogueManager* dialogueManager;
+
+	GameState currentState = GameState::MAIN_MENU;
+
+	void UpdateMainMenu();
+	void UpdateGameplay(float dt);
+	void UpdatePauseMenu();
+	void UpdateGameOver();
 };
 
