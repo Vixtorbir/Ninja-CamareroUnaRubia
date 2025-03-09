@@ -156,11 +156,22 @@ bool Player::Update(float dt)
 	Engine::GetInstance().render.get()->DrawEntity(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame(), 1, 0, 0, 0, (int)playerDirection);
 	currentAnimation->Update();
 
-	camX = -(float)position.getX() + (Engine::GetInstance().render.get()->camera.w / 2);
-	camY = -(float)position.getY() + (Engine::GetInstance().render.get()->camera.h / 2);
+	if (!Engine::GetInstance().scene.get()->watchtitle)
+	{
+		camX = -(float)position.getX() + (Engine::GetInstance().render.get()->camera.w / 2);
+		camY = -(float)position.getY() + (Engine::GetInstance().render.get()->camera.h / 2);
 
-	Engine::GetInstance().render.get()->camera.x += (camX - Engine::GetInstance().render.get()->camera.x) * smoothFactor;
-	Engine::GetInstance().render.get()->camera.y += (camY - Engine::GetInstance().render.get()->camera.y) * smoothFactor;
+		Engine::GetInstance().render.get()->camera.x += (camX - Engine::GetInstance().render.get()->camera.x) * smoothFactor;
+		Engine::GetInstance().render.get()->camera.y += (camY - Engine::GetInstance().render.get()->camera.y) * smoothFactor;
+	}
+	else {
+		camX = 1920 + (Engine::GetInstance().render.get()->camera.w / 2);
+		camY = -(float)position.getY() + (Engine::GetInstance().render.get()->camera.h / 2);
+
+		Engine::GetInstance().render.get()->camera.x += (camX - Engine::GetInstance().render.get()->camera.x) * smoothFactor;
+		Engine::GetInstance().render.get()->camera.y += (camY - Engine::GetInstance().render.get()->camera.y) * smoothFactor;
+	}
+
 	return true;
 }
 float Player::Lerp(float start, float end, float factor) {

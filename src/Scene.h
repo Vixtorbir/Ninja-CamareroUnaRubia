@@ -76,8 +76,8 @@ public:
 	Dialogue* dialogue;
 	DialogueManager* dialogueManager;
 
-	bool loadScene = false;
-
+	bool watchtitle = true;
+	
 private:
 	Parallax* parallax = nullptr;
 
