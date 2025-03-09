@@ -171,6 +171,7 @@
     <ClCompile Include="src\Shurikens.cpp" />
     <ClCompile Include="src\Textures.cpp" />
     <ClCompile Include="src\Timer.cpp" />
+    <ClCompile Include="src\Title.cpp" />
     <ClCompile Include="src\Vector2D.cpp" />
     <ClCompile Include="src\Window.cpp" />
   </ItemGroup>
@@ -204,6 +205,7 @@
     <ClInclude Include="src\Shurikens.h" />
     <ClInclude Include="src\Textures.h" />
     <ClInclude Include="src\Timer.h" />
+    <ClInclude Include="src\Title.h" />
     <ClInclude Include="src\Vector2D.h" />
     <ClInclude Include="src\Window.h" />
   </ItemGroup>

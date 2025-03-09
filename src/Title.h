@@ -11,14 +11,14 @@
 
 struct SDL_Texture;
 
-class Scene : public Module
+class Title : public Module
 {
 public:
 
-	Scene();
+	Title();
 
 	// Destructor
-	virtual ~Scene();
+	virtual ~Title();
 
 	// Called before render is available
 	bool Awake();
@@ -53,16 +53,10 @@ public:
 
 public:
 	// Get tilePosDebug value
-	std::string GetTilePosDebug() {
-		return tilePosDebug;
-
-	}
 
 public:
-	SDL_Texture* mouseTileTex = nullptr;
-	SDL_Texture* textureBuffer = nullptr;
 
-	std::string tilePosDebug = "[0,0]";
+
 	bool once = false;
 
 	//L03: TODO 3b: Declare a Player attribute
@@ -76,10 +70,7 @@ public:
 	Dialogue* dialogue;
 	DialogueManager* dialogueManager;
 
-	bool loadScene = false;
-
 private:
-	Parallax* parallax = nullptr;
 
 };
 
