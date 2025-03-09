@@ -40,13 +40,16 @@ bool Player::Start() {
 	currentAnimation = &idle;
 
 	// L08 TODO 5: Add physics to the player - initialize physics body
-	pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX(), (int)position.getY(), texW / 2, bodyType::DYNAMIC);
+	pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX(), (int)position.getY(), texW, texH, bodyType::DYNAMIC);
 
 	// L08 TODO 6: Assign player class (using "this") to the listener of the pbody. This makes the Physics module to call the OnCollision method
 	pbody->listener = this;
 
 	// L08 TODO 7: Assign collider type
 	pbody->ctype = ColliderType::PLAYER;
+
+	pbody->body->SetFixedRotation(true);
+
 
 	// Set the gravity of the body
 	if (!parameters.attribute("gravity").as_bool()) pbody->body->SetGravityScale(0);
@@ -70,7 +73,7 @@ bool Player::Update(float dt)
 	// Code you want to profile
 
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_E) == KEY_DOWN) {
-		ShootShuriken();
+		//ShootShuriken();
 	}
 	
 	// L08 TODO 5: Add physics to the player - updated player position using physics
@@ -98,23 +101,71 @@ bool Player::Update(float dt)
 		currentAnimation = &idle;
 	}
 	// Move Up
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_W) == KEY_REPEAT) {
+	/*if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_W) == KEY_REPEAT) {
 		velocity.y = -0.2 * 16;
 	}
-
+	*/
 	// Move down
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) {
 		velocity.y = 0.2 * 16;
 	}
 
 	//Jump
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN && (isJumping == false || hasAlreadyJumpedOnce <= 1)) {
-		// Apply an initial upward force
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_W) == KEY_DOWN && hasAlreadyJumpedOnce == 0) {
+		isHoldingJump = true;
+		jumpHoldTimer = 0.0f;
+	}
+
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_W) == KEY_REPEAT && isHoldingJump) {
+		jumpHoldTimer += dt;
+
+		if (jumpHoldTimer >= maxHoldTime) {
+			float jumpStrength = jumpForce * maxJumpMultiplier;
+			pbody->body->ApplyLinearImpulseToCenter(b2Vec2(0, -jumpStrength), true);
+			hasAlreadyJumpedOnce++;
+			isHoldingJump = false;
+			isJumping = true;
+		}
+	}
+
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_W) == KEY_UP && isHoldingJump) {
+		float holdPercentage = jumpHoldTimer / maxHoldTime;
+		float jumpMultiplier = minJumpMultiplier + (holdPercentage * (maxJumpMultiplier - minJumpMultiplier));
+		float jumpStrength = jumpForce * jumpMultiplier;
+
+		pbody->body->ApplyLinearImpulseToCenter(b2Vec2(0, -jumpStrength), true);
+		hasAlreadyJumpedOnce++;
+		isHoldingJump = false;
+		isJumping = true;
+	}
+
+	
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_W) == KEY_DOWN && hasAlreadyJumpedOnce == 1) {
+		pbody->body->SetLinearVelocity(b2Vec2(pbody->body->GetLinearVelocity().x, 0)); 
 		pbody->body->ApplyLinearImpulseToCenter(b2Vec2(0, -jumpForce), true);
 		hasAlreadyJumpedOnce++;
 		isJumping = true;
 	}
 
+	// Wall Jump
+	if (touchingWall && Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_L) == KEY_DOWN) {
+		float jumpDirection = (playerDirection == EntityDirections::LEFT) ? 1.0f : -1.0f;
+
+		pbody->body->SetLinearVelocity(b2Vec2(0, 0)); 
+		pbody->body->ApplyLinearImpulseToCenter(b2Vec2(jumpDirection * wallJumpPush, -wallJumpForce), true);
+
+		isHoldingJump = false;
+		jumpHoldTimer = 0.0f;
+
+		playerDirection = (playerDirection == EntityDirections::LEFT) ? EntityDirections::RIGHT : EntityDirections::LEFT;
+	}
+
+	if (touchingWall && Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_W) == KEY_REPEAT) {
+		pbody->body->SetLinearVelocity(b2Vec2(0, wallClimbSpeed));
+	}
+
+
+	//Dash
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_LSHIFT) == KEY_DOWN && canDash) {
 		if (playerDirection == EntityDirections::RIGHT) {
 			targetDashVelocity = dashSpeed * dt;
@@ -150,7 +201,7 @@ bool Player::Update(float dt)
 	pbody->body->SetLinearVelocity(velocity);
 
 	b2Transform pbodyPos = pbody->body->GetTransform();
-	position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 2);
+	position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texW / 2);
 	position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
 
 	Engine::GetInstance().render.get()->DrawEntity(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame(), 1, 0, 0, 0, (int)playerDirection);
@@ -181,6 +232,9 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 		isJumping = false;
 		hasAlreadyJumpedOnce = 0;
 		break;
+	case ColliderType::WALL:
+		touchingWall = true;
+		break;
 	case ColliderType::ITEM:
 		Engine::GetInstance().audio.get()->PlayFx(pickCoinFxId);
 		Engine::GetInstance().physics.get()->DeletePhysBody(physB); // Deletes the body of the item from the physics world
@@ -199,6 +253,9 @@ void Player::OnCollisionEnd(PhysBody* physA, PhysBody* physB)
 	case ColliderType::ITEM:
 		break;
 	case ColliderType::UNKNOWN:
+		break;
+	case ColliderType::WALL:
+		touchingWall = false;
 		break;
 	}
 }
