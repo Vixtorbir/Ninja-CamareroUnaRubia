@@ -29,7 +29,8 @@ enum class ColliderType {
 	PLATFORM, 
 	ENEMY,
 	SHURIKEN,
-	UNKNOWN
+	UNKNOWN,
+	WALL
 	// ..
 };
 
