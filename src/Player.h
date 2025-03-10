@@ -50,16 +50,29 @@ public:
 	float speed = 5.0f;
 	SDL_Texture* texture = NULL;
 	int texW, texH;
-
+	int camX, camY;
+	float smoothFactor = 0.1f;
 	//Audio fx
 	int pickCoinFxId;
 
 	// L08 TODO 5: Add physics to the player - declare a Physics body
 	PhysBody* pbody;
-	float jumpForce = 2.5f; // The force to apply when jumping
+	float jumpForce = 65.0f; // The force to apply when jumping
 	bool isJumping = false; // Flag to check if the player is currently jumping
 	int hasAlreadyJumpedOnce = 0;
 	bool isRolling = false;
+
+	const float maxHoldTime = 1500.0f;  
+	const float minJumpMultiplier = 0.5f;
+	const float maxJumpMultiplier = 1.2f;
+	float jumpHoldTimer = 0.0f;
+	bool isHoldingJump = false;
+
+	bool touchingWall = false;  
+	float wallJumpForce = 40.5f; 
+	float wallJumpPush = 2.0f;  
+	float wallClimbSpeed = -1.5f;
+
 
 	bool canDash = true;
 	bool isDashing = false;
@@ -74,6 +87,7 @@ public:
 	pugi::xml_node parameters;
 	Animation* currentAnimation = nullptr;
 	Animation idle;
+	Animation walk;
 
 	std::vector<Shuriken*> shurikens;
 	EntityDirections playerDirection = EntityDirections::RIGHT;

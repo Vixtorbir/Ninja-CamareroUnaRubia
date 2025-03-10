@@ -28,6 +28,8 @@ Scene::~Scene()
 // Called before render is available
 bool Scene::Awake()
 {
+	parallax = Engine::GetInstance().parallax.get();
+
 	LOG("Loading Scene");
 	bool ret = true;
 	dialogueManager = new DialogueManager();
@@ -72,7 +74,7 @@ bool Scene::Start()
 	// Texture to highligh mouse position 
 	mouseTileTex = Engine::GetInstance().textures.get()->Load("Assets/Maps/MapMetadata.png");
 
-	LoadTextures();
+	dialogueManager->CastDialogue(DialogueEngine::RAIDEDVILLAGE);
 
 	// Initalize the camera position
 	int w, h;

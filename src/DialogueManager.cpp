@@ -8,8 +8,6 @@
 DialogueManager::DialogueManager()
 {
 
-
-
     pugi::xml_parse_result result = dialogFile.load_file("dialogues.xml");
     if (result)
     {
