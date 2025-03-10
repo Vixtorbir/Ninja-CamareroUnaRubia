@@ -16,8 +16,9 @@ public:
 	// Called each loop iteration
 	bool Update(float dt);
 
-private:
+	bool isActive = false;
 
+private:
 	bool canClick = true;
 	bool drawBasic = false;
 };

@@ -51,7 +51,8 @@ bool Player::Start() {
 
 	pbody->body->SetFixedRotation(true);
 
-	popup = (GuiPopup*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::POPUP, 1, "E", btPos, this);
+	popup = (GuiPopup*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::POPUP, 1, "E", btPos, sceneModule);
+	
 
 	// Set the gravity of the body
 	if (!parameters.attribute("gravity").as_bool()) pbody->body->SetGravityScale(0);
@@ -231,7 +232,7 @@ void Player::GuiPOPup(GuiPopups guiPopup)
 	switch (guiPopup)
 	{
 	case GuiPopups::E_Interact:
-		
+		popup->isActive = true;
 		break;
 	}
 }
@@ -265,7 +266,9 @@ void Player::OnCollisionEnd(PhysBody* physA, PhysBody* physB)
 	{
 	case ColliderType::PLATFORM:
 		break;
-	case ColliderType::ITEM:
+	case ColliderType::NPC:
+		popup->isActive = false;
+
 		break;
 	case ColliderType::UNKNOWN:
 		break;

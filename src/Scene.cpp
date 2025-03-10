@@ -65,7 +65,7 @@ bool Scene::Awake()
 	//dialogue = (Dialogue*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::DIALOGUE, 1, "dialogo moment", btPos2, this);
 	//
 	dialogueManager->SetModule(this);
-	
+	player->sceneModule = this;
 	return ret;
 }
 

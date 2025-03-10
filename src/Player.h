@@ -7,6 +7,7 @@
 #include "Shurikens.h"
 #include "GuiPopup.h"
 #include "GuiControl.h"
+#include "Module.h"
 #include <vector>
 
 
@@ -100,7 +101,7 @@ public:
 
 	GuiPopup* popup;
 	SDL_Rect btPos = { 520, 350, 120,20 };
-
+	Module* sceneModule = nullptr;
 	std::vector<Shuriken*> shurikens;
 	EntityDirections playerDirection = EntityDirections::RIGHT;
 };
