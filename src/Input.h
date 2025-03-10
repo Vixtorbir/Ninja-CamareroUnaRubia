@@ -4,8 +4,6 @@
 #include "SDL2/SDL.h"
 #include "SDL2/SDL_rect.h"
 #include "Vector2D.h"
-#include <unordered_map>
-#include <vector>
 
 #define NUM_MOUSE_BUTTONS 5
 
@@ -23,14 +21,6 @@ enum KeyState
 	KEY_DOWN,
 	KEY_REPEAT,
 	KEY_UP
-};
-enum InputAction
-{
-	HORIZONTAL_LEFT,
-	HORIZONTAL_RIGHT,
-	JUMP,
-	ATTACK,
-	ACTION_COUNT
 };
 
 class Input : public Module
@@ -73,10 +63,6 @@ public:
 	Vector2D GetMousePosition();
 	Vector2D GetMouseMotion();
 
-	void BindAction(InputAction action, int key, int joystickButton, int axis = -1);
-	KeyState GetActionState(InputAction action);
-
-
 private:
 	bool windowEvents[WE_COUNT];
 	KeyState*	keyboard;
@@ -85,14 +71,4 @@ private:
 	int mouseMotionY;
 	int mouseX;
 	int mouseY;
-	std::unordered_map<InputAction, std::vector<int>> keyBindings;
-	std::unordered_map<InputAction, std::vector<int>> joystickButtonBindings;
-	std::unordered_map<InputAction, int> joystickAxisBindings;
-	std::unordered_map<InputAction, KeyState> actionStates;
-
-
-
-
-
 };
-

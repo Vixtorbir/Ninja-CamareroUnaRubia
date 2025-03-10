@@ -7,15 +7,9 @@
 #include "GuiControlButton.h"
 #include "Dialogue.h"
 #include "DialogueManager.h"
+#include "Parallax.h"
 
 struct SDL_Texture;
-
-enum class GameState {
-	MAIN_MENU,
-	PLAYING,
-	PAUSED,
-	GAME_OVER
-};
 
 class Scene : public Module
 {
@@ -57,9 +51,6 @@ public:
 
 	void LoadTextures();
 
-	void SetState(GameState newState); 
-	GameState GetState() const;        
-
 public:
 	// Get tilePosDebug value
 	std::string GetTilePosDebug() {
@@ -69,7 +60,7 @@ public:
 
 public:
 	SDL_Texture* mouseTileTex = nullptr;
-	SDL_Texture* Hanzo = nullptr;
+	SDL_Texture* textureBuffer = nullptr;
 
 	std::string tilePosDebug = "[0,0]";
 	bool once = false;
@@ -85,11 +76,8 @@ public:
 	Dialogue* dialogue;
 	DialogueManager* dialogueManager;
 
-	GameState currentState = GameState::MAIN_MENU;
+private:
+	Parallax* parallax = nullptr;
 
-	void UpdateMainMenu();
-	void UpdateGameplay(float dt);
-	void UpdatePauseMenu();
-	void UpdateGameOver();
 };
 
