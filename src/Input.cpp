@@ -18,10 +18,7 @@ Input::Input() : Module()
 
 
 
-	if (SDL_InitSubSystem(SDL_INIT_GAMECONTROLLER) < 0)
-	{
-		LOG("SDL GameController could not initialize! SDL_Error: %s\n", SDL_GetError());
-	}
+
 }
 
 // Destructor
@@ -42,84 +39,111 @@ bool Input::Awake()
 		LOG("SDL_EVENTS could not initialize! SDL_Error: %s\n", SDL_GetError());
 		ret = false;
 	}
-
+    if (SDL_InitSubSystem(SDL_INIT_GAMECONTROLLER) < 0) {
+        LOG("SDL_GAMECONTROLLER could not initialize! SDL_Error: %s", SDL_GetError());
+        ret = false;
+    }
 	return ret;
 }
-
+SDL_GameController* Input::FindController()
+{
+    for (int i = 0; i < SDL_NumJoysticks(); i++) {
+        if (SDL_IsGameController(i)) {
+            LOG("Controller found at index %d: %s", i, SDL_GameControllerNameForIndex(i));
+            return SDL_GameControllerOpen(i);
+        }
+    }
+    LOG("No compatible game controller found");
+    return nullptr;
+}
 // Called before the first frame
 bool Input::Start()
 {
 	SDL_StopTextInput();
+
+    controller = FindController();
+    if (controller != nullptr) {
+        LOG("Game controller connected: %s", SDL_GameControllerName(controller));
+    }
+    else {
+        LOG("No game controller detected at startup");
+    }
+
 	return true;
 }
 
 // Called each loop iteration
 bool Input::PreUpdate()
 {
-    // Update action states before processing events
-    for (auto& state : actionStates)
-    {
-        if (state.second == KEY_DOWN)
-            state.second = KEY_REPEAT;
-        else if (state.second == KEY_UP)
-            state.second = KEY_IDLE;
-    }
+ 
 
     static SDL_Event event;
-    while (SDL_PollEvent(&event) != 0)
-    {
-        switch (event.type)
-        {
-        case SDL_CONTROLLERBUTTONDOWN:
-            for (auto& pair : joystickButtonBindings)
-            {
-                if (std::find(pair.second.begin(), pair.second.end(), event.cbutton.button) != pair.second.end())
-                {
-                    actionStates[pair.first] = KEY_DOWN;
+
+
+    const Uint8* keys = SDL_GetKeyboardState(NULL);
+
+    for (int i = 0; i < MAX_KEYS; ++i) {
+        if (keys[i] == 1) {
+            if (keyboard[i] == KEY_IDLE)
+                keyboard[i] = KEY_DOWN;
+            else
+                keyboard[i] = KEY_REPEAT;
+        }
+        else {
+            if (keyboard[i] == KEY_REPEAT || keyboard[i] == KEY_DOWN)
+                keyboard[i] = KEY_UP;
+            else
+                keyboard[i] = KEY_IDLE;
+        }
+    }
+
+    // Mouse button input
+    for (int i = 0; i < NUM_MOUSE_BUTTONS; ++i) {
+        
+        if (mouseButtons[i] == KEY_DOWN)
+            mouseButtons[i] = KEY_REPEAT;
+
+        if (mouseButtons[i] == KEY_UP)
+            mouseButtons[i] = KEY_IDLE;
+    }
+
+    if (controller != nullptr) {
+        for (int i = 0; i < SDL_CONTROLLER_BUTTON_MAX; ++i) {
+            bool isPressed = SDL_GameControllerGetButton(controller, (SDL_GameControllerButton)i);
+            if (isPressed) {
+                if (controllerButtons[i] == KEY_IDLE) {
+                    controllerButtons[i] = KEY_DOWN;
+                }
+                else {
+                    controllerButtons[i] = KEY_REPEAT;
                 }
             }
-            break;
-
-        case SDL_CONTROLLERBUTTONUP:
-            for (auto& pair : joystickButtonBindings)
-            {
-                if (std::find(pair.second.begin(), pair.second.end(), event.cbutton.button) != pair.second.end())
-                {
-                    actionStates[pair.first] = KEY_UP;
+            else {
+                if (controllerButtons[i] == KEY_REPEAT || controllerButtons[i] == KEY_DOWN) {
+                    controllerButtons[i] = KEY_UP;
+                }
+                else {
+                    controllerButtons[i] = KEY_IDLE;
                 }
             }
-            break;
+        }
 
-        case SDL_CONTROLLERAXISMOTION:
-            for (auto& pair : joystickAxisBindings)
-            {
-                if (pair.second == event.caxis.axis)
-                {
-                    if (event.caxis.value < -8000)
-                    {
-                        actionStates[pair.first] = KEY_DOWN;
-                    }
-                    else if (event.caxis.value > 8000)
-                    {
-                        actionStates[pair.first] = KEY_DOWN;
-                    }
-                    else
-                    {
-                        if (actionStates[pair.first] == KEY_DOWN || actionStates[pair.first] == KEY_REPEAT)
-                            actionStates[pair.first] = KEY_UP;
-                    }
-                }
+        for (int i = 0; i < SDL_CONTROLLER_AXIS_MAX; ++i) {
+            Sint16 axisValue = SDL_GameControllerGetAxis(controller, (SDL_GameControllerAxis)i);
+            if (axisValue != controllerAxes[i]) {
+                controllerAxes[i] = axisValue;
             }
-            break;
+        }
+    }
 
-
+    while (SDL_PollEvent(&event) != 0) {
+        switch (event.type) {
         case SDL_QUIT:
             windowEvents[WE_QUIT] = true;
             break;
 
         case SDL_WINDOWEVENT:
-            switch (event.window.event)
-            {
+            switch (event.window.event) {
             case SDL_WINDOWEVENT_HIDDEN:
             case SDL_WINDOWEVENT_MINIMIZED:
             case SDL_WINDOWEVENT_FOCUS_LOST:
@@ -153,25 +177,7 @@ bool Input::PreUpdate()
         }
     }
 
-    // Handle keyboard state updates
-    const Uint8* keys = SDL_GetKeyboardState(NULL);
-    for (int i = 0; i < MAX_KEYS; ++i)
-    {
-        if (keys[i] == 1)
-        {
-            if (keyboard[i] == KEY_IDLE)
-                keyboard[i] = KEY_DOWN;
-            else
-                keyboard[i] = KEY_REPEAT;
-        }
-        else
-        {
-            if (keyboard[i] == KEY_REPEAT || keyboard[i] == KEY_DOWN)
-                keyboard[i] = KEY_UP;
-            else
-                keyboard[i] = KEY_IDLE;
-        }
-    }
+
 
     // Update mouse button states
     for (int i = 0; i < NUM_MOUSE_BUTTONS; ++i)
@@ -192,6 +198,13 @@ bool Input::CleanUp()
 {
 	LOG("Quitting SDL event subsystem");
 	SDL_QuitSubSystem(SDL_INIT_EVENTS);
+    SDL_QuitSubSystem(SDL_INIT_GAMECONTROLLER);
+
+    if (controller != nullptr) {
+        SDL_GameControllerClose(controller);
+        controller = nullptr;
+        LOG("Game controller disconnected during cleanup");
+    }
 	return true;
 }
 
@@ -210,23 +223,12 @@ Vector2D Input::GetMouseMotion()
 {
 	return Vector2D(mouseMotionX, mouseMotionY);
 }
-void Input::BindAction(InputAction action, int key, int joystickButton, int axis)
+KeyState Input::GetControllerButton(SDL_GameControllerButton button)
 {
-	if (key != -1)
-		keyBindings[action].push_back(key);
-
-	if (joystickButton != -1)
-		joystickButtonBindings[action].push_back(joystickButton);
-
-	if (axis != -1)
-		joystickAxisBindings[action] = axis;
+    return controllerButtons[button];
 }
-KeyState Input::GetActionState(InputAction action)
-{
-		auto it = actionStates.find(action);
-		if (it != actionStates.end())
-			return it->second;
 
-		return KEY_IDLE;
-	
+Sint16 Input::GetControllerAxis(SDL_GameControllerAxis axis)
+{
+    return controllerAxes[axis];
 }

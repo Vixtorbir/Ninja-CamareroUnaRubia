@@ -73,8 +73,13 @@ public:
 	Vector2D GetMousePosition();
 	Vector2D GetMouseMotion();
 
-	void BindAction(InputAction action, int key, int joystickButton, int axis = -1);
-	KeyState GetActionState(InputAction action);
+
+	SDL_GameController* FindController();
+	KeyState GetControllerButton(SDL_GameControllerButton button);
+
+	Sint16 GetControllerAxis(SDL_GameControllerAxis axis);
+
+
 
 
 private:
@@ -85,10 +90,10 @@ private:
 	int mouseMotionY;
 	int mouseX;
 	int mouseY;
-	std::unordered_map<InputAction, std::vector<int>> keyBindings;
-	std::unordered_map<InputAction, std::vector<int>> joystickButtonBindings;
-	std::unordered_map<InputAction, int> joystickAxisBindings;
-	std::unordered_map<InputAction, KeyState> actionStates;
+
+	SDL_GameController* controller;
+	KeyState controllerButtons[SDL_CONTROLLER_BUTTON_MAX];
+	Sint16 controllerAxes[SDL_CONTROLLER_AXIS_MAX];
 
 
 

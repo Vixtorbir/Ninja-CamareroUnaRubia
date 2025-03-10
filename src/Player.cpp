@@ -52,9 +52,7 @@ bool Player::Start() {
 	//initialize audio effect
 	pickCoinFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/retro-video-game-coin-pickup-38299.ogg");
 
-	Engine::GetInstance().input.get()->BindAction(HORIZONTAL_LEFT, SDL_SCANCODE_A, -1, -1);
-	Engine::GetInstance().input.get()->BindAction(HORIZONTAL_RIGHT, SDL_SCANCODE_D, -1, -1);
-	Engine::GetInstance().input.get()->BindAction(JUMP, SDL_SCANCODE_SPACE, -1, -1);
+
 	return true;
 }
 
@@ -83,31 +81,31 @@ bool Player::Update(float dt)
 
 
 
-
+	auto input = Engine::GetInstance().input.get();
 
 
 	// Move left
-	if ((Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)||Engine::GetInstance().input.get()->GetActionState(HORIZONTAL_LEFT) == KEY_REPEAT) {
+	if ((Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_A) == KEY_REPEAT) || input->GetControllerButton(static_cast<SDL_GameControllerButton>(13))) {
 		velocity.x = -0.2 * 16;
 		playerDirection = EntityDirections::LEFT;
 	}
 
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_D) == KEY_REPEAT||Engine::GetInstance().input.get()->GetActionState(HORIZONTAL_RIGHT) == KEY_REPEAT) {
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_D) == KEY_REPEAT || input->GetControllerButton(static_cast<SDL_GameControllerButton>(14))) {
 		velocity.x = 0.2 * 16;
 		playerDirection = EntityDirections::RIGHT;
 	}
 	// Move Up
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_W) == KEY_REPEAT) {
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_W) == KEY_REPEAT || input->GetControllerButton(static_cast<SDL_GameControllerButton>(11))) {
 		velocity.y = -0.2 * 16;
 	}
 
 	// Move down
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) {
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_REPEAT || input->GetControllerButton(static_cast<SDL_GameControllerButton>(12))) {
 		velocity.y = 0.2 * 16;
 	}
 
 	//Jump
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN && (isJumping == false || hasAlreadyJumpedOnce <= 1)||(Engine::GetInstance().input.get()->GetActionState(JUMP) == KEY_REPEAT)&& (isJumping == false || hasAlreadyJumpedOnce <= 1)) {
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN && (isJumping == false || hasAlreadyJumpedOnce <= 1)) {
 		// Apply an initial upward force
 		pbody->body->ApplyLinearImpulseToCenter(b2Vec2(0, -jumpForce), true);
 		hasAlreadyJumpedOnce++;
@@ -157,6 +155,7 @@ bool Player::Update(float dt)
 	currentAnimation->Update();
 
 	return true;
+
 }
 float Player::Lerp(float start, float end, float factor) {
 	return start + factor * (end - start);
