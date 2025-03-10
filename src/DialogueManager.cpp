@@ -31,6 +31,9 @@ void DialogueManager::CastDialogue(DialogueEngine dialogueEngine)
     std::string dialogueType;
     switch (dialogueEngine)
     {
+    case DialogueEngine::MENTORSHIP:
+        dialogueType = "MENTORSHIP";
+        break;
     case DialogueEngine::RAIDEDVILLAGE:
         dialogueType = "RAIDEDVILLAGE";
         break;

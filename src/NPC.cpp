@@ -8,6 +8,7 @@
 #include "Log.h"
 #include "Physics.h"
 #include "EntityManager.h"
+#include "GuiManager.h"
 //#include "tracy/Tracy.hpp"
 
 
@@ -104,10 +105,14 @@ void NPC::OnCollision(PhysBody* physA, PhysBody* physB) {
 	switch (physB->ctype)
 	{
 	case ColliderType::PLAYER:
+		showcaseDialogue = true;
+
 		//FIX interact mapping
 		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_E) == KEY_DOWN)
 		{
-			showcaseDialogue = true;
+
+			LOG("a");
+
 		}
 		break;
 	}
@@ -119,7 +124,9 @@ void NPC::OnCollisionEnd(PhysBody* physA, PhysBody* physB)
 	{
 	case ColliderType::PLATFORM:
 		break;
-
+	case ColliderType::PLAYER:
+		Engine::GetInstance().guiManager->ClearControlsOfType(GuiControlType::DIALOGUE);
+		break;
 	}
 }
 
