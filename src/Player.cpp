@@ -106,23 +106,19 @@ bool Player::Update(float dt)
 	else {
 		currentAnimation = &idle;
 	}
-	// Move Up
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_W) == KEY_REPEAT || input->GetControllerButton(static_cast<SDL_GameControllerButton>(11))) {
-		velocity.y = -0.2 * 16;
-	}
-	*/
+	
 	// Move down
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_REPEAT || input->GetControllerButton(static_cast<SDL_GameControllerButton>(12))) {
 		velocity.y = 0.2 * 16;
 	}
 
 	//Jump
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_W) == KEY_DOWN && hasAlreadyJumpedOnce == 0) {
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_W) == KEY_DOWN && hasAlreadyJumpedOnce == 0 || input->GetControllerButton(static_cast<SDL_GameControllerButton>(11))) {
 		isHoldingJump = true;
 		jumpHoldTimer = 0.0f;
 	}
 
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_W) == KEY_REPEAT && isHoldingJump) {
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_W) == KEY_REPEAT && isHoldingJump || input->GetControllerButton(static_cast<SDL_GameControllerButton>(11))) {
 		jumpHoldTimer += dt;
 
 		if (jumpHoldTimer >= maxHoldTime) {
@@ -134,7 +130,7 @@ bool Player::Update(float dt)
 		}
 	}
 
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_W) == KEY_UP && isHoldingJump) {
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_W) == KEY_UP && isHoldingJump || input->GetControllerButton(static_cast<SDL_GameControllerButton>(11))) {
 		float holdPercentage = jumpHoldTimer / maxHoldTime;
 		float jumpMultiplier = minJumpMultiplier + (holdPercentage * (maxJumpMultiplier - minJumpMultiplier));
 		float jumpStrength = jumpForce * jumpMultiplier;
@@ -146,7 +142,7 @@ bool Player::Update(float dt)
 	}
 
 	
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_W) == KEY_DOWN && hasAlreadyJumpedOnce == 1) {
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_W) == KEY_DOWN && hasAlreadyJumpedOnce == 1 || input->GetControllerButton(static_cast<SDL_GameControllerButton>(11))) {
 		pbody->body->SetLinearVelocity(b2Vec2(pbody->body->GetLinearVelocity().x, 0)); 
 		pbody->body->ApplyLinearImpulseToCenter(b2Vec2(0, -jumpForce), true);
 		hasAlreadyJumpedOnce++;

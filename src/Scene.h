@@ -71,6 +71,7 @@ public:
 public:
 	SDL_Texture* mouseTileTex = nullptr;
 	SDL_Texture* textureBuffer = nullptr;
+	SDL_Texture* Hanzo = nullptr;
 
 	std::string tilePosDebug = "[0,0]";
 	bool once = false;
