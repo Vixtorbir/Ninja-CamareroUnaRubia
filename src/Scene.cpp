@@ -15,6 +15,7 @@
 #include "GuiControl.h"
 #include "GuiManager.h"
 #include "DialogueManager.h"
+#include "NPC.h"
 
 Scene::Scene() : Module()
 {
@@ -37,6 +38,9 @@ bool Scene::Awake()
 	player = (Player*)Engine::GetInstance().entityManager->CreateEntity(EntityType::PLAYER);
 	player->SetParameters(configParameters.child("entities").child("player"));
 	
+	npc = (NPC*)Engine::GetInstance().entityManager->CreateEntity(EntityType::NPC);
+	npc->SetParameters(configParameters.child("entities").child("npc"));
+
 	//L08 Create a new item using the entity manager and set the position to (200, 672) to test
 	for(pugi::xml_node itemNode = configParameters.child("entities").child("items").child("item"); itemNode; itemNode = itemNode.next_sibling("item"))
 	{

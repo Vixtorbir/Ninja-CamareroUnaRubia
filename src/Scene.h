@@ -8,6 +8,7 @@
 #include "Dialogue.h"
 #include "DialogueManager.h"
 #include "Parallax.h"
+#include "Npc.h"
 
 struct SDL_Texture;
 
@@ -69,6 +70,7 @@ public:
 	Player* player;
 	std::vector<Enemy*> enemyList;
 
+	NPC* npc;
 
 	// L16: TODO 2: Declare a GUI Control Button 
 	GuiControlButton* guiBt;

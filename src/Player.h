@@ -5,10 +5,17 @@
 #include "Box2D/Box2D.h"
 #include "Animation.h"
 #include "Shurikens.h"
+#include "GuiPopup.h"
+#include "GuiControl.h"
 #include <vector>
+
 
 struct SDL_Texture;
 
+enum class GuiPopups
+{
+	E_Interact
+};
 
 class Player : public Entity
 {
@@ -27,6 +34,8 @@ public:
 	float Lerp(float start, float end, float factor);
 
 	bool CleanUp();
+
+	void GuiPOPup(GuiPopups guiPopup);
 
 	// L08 TODO 6: Define OnCollision function for the player. 
 	void OnCollision(PhysBody* physA, PhysBody* physB);
@@ -88,6 +97,9 @@ public:
 	Animation* currentAnimation = nullptr;
 	Animation idle;
 	Animation walk;
+
+	GuiPopup* popup;
+	SDL_Rect btPos = { 520, 350, 120,20 };
 
 	std::vector<Shuriken*> shurikens;
 	EntityDirections playerDirection = EntityDirections::RIGHT;

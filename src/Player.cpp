@@ -8,6 +8,7 @@
 #include "Log.h"
 #include "Physics.h"
 #include "EntityManager.h"
+#include "GuiManager.h"
 //#include "tracy/Tracy.hpp"
 
 Player::Player() : Entity(EntityType::PLAYER)
@@ -50,6 +51,7 @@ bool Player::Start() {
 
 	pbody->body->SetFixedRotation(true);
 
+	popup = (GuiPopup*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::POPUP, 1, "E", btPos, this);
 
 	// Set the gravity of the body
 	if (!parameters.attribute("gravity").as_bool()) pbody->body->SetGravityScale(0);
@@ -224,6 +226,16 @@ bool Player::CleanUp()
 	return true;
 }
 
+void Player::GuiPOPup(GuiPopups guiPopup)
+{
+	switch (guiPopup)
+	{
+	case GuiPopups::E_Interact:
+		
+		break;
+	}
+}
+
 // L08 TODO 6: Define OnCollision function for the player. 
 void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 	switch (physB->ctype)
@@ -231,6 +243,9 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 	case ColliderType::PLATFORM:
 		isJumping = false;
 		hasAlreadyJumpedOnce = 0;
+		break;
+	case ColliderType::NPC:
+		GuiPOPup(GuiPopups::E_Interact);
 		break;
 	case ColliderType::WALL:
 		touchingWall = true;
