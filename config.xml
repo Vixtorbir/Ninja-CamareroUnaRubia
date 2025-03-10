@@ -59,4 +59,31 @@
 			</enemies>
 		</entities>
 	</scene>
+	<UI path="Assets/UI/UI buttons spritesheet.png">
+		<playButton x="250" y="250" w="250" h="250" state ="unselected">
+		</playButton>
+		<settingsButton x="250" y="250"  w="250" h="250" state ="unselected">
+		</settingsButton>
+		<stopButton x="250" y="250"  w="250" h="250" state ="unselected">
+		</stopButton>
+		<forwardButton x="250" y="250"  w="250" h="250" state ="unselected">
+		</forwardButton>
+		<backwardsButton x="250" y="250" w="250" h="250" state ="unselected">
+		</backwardsButton>
+		<saveButton x="250" y="250" w="250" h="250" state ="unselected">
+		</saveButton>
+		<loadButton x="250" y="250" w="250" h="250" state ="unselected">
+		</loadButton>
+		<exitButton x="250" y="250" w="250" h="250" state ="unselected">
+		</exitButton>
+		<scroll x="500" y="250" w="250" h="250" >
+		</scroll>
+		<scrollControl x="250" y="250"  w="250" h="250">
+		</scrollControl>
+		<checkBox x="250" y="250"  w="250" h="250" state ="inactive">
+		</checkBox>
+		<dialogueBox x="250" y="250"  w="1500" h="500">
+		</dialogueBox>
+	</UI>
+
 </config>

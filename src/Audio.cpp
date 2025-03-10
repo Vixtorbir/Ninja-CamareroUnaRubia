@@ -47,6 +47,7 @@ bool Audio::Awake()
 		ret = true;
 	}
 
+	//load music and sound in array
 	return ret;
 }
 
@@ -141,7 +142,7 @@ int Audio::LoadFx(const char* path)
 
 	if(chunk == NULL)
 	{
-		LOG("Cannot load wav %s. Mix_GetError(): %s", path, Mix_GetError());
+		LOG("Cannot load fx wav %s. Mix_GetError(): %s", path, Mix_GetError());
 	}
 	else
 	{
@@ -150,6 +151,25 @@ int Audio::LoadFx(const char* path)
 	}
 
 	return ret;
+}
+int  Audio::LoadMusic(const char* path)
+{
+	int ret = 0;
+	if (!active)
+		return 0;
+
+    _Mix_Music* track = Mix_LoadMUS(path);
+
+	if (track == NULL)
+	{
+		LOG("Cannot load music wav %s. Mix_GetError(): %s", path, Mix_GetError());
+	}
+	else
+	{
+		tracks.push_back(track);
+		ret = (int)tracks.size();
+	}
+
 }
 
 // Play WAV
