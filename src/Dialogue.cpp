@@ -20,6 +20,7 @@ bool Dialogue::Start()
 {
     Hanzo = Engine::GetInstance().textures.get()->Load("Assets/Portraits/Hanzo.png");
     Mikado = Engine::GetInstance().textures.get()->Load("Assets/Portraits/Mikado.png");
+    Mentor = Engine::GetInstance().textures.get()->Load("Assets/Portraits/Mentor.png");
 
     Overlay = Engine::GetInstance().textures.get()->Load("Assets/Portraits/VNAssets/TextBox.png");
     OverlayPortrait = Engine::GetInstance().textures.get()->Load("Assets/Portraits/VNAssets/Button.png");
@@ -71,6 +72,12 @@ bool Dialogue::Update(float dt)
             SDL_Rect portraitPos = { 0, 0, textureWidth, textureHeight };
 
             Engine::GetInstance().render.get()->DrawTexture(Mikado, (textX - 300)  - Engine::GetInstance().render->camera.x, (textY - 400)  - Engine::GetInstance().render->camera.y, &portraitPos);
+        }
+        else if (buttonText == "Mentor") {
+            SDL_QueryTexture(Mentor, NULL, NULL, &textureWidth, &textureHeight);
+            SDL_Rect portraitPos = { 0, 0, textureWidth, textureHeight };
+
+            Engine::GetInstance().render.get()->DrawTexture(Mentor, (textX - 300) - Engine::GetInstance().render->camera.x, (textY - 400) - Engine::GetInstance().render->camera.y, &portraitPos);
         }
 
         if (Engine::GetInstance().input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)

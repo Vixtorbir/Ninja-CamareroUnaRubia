@@ -37,4 +37,6 @@ private:
 
     SDL_Texture* Hanzo;
     SDL_Texture* Mikado;
+    SDL_Texture* Mentor;
+
 };

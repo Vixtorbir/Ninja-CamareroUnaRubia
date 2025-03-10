@@ -71,6 +71,7 @@ public:
 	std::vector<Enemy*> enemyList;
 
 	NPC* npc;
+	std::vector<NPC*> npcs;
 
 	// L16: TODO 2: Declare a GUI Control Button 
 	GuiControlButton* guiBt;

@@ -100,7 +100,7 @@ public:
 	Animation walk;
 
 	GuiPopup* popup;
-	SDL_Rect btPos = { 520, 350, 120,20 };
+	SDL_Rect btPos = { 960, 520, 40, 40};
 	Module* sceneModule = nullptr;
 	std::vector<Shuriken*> shurikens;
 	EntityDirections playerDirection = EntityDirections::RIGHT;

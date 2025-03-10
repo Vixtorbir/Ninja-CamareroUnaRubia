@@ -4,7 +4,7 @@
 #include "SDL2/SDL.h"
 #include "Box2D/Box2D.h"
 #include "Animation.h"
-#include "Shurikens.h"
+#include "DialogueManager.h"
 #include <vector>
 
 struct SDL_Texture;
@@ -15,6 +15,8 @@ class NPC : public Entity
 public:
 
 	NPC();
+
+	NPC(DialogueEngine name);
 	
 	virtual ~NPC();
 
@@ -54,11 +56,13 @@ public:
 
 	// L08 TODO 5: Add physics to the player - declare a Physics body
 	PhysBody* pbody;
-
+	bool showcaseDialogue = false;
 
 	pugi::xml_node parameters;
 	Animation* currentAnimation = nullptr;
 	Animation idle;
+
+	DialogueEngine dialogueName;
 
 	EntityDirections npcDirection = EntityDirections::RIGHT;
 };

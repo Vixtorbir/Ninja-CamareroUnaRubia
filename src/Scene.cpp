@@ -38,8 +38,9 @@ bool Scene::Awake()
 	player = (Player*)Engine::GetInstance().entityManager->CreateEntity(EntityType::PLAYER);
 	player->SetParameters(configParameters.child("entities").child("player"));
 	
-	npc = (NPC*)Engine::GetInstance().entityManager->CreateEntity(EntityType::NPC);
+	npc = (NPC*)Engine::GetInstance().entityManager->CreateNamedCharacter(EntityType::NPC, DialogueEngine::MENTORSHIP);
 	npc->SetParameters(configParameters.child("entities").child("npc"));
+	npcs.push_back(npc);
 
 	//L08 Create a new item using the entity manager and set the position to (200, 672) to test
 	for(pugi::xml_node itemNode = configParameters.child("entities").child("items").child("item"); itemNode; itemNode = itemNode.next_sibling("item"))
@@ -57,7 +58,7 @@ bool Scene::Awake()
 	}
 
 	// L16: TODO 2: Instantiate a new GuiControlButton in the Scene
-	SDL_Rect btPos = { 520, 350, 120,20 };
+	SDL_Rect btPos = { -10000, 350, 120,20 };
 	guiBt = (GuiControlButton*) Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 1, "MyButton", btPos, this);
 	
 
@@ -78,7 +79,7 @@ bool Scene::Start()
 	// Texture to highligh mouse position 
 	mouseTileTex = Engine::GetInstance().textures.get()->Load("Assets/Maps/MapMetadata.png");
 
-	dialogueManager->CastDialogue(DialogueEngine::RAIDEDVILLAGE);
+	//dialogueManager->CastDialogue(DialogueEngine::RAIDEDVILLAGE);
 
 	// Initalize the camera position
 	int w, h;
@@ -145,7 +146,16 @@ bool Scene::Update(float dt)
 		enemyList[0]->ResetPath();
 	}
 
+	//Dialogue things
 	dialogueManager->Update();
+	for (NPC* npc : npcs)
+	{
+		if (npc->showcaseDialogue)
+		{
+			dialogueManager->CastDialogue(npc->dialogueName);
+			npc->showcaseDialogue = false;
+		}
+	}
 
 	return true;
 }

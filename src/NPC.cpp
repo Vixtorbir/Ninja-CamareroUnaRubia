@@ -10,9 +10,14 @@
 #include "EntityManager.h"
 //#include "tracy/Tracy.hpp"
 
+
 NPC::NPC() : Entity(EntityType::NPC)
 {
-	name = "NPC";
+}
+
+NPC::NPC(DialogueEngine name) : Entity(EntityType::NPC)
+{
+	this->dialogueName = name;
 }
 
 NPC::~NPC() {
@@ -62,9 +67,6 @@ bool NPC::Update(float dt)
 	//ZoneScoped;
 	// Code you want to profile
 
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_E) == KEY_DOWN) {
-		//ShootShuriken();
-	}
 	
 	// L08 TODO 5: Add physics to the player - updated player position using physics
 	b2Vec2 velocity = b2Vec2(0, pbody->body->GetLinearVelocity().y);
@@ -101,8 +103,12 @@ bool NPC::CleanUp()
 void NPC::OnCollision(PhysBody* physA, PhysBody* physB) {
 	switch (physB->ctype)
 	{
-	case ColliderType::PLATFORM:
-		
+	case ColliderType::PLAYER:
+		//FIX interact mapping
+		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_E) == KEY_DOWN)
+		{
+			showcaseDialogue = true;
+		}
 		break;
 	}
 }

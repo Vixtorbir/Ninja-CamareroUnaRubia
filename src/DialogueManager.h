@@ -8,6 +8,7 @@
 
 enum class DialogueEngine
 {
+	MENTORSHIP,
 	RAIDEDVILLAGE,
 	EMPTY
 };

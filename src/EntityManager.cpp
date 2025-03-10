@@ -81,8 +81,23 @@ Entity* EntityManager::CreateEntity(EntityType type)
 	case EntityType::ENEMY:
 		entity = new Enemy();
 		break;
+	default:
+		break;
+	}
+
+	entities.push_back(entity);
+
+	return entity;
+}
+Entity* EntityManager::CreateNamedCharacter(EntityType type, DialogueEngine name)
+{
+	Entity* entity = nullptr;
+
+	//L04: TODO 3a: Instantiate entity according to the type and add the new entity to the list of Entities
+	switch (type)
+	{
 	case EntityType::NPC:
-		entity = new NPC();
+		entity = new NPC(name);
 		break;
 	default:
 		break;
@@ -92,7 +107,6 @@ Entity* EntityManager::CreateEntity(EntityType type)
 
 	return entity;
 }
-
 void EntityManager::DestroyEntity(Entity* entity)
 {
 	for (auto it = entities.begin(); it != entities.end(); ++it)

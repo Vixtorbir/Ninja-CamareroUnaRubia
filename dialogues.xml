@@ -8,6 +8,11 @@
 			<dialogue2 character="" text=""/>
 		</dialogues>
 	</RAIDEDVILLAGE>
+	<MENTOR>
+		<dialogues size="3">
+			<dialogue1 character="Mentor" text="I am mentoring you" />
+		</dialogues>
+	</MENTOR>
 	<EMPTY>
 		<dialogues size="1">
 			<dialogue1 character="" text="" />
