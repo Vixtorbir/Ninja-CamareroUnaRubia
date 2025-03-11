@@ -46,7 +46,7 @@ public:
 
 private:
 	bool dialogueEnded = false;
-	SDL_Rect namePos = { 100, 400, 300,150 };
+	SDL_Rect namePos = { 500, 550, 300,150 };
 	SDL_Rect dialoguePos = { 0, 700, 1920,300 };
 
 

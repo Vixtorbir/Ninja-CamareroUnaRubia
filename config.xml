@@ -12,7 +12,7 @@
 		<camera zoom="1" />
 		<fullscreen value="false" />
 		<borderless value="false" />
-		<resizable value="false" />
+		<resizable value="true" />
 		<fullscreen_window value="false" />
 	</window>
 	<scene>
