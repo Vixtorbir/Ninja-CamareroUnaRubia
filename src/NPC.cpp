@@ -64,11 +64,11 @@ bool NPC::Start() {
 
 bool NPC::Update(float dt)
 {
-	
+
 	//ZoneScoped;
 	// Code you want to profile
 
-	
+
 	// L08 TODO 5: Add physics to the player - updated player position using physics
 	b2Vec2 velocity = b2Vec2(0, pbody->body->GetLinearVelocity().y);
 
