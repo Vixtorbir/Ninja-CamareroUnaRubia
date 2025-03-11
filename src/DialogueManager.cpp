@@ -52,6 +52,7 @@ void DialogueManager::CastDialogue(DialogueEngine dialogueEngine)
     {
         LOG("Dialogue type '%s' not found in XML!", dialogueType.c_str());
         return;
+
     }
 
     dialogues.clear();
