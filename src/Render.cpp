@@ -80,6 +80,7 @@ bool Render::PreUpdate()
 
 bool Render::Update(float dt)
 {
+	SDL_RenderSetLogicalSize(renderer, 1920, 1080);
 	return true;
 }
 

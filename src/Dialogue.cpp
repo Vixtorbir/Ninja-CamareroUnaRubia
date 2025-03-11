@@ -22,17 +22,15 @@ bool Dialogue::Start()
 {
     pugi::xml_parse_result result = config.load_file("config.xml");
 
-    if (!result)  // Check if the file was loaded successfully
+    if (!result)
     {
         std::cout << "XML file could not be loaded: " << result.description() << std::endl;
         return false;
     }
 
-    // Extract resolution width and height
     screenWidth = config.child("config").child("window").child("resolution").attribute("width").as_int();
     screenHeight = config.child("config").child("window").child("resolution").attribute("height").as_int();
 
-    std::cout << "Screen Resolution: " << screenWidth << "x" << screenHeight << std::endl;
     Hanzo = Engine::GetInstance().textures.get()->Load("Assets/Portraits/Hanzo.png");
     Mikado = Engine::GetInstance().textures.get()->Load("Assets/Portraits/Mikado.png");
     Mentor = Engine::GetInstance().textures.get()->Load("Assets/Portraits/Mentor.png");
@@ -43,6 +41,7 @@ bool Dialogue::Start()
     started = true;
     return true;
 }
+
 bool Dialogue::Update(float dt)
 {
     if (!started) Start();
@@ -86,13 +85,13 @@ bool Dialogue::Update(float dt)
             SDL_QueryTexture(Mikado, NULL, NULL, &textureWidth, &textureHeight);
             SDL_Rect portraitPos = { 0, 0, textureWidth, textureHeight };
 
-            Engine::GetInstance().render.get()->DrawTexture(Mikado, (textX - 300)  - Engine::GetInstance().render->camera.x, (textY - 400)  - Engine::GetInstance().render->camera.y, &portraitPos);
+            Engine::GetInstance().render.get()->DrawTexture(Mikado, (textX - screenWidth / 7)  - Engine::GetInstance().render->camera.x, (textY - 400)  - Engine::GetInstance().render->camera.y, &portraitPos);
         }
         else if (buttonText == "Mentor") {
             SDL_QueryTexture(Mentor, NULL, NULL, &textureWidth, &textureHeight);
             SDL_Rect portraitPos = { 0, 0, textureWidth, textureHeight };
 
-            Engine::GetInstance().render.get()->DrawTexture(Mentor, (textX - 300) - Engine::GetInstance().render->camera.x, (textY - 400) - Engine::GetInstance().render->camera.y, &portraitPos);
+            Engine::GetInstance().render.get()->DrawTexture(Mentor, (textX - screenWidth  / 7) - Engine::GetInstance().render->camera.x, (textY - 400) - Engine::GetInstance().render->camera.y, &portraitPos);
         }
 
         if (Engine::GetInstance().input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
