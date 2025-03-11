@@ -52,12 +52,14 @@ GuiControl* GuiManager::CreateGuiControl(GuiControlType type, int id, const char
 }
 
 void GuiManager::ClearControlsOfType(GuiControlType type)
-{ 
-	auto it = guiControlsList.begin();
-	delete* it;
-	it = guiControlsList.erase(it);
-
+{
+	for (auto it = guiControlsList.begin(); it != guiControlsList.end();)
+	{
+		delete* it;
+		it = guiControlsList.erase(it);
+	}
 }
+
 
 bool GuiManager::Update(float dt)
 {

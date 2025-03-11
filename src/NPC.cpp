@@ -105,7 +105,11 @@ void NPC::OnCollision(PhysBody* physA, PhysBody* physB) {
 	switch (physB->ctype)
 	{
 	case ColliderType::PLAYER:
-		showcaseDialogue = true;
+		if (once)
+		{
+			showcaseDialogue = true;
+
+		}
 
 		//FIX interact mapping
 		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_E) == KEY_DOWN)
@@ -125,6 +129,7 @@ void NPC::OnCollisionEnd(PhysBody* physA, PhysBody* physB)
 	case ColliderType::PLATFORM:
 		break;
 	case ColliderType::PLAYER:
+		once = false;
 		Engine::GetInstance().guiManager->ClearControlsOfType(GuiControlType::DIALOGUE);
 		break;
 	}
