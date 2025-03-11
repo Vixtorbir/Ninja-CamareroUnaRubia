@@ -37,6 +37,7 @@ bool Window::Awake()
 		width = configParameters.child("resolution").attribute("width").as_int();
 		height = configParameters.child("resolution").attribute("height").as_int();
 		scale = configParameters.child("resolution").attribute("scale").as_int();
+		zoom = configParameters.child("camera").attribute("zoom").as_float();
 
 		if(fullscreen == true) flags |= SDL_WINDOW_FULLSCREEN;
 		if(borderless == true) flags |= SDL_WINDOW_BORDERLESS;
@@ -86,4 +87,9 @@ void Window::GetWindowSize(int& width, int& height) const
 int Window::GetScale() const
 {
 	return scale;
+}
+
+int Window::GetCameraZoom() const
+{
+	return zoom;
 }

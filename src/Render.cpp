@@ -2,7 +2,7 @@
 #include "Window.h"
 #include "Render.h"
 #include "Log.h"
-#include "tracy/Tracy.hpp"
+//#include "tracy/Tracy.hpp"
 
 #define VSYNC true
 
@@ -33,7 +33,7 @@ bool Render::Awake()
 		LOG("Using vsync");
 	}
 	int scale = Engine::GetInstance().window.get()->GetScale();
-
+	float camera_zoom = Engine::GetInstance().window.get()->GetCameraZoom();
 	SDL_Window* window = Engine::GetInstance().window.get()->window;
 	renderer = SDL_CreateRenderer(window, -1, flags);
 
@@ -54,7 +54,7 @@ bool Render::Awake()
 	TTF_Init();
 
 	//load a font into memory
-	font = TTF_OpenFont("Assets/Fonts/arial/arial.ttf", 25);
+	font = TTF_OpenFont("Assets/Fonts/arial/arial.ttf", 100);
 
 	return ret;
 }
@@ -71,7 +71,7 @@ bool Render::Start()
 // Called each loop iteration
 bool Render::PreUpdate()
 {
-	ZoneScoped;
+	//ZoneScoped;
 	// Code you want to profile
 
 	SDL_RenderClear(renderer);
@@ -85,7 +85,7 @@ bool Render::Update(float dt)
 
 bool Render::PostUpdate()
 {
-	ZoneScoped;
+	//ZoneScoped;
 	// Code you want to profile
 
 	SDL_SetRenderDrawColor(renderer, background.r, background.g, background.g, background.a);
@@ -157,7 +157,53 @@ bool Render::DrawTexture(SDL_Texture* texture, int x, int y, const SDL_Rect* sec
 
 	return ret;
 }
+bool Render::DrawEntity(SDL_Texture* texture, int x, int y, const SDL_Rect* section, float speed, double angle, int pivotX, int pivotY, bool direction) const
+{
+	bool ret = true;
+	int scale = Engine::GetInstance().window.get()->GetScale();
 
+	SDL_Rect rect;
+	rect.x = (int)(camera.x * speed) + x * scale;
+	rect.y = (int)(camera.y * speed) + y * scale;
+
+	if (section != NULL)
+	{
+		rect.w = section->w;
+		rect.h = section->h;
+	}
+	else
+	{
+		SDL_QueryTexture(texture, NULL, NULL, &rect.w, &rect.h);
+	}
+
+	rect.w *= scale;
+	rect.h *= scale;
+
+	SDL_Point* p = NULL;
+	SDL_Point pivot;
+
+	if (pivotX != INT_MAX && pivotY != INT_MAX)
+	{
+		pivot.x = pivotX;
+		pivot.y = pivotY;
+		p = &pivot;
+	}
+	SDL_RendererFlip flip = SDL_FLIP_HORIZONTAL;
+	if (direction == 0)
+	{
+		flip = SDL_FLIP_NONE;
+	}
+	else {
+		flip = SDL_FLIP_HORIZONTAL;
+	}
+	if (SDL_RenderCopyEx(renderer, texture, section, &rect, angle, p, flip) != 0)
+	{
+		LOG("Cannot blit to screen. SDL_RenderCopy error: %s", SDL_GetError());
+		ret = false;
+	}
+
+	return ret;
+}
 bool Render::DrawRectangle(const SDL_Rect& rect, Uint8 r, Uint8 g, Uint8 b, Uint8 a, bool filled, bool use_camera) const
 {
 	bool ret = true;

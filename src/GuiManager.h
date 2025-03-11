@@ -18,6 +18,8 @@ public:
 	// Called before the first frame
 	 bool Start();
 
+	 void ClearControlsOfType(GuiControlType type);
+
 	 // Called each loop iteration
 	 bool Update(float dt);
 

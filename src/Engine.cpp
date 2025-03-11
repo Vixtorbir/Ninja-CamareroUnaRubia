@@ -12,10 +12,12 @@
 #include "Scene.h"
 #include "EntityManager.h"
 #include "Map.h"
+#include "Parallax.h"
 #include "Physics.h"
 #include "GuiManager.h"
+#include "DialogueManager.h"
 
-#include "tracy/Tracy.hpp"
+//#include "tracy/Tracy.hpp"
 
 // Constructor
 Engine::Engine() {
@@ -40,9 +42,12 @@ Engine::Engine() {
     // L08: TODO 2: Add Physics module
     physics = std::make_shared<Physics>();
     scene = std::make_shared<Scene>();
+    parallax = std::make_shared<Parallax>();
     map = std::make_shared<Map>();
     entityManager = std::make_shared<EntityManager>();
     guiManager = std::make_shared<GuiManager>();
+    dialogueManager = std::make_shared<DialogueManager>();
+
 
     // Ordered for awake / Start / Update
     // Reverse order of CleanUp
@@ -52,10 +57,12 @@ Engine::Engine() {
     AddModule(std::static_pointer_cast<Module>(audio));
     // L08: TODO 2: Add Physics module
     AddModule(std::static_pointer_cast<Module>(physics));
+    AddModule(std::static_pointer_cast<Parallax>(parallax));
     AddModule(std::static_pointer_cast<Module>(map));
     AddModule(std::static_pointer_cast<Module>(scene));
     AddModule(std::static_pointer_cast<Module>(entityManager));
 	AddModule(std::static_pointer_cast<Module>(guiManager));
+    AddModule(std::static_pointer_cast<Module>(dialogueManager));
 
     // Render last 
     AddModule(std::static_pointer_cast<Module>(render));
@@ -130,7 +137,7 @@ bool Engine::Start() {
 // Called each loop iteration
 bool Engine::Update() {
 
-    ZoneScoped;
+    //ZoneScoped;
     // Code you want to profile
     
     bool ret = true;
@@ -150,7 +157,7 @@ bool Engine::Update() {
 
     FinishUpdate();
 
-    FrameMark;
+    //FrameMark;
 
     return ret;
 }
@@ -180,14 +187,14 @@ bool Engine::CleanUp() {
 // ---------------------------------------------
 void Engine::PrepareUpdate()
 {
-    ZoneScoped;
+    //ZoneScoped;
     frameTime.Start();
 }
 
 // ---------------------------------------------
 void Engine::FinishUpdate()
 {
-    ZoneScoped;
+    //ZoneScoped;
     // L03: TODO 1: Cap the framerate of the gameloop
     double currentDt = frameTime.ReadMs();
     if (maxFrameDuration > 0 && currentDt < maxFrameDuration) {
@@ -240,7 +247,7 @@ void Engine::FinishUpdate()
 // Call modules before each loop iteration
 bool Engine::PreUpdate()
 {
-    ZoneScoped;
+    //ZoneScoped;
     //Iterates the module list and calls PreUpdate on each module
     bool result = true;
     for (const auto& module : moduleList) {
@@ -256,7 +263,7 @@ bool Engine::PreUpdate()
 // Call modules on each loop iteration
 bool Engine::DoUpdate()
 {
-    ZoneScoped;
+    //ZoneScoped;
     //Iterates the module list and calls Update on each module
     bool result = true;
     for (const auto& module : moduleList) {

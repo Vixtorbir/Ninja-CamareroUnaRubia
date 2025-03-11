@@ -5,6 +5,9 @@
 #include "Enemy.h"
 #include <vector>
 #include "GuiControlButton.h"
+#include "Dialogue.h"
+#include "DialogueManager.h"
+#include "Parallax.h"
 
 struct SDL_Texture;
 
@@ -46,6 +49,8 @@ public:
 	// Handles multiple Gui Event methods
 	bool OnGuiMouseClickEvent(GuiControl* control);
 
+	void LoadTextures();
+
 public:
 	// Get tilePosDebug value
 	std::string GetTilePosDebug() {
@@ -55,6 +60,8 @@ public:
 
 public:
 	SDL_Texture* mouseTileTex = nullptr;
+	SDL_Texture* textureBuffer = nullptr;
+
 	std::string tilePosDebug = "[0,0]";
 	bool once = false;
 
@@ -62,6 +69,15 @@ public:
 	Player* player;
 	std::vector<Enemy*> enemyList;
 
+
 	// L16: TODO 2: Declare a GUI Control Button 
 	GuiControlButton* guiBt;
+
+	Dialogue* dialogue;
+	DialogueManager* dialogueManager;
+
+private:
+	Parallax* parallax = nullptr;
+
 };
+

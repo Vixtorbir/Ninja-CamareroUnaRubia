@@ -2,7 +2,7 @@
 #include "Render.h"
 #include "Engine.h"
 #include "Audio.h"
-
+#include "Textures.h"
 GuiControlButton::GuiControlButton(int id, SDL_Rect bounds, const char* text) : GuiControl(GuiControlType::BUTTON, id)
 {
 	this->bounds = bounds;
@@ -16,7 +16,10 @@ GuiControlButton::~GuiControlButton()
 {
 
 }
-
+bool GuiControlButton::Start()
+{
+	return false;
+}
 bool GuiControlButton::Update(float dt)
 {
 	if (state != GuiControlState::DISABLED)
@@ -59,6 +62,7 @@ bool GuiControlButton::Update(float dt)
 		}
 
 		Engine::GetInstance().render->DrawText(text.c_str(), bounds.x, bounds.y, bounds.w, bounds.h);
+
 
 	}
 
