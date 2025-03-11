@@ -11,6 +11,8 @@ Dialogue::Dialogue(int id, SDL_Rect bounds, const char* text) : GuiControl(GuiCo
 
     canClick = true;
     drawBasic = false;
+
+
 }
 
 Dialogue::~Dialogue()
@@ -18,6 +20,19 @@ Dialogue::~Dialogue()
 }
 bool Dialogue::Start()
 {
+    pugi::xml_parse_result result = config.load_file("config.xml");
+
+    if (!result)  // Check if the file was loaded successfully
+    {
+        std::cout << "XML file could not be loaded: " << result.description() << std::endl;
+        return false;
+    }
+
+    // Extract resolution width and height
+    screenWidth = config.child("config").child("window").child("resolution").attribute("width").as_int();
+    screenHeight = config.child("config").child("window").child("resolution").attribute("height").as_int();
+
+    std::cout << "Screen Resolution: " << screenWidth << "x" << screenHeight << std::endl;
     Hanzo = Engine::GetInstance().textures.get()->Load("Assets/Portraits/Hanzo.png");
     Mikado = Engine::GetInstance().textures.get()->Load("Assets/Portraits/Mikado.png");
     Mentor = Engine::GetInstance().textures.get()->Load("Assets/Portraits/Mentor.png");
@@ -119,7 +134,7 @@ bool Dialogue::Update(float dt)
         case GuiControlState::NORMAL:
             Engine::GetInstance().render->DrawRectangle(bounds, 0, 0, 0, 0, true, false);
      
-            Engine::GetInstance().render.get()->DrawTexture(OverlayPortrait, 50 - Engine::GetInstance().render->camera.x, 440 - Engine::GetInstance().render->camera.y, &overlayPos);
+            Engine::GetInstance().render.get()->DrawTexture(OverlayPortrait, screenHeight / 3 - Engine::GetInstance().render->camera.x, screenHeight / 4 - Engine::GetInstance().render->camera.y, &overlayPos);
             Engine::GetInstance().render.get()->DrawTexture(Overlay, 400 - Engine::GetInstance().render->camera.x, 700 - Engine::GetInstance().render->camera.y, &overlayPos2);
 
             break;
