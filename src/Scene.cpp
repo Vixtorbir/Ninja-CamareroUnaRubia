@@ -40,7 +40,7 @@ bool Scene::Awake()
 	player->SetParameters(configParameters.child("entities").child("player"));
 
 	npc = (NPC*)Engine::GetInstance().entityManager->CreateNamedCharacter(EntityType::NPC, DialogueEngine::MENTORSHIP);
-	npc->SetParameters(configParameters.child("entities").child("npc"));
+	npc->SetParameters(configParameters.child("entities").child("npcMENTORSHIP"));
 	npcs.push_back(npc);
 
 	//L08 Create a new item using the entity manager and set the position to (200, 672) to test

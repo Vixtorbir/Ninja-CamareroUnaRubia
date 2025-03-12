@@ -82,7 +82,7 @@ bool Dialogue::Update(float dt)
             SDL_QueryTexture(Hanzo, NULL, NULL, &textureWidth, &textureHeight);
             SDL_Rect portraitPos = { 0, 0, textureWidth, textureHeight };
 
-            Engine::GetInstance().render.get()->DrawTexture(Hanzo, (textX - 700) - Engine::GetInstance().render->camera.x, (textY - 400) - Engine::GetInstance().render->camera.y, &portraitPos);
+            Engine::GetInstance().render.get()->DrawTexture(Hanzo, (textX - 700) - Engine::GetInstance().render->camera.x, (textY - 550) - Engine::GetInstance().render->camera.y, &portraitPos);
             Engine::GetInstance().render.get()->DrawTexture(OverlayPortrait, screenHeight / 3 - Engine::GetInstance().render->camera.x, screenHeight / 2 - Engine::GetInstance().render->camera.y, &overlayPos);
 
         }
@@ -90,7 +90,7 @@ bool Dialogue::Update(float dt)
             SDL_QueryTexture(Mikado, NULL, NULL, &textureWidth, &textureHeight);
             SDL_Rect portraitPos = { 0, 0, textureWidth, textureHeight };
 
-            Engine::GetInstance().render.get()->DrawTexture(Mikado, (textX - 700) - Engine::GetInstance().render->camera.x, (textY + 300)  - Engine::GetInstance().render->camera.y, &portraitPos);
+            Engine::GetInstance().render.get()->DrawTexture(Mikado, (textX - 700) - Engine::GetInstance().render->camera.x, (textY - 550) - Engine::GetInstance().render->camera.y, &portraitPos);
             Engine::GetInstance().render.get()->DrawTexture(OverlayPortrait, screenHeight / 3 - Engine::GetInstance().render->camera.x, screenHeight / 2 - Engine::GetInstance().render->camera.y, &overlayPos);
 
         }
