@@ -62,20 +62,51 @@ bool Enemy::Update(float dt)
 	// 
 	//The enemy has to move to the right automatically modify to make the enemy move left and right after 5 seconds
 
-	if (!IsNextTileCollidable()) {
-		// Cambia de dirección
-		direction = (direction == 0) ? 1 : 0;
-	}
+	Vector2D playerPos = Engine::GetInstance().scene.get()->player->GetPosition();
+	Vector2D enemyPos = GetPosition();
+	Vector2D enemyTilePos = Engine::GetInstance().map.get()->WorldToMap(enemyPos.getX(), enemyPos.getY());
+	Vector2D playerTilePos = Engine::GetInstance().map.get()->WorldToMap(playerPos.getX(), playerPos.getY());
 
-	// Movimiento del enemigo
-	if (direction == 0) {
-		pbody->body->SetLinearVelocity(b2Vec2(-2, 0));
+	// Cambia de estado si el jugador está en rango
+	if (IsPlayerInRange()) {
+		state = EnemyState::AGGRESSIVE;
 	}
 	else {
-		pbody->body->SetLinearVelocity(b2Vec2(2, 0));
+		state = EnemyState::PATROL;
 	}
 
+	switch (state) {
+	case EnemyState::PATROL:
+		// Movimiento de patrulla
+		if (!IsNextTileCollidable() || tilesMovedInSameDirection >= 150) {
+			direction = (direction == 0) ? 1 : 0;
+			tilesMovedInSameDirection = 0; // Reinicia el contador de tiles recorridos en la misma dirección
+		}
 
+		if (direction == 0) {
+			pbody->body->SetLinearVelocity(b2Vec2(-2, 0));
+		}
+		else {
+			pbody->body->SetLinearVelocity(b2Vec2(2, 0));
+		}
+		tilesMovedInSameDirection++; // Incrementa el contador de tiles recorridos en la misma dirección
+		break;
+
+	case EnemyState::AGGRESSIVE:
+		// Movimiento agresivo
+		if (playerTilePos.getX() < enemyTilePos.getX() && IsNextTileCollidable()) {
+			pbody->body->SetLinearVelocity(b2Vec2(-2, 0));
+			direction = 0;
+		}
+		else if (playerTilePos.getX() > enemyTilePos.getX() && IsNextTileCollidable()) {
+			pbody->body->SetLinearVelocity(b2Vec2(2, 0));
+			direction = 1;
+		}
+		else {
+			pbody->body->SetLinearVelocity(b2Vec2(0, 0));
+		}
+		break;
+	}
 
 
 	// Pathfinding testing inputs
@@ -217,3 +248,13 @@ bool Enemy::IsNextTileCollidable() {
 	return Engine::GetInstance().map.get()->IsTileCollidable(tilePos.getX(), tilePos.getY() + 1); // +1 para verificar el suelo
 }
 
+
+bool Enemy::IsPlayerInRange() {
+	Vector2D playerPos = Engine::GetInstance().scene.get()->player->GetPosition();
+	Vector2D enemyPos = GetPosition();
+	Vector2D enemyTilePos = Engine::GetInstance().map.get()->WorldToMap(enemyPos.getX(), enemyPos.getY());
+	Vector2D playerTilePos = Engine::GetInstance().map.get()->WorldToMap(playerPos.getX(), playerPos.getY());
+
+	int distance = abs(playerTilePos.getX() - enemyTilePos.getX());
+	return distance <= 10;
+}
