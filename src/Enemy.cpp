@@ -9,6 +9,7 @@
 #include "Physics.h"
 #include "Map.h"
 #include "EntityManager.h"
+#include "Timer.h"	
 //#include "tracy/Tracy.hpp"
 
 Enemy::Enemy() : Entity(EntityType::ENEMY)
@@ -58,6 +59,25 @@ bool Enemy::Start() {
 bool Enemy::Update(float dt)
 {
 	//ZoneScoped;
+	// 
+	//The enemy has to move to the right automatically modify to make the enemy move left and right after 5 seconds
+
+	if (!IsNextTileCollidable()) {
+		// Cambia de dirección
+		direction = (direction == 0) ? 1 : 0;
+	}
+
+	// Movimiento del enemigo
+	if (direction == 0) {
+		pbody->body->SetLinearVelocity(b2Vec2(-2, 0));
+	}
+	else {
+		pbody->body->SetLinearVelocity(b2Vec2(2, 0));
+	}
+
+
+
+
 	// Pathfinding testing inputs
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_R) == KEY_DOWN) {
 		Vector2D pos = GetPosition();
@@ -180,3 +200,20 @@ void Enemy::OnCollisionEnd(PhysBody* physA, PhysBody* physB)
 		break;
 	}
 }
+
+bool Enemy::IsNextTileCollidable() {
+	Vector2D pos = GetPosition();
+	Vector2D tilePos = Engine::GetInstance().map.get()->WorldToMap(pos.getX(), pos.getY());
+
+	// Calcula la posición del siguiente tile en la dirección actual
+	if (direction == 0) { // Izquierda
+		tilePos.setX(tilePos.getX() - 1);
+	}
+	else { // Derecha
+		tilePos.setX(tilePos.getX() + 1);
+	}
+
+	// Verifica si el siguiente tile tiene colisión
+	return Engine::GetInstance().map.get()->IsTileCollidable(tilePos.getX(), tilePos.getY() + 1); // +1 para verificar el suelo
+}
+

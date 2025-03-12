@@ -4,6 +4,7 @@
 #include "SDL2/SDL.h"
 #include "Animation.h"
 #include "Pathfinding.h"
+#include "Timer.h"
 
 struct SDL_Texture;
 
@@ -36,6 +37,8 @@ public:
 
 	void OnCollisionEnd(PhysBody* physA, PhysBody* physB);
 
+	bool IsNextTileCollidable();
+
 public:
 
 private:
@@ -48,4 +51,9 @@ private:
 	Animation idle;
 	PhysBody* pbody;
 	Pathfinding* pathfinding;
+
+	Timer timer;
+
+	int direction = 0;
+
 };

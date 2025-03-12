@@ -345,5 +345,27 @@ Properties::Property* Properties::GetProperty(const char* name)
     return nullptr;
 }
 
+bool Map::IsTileCollidable(int x, int y) {
+    // Verifica si las coordenadas están dentro de los límites del mapa
+    if (x < 0 || x >= mapData.width || y < 0 || y >= mapData.height) {
+        return false;
+    }
+
+    // Itera sobre las capas del mapa para encontrar la capa de colisiones
+    for (const auto& mapLayer : mapData.layers) {
+        if (mapLayer->name == "Collisions") {
+            int gid = mapLayer->Get(x, y);
+            // Verifica si el gid es diferente de 0, lo que indica que el tile es colisionable
+            if (gid != 0) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+
+
 
 
