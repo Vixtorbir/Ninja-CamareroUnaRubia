@@ -41,6 +41,10 @@ public:
 
 	Vector2D GetPosition();
 
+	void TakeDamage(int damage);
+
+	void Die();
+
 	
 
 
@@ -91,4 +95,13 @@ public:
 
 	
 	EntityDirections playerDirection = EntityDirections::RIGHT;
+
+	int hp; 
+	const int maxHp = 3;
+
+	float damageCooldown = 3.0f; 
+	float timeSinceLastDamage = 0.0f; 
+	bool canTakeDamage = true;
+
+	SDL_Texture* hpIconTexture;
 };

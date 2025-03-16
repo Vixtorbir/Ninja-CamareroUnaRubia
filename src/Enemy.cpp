@@ -26,35 +26,38 @@ bool Enemy::Awake() {
 }
 
 bool Enemy::Start() {
-
-	//initilize textures
+	// Inicializar texturas
 	texture = Engine::GetInstance().textures.get()->Load(parameters.attribute("texture").as_string());
+	attackTexture = Engine::GetInstance().textures.get()->Load(parameters.attribute("attack_texture").as_string());
+	trailTexture = Engine::GetInstance().textures.get()->Load(parameters.attribute("trail_texture").as_string());
+
 	position.setX(parameters.attribute("x").as_int());
 	position.setY(parameters.attribute("y").as_int());
 	texW = parameters.attribute("w").as_int();
 	texH = parameters.attribute("h").as_int();
 
-	//Load animations
+	// Cargar animaciones
 	idle.LoadAnimations(parameters.child("animations").child("idle"));
+	attackAnimation.LoadAnimations(parameters.child("animations").child("attack"));
 	currentAnimation = &idle;
-	
-	//Add a physics to an item - initialize the physics body
+
+	// Agregar física al enemigo
 	pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() + texH / 2, (int)position.getY() + texH / 2, texH / 2, bodyType::DYNAMIC);
 
-	//Assign collider type
+	// Asignar tipo de colisionador
 	pbody->ctype = ColliderType::ENEMY;
-
 	pbody->listener = this;
 
-	// Set the gravity of the body
+	// Establecer la gravedad del cuerpo
 	if (!parameters.attribute("gravity").as_bool()) pbody->body->SetGravityScale(0);
 
-	// Initialize pathfinding
+	// Inicializar pathfinding
 	pathfinding = new Pathfinding();
 	ResetPath();
 
 	return true;
 }
+
 
 bool Enemy::Update(float dt)
 {
@@ -69,7 +72,12 @@ bool Enemy::Update(float dt)
 
 	// Cambia de estado si el jugador está en rango
 	if (IsPlayerInRange()) {
-		state = EnemyState::AGGRESSIVE;
+		if (IsPlayerInAttackRange()) {
+			state = EnemyState::ATTACK;
+		}
+		else {
+			state = EnemyState::AGGRESSIVE;
+		}
 	}
 	else {
 		state = EnemyState::PATROL;
@@ -105,6 +113,11 @@ bool Enemy::Update(float dt)
 		else {
 			pbody->body->SetLinearVelocity(b2Vec2(0, 0));
 		}
+		break;
+
+	case EnemyState::ATTACK:
+		// Lógica de ataque
+		PerformAttack();
 		break;
 	}
 
@@ -214,10 +227,7 @@ void Enemy::OnCollision(PhysBody* physA, PhysBody* physB) {
 	switch (physB->ctype)
 	{
 	case ColliderType::PLAYER:
-		LOG("Collided with player - DESTROY");
-		Engine::GetInstance().entityManager.get()->DestroyEntity(this);
 		
-		Engine::GetInstance().scene.get()->enemyList.pop_back();
 		break;
 	}
 }
@@ -236,16 +246,14 @@ bool Enemy::IsNextTileCollidable() {
 	Vector2D pos = GetPosition();
 	Vector2D tilePos = Engine::GetInstance().map.get()->WorldToMap(pos.getX(), pos.getY());
 
-	// Calcula la posición del siguiente tile en la dirección actual
-	if (direction == 0) { // Izquierda
+	if (direction == 0) { 
 		tilePos.setX(tilePos.getX() - 1);
 	}
-	else { // Derecha
+	else { 
 		tilePos.setX(tilePos.getX() + 1);
 	}
 
-	// Verifica si el siguiente tile tiene colisión
-	return Engine::GetInstance().map.get()->IsTileCollidable(tilePos.getX(), tilePos.getY() + 1); // +1 para verificar el suelo
+	return Engine::GetInstance().map.get()->IsTileCollidable(tilePos.getX(), tilePos.getY() + 1); 
 }
 
 
@@ -258,3 +266,30 @@ bool Enemy::IsPlayerInRange() {
 	int distance = abs(playerTilePos.getX() - enemyTilePos.getX());
 	return distance <= 10;
 }
+
+void Enemy::PerformAttack() {
+	
+	Engine::GetInstance().render.get()->DrawTexture(attackTexture, (int)position.getX(), (int)position.getY(), &attackAnimation.GetCurrentFrame());
+	attackAnimation.Update();
+
+	
+	swordTrail.push_back(position);
+	if (swordTrail.size() > maxTrailLength) {
+		swordTrail.pop_front();
+	}
+
+	for (const auto& trailPos : swordTrail) {
+		Engine::GetInstance().render.get()->DrawTexture(trailTexture, (int)trailPos.getX(), (int)trailPos.getY());
+	}
+}
+
+bool Enemy::IsPlayerInAttackRange() {
+	Vector2D playerPos = Engine::GetInstance().scene.get()->player->GetPosition();
+	Vector2D enemyPos = GetPosition();
+	Vector2D enemyTilePos = Engine::GetInstance().map.get()->WorldToMap(enemyPos.getX(), enemyPos.getY());
+	Vector2D playerTilePos = Engine::GetInstance().map.get()->WorldToMap(playerPos.getX(), playerPos.getY());
+
+	int distance = abs(playerTilePos.getX() - enemyTilePos.getX());
+	return distance <= 5;
+}
+

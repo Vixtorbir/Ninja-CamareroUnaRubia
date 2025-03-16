@@ -10,7 +10,8 @@ struct SDL_Texture;
 
 enum class EnemyState {
     PATROL,
-    AGGRESSIVE
+    AGGRESSIVE,
+    ATTACK
 };
 
 class Enemy : public Entity
@@ -36,17 +37,26 @@ private:
     bool IsNextTileCollidable();
     bool IsPlayerInRange();
 
+    void PerformAttack();
+
+    bool IsPlayerInAttackRange();
+
     SDL_Texture* texture;
+    SDL_Texture* attackTexture;
+    SDL_Texture* trailTexture;
     const char* texturePath;
     int texW, texH;
     pugi::xml_node parameters;
     Animation* currentAnimation = nullptr;
     Animation idle;
+    Animation attackAnimation;
     PhysBody* pbody;
     Pathfinding* pathfinding;
     Timer timer;
     int direction = 0;
     int tilesMovedInSameDirection = 0;
     EnemyState state = EnemyState::PATROL; // Estado inicial
+    std::deque<Vector2D> swordTrail;
+    const int maxTrailLength = 10;
 };
 

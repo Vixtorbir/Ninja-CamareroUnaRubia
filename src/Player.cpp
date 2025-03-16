@@ -57,6 +57,12 @@ bool Player::Start() {
 	//initialize audio effect
 	pickCoinFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/retro-video-game-coin-pickup-38299.ogg");
 
+	hp = maxHp;
+	timeSinceLastDamage = damageCooldown;
+	canTakeDamage = true;
+
+	hpIconTexture = Engine::GetInstance().textures.get()->Load("Assets/Textures/hp_icon.png");
+
 	return true;
 }
 
@@ -188,6 +194,14 @@ bool Player::Update(float dt)
 		}
 	}
 
+	if (!canTakeDamage) {
+		timeSinceLastDamage += dt / 1000;
+		if (timeSinceLastDamage >= damageCooldown) {
+			canTakeDamage = true;
+			timeSinceLastDamage = 0.0f;
+		}
+	}
+
 
 	if (isJumping == true)
 	{
@@ -209,6 +223,11 @@ bool Player::Update(float dt)
 
 	Engine::GetInstance().render.get()->camera.x += (camX - Engine::GetInstance().render.get()->camera.x) * smoothFactor;
 	Engine::GetInstance().render.get()->camera.y += (camY - Engine::GetInstance().render.get()->camera.y) * smoothFactor;
+
+	for (int i = 0; i < hp; ++i) {
+		Engine::GetInstance().render.get()->DrawTexture(hpIconTexture, 10 + i * 40, 10);
+	}
+
 	return true;
 }
 float Player::Lerp(float start, float end, float factor) {
@@ -237,6 +256,10 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 		Engine::GetInstance().physics.get()->DeletePhysBody(physB); // Deletes the body of the item from the physics world
 		break;
 	case ColliderType::UNKNOWN:
+		break;
+
+	case ColliderType::ENEMY:
+		TakeDamage(1); // El jugador recibe 1 punto de daño
 		break;
 	}
 }
@@ -268,6 +291,24 @@ Vector2D Player::GetPosition() {
 	b2Vec2 bodyPos = pbody->body->GetTransform().p;
 	Vector2D pos = Vector2D(METERS_TO_PIXELS(bodyPos.x), METERS_TO_PIXELS(bodyPos.y));
 	return pos;
+}
+
+void Player::TakeDamage(int damage) {
+	if (canTakeDamage) {
+		hp -= damage;
+		if (hp <= 0) {
+			Die();
+		}
+		canTakeDamage = false;
+		timeSinceLastDamage = 0.0f;
+	}
+}
+
+
+void Player::Die() {
+	
+	LOG("Player has died");
+	// Puedes reiniciar el nivel, mostrar una pantalla de game over, etc.
 }
 
 
