@@ -79,6 +79,8 @@ public:
 	Dialogue* dialogue;
 	DialogueManager* dialogueManager;
 
+	bool watchtitle = false;
+	
 private:
 	Parallax* parallax = nullptr;
 

@@ -8,7 +8,7 @@ Dialogue::Dialogue(int id, SDL_Rect bounds, const char* text) : GuiControl(GuiCo
 {
     this->bounds = bounds;
     this->text = text;
-
+    unkillable = false;
     canClick = true;
     drawBasic = false;
 

@@ -53,10 +53,20 @@ GuiControl* GuiManager::CreateGuiControl(GuiControlType type, int id, const char
 
 void GuiManager::ClearControlsOfType(GuiControlType type)
 {
-	for (auto it = guiControlsList.begin(); it != guiControlsList.end();)
+	auto it = guiControlsList.begin();
+	while (it != guiControlsList.end())
 	{
-		delete* it;
-		it = guiControlsList.erase(it);
+		GuiControl* control = *it;
+
+		if (!control->unkillable)
+		{
+			delete control;
+			it = guiControlsList.erase(it);
+		}
+		else
+		{
+			++it;
+		}
 	}
 }
 

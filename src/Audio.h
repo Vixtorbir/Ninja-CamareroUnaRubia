@@ -28,6 +28,7 @@ public:
 
 	// Load a WAV in memory
 	int LoadFx(const char* path);
+	int LoadMusic(const char* path);
 
 	// Play a previously loaded WAV
 	bool PlayFx(int fx, int repeat = 0);
@@ -36,4 +37,5 @@ private:
 
 	_Mix_Music* music;
 	std::list<Mix_Chunk*> fx;
+	std::list<_Mix_Music*> tracks;
 };

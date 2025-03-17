@@ -87,6 +87,6 @@ public:
 
 	SDL_Texture* texture;   // Texture atlas reference
 	SDL_Rect section;       // Texture atlas base section
-
+	bool unkillable = true;
 	Module* observer;        // Observer 
 };

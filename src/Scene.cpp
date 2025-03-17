@@ -88,6 +88,8 @@ bool Scene::Start()
 	Engine::GetInstance().render.get()->camera.x = 0;
 	Engine::GetInstance().render.get()->camera.y = 0;
 
+
+
 	return true;
 }
 
