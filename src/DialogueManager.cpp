@@ -31,6 +31,9 @@ void DialogueManager::CastDialogue(DialogueEngine dialogueEngine)
     std::string dialogueType;
     switch (dialogueEngine)
     {
+    case DialogueEngine::MENTORSHIP:
+        dialogueType = "MENTORSHIP";
+        break;
     case DialogueEngine::RAIDEDVILLAGE:
         dialogueType = "RAIDEDVILLAGE";
         break;
@@ -49,6 +52,7 @@ void DialogueManager::CastDialogue(DialogueEngine dialogueEngine)
     {
         LOG("Dialogue type '%s' not found in XML!", dialogueType.c_str());
         return;
+
     }
 
     dialogues.clear();
@@ -90,9 +94,9 @@ void DialogueManager::ShowNextDialogue()
     {
         std::string character = dialogues[currentDialogueIndex].first;
         std::string text = dialogues[currentDialogueIndex].second;
+        Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::DIALOGUE, 1, text.c_str(), dialoguePos, module);
 
         Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::DIALOGUE, 1, character.c_str(), namePos, module);
-        Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::DIALOGUE, 1, text.c_str(), dialoguePos, module);
 
         currentDialogueIndex++;
     }
