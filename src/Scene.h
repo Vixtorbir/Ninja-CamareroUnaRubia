@@ -8,6 +8,7 @@
 #include "Dialogue.h"
 #include "DialogueManager.h"
 #include "Parallax.h"
+#include "Audio.h"
 
 struct SDL_Texture;
 
@@ -77,6 +78,7 @@ public:
 	DialogueManager* dialogueManager;
 
 	bool watchtitle = false;
+
 	
 private:
 	Parallax* parallax = nullptr;

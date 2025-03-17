@@ -54,6 +54,7 @@ public:
 	float smoothFactor = 0.1f;
 	//Audio fx
 	int pickCoinFxId;
+	int daggerThrow2FxId;
 
 	// L08 TODO 5: Add physics to the player - declare a Physics body
 	PhysBody* pbody;

@@ -25,7 +25,7 @@ bool Player::Awake() {
 }
 
 bool Player::Start() {
-
+	
 	//L03: TODO 2: Initialize Player parameters
 	texture = Engine::GetInstance().textures.get()->Load(parameters.attribute("texture").as_string());
 	position.setX(parameters.attribute("x").as_int());
@@ -56,6 +56,7 @@ bool Player::Start() {
 
 	//initialize audio effect
 	pickCoinFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/retro-video-game-coin-pickup-38299.ogg");
+	daggerThrow2FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/daggerThrow2.wav");
 
 	return true;
 }
@@ -114,6 +115,8 @@ bool Player::Update(float dt)
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_W) == KEY_DOWN && hasAlreadyJumpedOnce == 0) {
 		isHoldingJump = true;
 		jumpHoldTimer = 0.0f;
+		Engine::GetInstance().audio.get()->PlayFx(pickCoinFxId);
+		
 	}
 
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_W) == KEY_REPEAT && isHoldingJump) {

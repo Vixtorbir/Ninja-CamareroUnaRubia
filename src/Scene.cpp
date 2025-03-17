@@ -60,6 +60,7 @@ bool Scene::Awake()
 	//SDL_Rect btPos2 = { 0, 700, 1920,300 };
 	//dialogue = (Dialogue*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::DIALOGUE, 1, "dialogo moment", btPos2, this);
 	//
+
 	dialogueManager->SetModule(this);
 	
 	return ret;
