@@ -59,6 +59,8 @@ private:
     EnemyState state = EnemyState::PATROL; // Estado inicial
     std::deque<Vector2D> swordTrail;
     const int maxTrailLength = 10;
-    SDL_Rect attackHitbox;
+    PhysBody* attackHitbox = nullptr;
+    Timer attackCooldownTimer;
+    Timer attackDurationTimer;
 };
 
