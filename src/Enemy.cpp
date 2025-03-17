@@ -63,14 +63,13 @@ bool Enemy::Update(float dt)
 {
 	//ZoneScoped;
 	// 
-	//The enemy has to move to the right automatically modify to make the enemy move left and right after 5 seconds
+	
 
 	Vector2D playerPos = Engine::GetInstance().scene.get()->player->GetPosition();
 	Vector2D enemyPos = GetPosition();
 	Vector2D enemyTilePos = Engine::GetInstance().map.get()->WorldToMap(enemyPos.getX(), enemyPos.getY());
 	Vector2D playerTilePos = Engine::GetInstance().map.get()->WorldToMap(playerPos.getX(), playerPos.getY());
 
-	// Cambia de estado si el jugador está en rango
 	if (IsPlayerInRange()) {
 		if (IsPlayerInAttackRange()) {
 			state = EnemyState::ATTACK;
@@ -88,7 +87,7 @@ bool Enemy::Update(float dt)
 		// Movimiento de patrulla
 		if (!IsNextTileCollidable() || tilesMovedInSameDirection >= 150) {
 			direction = (direction == 0) ? 1 : 0;
-			tilesMovedInSameDirection = 0; // Reinicia el contador de tiles recorridos en la misma dirección
+			tilesMovedInSameDirection = 0; 
 		}
 
 		if (direction == 0) {
@@ -97,7 +96,7 @@ bool Enemy::Update(float dt)
 		else {
 			pbody->body->SetLinearVelocity(b2Vec2(2, 0));
 		}
-		tilesMovedInSameDirection++; // Incrementa el contador de tiles recorridos en la misma dirección
+		tilesMovedInSameDirection++; 
 		break;
 
 	case EnemyState::AGGRESSIVE:
@@ -268,11 +267,14 @@ bool Enemy::IsPlayerInRange() {
 }
 
 void Enemy::PerformAttack() {
-	
 	Engine::GetInstance().render.get()->DrawTexture(attackTexture, (int)position.getX(), (int)position.getY(), &attackAnimation.GetCurrentFrame());
 	attackAnimation.Update();
 
-	
+	attackHitbox.x = (int)position.getX();
+	attackHitbox.y = (int)position.getY();
+	attackHitbox.w = texW;
+	attackHitbox.h = texH;
+
 	swordTrail.push_back(position);
 	if (swordTrail.size() > maxTrailLength) {
 		swordTrail.pop_front();
@@ -281,7 +283,25 @@ void Enemy::PerformAttack() {
 	for (const auto& trailPos : swordTrail) {
 		Engine::GetInstance().render.get()->DrawTexture(trailTexture, (int)trailPos.getX(), (int)trailPos.getY());
 	}
+
+	CheckAttackCollision();
 }
+
+void Enemy::CheckAttackCollision() {
+	Vector2D playerPos = Engine::GetInstance().scene.get()->player->GetPosition();
+	SDL_Rect playerHitbox = {
+		(int)playerPos.getX(),
+		(int)playerPos.getY(),
+		Engine::GetInstance().scene.get()->player->texW,
+		Engine::GetInstance().scene.get()->player->texH
+	};
+
+	if (SDL_HasIntersection(&attackHitbox, &playerHitbox)) {
+		// Reduce la HP del jugador
+		Engine::GetInstance().scene.get()->player->TakeDamage(1);
+	}
+}
+
 
 bool Enemy::IsPlayerInAttackRange() {
 	Vector2D playerPos = Engine::GetInstance().scene.get()->player->GetPosition();

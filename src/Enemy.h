@@ -40,6 +40,7 @@ private:
     void PerformAttack();
 
     bool IsPlayerInAttackRange();
+    void CheckAttackCollision();
 
     SDL_Texture* texture;
     SDL_Texture* attackTexture;
@@ -58,5 +59,6 @@ private:
     EnemyState state = EnemyState::PATROL; // Estado inicial
     std::deque<Vector2D> swordTrail;
     const int maxTrailLength = 10;
+    SDL_Rect attackHitbox;
 };
 
