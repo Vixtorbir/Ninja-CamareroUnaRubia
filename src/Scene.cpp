@@ -196,58 +196,6 @@ Vector2D Scene::GetPlayerPosition()
 	return player->GetPosition();
 }
 
-// L15 TODO 1: Implement the Load function
-void Scene::LoadState() {
-
-	pugi::xml_document loadFile;
-	pugi::xml_parse_result result = loadFile.load_file("config.xml");
-
-	if(result == NULL)
-	{
-		LOG("Could not load file. Pugi error: %s", result.description());
-		return;
-	}
-
-	pugi::xml_node sceneNode = loadFile.child("config").child("scene");
-
-	//Read XML and restore information
-
-	//Player position
-	Vector2D playerPos = Vector2D(sceneNode.child("entities").child("player").attribute("x").as_int(),
-								  sceneNode.child("entities").child("player").attribute("y").as_int());
-	player->SetPosition(playerPos);
-
-	//enemies
-	// ...
-
-}
-
-// L15 TODO 2: Implement the Save function
-void Scene::SaveState() {
-
-	pugi::xml_document loadFile;
-	pugi::xml_parse_result result = loadFile.load_file("config.xml");
-
-	if (result == NULL)
-	{
-		LOG("Could not load file. Pugi error: %s", result.description());
-		return;
-	}
-
-	pugi::xml_node sceneNode = loadFile.child("config").child("scene");
-
-	//Save info to XML 
-
-	//Player position
-	sceneNode.child("entities").child("player").attribute("x").set_value(player->GetPosition().getX());
-	sceneNode.child("entities").child("player").attribute("y").set_value(player->GetPosition().getY());
-
-	//enemies
-	// ...
-
-	//Saves the modifications to the XML 
-	loadFile.save_file("config.xml");
-}
 
 bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 {
@@ -304,5 +252,83 @@ void Scene::UpdateGameOver() {
 
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_R) == KEY_DOWN) {
 		SetState(GameState::MAIN_MENU);
+	}
+}
+void Scene::SaveState() {
+
+	pugi::xml_document loadFile;
+	pugi::xml_parse_result result = loadFile.load_file("config.xml");
+
+	if (result == NULL)
+	{
+		LOG("Could not load file. Pugi error: %s", result.description());
+		return;
+	}
+
+	pugi::xml_node sceneNode = loadFile.child("config").child("scene");
+
+	//Save info to XML 
+
+	//Player position
+	sceneNode.child("entities").child("player").attribute("x").set_value(player->GetPosition().getX());
+	sceneNode.child("entities").child("player").attribute("y").set_value(player->GetPosition().getY());
+
+	pugi::xml_node enemiesNode = sceneNode.child("entities").child("enemies");
+	if (!enemiesNode) {
+		enemiesNode = sceneNode.child("entities").append_child("enemies");
+	}
+
+
+	for (auto& enemy : enemyList) {
+		pugi::xml_node enemyNode = enemiesNode.append_child("enemy");
+		sceneNode.child("entities").child("enemies").child("enemy").attribute("x").set_value(enemy->GetPosition().getX());
+		sceneNode.child("entities").child("enemies").child("enemy").attribute("x").set_value(enemy->GetPosition().getY());
+
+		
+
+	}
+
+	pugi::xml_node ItemsNode = sceneNode.child("entities").child("items");
+	if (!ItemsNode) {
+		ItemsNode = sceneNode.child("entities").append_child("items");
+	}
+
+
+
+	//Saves the modifications to the XML 
+	loadFile.save_file("config.xml");
+
+}
+
+void Scene::LoadState() {
+
+	pugi::xml_document loadFile;
+	pugi::xml_parse_result result = loadFile.load_file("config.xml");
+
+	if (result == NULL)
+	{
+		LOG("Could not load file. Pugi error: %s", result.description());
+		return;
+	}
+
+	pugi::xml_node sceneNode = loadFile.child("config").child("scene");
+
+	//Read XML and restore information
+
+	//Player position
+	Vector2D playerPos = Vector2D(sceneNode.child("entities").child("player").attribute("x").as_int(),
+		(sceneNode.child("entities").child("player").attribute("y").as_int()) - 32);
+	player->SetPosition(playerPos);
+
+	pugi::xml_node enemiesNode = sceneNode.child("entities").child("enemies");
+	if (enemiesNode) {
+		for (pugi::xml_node enemyNode = enemiesNode.child("enemy"); enemyNode; enemyNode = enemyNode.next_sibling("enemy")) {
+			float enemyX = enemyNode.child("position").attribute("x").as_float();
+			float enemyY = enemyNode.child("position").attribute("y").as_float();
+
+			bool isAlive = enemyNode.attribute("alive").as_bool(true);
+
+		}
+
 	}
 }

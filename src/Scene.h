@@ -59,7 +59,8 @@ public:
 	void LoadTextures();
 
 	void SetState(GameState newState); 
-	GameState GetState() const;        
+	GameState GetState() const;    
+	
 
 public:
 	// Get tilePosDebug value
