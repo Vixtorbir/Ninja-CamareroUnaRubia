@@ -235,7 +235,7 @@ void Scene::UpdateGameplay(float dt) {
 
 
 void Scene::UpdatePauseMenu() {
-	Engine::GetInstance().render.get()->DrawText("PAUSED - Press ESC to Resume",600, 400, 750, 255);
+	Engine::GetInstance().render.get()->DrawText("PAUSED - Press P to Resume",600, 400, 750, 255);
 
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_P) == KEY_DOWN) {
 		SetState(GameState::PLAYING);
