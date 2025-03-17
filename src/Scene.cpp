@@ -160,6 +160,79 @@ bool Scene::Update(float dt)
 		}
 	}
 
+	HandleInput();
+
+
+
+	switch (currentState)
+	{
+	case GameState::MAIN_MENU:
+		Engine::GetInstance().render.get()->DrawText("Press ENTER to Start", 600, 400, 750, 255);
+
+		break;
+	case GameState::PLAYING:
+	{
+		float camSpeed = 1;
+
+		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
+			Engine::GetInstance().render.get()->camera.y -= ceil(camSpeed * dt);
+
+		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
+			Engine::GetInstance().render.get()->camera.y += ceil(camSpeed * dt);
+
+		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
+			Engine::GetInstance().render.get()->camera.x -= ceil(camSpeed * dt);
+
+		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
+			Engine::GetInstance().render.get()->camera.x += ceil(camSpeed * dt);
+
+		// L10 TODO 6: Implement a method that repositions the player in the map with a mouse click
+
+		//Get mouse position and obtain the map coordinate
+		int scale = Engine::GetInstance().window.get()->GetScale();
+		Vector2D mousePos = Engine::GetInstance().input.get()->GetMousePosition();
+		Vector2D mouseTile = Engine::GetInstance().map.get()->WorldToMap(mousePos.getX() - Engine::GetInstance().render.get()->camera.x / scale,
+			mousePos.getY() - Engine::GetInstance().render.get()->camera.y / scale);
+
+		//Render a texture where the mouse is over to highlight the tile, use the texture 'mouseTileTex'
+		Vector2D highlightTile = Engine::GetInstance().map.get()->MapToWorld(mouseTile.getX(), mouseTile.getY());
+		SDL_Rect rect = { 0,0,32,32 };
+		Engine::GetInstance().render.get()->DrawTexture(mouseTileTex,
+			highlightTile.getX(),
+			highlightTile.getY(),
+			&rect);
+
+		// saves the tile pos for debugging purposes
+		if (mouseTile.getX() >= 0 && mouseTile.getY() >= 0 || once) {
+			tilePosDebug = "[" + std::to_string((int)mouseTile.getX()) + "," + std::to_string((int)mouseTile.getY()) + "] ";
+			once = true;
+		}
+
+		//If mouse button is pressed modify enemy position
+		if (enemyList.size() > 0 && Engine::GetInstance().input.get()->GetMouseButtonDown(1) == KEY_REPEAT) {
+			enemyList[0]->SetPosition(Vector2D(highlightTile.getX(), highlightTile.getY()));
+			enemyList[0]->ResetPath();
+		}
+
+		//Dialogue things
+		dialogueManager->Update();
+		for (NPC* npc : npcs)
+		{
+			if (npc->showcaseDialogue)
+			{
+				dialogueManager->CastDialogue(npc->dialogueName);
+				npc->showcaseDialogue = false;
+			}
+		}
+		break;
+	}
+	case GameState::PAUSED:
+		// Render pause menu
+		break;
+	case GameState::GAME_OVER:
+		// Render game over screen
+		break;
+	}
 	return true;
 }
 
@@ -218,38 +291,7 @@ GameState Scene::GetState() const {
 	return currentState;
 }
 
-void Scene::UpdateMainMenu() {
-	Engine::GetInstance().render.get()->DrawText("Press ENTER to Start", 600, 400, 750, 255);
 
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_RETURN) == KEY_DOWN) {
-		SetState(GameState::PLAY);
-	}
-}
-
-
-void Scene::UpdateGameplay(float dt) {
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_P) == KEY_DOWN) {
-		SetState(GameState::PAUSE);
-	}
-}
-
-
-void Scene::UpdatePauseMenu() {
-	Engine::GetInstance().render.get()->DrawText("PAUSED - Press P to Resume",600, 400, 750, 255);
-
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_P) == KEY_DOWN) {
-		SetState(GameState::PLAY);
-	}
-}
-
-
-void Scene::UpdateGameOver() {
-	Engine::GetInstance().render.get()->DrawText("GAME OVER - Press R to Restart", 100, 100, 20, { 255});
-
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_R) == KEY_DOWN) {
-		SetState(GameState::MAIN_MENU);
-	}
-}
 void Scene::SaveState() {
 
 	pugi::xml_document loadFile;
@@ -326,5 +368,31 @@ void Scene::LoadState() {
 
 		}
 
+	}
+}
+void Scene::HandleInput()
+{
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_RETURN) == KEY_DOWN)
+	{
+		if (currentState == GameState::MAIN_MENU)
+		{
+			SetState(GameState::PLAYING);
+		}
+		else if (currentState == GameState::GAME_OVER)
+		{
+			SetState(GameState::MAIN_MENU);
+		}
+	}
+
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_P) == KEY_DOWN)
+	{
+		if (currentState == GameState::PLAYING)
+		{
+			SetState(GameState::PAUSED);
+		}
+		else if (currentState == GameState::PAUSED)
+		{
+			SetState(GameState::PLAYING);
+		}
 	}
 }

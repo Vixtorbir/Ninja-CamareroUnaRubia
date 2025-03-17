@@ -147,7 +147,6 @@
     <None Include="vcpkg.json" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="GameStateManager.cpp" />
     <ClCompile Include="src\Audio.cpp" />
     <ClCompile Include="src\Dialogue.cpp" />
     <ClCompile Include="src\DialogueManager.cpp" />
@@ -178,7 +177,6 @@
     <ClCompile Include="src\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="GameStateManager.h" />
     <ClInclude Include="src\Animation.h" />
     <ClInclude Include="src\Audio.h" />
     <ClInclude Include="src\Dialogue.h" />

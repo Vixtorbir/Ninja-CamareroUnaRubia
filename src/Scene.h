@@ -10,15 +10,15 @@
 #include "Dialogue.h"
 #include "DialogueManager.h"
 #include "Parallax.h"
-#include "GameStateManager.h"
+
 #include "Npc.h"
 
 struct SDL_Texture;
 
 enum class GameState {
 	MAIN_MENU,
-	PLAY,
-	PAUSE,
+	PLAYING,
+	PAUSED,
 	GAME_OVER
 };
 
@@ -95,14 +95,11 @@ public:
 
 	GameState currentState = GameState::MAIN_MENU;
 
-	void UpdateMainMenu();
-	void UpdateGameplay(float dt);
-	void UpdatePauseMenu();
-	void UpdateGameOver();
+	void HandleInput();
 
 private:
 	Parallax* parallax = nullptr;
-	StateManager stateManager; // Add StateManager as a member
+	
 };
 
 #endif
