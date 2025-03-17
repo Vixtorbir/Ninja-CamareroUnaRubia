@@ -52,7 +52,7 @@ bool Map::Update(float dt)
 				if (camPos.getY() < 0) camPos.setY(0);
 				Vector2D camPosTile = WorldToMap(camPos.getX(), camPos.getY());
 
-				Vector2D camSize = Vector2D(Engine::GetInstance().render->camera.w + 200, Engine::GetInstance().render->camera.h + 200);
+				Vector2D camSize = Vector2D(Engine::GetInstance().render->camera.w *3, Engine::GetInstance().render->camera.h *3);
 				Vector2D camSizeTile = WorldToMap(camSize.getX(), camSize.getY());
 
 				Vector2D limits = Vector2D(camPosTile.getX() + camSizeTile.getX(), camPosTile.getY() + camSizeTile.getY());

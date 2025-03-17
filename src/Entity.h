@@ -14,7 +14,8 @@ enum class EntityType
 	ITEM,
 	ENEMY,
 	UNKNOWN,
-	SHURIKENS
+	SHURIKENS,
+	NPC
 };
 
 class PhysBody;

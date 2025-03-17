@@ -8,9 +8,14 @@
 			<dialogue2 character="" text=""/>
 		</dialogues>
 	</RAIDEDVILLAGE>
+	<MENTORSHIP>
+		<dialogues size="1">
+			<dialogue1 character="Mentor" text="I am mentoring you" />
+		</dialogues>
+	</MENTORSHIP>
 	<EMPTY>
 		<dialogues size="1">
-			<dialogue1 character="" text="" />
+			<dialogue1  character="" text="" />
 		</dialogues>
 	</EMPTY>
 </dialogues>

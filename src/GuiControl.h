@@ -19,6 +19,7 @@ enum class GuiControlType
 	VALUEBOX,
 	DIALOGUE,
 	SPINNER,
+	POPUP,
 	PORTRAIT
 };
 

@@ -5,6 +5,7 @@
 #include "GuiControlButton.h"
 #include "Dialogue.h"
 #include "Portrait.h"
+#include "GuiPopup.h"
 
 #include "Audio.h"
 
@@ -37,6 +38,9 @@ GuiControl* GuiManager::CreateGuiControl(GuiControlType type, int id, const char
 	case GuiControlType::PORTRAIT:
 		guiControl = new Portrait(id, bounds, text);
 		break;
+	case GuiControlType::POPUP:
+		guiControl = new GuiPopup(id, bounds, text);
+		break;
 	}
 
 	// Set the observer
@@ -48,12 +52,14 @@ GuiControl* GuiManager::CreateGuiControl(GuiControlType type, int id, const char
 }
 
 void GuiManager::ClearControlsOfType(GuiControlType type)
-{ 
-	auto it = guiControlsList.begin();
-	delete* it;
-	it = guiControlsList.erase(it);
-
+{
+	for (auto it = guiControlsList.begin(); it != guiControlsList.end();)
+	{
+		delete* it;
+		it = guiControlsList.erase(it);
+	}
 }
+
 
 bool GuiManager::Update(float dt)
 {
