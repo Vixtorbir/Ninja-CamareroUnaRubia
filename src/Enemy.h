@@ -48,4 +48,17 @@ private:
 	Animation idle;
 	PhysBody* pbody;
 	Pathfinding* pathfinding;
+
+	//fx
+	int walk1FxId;
+	int walk2FxId;
+	int meleAttack1FxId;
+	int meleAttack2FxId;
+	int rangeAttack1FxId;
+	int rangeAttack2FxId;
+	int jump1FxId;
+	int jump2FxId;
+	int dieFxId;
+	int hit1FxId;
+	int hit2FxId;
 };

@@ -55,8 +55,7 @@ bool Player::Start() {
 	if (!parameters.attribute("gravity").as_bool()) pbody->body->SetGravityScale(0);
 
 	//initialize audio effect
-	pickCoinFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/retro-video-game-coin-pickup-38299.ogg");
-	daggerThrow2FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/daggerThrow2.wav");
+	LoadPlayerFx();
 
 	return true;
 }
@@ -112,14 +111,16 @@ bool Player::Update(float dt)
 	}
 
 	//Jump
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_W) == KEY_DOWN && hasAlreadyJumpedOnce == 0) {
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_W) == KEY_DOWN && hasAlreadyJumpedOnce == 0) 
+	{
 		isHoldingJump = true;
 		jumpHoldTimer = 0.0f;
-		Engine::GetInstance().audio.get()->PlayFx(pickCoinFxId);
+		
 		
 	}
 
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_W) == KEY_REPEAT && isHoldingJump) {
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_W) == KEY_REPEAT && isHoldingJump)
+	{
 		jumpHoldTimer += dt;
 
 		if (jumpHoldTimer >= maxHoldTime) {
@@ -128,10 +129,13 @@ bool Player::Update(float dt)
 			hasAlreadyJumpedOnce++;
 			isHoldingJump = false;
 			isJumping = true;
+			
 		}
+		Engine::GetInstance().audio.get()->PlayFx(jump1FxId);
 	}
 
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_W) == KEY_UP && isHoldingJump) {
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_W) == KEY_UP && isHoldingJump) 
+	{
 		float holdPercentage = jumpHoldTimer / maxHoldTime;
 		float jumpMultiplier = minJumpMultiplier + (holdPercentage * (maxJumpMultiplier - minJumpMultiplier));
 		float jumpStrength = jumpForce * jumpMultiplier;
@@ -148,6 +152,7 @@ bool Player::Update(float dt)
 		pbody->body->ApplyLinearImpulseToCenter(b2Vec2(0, -jumpForce), true);
 		hasAlreadyJumpedOnce++;
 		isJumping = true;
+		Engine::GetInstance().audio.get()->PlayFx(throwShuriken1FxId);
 	}
 
 	// Wall Jump
@@ -180,6 +185,8 @@ bool Player::Update(float dt)
 		dashTimer = 0.0f;
 		isDashing = true;
 		dashElapsedTime = 0.0f;
+		int dashId = Engine::GetInstance().audio.get()->randomFx(dash1FxId,dash3FxId);
+		Engine::GetInstance().audio.get()->PlayFx(dashId);
 	}
 
 	if (isDashing) {
@@ -250,7 +257,6 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 		touchingWall = true;
 		break;
 	case ColliderType::ITEM:
-		Engine::GetInstance().audio.get()->PlayFx(pickCoinFxId);
 		Engine::GetInstance().physics.get()->DeletePhysBody(physB); // Deletes the body of the item from the physics world
 		break;
 	case ColliderType::UNKNOWN:
@@ -285,6 +291,30 @@ Vector2D Player::GetPosition() {
 	b2Vec2 bodyPos = pbody->body->GetTransform().p;
 	Vector2D pos = Vector2D(METERS_TO_PIXELS(bodyPos.x), METERS_TO_PIXELS(bodyPos.y));
 	return pos;
+}
+void Player::LoadPlayerFx()
+{
+	 jump1FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/coinSound.ogg");
+	 jump2FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/coinSound.ogg");
+	 jump3FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/coinSound.ogg");
+	 doubleJumpFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/coinSound.ogg");
+	 walk1FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/coinSound.ogg");
+	 walk2FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/coinSound.ogg");
+	 walk3FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/coinSound.ogg");
+	 dash1FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/shuriken shoot.wav");
+	 dash2FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/sharp sword slash2.wav");
+	 dash3FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/coinSound.ogg");
+	 throwShuriken1FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/coinSound.ogg");
+	 throwShuriken2FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/coinSound.ogg");
+	 throwShuriken3FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/coinSound.ogg");
+	 weakKatana1FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/coinSound.ogg");
+	 weakKatana2FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/coinSound.ogg");
+	 weakKatana3FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/coinSound.ogg");
+	 strongKatana1FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/coinSound.ogg");
+	 strongKatana2FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/coinSound.ogg");
+	 dieFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/coinSound.ogg");
+	 hit1FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/throw punch1.wav");
+	 hit2FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/throw punch1.wav");
 }
 
 void Player::ShootShuriken() {

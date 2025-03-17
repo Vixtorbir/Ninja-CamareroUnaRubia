@@ -1,6 +1,6 @@
 #include "Audio.h"
 #include "Log.h"
-
+#include <time.h>
 #include "SDL2/SDL.h"
 #include "SDL2/SDL_mixer.h"
 
@@ -172,6 +172,12 @@ int  Audio::LoadMusic(const char* path)
 	}
 
 }
+bool Audio::musicVolume(int v)
+{
+	bool ret = true;
+	return ret;
+
+}
 
 // Play WAV
 bool Audio::PlayFx(int id, int repeat)
@@ -189,4 +195,9 @@ bool Audio::PlayFx(int id, int repeat)
 	}
 
 	return ret;
+}
+int Audio::randomFx(int min, int max)
+{
+	int randomId = min + (rand() % (max - min + 1));
+	return randomId;
 }
