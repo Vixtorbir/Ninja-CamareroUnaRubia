@@ -52,6 +52,10 @@ public:
 
 	void LoadTextures();
 
+	void SetState(GameState newState); 
+	GameState GetState() const;    
+	
+
 public:
 	// Get tilePosDebug value
 	std::string GetTilePosDebug() {
@@ -62,6 +66,7 @@ public:
 public:
 	SDL_Texture* mouseTileTex = nullptr;
 	SDL_Texture* textureBuffer = nullptr;
+	SDL_Texture* Hanzo = nullptr;
 
 	std::string tilePosDebug = "[0,0]";
 	bool once = false;
@@ -79,8 +84,12 @@ public:
 	Dialogue* dialogue;
 	DialogueManager* dialogueManager;
 
-	bool watchtitle = false;
-	
+	GameState currentState = GameState::MAIN_MENU;
+
+	void UpdateMainMenu();
+	void UpdateGameplay(float dt);
+	void UpdatePauseMenu();
+	void UpdateGameOver();
 private:
 	Parallax* parallax = nullptr;
 

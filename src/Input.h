@@ -63,6 +63,15 @@ public:
 	Vector2D GetMousePosition();
 	Vector2D GetMouseMotion();
 
+
+	SDL_GameController* FindController();
+	KeyState GetControllerButton(SDL_GameControllerButton button);
+
+	Sint16 GetControllerAxis(SDL_GameControllerAxis axis);
+
+
+
+
 private:
 	bool windowEvents[WE_COUNT];
 	KeyState*	keyboard;
@@ -71,4 +80,14 @@ private:
 	int mouseMotionY;
 	int mouseX;
 	int mouseY;
+
+	SDL_GameController* controller;
+	KeyState controllerButtons[SDL_CONTROLLER_BUTTON_MAX];
+	Sint16 controllerAxes[SDL_CONTROLLER_AXIS_MAX];
+
+
+
+
+
 };
+
