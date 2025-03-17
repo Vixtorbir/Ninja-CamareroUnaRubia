@@ -71,8 +71,9 @@ bool Enemy::Update(float dt)
 	Vector2D playerTilePos = Engine::GetInstance().map.get()->WorldToMap(playerPos.getX(), playerPos.getY());
 
 	if (IsPlayerInRange()) {
-		if (IsPlayerInAttackRange()) {
+		if (IsPlayerInAttackRange() && attackCooldownTimer.ReadSec() >= 3) {
 			state = EnemyState::ATTACK;
+			attackDurationTimer.Start();
 		}
 		else {
 			state = EnemyState::AGGRESSIVE;
@@ -87,7 +88,7 @@ bool Enemy::Update(float dt)
 		// Movimiento de patrulla
 		if (!IsNextTileCollidable() || tilesMovedInSameDirection >= 150) {
 			direction = (direction == 0) ? 1 : 0;
-			tilesMovedInSameDirection = 0; 
+			tilesMovedInSameDirection = 0;
 		}
 
 		if (direction == 0) {
@@ -96,7 +97,7 @@ bool Enemy::Update(float dt)
 		else {
 			pbody->body->SetLinearVelocity(b2Vec2(2, 0));
 		}
-		tilesMovedInSameDirection++; 
+		tilesMovedInSameDirection++;
 		break;
 
 	case EnemyState::AGGRESSIVE:
@@ -117,6 +118,12 @@ bool Enemy::Update(float dt)
 	case EnemyState::ATTACK:
 		// Lógica de ataque
 		PerformAttack();
+		
+		Engine::GetInstance().physics.get()->DeletePhysBody(attackHitbox);
+		attackHitbox = nullptr;
+		attackCooldownTimer.Start();
+		state = EnemyState::AGGRESSIVE;
+		
 		break;
 	}
 
@@ -267,14 +274,22 @@ bool Enemy::IsPlayerInRange() {
 }
 
 void Enemy::PerformAttack() {
+	
+	// Detiene al enemigo
+	pbody->body->SetLinearVelocity(b2Vec2(0, 0));
+	
+	if (attackHitbox == nullptr) {
+		// Crea la hitbox del ataque
+		attackHitbox = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX()+2, (int)position.getY(), texW, texH, bodyType::STATIC);
+		attackHitbox->ctype = ColliderType::ENEMY;
+		attackHitbox->listener = this;
+	}
+		
+
 	Engine::GetInstance().render.get()->DrawTexture(attackTexture, (int)position.getX(), (int)position.getY(), &attackAnimation.GetCurrentFrame());
 	attackAnimation.Update();
 
-	attackHitbox.x = (int)position.getX();
-	attackHitbox.y = (int)position.getY();
-	attackHitbox.w = texW;
-	attackHitbox.h = texH;
-
+	// Agrega la posición actual al trazo de la espada
 	swordTrail.push_back(position);
 	if (swordTrail.size() > maxTrailLength) {
 		swordTrail.pop_front();
@@ -284,21 +299,31 @@ void Enemy::PerformAttack() {
 		Engine::GetInstance().render.get()->DrawTexture(trailTexture, (int)trailPos.getX(), (int)trailPos.getY());
 	}
 
+	// Verifica colisiones con el jugador
 	CheckAttackCollision();
 }
 
 void Enemy::CheckAttackCollision() {
-	Vector2D playerPos = Engine::GetInstance().scene.get()->player->GetPosition();
-	SDL_Rect playerHitbox = {
-		(int)playerPos.getX(),
-		(int)playerPos.getY(),
-		Engine::GetInstance().scene.get()->player->texW,
-		Engine::GetInstance().scene.get()->player->texH
-	};
+	if (attackHitbox != nullptr) {
+		Vector2D playerPos = Engine::GetInstance().scene.get()->player->GetPosition();
+		SDL_Rect playerHitbox = {
+			(int)playerPos.getX(),
+			(int)playerPos.getY(),
+			Engine::GetInstance().scene.get()->player->texW,
+			Engine::GetInstance().scene.get()->player->texH
+		};
 
-	if (SDL_HasIntersection(&attackHitbox, &playerHitbox)) {
-		// Reduce la HP del jugador
-		Engine::GetInstance().scene.get()->player->TakeDamage(1);
+		SDL_Rect attackRect = {
+			(int)position.getX(),
+			(int)position.getY(),
+			texW,
+			texH
+		};
+
+		if (SDL_HasIntersection(&attackRect, &playerHitbox)) {
+			// Reduce la HP del jugador
+			Engine::GetInstance().scene.get()->player->TakeDamage(1);
+		}
 	}
 }
 
@@ -310,6 +335,6 @@ bool Enemy::IsPlayerInAttackRange() {
 	Vector2D playerTilePos = Engine::GetInstance().map.get()->WorldToMap(playerPos.getX(), playerPos.getY());
 
 	int distance = abs(playerTilePos.getX() - enemyTilePos.getX());
-	return distance <= 5;
+	return distance <= 3;
 }
 
