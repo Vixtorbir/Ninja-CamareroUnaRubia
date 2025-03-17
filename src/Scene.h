@@ -12,6 +12,13 @@
 
 struct SDL_Texture;
 
+enum class GameState {
+	MAIN_MENU,
+	PLAYING,
+	PAUSED,
+	GAME_OVER
+};
+
 class Scene : public Module
 {
 public:
@@ -83,6 +90,8 @@ public:
 
 	Dialogue* dialogue;
 	DialogueManager* dialogueManager;
+
+	bool watchtitle = false;
 
 	GameState currentState = GameState::MAIN_MENU;
 

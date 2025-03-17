@@ -147,6 +147,10 @@
     <None Include="vcpkg.json" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="GameOverState.cpp" />
+    <ClCompile Include="GameStateManager.cpp" />
+    <ClCompile Include="MainMenuState.cpp" />
+    <ClCompile Include="PlayingGameState.cpp" />
     <ClCompile Include="src\Audio.cpp" />
     <ClCompile Include="src\Dialogue.cpp" />
     <ClCompile Include="src\DialogueManager.cpp" />
@@ -172,10 +176,16 @@
     <ClCompile Include="src\Scene.cpp" />
     <ClCompile Include="src\Textures.cpp" />
     <ClCompile Include="src\Timer.cpp" />
+    <ClCompile Include="src\Title.cpp" />
     <ClCompile Include="src\Vector2D.cpp" />
     <ClCompile Include="src\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="GameOverState.h" />
+    <ClInclude Include="GameState.h" />
+    <ClInclude Include="GameStateManager.h" />
+    <ClInclude Include="MainMenuState.h" />
+    <ClInclude Include="PlayingGameState.h" />
     <ClInclude Include="src\Animation.h" />
     <ClInclude Include="src\Audio.h" />
     <ClInclude Include="src\Dialogue.h" />
@@ -206,6 +216,7 @@
     <ClInclude Include="src\Scene.h" />
     <ClInclude Include="src\Textures.h" />
     <ClInclude Include="src\Timer.h" />
+    <ClInclude Include="src\Title.h" />
     <ClInclude Include="src\Vector2D.h" />
     <ClInclude Include="src\Window.h" />
   </ItemGroup>
