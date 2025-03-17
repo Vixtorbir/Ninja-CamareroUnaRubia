@@ -1,26 +1,29 @@
-#pragma once
-#ifndef GAMESTATEMANAGER_H
-#define GAMESTATEMANAGER_H
+#ifndef STATEMANAGER_H
+#define STATEMANAGER_H
 
-#include <stack>
-#include "GameState.h"
 
-class GameStateManager {
+#include "SDL2/SDL.h"
+#include "SDL2/SDL_ttf.h"
+#include "src/Scene.h"
+#include <string>
+#include <unordered_map>
+
+class StateManager {
 public:
-    GameStateManager();
-    ~GameStateManager();
+    StateManager(SDL_Renderer* renderer);
+    ~StateManager();
 
-    void PushState(GameState* state);
-    void PopState();
-    void ChangeState(GameState* state);
-
-    void HandleEvents();
-    void Update();
-    void Render(SDL_Renderer* renderer);
+    void ChangeState(GameState newState); // Switch to a new state
+    void Update(float deltaTime);         // Update the current state
+    void Render();                        // Render the current state
+    void HandleEvents(SDL_Event& event);  // Handle events for the current state
 
 private:
-    std::stack<GameState*> stateStack;
+    SDL_Renderer* renderer;               // SDL renderer for drawing
+    GameState currentState;               // Current game state
+    TTF_Font* font;                       // Font for rendering text
+
+    void RenderText(const std::string& text, int x, int y, SDL_Color color); // Helper function to render text
 };
 
-#endif // GAMESTATEMANAGER_H
-
+#endif // STATEMANAGER_H

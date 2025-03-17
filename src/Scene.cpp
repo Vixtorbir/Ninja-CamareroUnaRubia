@@ -222,14 +222,14 @@ void Scene::UpdateMainMenu() {
 	Engine::GetInstance().render.get()->DrawText("Press ENTER to Start", 600, 400, 750, 255);
 
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_RETURN) == KEY_DOWN) {
-		SetState(GameState::PLAYING);
+		SetState(GameState::PLAY);
 	}
 }
 
 
 void Scene::UpdateGameplay(float dt) {
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_P) == KEY_DOWN) {
-		SetState(GameState::PAUSED);
+		SetState(GameState::PAUSE);
 	}
 }
 
@@ -238,7 +238,7 @@ void Scene::UpdatePauseMenu() {
 	Engine::GetInstance().render.get()->DrawText("PAUSED - Press P to Resume",600, 400, 750, 255);
 
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_P) == KEY_DOWN) {
-		SetState(GameState::PLAYING);
+		SetState(GameState::PLAY);
 	}
 }
 

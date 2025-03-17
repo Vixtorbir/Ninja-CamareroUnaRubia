@@ -1,3 +1,5 @@
+#ifndef SCENE_H
+#define SCENE_H
 #pragma once
 
 #include "Module.h"
@@ -8,21 +10,21 @@
 #include "Dialogue.h"
 #include "DialogueManager.h"
 #include "Parallax.h"
+#include "GameStateManager.h"
 #include "Npc.h"
 
 struct SDL_Texture;
 
 enum class GameState {
 	MAIN_MENU,
-	PLAYING,
-	PAUSED,
+	PLAY,
+	PAUSE,
 	GAME_OVER
 };
 
 class Scene : public Module
 {
 public:
-
 	Scene();
 
 	// Destructor
@@ -59,15 +61,13 @@ public:
 
 	void LoadTextures();
 
-	void SetState(GameState newState); 
-	GameState GetState() const;    
-	
+	void SetState(GameState newState);
+	GameState GetState() const;
 
 public:
 	// Get tilePosDebug value
 	std::string GetTilePosDebug() {
 		return tilePosDebug;
-
 	}
 
 public:
@@ -99,8 +99,10 @@ public:
 	void UpdateGameplay(float dt);
 	void UpdatePauseMenu();
 	void UpdateGameOver();
+
 private:
 	Parallax* parallax = nullptr;
-
+	StateManager stateManager; // Add StateManager as a member
 };
 
+#endif
