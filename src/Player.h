@@ -5,7 +5,6 @@
 #include "Box2D/Box2D.h"
 #include "Animation.h"
 
-#include "Shurikens.h"
 #include "GuiPopup.h"
 #include "GuiControl.h"
 #include "Module.h"
@@ -108,7 +107,6 @@ public:
 	GuiPopup* popup;
 	SDL_Rect btPos = { 960, 520, 40, 40};
 	Module* sceneModule = nullptr;
-	std::vector<Shuriken*> shurikens;
 	EntityDirections playerDirection = EntityDirections::RIGHT;
 
 	int hp; 
