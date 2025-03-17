@@ -98,10 +98,13 @@ private:
 		int jump1FxId;
 		int jump2FxId;
 		int jump3FxId;
-		int doubleJumpFxId;
+		int doubleJump1FxId;
+		int doubleJump2FxId;
 		int walk1FxId;
 		int walk2FxId;
 		int walk3FxId;
+		int walk4FxId;
+		int walk5FxId;
 		int dash1FxId;
 		int dash2FxId;
 		int dash3FxId;

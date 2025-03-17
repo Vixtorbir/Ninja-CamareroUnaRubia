@@ -294,27 +294,31 @@ Vector2D Player::GetPosition() {
 }
 void Player::LoadPlayerFx()
 {
-	 jump1FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/coinSound.ogg");
-	 jump2FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/coinSound.ogg");
-	 jump3FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/coinSound.ogg");
-	 doubleJumpFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/coinSound.ogg");
-	 walk1FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/coinSound.ogg");
-	 walk2FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/coinSound.ogg");
-	 walk3FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/coinSound.ogg");
-	 dash1FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/shuriken shoot.wav");
-	 dash2FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/sharp sword slash2.wav");
-	 dash3FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/coinSound.ogg");
-	 throwShuriken1FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/coinSound.ogg");
-	 throwShuriken2FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/coinSound.ogg");
-	 throwShuriken3FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/coinSound.ogg");
-	 weakKatana1FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/coinSound.ogg");
-	 weakKatana2FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/coinSound.ogg");
-	 weakKatana3FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/coinSound.ogg");
-	 strongKatana1FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/coinSound.ogg");
-	 strongKatana2FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/coinSound.ogg");
-	 dieFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/coinSound.ogg");
-	 hit1FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/throw punch1.wav");
-	 hit2FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/throw punch1.wav");
+	
+	 jump1FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/");
+	 jump2FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/");
+	 jump3FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/");
+	 doubleJump1FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/");
+	 doubleJump2FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/");
+	 walk1FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/");
+	 walk2FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/");
+	 walk3FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/");
+	 walk4FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/");
+	 walk5FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/");
+	 dash1FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/");
+	 dash2FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/");
+	 dash3FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/");
+	 throwShuriken1FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/");
+	 throwShuriken2FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/");
+	 throwShuriken3FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/");
+	 weakKatana1FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/");
+	 weakKatana2FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/");
+	 weakKatana3FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/");
+	 strongKatana1FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/");
+	 strongKatana2FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/");
+	 dieFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/");
+	 hit1FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/");
+	 hit2FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/");
 }
 
 void Player::ShootShuriken() {
