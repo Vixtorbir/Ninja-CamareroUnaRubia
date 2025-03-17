@@ -15,12 +15,12 @@
 	</MENTORSHIP>
 	<MENTORSHIP1>
 		<dialogues size="1">
-			<dialogue1 character="Mentor" text="option1"  branching="1"/>
+			<dialogue1 character="Mentor" text="option1"  branching="0"/>
 		</dialogues>
 	</MENTORSHIP1>
 	<MENTORSHIP2>
 		<dialogues size="1">
-			<dialogue1 character="Mentor" text="option2"  branching="1"/>
+			<dialogue1 character="Mentor" text="option2"  branching="0"/>
 		</dialogues>
 	</MENTORSHIP2>
 	<EMPTY>

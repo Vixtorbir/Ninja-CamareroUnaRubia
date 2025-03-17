@@ -62,6 +62,7 @@ void DialogueManager::CastDialogue(DialogueEngine dialogueEngine)
         std::string character = dialogue.attribute("character").as_string();
         std::string text = dialogue.attribute("text").as_string();
         dialogues.push_back({ character, text });
+        isBranching = dialogue.attribute("branching").as_int();
     }
 
     if (!dialogues.empty())
@@ -97,8 +98,17 @@ void DialogueManager::ShowNextDialogue()
         Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::DIALOGUE, 1, text.c_str(), dialoguePos, module);
 
         Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::DIALOGUE, 1, character.c_str(), namePos, module);
+        
+        if (!isBranching)
+        {
+            currentDialogueIndex++;
 
-        currentDialogueIndex++;
+        }
+        else {
+
+        }
+
+
     }
     else
     {
