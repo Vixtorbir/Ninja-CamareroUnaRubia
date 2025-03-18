@@ -137,7 +137,9 @@ bool Player::Update(float dt)
 			isJumping = true;
 			
 		}
-		Engine::GetInstance().audio.get()->PlayFx(jump1FxId);
+		int jumpId = Engine::GetInstance().audio.get()->randomFx(jump1FxId, jump3FxId);
+		Engine::GetInstance().audio.get()->PlayFx(jumpId);
+	
 	}
 
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_W) == KEY_UP && isHoldingJump) 
@@ -158,7 +160,9 @@ bool Player::Update(float dt)
 		pbody->body->ApplyLinearImpulseToCenter(b2Vec2(0, -jumpForce), true);
 		hasAlreadyJumpedOnce++;
 		isJumping = true;
-		Engine::GetInstance().audio.get()->PlayFx(throwShuriken1FxId);
+		int doubleJumpId = Engine::GetInstance().audio.get()->randomFx(doubleJump1FxId, doubleJump2FxId);
+		Engine::GetInstance().audio.get()->PlayFx(doubleJumpId);
+	
 	}
 
 	// Wall Jump
@@ -291,12 +295,15 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 		touchingWall = true;
 		break;
 	case ColliderType::ITEM:
+		Engine::GetInstance().audio.get()->PlayFx(dieFxId);
 		Engine::GetInstance().physics.get()->DeletePhysBody(physB); // Deletes the body of the item from the physics world
 		break;
 	case ColliderType::UNKNOWN:
 		break;
 
 	case ColliderType::ENEMY:
+		int damageId = Engine::GetInstance().audio.get()->randomFx(hit1FxId, hit2FxId);
+		Engine::GetInstance().audio.get()->PlayFx(damageId);
 		TakeDamage(1); // El jugador recibe 1 punto de da�o
 		break;
 	}
@@ -376,6 +383,7 @@ void Player::TakeDamage(int damage) {
 void Player::Die() {
 	
 	LOG("Player has died");
+	Engine::GetInstance().audio.get()->PlayFx(dieFxId);
 	// Puedes reiniciar el nivel, mostrar una pantalla de game over, etc.
 }
 

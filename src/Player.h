@@ -55,8 +55,9 @@ public:
 	
 	//sound
 	void LoadPlayerFx();
-	void TakeDamage(int damage);
 
+	//damage
+	void TakeDamage(int damage);
 	void Die();
 
 	
@@ -137,6 +138,7 @@ private:
 		int dieFxId;
 		int hit1FxId;
 		int hit2FxId;
+		int pickUpItem;
 
 
 	int hp; 
