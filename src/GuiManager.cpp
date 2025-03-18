@@ -41,6 +41,12 @@ GuiControl* GuiManager::CreateGuiControl(GuiControlType type, int id, const char
 	case GuiControlType::POPUP:
 		guiControl = new GuiPopup(id, bounds, text);
 		break;
+	case GuiControlType::OPTIONA:
+		guiControl = new GuiControlButton(id, bounds, text);
+		break;
+	case GuiControlType::OPTIONB:
+		guiControl = new GuiControlButton(id, bounds, text);
+		break;
 	}
 
 	// Set the observer

@@ -11,6 +11,7 @@
 	<MENTORSHIP>
 		<dialogues size="1">
 			<dialogue1 character="Mentor" text="I am mentoring you"  branching="1"/>
+			<options a="ok" b="no"/>
 		</dialogues>
 	</MENTORSHIP>
 	<MENTORSHIP1>
