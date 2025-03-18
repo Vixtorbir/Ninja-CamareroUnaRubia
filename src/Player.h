@@ -138,8 +138,8 @@ private:
 		int dieFxId;
 		int hit1FxId;
 		int hit2FxId;
-		int pickUpItem;
-
+		int pickUpItemFxId;
+		
 
 	int hp; 
 	const int maxHp = 3;
