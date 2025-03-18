@@ -62,6 +62,7 @@ void DialogueManager::CastDialogue(DialogueEngine dialogueEngine)
         std::string character = dialogue.attribute("character").as_string();
         std::string text = dialogue.attribute("text").as_string();
         dialogues.push_back({ character, text });
+        isBranching = dialogue.attribute("branching").as_int();
     }
 
     if (!dialogues.empty())
@@ -94,11 +95,25 @@ void DialogueManager::ShowNextDialogue()
     {
         std::string character = dialogues[currentDialogueIndex].first;
         std::string text = dialogues[currentDialogueIndex].second;
-        Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::DIALOGUE, 1, text.c_str(), dialoguePos, module);
 
+        Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::DIALOGUE, 1, text.c_str(), dialoguePos, module);
         Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::DIALOGUE, 1, character.c_str(), namePos, module);
 
-        currentDialogueIndex++;
+        Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::OPTIONA, 1, character.c_str(), optionAPos, module);
+        Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::OPTIONB, 1, character.c_str(), optionBPos, module);
+
+
+        if (!isBranching) currentDialogueIndex++;
+        else {
+            std::string optionA = dialogues[currentDialogueIndex].first;
+            std::string optionB = dialogues[currentDialogueIndex].second;
+
+            Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::OPTIONA, 1, optionA.c_str(), optionAPos, module);
+            Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::OPTIONB, 1, optionB.c_str(), optionBPos, module);
+
+        }
+
+
     }
     else
     {

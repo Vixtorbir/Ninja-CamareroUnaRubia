@@ -10,7 +10,7 @@
 	</RAIDEDVILLAGE>
 	<MENTORSHIP>
 		<dialogues size="1">
-			<dialogue1 character="Mentor" text="I am mentoring you"  branching="1"/>
+			<dialogue1 character="Mentor" text="I am mentoring you"  branching="1" optionA="Okai" optionB="No"/>
 		</dialogues>
 	</MENTORSHIP>
 	<MENTORSHIP1>

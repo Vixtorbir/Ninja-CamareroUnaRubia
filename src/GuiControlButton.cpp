@@ -3,6 +3,11 @@
 #include "Engine.h"
 #include "Audio.h"
 #include "Textures.h"
+GuiControlButton::GuiControlButton(int id, SDL_Rect bounds, const char* text, bool optionA, bool optionB) : GuiControl(GuiControlType::BUTTON, id)
+{
+	this->isOptionA = optionA;
+	this->isOptionB = optionB;
+}
 GuiControlButton::GuiControlButton(int id, SDL_Rect bounds, const char* text) : GuiControl(GuiControlType::BUTTON, id)
 {
 	this->bounds = bounds;
