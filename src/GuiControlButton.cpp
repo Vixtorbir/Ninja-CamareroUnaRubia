@@ -5,6 +5,11 @@
 #include "Textures.h"
 GuiControlButton::GuiControlButton(int id, SDL_Rect bounds, const char* text, bool optionA, bool optionB) : GuiControl(GuiControlType::BUTTON, id)
 {
+	this->bounds = bounds;
+	this->text = text;
+
+	canClick = true;
+	drawBasic = false;
 	this->isOptionA = optionA;
 	this->isOptionB = optionB;
 }
@@ -23,6 +28,8 @@ GuiControlButton::~GuiControlButton()
 }
 bool GuiControlButton::Start()
 {
+	texture = Engine::GetInstance().textures.get()->Load("Assets/Portraits/UI/textName.png");
+
 	return false;
 }
 bool GuiControlButton::Update(float dt)
@@ -56,7 +63,7 @@ bool GuiControlButton::Update(float dt)
 			Engine::GetInstance().render->DrawRectangle(bounds, 200, 200, 200, 255, true, false);
 			break;
 		case GuiControlState::NORMAL:
-			Engine::GetInstance().render->DrawRectangle(bounds, 0, 0, 255, 255, true, false);
+			//Engine::GetInstance().render->DrawRectangle(bounds, 0, 0, 255, 255, true, false);
 			break;
 		case GuiControlState::FOCUSED:
 			Engine::GetInstance().render->DrawRectangle(bounds, 0, 0, 20, 255, true, false);
@@ -67,7 +74,12 @@ bool GuiControlButton::Update(float dt)
 		}
 
 		Engine::GetInstance().render->DrawText(text.c_str(), bounds.x, bounds.y, bounds.w, bounds.h);
+		
+		if (isOptionA || isOptionB)
+		{
+			Engine::GetInstance().render.get()->DrawTexture(texture, 0,0, &bounds);
 
+		}
 
 	}
 

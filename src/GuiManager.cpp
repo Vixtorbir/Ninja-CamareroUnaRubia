@@ -43,7 +43,6 @@ GuiControl* GuiManager::CreateGuiControl(GuiControlType type, int id, const char
 		break;
 	case GuiControlType::OPTIONA:
 		guiControl = new GuiControlButton(id, bounds, text, true, false);
-		
 		break;
 		
 	case GuiControlType::OPTIONB:

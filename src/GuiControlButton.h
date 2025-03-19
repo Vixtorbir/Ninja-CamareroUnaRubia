@@ -19,6 +19,8 @@ public:
 	bool isOptionA = false;
 	bool isOptionB = false;
 private:
+
+	SDL_Texture* texture;
 	
 	bool canClick = true;
 	bool drawBasic = false;
