@@ -103,6 +103,10 @@ public:
 
 	void HandleInput();
 
+	GuiControlButton* startButton = nullptr;
+	GuiControlButton* optionsButton = nullptr;
+	GuiControlButton* exitButton = nullptr;
+
 private:
 	Parallax* parallax = nullptr;
 	

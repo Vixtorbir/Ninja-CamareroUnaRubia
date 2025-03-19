@@ -3,6 +3,8 @@
 #include "Engine.h"
 #include "Audio.h"
 #include "Textures.h"
+
+#define LOG(msg) std::cerr << msg << std::endl
 GuiControlButton::GuiControlButton(int id, SDL_Rect bounds, const char* text) : GuiControl(GuiControlType::BUTTON, id)
 {
 	this->bounds = bounds;
@@ -10,6 +12,8 @@ GuiControlButton::GuiControlButton(int id, SDL_Rect bounds, const char* text) : 
 
 	canClick = true;
 	drawBasic = false;
+	texture = Engine::GetInstance().textures.get()->Load("Assets/UI/individualUIsprites/textName.png");
+
 }
 
 GuiControlButton::~GuiControlButton()
@@ -68,4 +72,14 @@ bool GuiControlButton::Update(float dt)
 
 	return false;
 }
+void GuiControlButton::Render() {
+	// Draw the button background (texture or rectangle)
+
+	Engine::GetInstance().render.get()->DrawTexture(texture, bounds.x, bounds.y);
+	Engine::GetInstance().render.get()->DrawText(iftext, bounds.x + 10, bounds.y + 10, 255, 255);
+}
+	
+
+
+
 

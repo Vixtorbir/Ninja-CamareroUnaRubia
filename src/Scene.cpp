@@ -341,6 +341,31 @@ void Scene::HandleInput()
 }
 void Scene::UpdateMainMenu(float dt) {
 	Engine::GetInstance().render.get()->DrawText("MAIN MENU: Press enter to start", 600, 400, 750, 255);
+	SDL_Rect startButtonPos = { 600, 300, 200, 50 };
+	SDL_Rect optionsButtonPos = { 600, 400, 200, 50 };
+	SDL_Rect exitButtonPos = { 600, 500, 200, 50 };
+
+	// Create buttons if they don't already exist
+
+		startButton = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(
+			GuiControlType::BUTTON, 1, "Start Game", startButtonPos, this);
+
+
+		optionsButton = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(
+			GuiControlType::BUTTON, 2, "Options", optionsButtonPos, this);
+	
+
+		exitButton = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(
+			GuiControlType::BUTTON, 3, "Exit", exitButtonPos, this);
+	
+
+	// Render the main menu text
+	Engine::GetInstance().render.get()->DrawText("MAIN MENU", 600, 200, 750, 255);
+
+	// Render the buttons
+	startButton->Render();
+	optionsButton->Render();
+	exitButton->Render();
 }
 
 void Scene::UpdatePlaying(float dt) {
