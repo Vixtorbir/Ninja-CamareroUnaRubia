@@ -1,5 +1,4 @@
-#ifndef SCENE_H
-#define SCENE_H
+
 #pragma once
 
 #include "Module.h"
@@ -108,5 +107,3 @@ private:
 	Parallax* parallax = nullptr;
 	
 };
-
-#endif

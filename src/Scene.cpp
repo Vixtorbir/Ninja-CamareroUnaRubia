@@ -102,7 +102,6 @@ bool Scene::PreUpdate()
 // Called each loop iteration
 bool Scene::Update(float dt)
 {
-
 	//L03 TODO 3: Make the camera movement independent of framerate
 	float camSpeed = 1;
 
@@ -134,8 +133,6 @@ bool Scene::Update(float dt)
 		highlightTile.getY(),
 		&rect);
 
-
-
 	// saves the tile pos for debugging purposes
 	if (mouseTile.getX() >= 0 && mouseTile.getY() >= 0 || once) {
 		tilePosDebug = "[" + std::to_string((int)mouseTile.getX()) + "," + std::to_string((int)mouseTile.getY()) + "] ";
@@ -143,7 +140,6 @@ bool Scene::Update(float dt)
 	}
 
 	//If mouse button is pressed modify enemy position
-
 	if (enemyList.size() > 0 && Engine::GetInstance().input.get()->GetMouseButtonDown(1) == KEY_REPEAT) {
 		enemyList[0]->SetPosition(Vector2D(highlightTile.getX(), highlightTile.getY()));
 		enemyList[0]->ResetPath();
@@ -162,65 +158,12 @@ bool Scene::Update(float dt)
 
 	HandleInput();
 
-
 	switch (currentState) {
 	case GameState::MAIN_MENU:
 		UpdateMainMenu(dt);
 		break;
 	case GameState::PLAYING:
 		UpdatePlaying(dt);
-		float camSpeed = 1;
-
-		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
-			Engine::GetInstance().render.get()->camera.y -= ceil(camSpeed * dt);
-
-		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
-			Engine::GetInstance().render.get()->camera.y += ceil(camSpeed * dt);
-
-		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
-			Engine::GetInstance().render.get()->camera.x -= ceil(camSpeed * dt);
-
-		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
-			Engine::GetInstance().render.get()->camera.x += ceil(camSpeed * dt);
-
-		// L10 TODO 6: Implement a method that repositions the player in the map with a mouse click
-
-		//Get mouse position and obtain the map coordinate
-		int scale = Engine::GetInstance().window.get()->GetScale();
-		Vector2D mousePos = Engine::GetInstance().input.get()->GetMousePosition();
-		Vector2D mouseTile = Engine::GetInstance().map.get()->WorldToMap(mousePos.getX() - Engine::GetInstance().render.get()->camera.x / scale,
-			mousePos.getY() - Engine::GetInstance().render.get()->camera.y / scale);
-
-		//Render a texture where the mouse is over to highlight the tile, use the texture 'mouseTileTex'
-		Vector2D highlightTile = Engine::GetInstance().map.get()->MapToWorld(mouseTile.getX(), mouseTile.getY());
-		SDL_Rect rect = { 0,0,32,32 };
-		Engine::GetInstance().render.get()->DrawTexture(mouseTileTex,
-			highlightTile.getX(),
-			highlightTile.getY(),
-			&rect);
-		// saves the tile pos for debugging purposes
-		if (mouseTile.getX() >= 0 && mouseTile.getY() >= 0 || once) {
-			tilePosDebug = "[" + std::to_string((int)mouseTile.getX()) + "," + std::to_string((int)mouseTile.getY()) + "] ";
-			once = true;
-		}
-
-		//If mouse button is pressed modify enemy position
-		if (enemyList.size() > 0 && Engine::GetInstance().input.get()->GetMouseButtonDown(1) == KEY_REPEAT) {
-			enemyList[0]->SetPosition(Vector2D(highlightTile.getX(), highlightTile.getY()));
-			enemyList[0]->ResetPath();
-		}
-
-		//Dialogue things
-		dialogueManager->Update();
-		for (NPC* npc : npcs)
-		{
-			if (npc->showcaseDialogue)
-			{
-				dialogueManager->CastDialogue(npc->dialogueName);
-				npc->showcaseDialogue = false;
-			}
-		}
-		
 		break;
 	case GameState::PAUSED:
 		UpdatePaused(dt);
@@ -231,9 +174,10 @@ bool Scene::Update(float dt)
 	default:
 		break;
 	}
-	
+
 	return true;
 }
+
 
 // Called each loop iteration
 bool Scene::PostUpdate()
