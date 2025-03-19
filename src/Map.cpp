@@ -210,12 +210,44 @@ bool Map::Load(std::string path, std::string fileName)
             mapData.layers.push_back(mapLayer);
         }
 
+        for (pugi::xml_node objectGroupNode = mapFileXML.child("map").child("objectgroup"); objectGroupNode != NULL; objectGroupNode = objectGroupNode.next_sibling("objectgroup")) {
+
+            std::string objectLayerName = objectGroupNode.attribute("name").as_string();
+
+            ColliderType colliderType = ColliderType::UNKNOWN;
+
+            if (objectLayerName == "CollisionsDown") {
+                colliderType = ColliderType::FLOOR;
+            }
+            else if (objectLayerName == "CollisionsUp") {
+                colliderType = ColliderType::WALL;
+            }
+
+                for (pugi::xml_node objectNode = objectGroupNode.child("object"); objectNode != NULL; objectNode = objectNode.next_sibling("object")) {
+                    Vector2D position;
+                    position.setX(objectNode.attribute("x").as_float());
+                    position.setY(objectNode.attribute("y").as_float());
+                    float width = objectNode.attribute("width").as_float();
+                    float height = objectNode.attribute("height").as_float();
+
+                    PhysBody* platform = Engine::GetInstance().physics->CreateRectangle(
+                        position.getX() + width / 2,
+                        position.getY() + height / 2,
+                        width, height,
+                        bodyType::STATIC
+                    );
+
+                    platform->ctype = colliderType;
+                }
+        }
+
+        ret = true;
         // L08 TODO 3: Create colliders
         // L08 TODO 7: Assign collider type
         // Later you can create a function here to load and create the colliders from the map
 
         //Iterate the layer and create colliders
-        for (const auto& mapLayer : mapData.layers) {
+       /* for (const auto& mapLayer : mapData.layers) {
             if (mapLayer->name == "Collisions") {
                 for (int i = 0; i < mapData.width; i++) {
                     for (int j = 0; j < mapData.height; j++) {
@@ -230,7 +262,7 @@ bool Map::Load(std::string path, std::string fileName)
             }
         }
 
-        ret = true;
+        ret = true;*/
 
         // L06: TODO 5: LOG all the data loaded iterate all tilesetsand LOG everything
         if (ret == true)

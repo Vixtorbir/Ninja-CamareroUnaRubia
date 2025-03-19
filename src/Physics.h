@@ -30,7 +30,8 @@ enum class ColliderType {
 	ENEMY,
 	SHURIKEN,
 	UNKNOWN,
-	WALL
+	WALL,
+	FLOOR,
 	// ..
 };
 
