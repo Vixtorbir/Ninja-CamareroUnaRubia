@@ -12,8 +12,8 @@ GuiControlButton::GuiControlButton(int id, SDL_Rect bounds, const char* text) : 
 
 	canClick = true;
 	drawBasic = false;
-	texture = Engine::GetInstance().textures.get()->Load("Assets/UI/individualUIsprites/textName.png");
-
+	
+	
 }
 
 GuiControlButton::~GuiControlButton()
@@ -22,10 +22,12 @@ GuiControlButton::~GuiControlButton()
 }
 bool GuiControlButton::Start()
 {
+	texture = Engine::GetInstance().textures.get()->Load("Assets/UI/individualUIsprites/textName.png");
 	return false;
 }
 bool GuiControlButton::Update(float dt)
 {
+	
 	if (state != GuiControlState::DISABLED)
 	{
 		// L16: TODO 3: Update the state of the GUiButton according to the mouse position
@@ -52,10 +54,10 @@ bool GuiControlButton::Update(float dt)
 		switch (state)
 		{
 		case GuiControlState::DISABLED:
-			Engine::GetInstance().render->DrawRectangle(bounds, 200, 200, 200, 255, true, false);
+			Engine::GetInstance().render->DrawTexturedRectangle(texture, bounds.x-200, bounds.y-300,600, 400, false);
 			break;
 		case GuiControlState::NORMAL:
-			Engine::GetInstance().render->DrawRectangle(bounds, 0, 0, 255, 255, true, false);
+			Engine::GetInstance().render->DrawTexturedRectangle(texture, bounds.x-200,bounds.y-170,600,400, false);
 			break;
 		case GuiControlState::FOCUSED:
 			Engine::GetInstance().render->DrawRectangle(bounds, 0, 0, 20, 255, true, false);
@@ -72,12 +74,12 @@ bool GuiControlButton::Update(float dt)
 
 	return false;
 }
-void GuiControlButton::Render() {
+/*void GuiControlButton::Render() {
 	// Draw the button background (texture or rectangle)
-
+	texture = Engine::GetInstance().textures.get()->Load("Assets/UI/individualUIsprites/textName.png");
 	Engine::GetInstance().render.get()->DrawTexture(texture, bounds.x, bounds.y);
 	Engine::GetInstance().render.get()->DrawText(iftext, bounds.x + 10, bounds.y + 10, 255, 255);
-}
+}*/
 	
 
 

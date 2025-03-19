@@ -2,6 +2,7 @@
 
 #include "GuiControl.h"
 #include "Vector2D.h"
+#include "Engine.h"
 
 class GuiControlButton : public GuiControl
 {
@@ -17,12 +18,13 @@ public:
 	bool Update(float dt);
 	void Render();
 
-
+	SDL_Texture* texture;
 private:
 
 	bool canClick = true;
 	bool drawBasic = false;
-	SDL_Texture* texture;
+	
+	//texture = Engine::GetInstance().textures.get()->Load("Assets/UI/individualUIsprites/textName.png");
 	const char* iftext;
 };
 
