@@ -64,6 +64,7 @@ bool GuiControlButton::Update(float dt)
 			break;
 		case GuiControlState::PRESSED:
 			Engine::GetInstance().render->DrawRectangle(bounds, 0, 255, 0, 255, true, false);
+			isClicked = true;
 			break;
 		}
 
@@ -74,13 +75,18 @@ bool GuiControlButton::Update(float dt)
 
 	return false;
 }
-/*void GuiControlButton::Render() {
-	// Draw the button background (texture or rectangle)
-	texture = Engine::GetInstance().textures.get()->Load("Assets/UI/individualUIsprites/textName.png");
-	Engine::GetInstance().render.get()->DrawTexture(texture, bounds.x, bounds.y);
-	Engine::GetInstance().render.get()->DrawText(iftext, bounds.x + 10, bounds.y + 10, 255, 255);
-}*/
-	
+void GuiControlButton::CleanUp()
+{
+	if (texture != nullptr)
+	{
+		SDL_DestroyTexture(texture);
+		texture = nullptr;
+	}
+
+	// Limpiar el texto
+	text = "";
+}
+
 
 
 

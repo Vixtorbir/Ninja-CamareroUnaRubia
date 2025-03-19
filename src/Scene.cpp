@@ -68,7 +68,10 @@ bool Scene::Awake()
 	//
 	dialogueManager->SetModule(this);
 	player->sceneModule = this;
+
 	return ret;
+
+
 }
 
 // Called before the first frame
@@ -88,6 +91,27 @@ bool Scene::Start()
 	Engine::GetInstance().render.get()->camera.x = 0;
 	Engine::GetInstance().render.get()->camera.y = 0;
 
+
+
+	SDL_Rect startButtonPos = { 800, 300, 200, 50 };
+	SDL_Rect optionsButtonPos = { 800, 550, 200, 50 };
+	SDL_Rect exitButtonPos = { 800, 800, 200, 50 };
+
+	// Create buttons if they don't already exist
+
+	startButton = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(
+		GuiControlType::BUTTON, 1, "Start Game", startButtonPos, this);
+
+
+	optionsButton = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(
+		GuiControlType::BUTTON, 2, "Options", optionsButtonPos, this);
+
+
+	exitButton = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(
+		GuiControlType::BUTTON, 3, "Exit", exitButtonPos, this);
+	startButton->Start();
+	optionsButton->Start();
+	exitButton->Start();
 
 
 	return true;
@@ -209,13 +233,7 @@ Vector2D Scene::GetPlayerPosition()
 }
 
 
-bool Scene::OnGuiMouseClickEvent(GuiControl* control)
-{
-	// L15: DONE 5: Implement the OnGuiMouseClickEvent method
-	LOG("Press Gui Control: %d", control->id);
 
-	return true;
-}
 
 void Scene::LoadTextures()
 {
@@ -315,11 +333,15 @@ void Scene::LoadState() {
 }
 void Scene::HandleInput()
 {
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_RETURN) == KEY_DOWN)
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_RETURN) == KEY_DOWN||startButton->isClicked==true)
 	{
 		if (currentState == GameState::MAIN_MENU)
 		{
 			SetState(GameState::PLAYING);
+			startButton->CleanUp();
+			optionsButton->CleanUp();
+			exitButton->CleanUp();
+
 		}
 		else if (currentState == GameState::GAME_OVER)
 		{
@@ -338,33 +360,35 @@ void Scene::HandleInput()
 			SetState(GameState::PLAYING);
 		}
 	}
+
+}
+bool Scene::OnGuiMouseClickEvent(GuiControl* control)
+{
+	// L15: DONE 5: Implement the OnGuiMouseClickEvent method
+	LOG("Press Gui Control: %d", control->id);
+
+	if (control->id == 1) // ID del startButton
+	{
+		SetState(GameState::PLAYING);
+		startButton->CleanUp();
+		optionsButton->CleanUp();
+		exitButton->CleanUp();
+	}
+
+	return true;
 }
 void Scene::UpdateMainMenu(float dt) {
-	Engine::GetInstance().render.get()->DrawText("MAIN MENU: Press enter to start", 600, 400, 750, 255);
-	SDL_Rect startButtonPos = {800, 300, 200, 50};
-	SDL_Rect optionsButtonPos = { 800, 550, 200, 50 };
-	SDL_Rect exitButtonPos = { 800, 800, 200, 50 };
-
-	// Create buttons if they don't already exist
-
-		startButton = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(
-			GuiControlType::BUTTON, 1, "Start Game", startButtonPos, this);
-
-
-		optionsButton = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(
-			GuiControlType::BUTTON, 2, "Options", optionsButtonPos, this);
 	
 
-		exitButton = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(
-			GuiControlType::BUTTON, 3, "Exit", exitButtonPos, this);
+	startButton->Update(dt);
+	optionsButton->Update(dt);	
+	exitButton->Update(dt);
 
-		startButton->Start();
-		optionsButton->Start();
-		exitButton->Start();
+	
 	
 
 	// Render the main menu text
-	Engine::GetInstance().render.get()->DrawText("MAIN MENU", 600, 200, 750, 255);
+	Engine::GetInstance().render.get()->DrawText("MAIN MENU", 600, 40, 750, 255);
 
 
 }
