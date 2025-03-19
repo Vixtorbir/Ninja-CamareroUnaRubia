@@ -7,6 +7,7 @@ class GuiControlButton : public GuiControl
 {
 
 public:
+	GuiControlButton(int id, SDL_Rect bounds, const char* text, bool optionA, bool optionB);
 
 	GuiControlButton(int id, SDL_Rect bounds, const char* text);
 	virtual ~GuiControlButton();
@@ -15,9 +16,10 @@ public:
 
 	// Called each loop iteration
 	bool Update(float dt);
-
+	bool isOptionA = false;
+	bool isOptionB = false;
 private:
-
+	
 	bool canClick = true;
 	bool drawBasic = false;
 };

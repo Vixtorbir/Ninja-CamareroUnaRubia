@@ -10,6 +10,7 @@
 #include "Textures.h"
 #include "Audio.h"
 #include "Scene.h"
+#include "Title.h"
 #include "EntityManager.h"
 #include "Map.h"
 #include "Parallax.h"
@@ -42,6 +43,7 @@ Engine::Engine() {
     // L08: TODO 2: Add Physics module
     physics = std::make_shared<Physics>();
     scene = std::make_shared<Scene>();
+    title = std::make_shared<Title>();
     parallax = std::make_shared<Parallax>();
     map = std::make_shared<Map>();
     entityManager = std::make_shared<EntityManager>();
@@ -60,6 +62,7 @@ Engine::Engine() {
     AddModule(std::static_pointer_cast<Parallax>(parallax));
     AddModule(std::static_pointer_cast<Module>(map));
     AddModule(std::static_pointer_cast<Module>(scene));
+    AddModule(std::static_pointer_cast<Module>(title));
     AddModule(std::static_pointer_cast<Module>(entityManager));
 	AddModule(std::static_pointer_cast<Module>(guiManager));
     AddModule(std::static_pointer_cast<Module>(dialogueManager));
@@ -227,8 +230,7 @@ void Engine::FinishUpdate()
         lastSecFrameCount = 0;
     }
 
-    // Shows the time measurements in the window title
-    // check sprintf formats here https://cplusplus.com/reference/cstdio/printf/
+
     std::stringstream ss;
     ss << scene.get()->GetTilePosDebug()
         << gameTitle

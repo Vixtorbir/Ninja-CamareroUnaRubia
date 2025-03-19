@@ -52,7 +52,7 @@ bool Map::Update(float dt)
 				if (camPos.getY() < 0) camPos.setY(0);
 				Vector2D camPosTile = WorldToMap(camPos.getX(), camPos.getY());
 
-				Vector2D camSize = Vector2D(Engine::GetInstance().render->camera.w + 200, Engine::GetInstance().render->camera.h + 200);
+				Vector2D camSize = Vector2D(Engine::GetInstance().render->camera.w *3, Engine::GetInstance().render->camera.h *3);
 				Vector2D camSizeTile = WorldToMap(camSize.getX(), camSize.getY());
 
 				Vector2D limits = Vector2D(camPosTile.getX() + camSizeTile.getX(), camPosTile.getY() + camSizeTile.getY());
@@ -376,6 +376,28 @@ Properties::Property* Properties::GetProperty(const char* name)
 
     return nullptr;
 }
+
+bool Map::IsTileCollidable(int x, int y) {
+    // Verifica si las coordenadas están dentro de los límites del mapa
+    if (x < 0 || x >= mapData.width || y < 0 || y >= mapData.height) {
+        return false;
+    }
+
+    // Itera sobre las capas del mapa para encontrar la capa de colisiones
+    for (const auto& mapLayer : mapData.layers) {
+        if (mapLayer->name == "Collisions") {
+            int gid = mapLayer->Get(x, y);
+            // Verifica si el gid es diferente de 0, lo que indica que el tile es colisionable
+            if (gid != 0) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+
 
 
 

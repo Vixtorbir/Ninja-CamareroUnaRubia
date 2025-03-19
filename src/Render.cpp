@@ -80,6 +80,7 @@ bool Render::PreUpdate()
 
 bool Render::Update(float dt)
 {
+	SDL_RenderSetLogicalSize(renderer, 1920, 1080);
 	return true;
 }
 
@@ -151,7 +152,7 @@ bool Render::DrawTexture(SDL_Texture* texture, int x, int y, const SDL_Rect* sec
 
 	if(SDL_RenderCopyEx(renderer, texture, section, &rect, angle, p, SDL_FLIP_NONE) != 0)
 	{
-		LOG("Cannot blit to screen. SDL_RenderCopy error: %s", SDL_GetError());
+		//LOG("Cannot blit to screen. SDL_RenderCopy error: %s", SDL_GetError());
 		ret = false;
 	}
 

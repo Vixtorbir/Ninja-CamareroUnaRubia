@@ -8,6 +8,7 @@
 #include "Log.h"
 #include "Physics.h"
 #include "EntityManager.h"
+#include "GuiManager.h"
 //#include "tracy/Tracy.hpp"
 
 Player::Player() : Entity(EntityType::PLAYER)
@@ -50,12 +51,20 @@ bool Player::Start() {
 
 	pbody->body->SetFixedRotation(true);
 
+	popup = (GuiPopup*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::POPUP, 1, "E", btPos, sceneModule);
+	
 
 	// Set the gravity of the body
 	if (!parameters.attribute("gravity").as_bool()) pbody->body->SetGravityScale(0);
 
 	//initialize audio effect
 	pickCoinFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/retro-video-game-coin-pickup-38299.ogg");
+
+	hp = maxHp;
+	timeSinceLastDamage = damageCooldown;
+	canTakeDamage = true;
+
+	hpIconTexture = Engine::GetInstance().textures.get()->Load("Assets/Textures/hp_icon.png");
 
 	return true;
 }
@@ -72,9 +81,6 @@ bool Player::Update(float dt)
 	//ZoneScoped;
 	// Code you want to profile
 
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_E) == KEY_DOWN) {
-		//ShootShuriken();
-	}
 	
 	// L08 TODO 5: Add physics to the player - updated player position using physics
 	b2Vec2 velocity = b2Vec2(0, pbody->body->GetLinearVelocity().y);
@@ -191,6 +197,14 @@ bool Player::Update(float dt)
 		}
 	}
 
+	if (!canTakeDamage) {
+		timeSinceLastDamage += dt / 1000;
+		if (timeSinceLastDamage >= damageCooldown) {
+			canTakeDamage = true;
+			timeSinceLastDamage = 0.0f;
+		}
+	}
+
 
 	if (isJumping == true)
 	{
@@ -207,11 +221,29 @@ bool Player::Update(float dt)
 	Engine::GetInstance().render.get()->DrawEntity(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame(), 1, 0, 0, 0, (int)playerDirection);
 	currentAnimation->Update();
 
-	camX = -(float)position.getX() + (Engine::GetInstance().render.get()->camera.w / 2);
-	camY = -(float)position.getY() + (Engine::GetInstance().render.get()->camera.h / 2);
+	if (!Engine::GetInstance().scene.get()->watchtitle)
+	{
+		camX = -(float)position.getX() + (Engine::GetInstance().render.get()->camera.w / 2);
+		camY = -(float)position.getY() + (Engine::GetInstance().render.get()->camera.h / 2);
+
+		Engine::GetInstance().render.get()->camera.x += (camX - Engine::GetInstance().render.get()->camera.x) * smoothFactor;
+		Engine::GetInstance().render.get()->camera.y += (camY - Engine::GetInstance().render.get()->camera.y) * smoothFactor;
+	}
+	else {
+		camX = 1920 + (Engine::GetInstance().render.get()->camera.w / 2);
+		camY = -(float)position.getY() + (Engine::GetInstance().render.get()->camera.h / 2);
+
+		Engine::GetInstance().render.get()->camera.x += (camX - Engine::GetInstance().render.get()->camera.x) * smoothFactor;
+		Engine::GetInstance().render.get()->camera.y += (camY - Engine::GetInstance().render.get()->camera.y) * smoothFactor;
+	}
 
 	Engine::GetInstance().render.get()->camera.x += (camX - Engine::GetInstance().render.get()->camera.x) * smoothFactor;
 	Engine::GetInstance().render.get()->camera.y += (camY - Engine::GetInstance().render.get()->camera.y) * smoothFactor;
+
+	for (int i = 0; i < hp; ++i) {
+		Engine::GetInstance().render.get()->DrawTexture(hpIconTexture, 10 + i * 40, 10);
+	}
+
 	return true;
 }
 float Player::Lerp(float start, float end, float factor) {
@@ -224,6 +256,16 @@ bool Player::CleanUp()
 	return true;
 }
 
+void Player::GuiPOPup(GuiPopups guiPopup)
+{
+	switch (guiPopup)
+	{
+	case GuiPopups::E_Interact:
+		popup->isActive = true;
+		break;
+	}
+}
+
 // L08 TODO 6: Define OnCollision function for the player. 
 void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 	switch (physB->ctype)
@@ -231,6 +273,9 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 	case ColliderType::PLATFORM:
 		isJumping = false;
 		hasAlreadyJumpedOnce = 0;
+		break;
+	case ColliderType::NPC:
+		GuiPOPup(GuiPopups::E_Interact);
 		break;
 	case ColliderType::WALL:
 		touchingWall = true;
@@ -241,6 +286,10 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 		break;
 	case ColliderType::UNKNOWN:
 		break;
+
+	case ColliderType::ENEMY:
+		TakeDamage(1); // El jugador recibe 1 punto de da�o
+		break;
 	}
 }
 
@@ -250,7 +299,9 @@ void Player::OnCollisionEnd(PhysBody* physA, PhysBody* physB)
 	{
 	case ColliderType::PLATFORM:
 		break;
-	case ColliderType::ITEM:
+	case ColliderType::NPC:
+		popup->isActive = false;
+
 		break;
 	case ColliderType::UNKNOWN:
 		break;
@@ -273,19 +324,22 @@ Vector2D Player::GetPosition() {
 	return pos;
 }
 
-void Player::ShootShuriken() {
-	const int maxShurikens = 12;
-
-	if (shurikens.size() >= maxShurikens) {
-		return;
+void Player::TakeDamage(int damage) {
+	if (canTakeDamage) {
+		hp -= damage;
+		if (hp <= 0) {
+			Die();
+		}
+		canTakeDamage = false;
+		timeSinceLastDamage = 0.0f;
 	}
-
-	float shurikenSpeed = 5.0f;
-	float spawnX = position.getX() + (texW / 2);
-	float spawnY = position.getY() + (texH / 2);
-
-	float direction = (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_A) == KEY_REPEAT) ? -shurikenSpeed : shurikenSpeed;
-
-	Shuriken* newShuriken = (Shuriken*)Engine::GetInstance().entityManager->CreateEntity(EntityType::SHURIKENS);
-	shurikens.push_back(newShuriken);
 }
+
+
+void Player::Die() {
+	
+	LOG("Player has died");
+	// Puedes reiniciar el nivel, mostrar una pantalla de game over, etc.
+}
+
+

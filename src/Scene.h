@@ -1,3 +1,5 @@
+#ifndef SCENE_H
+#define SCENE_H
 #pragma once
 
 #include "Module.h"
@@ -9,12 +11,20 @@
 #include "DialogueManager.h"
 #include "Parallax.h"
 
+#include "Npc.h"
+
 struct SDL_Texture;
+
+enum class GameState {
+	MAIN_MENU,
+	PLAYING,
+	PAUSED,
+	GAME_OVER
+};
 
 class Scene : public Module
 {
 public:
-
 	Scene();
 
 	// Destructor
@@ -51,16 +61,19 @@ public:
 
 	void LoadTextures();
 
+	void SetState(GameState newState);
+	GameState GetState() const;
+
 public:
 	// Get tilePosDebug value
 	std::string GetTilePosDebug() {
 		return tilePosDebug;
-
 	}
 
 public:
 	SDL_Texture* mouseTileTex = nullptr;
 	SDL_Texture* textureBuffer = nullptr;
+	SDL_Texture* Hanzo = nullptr;
 
 	std::string tilePosDebug = "[0,0]";
 	bool once = false;
@@ -69,6 +82,8 @@ public:
 	Player* player;
 	std::vector<Enemy*> enemyList;
 
+	NPC* npc;
+	std::vector<NPC*> npcs;
 
 	// L16: TODO 2: Declare a GUI Control Button 
 	GuiControlButton* guiBt;
@@ -76,8 +91,15 @@ public:
 	Dialogue* dialogue;
 	DialogueManager* dialogueManager;
 
+	bool watchtitle = false;
+
+	GameState currentState = GameState::MAIN_MENU;
+
+	void HandleInput();
+
 private:
 	Parallax* parallax = nullptr;
-
+	
 };
 
+#endif
