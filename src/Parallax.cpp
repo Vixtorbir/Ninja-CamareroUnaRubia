@@ -27,24 +27,26 @@ bool Parallax::Update(float dt) {
     auto& engine = Engine::GetInstance();
     float cameraX = static_cast<float>(engine.render->camera.x);
 
-    for (auto& layer : layers) {
-        float layerPosition = -cameraX * layer.speed;
+    int fixedYPosition = 1080 - sizeH;
 
-        if (layerPosition > sizeW) {
-            layerPosition -= sizeW;
+    for (auto& layer : layers) {
+        float layerPositionX = -cameraX * layer.speed;
+
+        if (layerPositionX > sizeW) {
+            layerPositionX -= sizeW;
         }
-        else if (layerPosition < -sizeW) {
-            layerPosition += sizeW;
+        else if (layerPositionX < -sizeW) {
+            layerPositionX += sizeW;
         }
 
         for (int i = -1; i <= 1; ++i) {
             SDL_QueryTexture(layer.texture, NULL, NULL, &sizeW, &sizeH);
 
-            //RESOLUTION TO FIX
-             int drawX = static_cast<int>(layerPosition + i * sizeW) + 1920 - sizeW;
+            int drawX = static_cast<int>(layerPositionX + i * sizeW) + 1920 - sizeW;
+            int drawY = fixedYPosition;
 
             SDL_Rect rect = { 0, 0, sizeW, sizeH };
-            engine.render->DrawTexture(layer.texture, drawX, (int)engine.render->camera.y, &rect, SDL_FLIP_NONE);
+            engine.render->DrawTexture(layer.texture, -drawX, drawY, &rect, SDL_FLIP_NONE);
         }
     }
 

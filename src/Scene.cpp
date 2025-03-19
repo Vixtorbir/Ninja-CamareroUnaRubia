@@ -231,6 +231,9 @@ void Scene::UpdateGameplay(float dt) {
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_P) == KEY_DOWN) {
 		SetState(GameState::PAUSED);
 	}
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_M) == KEY_DOWN) {
+		SetState(GameState::MAIN_MENU);
+	}
 }
 
 
