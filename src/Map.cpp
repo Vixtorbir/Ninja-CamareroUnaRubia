@@ -84,7 +84,7 @@ bool Map::Update(float dt)
             }
         }
     }
-
+    UpdateAnimatedTiles(dt);
     return ret;
 }
 
@@ -179,7 +179,27 @@ bool Map::Load(std::string path, std::string fileName)
             tileSet->margin = tilesetNode.attribute("margin").as_int();
             tileSet->tileCount = tilesetNode.attribute("tilecount").as_int();
             tileSet->columns = tilesetNode.attribute("columns").as_int();
+            for (pugi::xml_node tileNode = tilesetNode.child("tile"); tileNode; tileNode = tileNode.next_sibling("tile")) {
+                int localId = tileNode.attribute("id").as_int();
+                int gid = tileSet->firstGid + localId;
 
+                pugi::xml_node animationNode = tileNode.child("animation");
+                if (animationNode) {
+                    AnimatedTile animTile;
+                    animTile.gid = gid;
+                    animTile.totalDuration = 0;
+
+                    for (pugi::xml_node frameNode = animationNode.child("frame"); frameNode; frameNode = frameNode.next_sibling("frame")) {
+                        AnimationFrame frame;
+                        frame.tileId = frameNode.attribute("tileid").as_int() + tileSet->firstGid;
+                        frame.duration = frameNode.attribute("duration").as_int();
+                        animTile.frames.push_back(frame);
+                        animTile.totalDuration += frame.duration;
+                    }
+
+                    tileSet->animatedTiles[gid] = animTile;
+                }
+            }
 			//Load the tileset image
 			std::string imgName = tilesetNode.child("image").attribute("source").as_string();
             tileSet->texture = Engine::GetInstance().textures->Load((mapPath+imgName).c_str());
@@ -298,7 +318,25 @@ bool Map::Load(std::string path, std::string fileName)
     mapLoaded = ret;
     return ret;
 }
+void Map::UpdateAnimatedTiles(float dt) {
+    static int elapsedTime = 0;
+    elapsedTime += static_cast<int>(dt) * 10;
 
+    for (auto& tileset : mapData.tilesets) {
+        for (auto& animatedTile : tileset->animatedTiles) {
+            int cycleTime = elapsedTime % animatedTile.second.totalDuration;
+            int timeAccumulator = 0;
+
+            for (const auto& frame : animatedTile.second.frames) {
+                timeAccumulator += frame.duration;
+                if (cycleTime < timeAccumulator) {
+                    animatedTile.second.gid = frame.tileId;
+                    break;
+                }
+            }
+        }
+    }
+}
 // L07: TODO 8: Create a method that translates x,y coordinates from map positions to world positions
 Vector2D Map::MapToWorld(int x, int y) const
 {
