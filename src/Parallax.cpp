@@ -53,6 +53,7 @@ bool Parallax::Update(float dt) {
     return true;
 }
 
+
 bool Parallax::CleanUp() {
     LOG("CleanUp Parallax");
     for (auto& layer : layers) {
