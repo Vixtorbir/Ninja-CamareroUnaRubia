@@ -71,6 +71,9 @@ bool Player::Start() {
 
 bool Player::Update(float dt)
 {
+
+	if (Engine::GetInstance().scene.get()->currentState != GameState::PLAYING) return true;
+
 	if (!canDash) {
 		dashTimer += dt / 1000;
 		if (dashTimer >= dashCooldown) {

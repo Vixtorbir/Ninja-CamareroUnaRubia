@@ -64,6 +64,7 @@ bool Enemy::Update(float dt)
 	//ZoneScoped;
 	// 
 	
+	if (Engine::GetInstance().scene.get()->currentState != GameState::PLAYING) return true;
 
 	Vector2D playerPos = Engine::GetInstance().scene.get()->player->GetPosition();
 	Vector2D enemyPos = GetPosition();
