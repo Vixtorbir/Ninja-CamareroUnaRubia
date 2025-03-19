@@ -163,15 +163,12 @@ bool Scene::Update(float dt)
 	HandleInput();
 
 
-
-	switch (currentState)
-	{
+	switch (currentState) {
 	case GameState::MAIN_MENU:
-		Engine::GetInstance().render.get()->DrawText("Press ENTER to Start", 600, 400, 750, 255);
-
+		UpdateMainMenu(dt);
 		break;
 	case GameState::PLAYING:
-	{
+		UpdatePlaying(dt);
 		float camSpeed = 1;
 
 		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
@@ -201,7 +198,6 @@ bool Scene::Update(float dt)
 			highlightTile.getX(),
 			highlightTile.getY(),
 			&rect);
-
 		// saves the tile pos for debugging purposes
 		if (mouseTile.getX() >= 0 && mouseTile.getY() >= 0 || once) {
 			tilePosDebug = "[" + std::to_string((int)mouseTile.getX()) + "," + std::to_string((int)mouseTile.getY()) + "] ";
@@ -224,15 +220,18 @@ bool Scene::Update(float dt)
 				npc->showcaseDialogue = false;
 			}
 		}
+		
 		break;
-	}
 	case GameState::PAUSED:
-		// Render pause menu
+		UpdatePaused(dt);
 		break;
 	case GameState::GAME_OVER:
-		// Render game over screen
+		UpdateGameOver(dt);
+		break;
+	default:
 		break;
 	}
+	
 	return true;
 }
 
@@ -395,4 +394,24 @@ void Scene::HandleInput()
 			SetState(GameState::PLAYING);
 		}
 	}
+}
+void Scene::UpdateMainMenu(float dt) {
+	Engine::GetInstance().render.get()->DrawText("MAIN MENU: Press enter to start", 600, 400, 750, 255);
+}
+
+void Scene::UpdatePlaying(float dt) {
+	// Handle gameplay logic
+	// Example: Update player, enemies, and other game entities
+	player->Update(dt);
+	for (auto& enemy : enemyList) {
+		enemy->Update(dt);
+	}
+}
+
+void Scene::UpdatePaused(float dt) {
+	Engine::GetInstance().render.get()->DrawText("PAUSED: Press enter to start", 600, 400, 750, 255);
+}
+
+void Scene::UpdateGameOver(float dt) {
+	Engine::GetInstance().render.get()->DrawText("GAME OVER:Press enter to start", 600, 400, 750, 255);
 }

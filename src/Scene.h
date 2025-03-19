@@ -64,6 +64,13 @@ public:
 	void SetState(GameState newState);
 	GameState GetState() const;
 
+
+	void UpdateMainMenu(float dt);
+	void UpdatePlaying(float dt);
+	void UpdatePaused(float dt);
+	void UpdateGameOver(float dt);
+
+
 public:
 	// Get tilePosDebug value
 	std::string GetTilePosDebug() {
