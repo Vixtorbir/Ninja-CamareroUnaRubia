@@ -8,29 +8,23 @@ class GuiControlButton : public GuiControl
 {
 
 public:
-	GuiControlButton(int id, SDL_Rect bounds, const char* text, bool optionA, bool optionB);
 
 	GuiControlButton(int id, SDL_Rect bounds, const char* text);
 	virtual ~GuiControlButton();
 
 	bool Start();
 	bool Update(float dt);
-	void Render();
 	void CleanUp();
 
 	SDL_Texture* texture;
 	bool isClicked = false;
 
 private:
-
-	SDL_Texture* texture;
 	
 	bool canClick = true;
 	bool drawBasic = false;
 
 	
-	//texture = Engine::GetInstance().textures.get()->Load("Assets/UI/individualUIsprites/textName.png");
-	const char* iftext;
 };
 
 #pragma once

@@ -69,12 +69,6 @@ bool GuiControlButton::Update(float dt)
 		}
 
 		Engine::GetInstance().render->DrawText(text.c_str(), bounds.x, bounds.y, bounds.w, bounds.h);
-		
-		if (isOptionA || isOptionB)
-		{
-			Engine::GetInstance().render.get()->DrawTexture(texture, 0,0, &bounds);
-
-		}
 
 	}
 

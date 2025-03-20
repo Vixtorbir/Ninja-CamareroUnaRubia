@@ -423,7 +423,7 @@ bool Map::IsTileCollidable(int x, int y) {
 
     // Itera sobre las capas del mapa para encontrar la capa de colisiones
     for (const auto& mapLayer : mapData.layers) {
-        if (mapLayer->name == "Collisions") {
+        if (mapLayer->name == "Floor") {
             int gid = mapLayer->Get(x, y);
             // Verifica si el gid es diferente de 0, lo que indica que el tile es colisionable
             if (gid != 0) {

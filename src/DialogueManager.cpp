@@ -104,14 +104,14 @@ void DialogueManager::ShowNextDialogue()
 
         }
         else {
-            Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::OPTIONA, 1, text.c_str(), dialoguePos, module);
-            Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::OPTIONB, 1, character.c_str(), namePos, module);
+            Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 1, text.c_str(), dialoguePos, module);
+            Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 1, character.c_str(), namePos, module);
 
         }
 
 
-        Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::OPTIONA, 1, character.c_str(), optionAPos, module);
-        Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::OPTIONB, 1, character.c_str(), optionBPos, module);
+        Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 1, character.c_str(), optionAPos, module);
+        Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 1, character.c_str(), optionBPos, module);
 
 
         if (!isBranching) currentDialogueIndex++;
