@@ -55,6 +55,8 @@ public:
 
 	void Die();
 
+	void ChangeHitboxSize(float width, float height);
+
 	
 
 
@@ -117,4 +119,6 @@ public:
 	bool canTakeDamage = true;
 
 	SDL_Texture* hpIconTexture;
+
+	bool crouched;
 };

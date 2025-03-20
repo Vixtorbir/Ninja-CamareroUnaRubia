@@ -14,6 +14,7 @@
 Player::Player() : Entity(EntityType::PLAYER)
 {
 	name = "Player";
+	crouched = false;
 }
 
 Player::~Player() {
@@ -71,6 +72,9 @@ bool Player::Start() {
 
 bool Player::Update(float dt)
 {
+
+	if (Engine::GetInstance().scene.get()->currentState != GameState::PLAYING) return true;
+
 	if (!canDash) {
 		dashTimer += dt / 1000;
 		if (dashTimer >= dashCooldown) {
@@ -112,8 +116,15 @@ bool Player::Update(float dt)
 	}
 	*/
 	// Move down
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) {
-		velocity.y = 0.2 * 16;
+
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_DOWN) {
+		currentAnimation = &idle; // Cambiar a animación de agachado después
+		ChangeHitboxSize(texW, texH / 2); // Reduce el hitbox
+	}
+
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_UP) {
+		currentAnimation = &idle;
+		ChangeHitboxSize(texW, texH); // Restaura el hitbox
 	}
 
 	//Jump
@@ -342,4 +353,24 @@ void Player::Die() {
 	// Puedes reiniciar el nivel, mostrar una pantalla de game over, etc.
 }
 
+void Player::ChangeHitboxSize(float width, float height) {
+	// Destroy the current fixture
+	b2Fixture* fixture = pbody->body->GetFixtureList();
+	while (fixture != nullptr) {
+		b2Fixture* next = fixture->GetNext();
+		pbody->body->DestroyFixture(fixture);
+		fixture = next;
+	}
+
+	// Create a new fixture with the new size
+	if (height == texH / 2) {
+	pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX()+55, (int)position.getY()+200, width, height, bodyType::DYNAMIC);
+	}
+	else {
+		pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX()+55, (int)position.getY()+100, width, height, bodyType::DYNAMIC);
+	}
+	pbody->listener = this;
+	pbody->ctype = ColliderType::PLAYER;
+	pbody->body->SetFixedRotation(true);
+}
 
