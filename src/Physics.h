@@ -24,13 +24,14 @@ enum bodyType {
 };
 
 enum class ColliderType {
-	PLAYER, 
+	PLAYER,
 	ITEM,
-	PLATFORM, 
+	PLATFORM,
 	ENEMY,
 	SHURIKEN,
 	UNKNOWN,
 	WALL,
+	FLOOR,
 	NPC
 	// ..
 };
