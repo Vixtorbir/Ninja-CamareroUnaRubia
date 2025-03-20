@@ -253,6 +253,38 @@ GameState Scene::GetState() const {
 }
 
 
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_RETURN) == KEY_DOWN) {
+		SetState(GameState::PLAYING);
+	}
+}
+
+
+void Scene::UpdateGameplay(float dt) {
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_P) == KEY_DOWN) {
+		SetState(GameState::PAUSED);
+	}
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_M) == KEY_DOWN) {
+		SetState(GameState::MAIN_MENU);
+	}
+}
+
+
+void Scene::UpdatePauseMenu() {
+	Engine::GetInstance().render.get()->DrawText("PAUSED - Press ESC to Resume",600, 400, 750, 255);
+
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_P) == KEY_DOWN) {
+		SetState(GameState::PLAYING);
+	}
+}
+
+
+void Scene::UpdateGameOver() {
+	Engine::GetInstance().render.get()->DrawText("GAME OVER - Press R to Restart", 100, 100, 20, { 255});
+
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_R) == KEY_DOWN) {
+		SetState(GameState::MAIN_MENU);
+	}
+}
 void Scene::SaveState() {
 
 	pugi::xml_document loadFile;
