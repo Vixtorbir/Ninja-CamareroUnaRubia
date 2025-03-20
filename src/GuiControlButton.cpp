@@ -3,16 +3,8 @@
 #include "Engine.h"
 #include "Audio.h"
 #include "Textures.h"
-GuiControlButton::GuiControlButton(int id, SDL_Rect bounds, const char* text, bool optionA, bool optionB) : GuiControl(GuiControlType::BUTTON, id)
-{
-	this->bounds = bounds;
-	this->text = text;
 
-	canClick = true;
-	drawBasic = false;
-	this->isOptionA = optionA;
-	this->isOptionB = optionB;
-}
+#define LOG(msg) std::cerr << msg << std::endl
 GuiControlButton::GuiControlButton(int id, SDL_Rect bounds, const char* text) : GuiControl(GuiControlType::BUTTON, id)
 {
 	this->bounds = bounds;
@@ -20,6 +12,8 @@ GuiControlButton::GuiControlButton(int id, SDL_Rect bounds, const char* text) : 
 
 	canClick = true;
 	drawBasic = false;
+	
+	
 }
 
 GuiControlButton::~GuiControlButton()
@@ -28,12 +22,12 @@ GuiControlButton::~GuiControlButton()
 }
 bool GuiControlButton::Start()
 {
-	texture = Engine::GetInstance().textures.get()->Load("Assets/Portraits/UI/textName.png");
-
+	texture = Engine::GetInstance().textures.get()->Load("Assets/UI/individualUIsprites/textName.png");
 	return false;
 }
 bool GuiControlButton::Update(float dt)
 {
+	
 	if (state != GuiControlState::DISABLED)
 	{
 		// L16: TODO 3: Update the state of the GUiButton according to the mouse position
@@ -60,16 +54,17 @@ bool GuiControlButton::Update(float dt)
 		switch (state)
 		{
 		case GuiControlState::DISABLED:
-			Engine::GetInstance().render->DrawRectangle(bounds, 200, 200, 200, 255, true, false);
+			Engine::GetInstance().render->DrawTexturedRectangle(texture, bounds.x-200, bounds.y-300,600, 400, false);
 			break;
 		case GuiControlState::NORMAL:
-			//Engine::GetInstance().render->DrawRectangle(bounds, 0, 0, 255, 255, true, false);
+			Engine::GetInstance().render->DrawTexturedRectangle(texture, bounds.x-200,bounds.y-170,600,400, false);
 			break;
 		case GuiControlState::FOCUSED:
 			Engine::GetInstance().render->DrawRectangle(bounds, 0, 0, 20, 255, true, false);
 			break;
 		case GuiControlState::PRESSED:
 			Engine::GetInstance().render->DrawRectangle(bounds, 0, 255, 0, 255, true, false);
+			isClicked = true;
 			break;
 		}
 
@@ -85,4 +80,19 @@ bool GuiControlButton::Update(float dt)
 
 	return false;
 }
+void GuiControlButton::CleanUp()
+{
+	if (texture != nullptr)
+	{
+		SDL_DestroyTexture(texture);
+		texture = nullptr;
+	}
+
+	// Limpiar el texto
+	text = "";
+}
+
+
+
+
 

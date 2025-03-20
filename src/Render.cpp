@@ -232,6 +232,33 @@ bool Render::DrawRectangle(const SDL_Rect& rect, Uint8 r, Uint8 g, Uint8 b, Uint
 
 	return ret;
 }
+bool Render::DrawTexturedRectangle(SDL_Texture* texture, int posX, int posY, int width, int height, bool use_camera) const
+{
+	bool ret = true;
+	int scale = Engine::GetInstance().window.get()->GetScale();
+
+	SDL_Rect rect;
+	rect.x = posX;
+	rect.y = posY;
+	rect.w = width;
+	rect.h = height;
+
+	if (use_camera)
+	{
+		rect.x = (int)(camera.x + posX * scale);
+		rect.y = (int)(camera.y + posY * scale);
+		rect.w *= scale;
+		rect.h *= scale;
+	}
+
+	if (SDL_RenderCopy(renderer, texture, NULL, &rect) != 0)
+	{
+		LOG("Cannot draw textured rectangle to screen. SDL_RenderCopy error: %s", SDL_GetError());
+		ret = false;
+	}
+
+	return ret;
+}
 
 bool Render::DrawLine(int x1, int y1, int x2, int y2, Uint8 r, Uint8 g, Uint8 b, Uint8 a, bool use_camera) const
 {

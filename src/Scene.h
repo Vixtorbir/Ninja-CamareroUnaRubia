@@ -1,5 +1,4 @@
-#ifndef SCENE_H
-#define SCENE_H
+
 #pragma once
 
 #include "Module.h"
@@ -64,6 +63,13 @@ public:
 	void SetState(GameState newState);
 	GameState GetState() const;
 
+
+	void UpdateMainMenu(float dt);
+	void UpdatePlaying(float dt);
+	void UpdatePaused(float dt);
+	void UpdateGameOver(float dt);
+
+
 public:
 	// Get tilePosDebug value
 	std::string GetTilePosDebug() {
@@ -97,9 +103,11 @@ public:
 
 	void HandleInput();
 
+	GuiControlButton* startButton = nullptr;
+	GuiControlButton* optionsButton = nullptr;
+	GuiControlButton* exitButton = nullptr;
+
 private:
 	Parallax* parallax = nullptr;
 	
 };
-
-#endif

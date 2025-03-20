@@ -68,7 +68,10 @@ bool Scene::Awake()
 	//
 	dialogueManager->SetModule(this);
 	player->sceneModule = this;
+
 	return ret;
+
+
 }
 
 // Called before the first frame
@@ -90,6 +93,27 @@ bool Scene::Start()
 
 
 
+	SDL_Rect startButtonPos = { 800, 300, 200, 50 };
+	SDL_Rect optionsButtonPos = { 800, 550, 200, 50 };
+	SDL_Rect exitButtonPos = { 800, 800, 200, 50 };
+
+	// Create buttons if they don't already exist
+
+	startButton = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(
+		GuiControlType::BUTTON, 1, "Start Game", startButtonPos, this);
+
+
+	optionsButton = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(
+		GuiControlType::BUTTON, 2, "Options", optionsButtonPos, this);
+
+
+	exitButton = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(
+		GuiControlType::BUTTON, 3, "Exit", exitButtonPos, this);
+	startButton->Start();
+	optionsButton->Start();
+	exitButton->Start();
+
+
 	return true;
 }
 
@@ -102,7 +126,6 @@ bool Scene::PreUpdate()
 // Called each loop iteration
 bool Scene::Update(float dt)
 {
-
 	//L03 TODO 3: Make the camera movement independent of framerate
 	float camSpeed = 1;
 
@@ -134,8 +157,6 @@ bool Scene::Update(float dt)
 		highlightTile.getY(),
 		&rect);
 
-
-
 	// saves the tile pos for debugging purposes
 	if (mouseTile.getX() >= 0 && mouseTile.getY() >= 0 || once) {
 		tilePosDebug = "[" + std::to_string((int)mouseTile.getX()) + "," + std::to_string((int)mouseTile.getY()) + "] ";
@@ -143,7 +164,6 @@ bool Scene::Update(float dt)
 	}
 
 	//If mouse button is pressed modify enemy position
-
 	if (enemyList.size() > 0 && Engine::GetInstance().input.get()->GetMouseButtonDown(1) == KEY_REPEAT) {
 		enemyList[0]->SetPosition(Vector2D(highlightTile.getX(), highlightTile.getY()));
 		enemyList[0]->ResetPath();
@@ -162,79 +182,26 @@ bool Scene::Update(float dt)
 
 	HandleInput();
 
-
-
-	switch (currentState)
-	{
+	switch (currentState) {
 	case GameState::MAIN_MENU:
-		Engine::GetInstance().render.get()->DrawText("Press ENTER to Start", 600, 400, 750, 255);
-
+		UpdateMainMenu(dt);
 		break;
 	case GameState::PLAYING:
-	{
-		float camSpeed = 1;
-
-		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
-			Engine::GetInstance().render.get()->camera.y -= ceil(camSpeed * dt);
-
-		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
-			Engine::GetInstance().render.get()->camera.y += ceil(camSpeed * dt);
-
-		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
-			Engine::GetInstance().render.get()->camera.x -= ceil(camSpeed * dt);
-
-		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
-			Engine::GetInstance().render.get()->camera.x += ceil(camSpeed * dt);
-
-		// L10 TODO 6: Implement a method that repositions the player in the map with a mouse click
-
-		//Get mouse position and obtain the map coordinate
-		int scale = Engine::GetInstance().window.get()->GetScale();
-		Vector2D mousePos = Engine::GetInstance().input.get()->GetMousePosition();
-		Vector2D mouseTile = Engine::GetInstance().map.get()->WorldToMap(mousePos.getX() - Engine::GetInstance().render.get()->camera.x / scale,
-			mousePos.getY() - Engine::GetInstance().render.get()->camera.y / scale);
-
-		//Render a texture where the mouse is over to highlight the tile, use the texture 'mouseTileTex'
-		Vector2D highlightTile = Engine::GetInstance().map.get()->MapToWorld(mouseTile.getX(), mouseTile.getY());
-		SDL_Rect rect = { 0,0,32,32 };
-		Engine::GetInstance().render.get()->DrawTexture(mouseTileTex,
-			highlightTile.getX(),
-			highlightTile.getY(),
-			&rect);
-
-		// saves the tile pos for debugging purposes
-		if (mouseTile.getX() >= 0 && mouseTile.getY() >= 0 || once) {
-			tilePosDebug = "[" + std::to_string((int)mouseTile.getX()) + "," + std::to_string((int)mouseTile.getY()) + "] ";
-			once = true;
-		}
-
-		//If mouse button is pressed modify enemy position
-		if (enemyList.size() > 0 && Engine::GetInstance().input.get()->GetMouseButtonDown(1) == KEY_REPEAT) {
-			enemyList[0]->SetPosition(Vector2D(highlightTile.getX(), highlightTile.getY()));
-			enemyList[0]->ResetPath();
-		}
-
-		//Dialogue things
-		dialogueManager->Update();
-		for (NPC* npc : npcs)
-		{
-			if (npc->showcaseDialogue)
-			{
-				dialogueManager->CastDialogue(npc->dialogueName);
-				npc->showcaseDialogue = false;
-			}
-		}
+		UpdatePlaying(dt);
 		break;
-	}
 	case GameState::PAUSED:
-		// Render pause menu
+		UpdatePaused(dt);
 		break;
 	case GameState::GAME_OVER:
-		// Render game over screen
+		UpdateGameOver(dt);
+		break;
+	default:
 		break;
 	}
+
 	return true;
 }
+
 
 // Called each loop iteration
 bool Scene::PostUpdate()
@@ -266,13 +233,7 @@ Vector2D Scene::GetPlayerPosition()
 }
 
 
-bool Scene::OnGuiMouseClickEvent(GuiControl* control)
-{
-	// L15: DONE 5: Implement the OnGuiMouseClickEvent method
-	LOG("Press Gui Control: %d", control->id);
 
-	return true;
-}
 
 void Scene::LoadTextures()
 {
@@ -372,11 +333,15 @@ void Scene::LoadState() {
 }
 void Scene::HandleInput()
 {
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_RETURN) == KEY_DOWN)
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_RETURN) == KEY_DOWN||startButton->isClicked==true)
 	{
 		if (currentState == GameState::MAIN_MENU)
 		{
 			SetState(GameState::PLAYING);
+			startButton->CleanUp();
+			optionsButton->CleanUp();
+			exitButton->CleanUp();
+
 		}
 		else if (currentState == GameState::GAME_OVER)
 		{
@@ -395,4 +360,52 @@ void Scene::HandleInput()
 			SetState(GameState::PLAYING);
 		}
 	}
+
+}
+bool Scene::OnGuiMouseClickEvent(GuiControl* control)
+{
+	// L15: DONE 5: Implement the OnGuiMouseClickEvent method
+	LOG("Press Gui Control: %d", control->id);
+
+	if (control->id == 1) // ID del startButton
+	{
+		SetState(GameState::PLAYING);
+		startButton->CleanUp();
+		optionsButton->CleanUp();
+		exitButton->CleanUp();
+	}
+
+	return true;
+}
+void Scene::UpdateMainMenu(float dt) {
+	
+
+	startButton->Update(dt);
+	optionsButton->Update(dt);	
+	exitButton->Update(dt);
+
+	
+	
+
+	// Render the main menu text
+	Engine::GetInstance().render.get()->DrawText("MAIN MENU", 600, 40, 750, 255);
+
+
+}
+
+void Scene::UpdatePlaying(float dt) {
+	// Handle gameplay logic
+	// Example: Update player, enemies, and other game entities
+	player->Update(dt);
+	for (auto& enemy : enemyList) {
+		enemy->Update(dt);
+	}
+}
+
+void Scene::UpdatePaused(float dt) {
+	Engine::GetInstance().render.get()->DrawText("PAUSED: Press enter to start", 600, 400, 750, 255);
+}
+
+void Scene::UpdateGameOver(float dt) {
+	Engine::GetInstance().render.get()->DrawText("GAME OVER:Press enter to start", 600, 400, 750, 255);
 }
