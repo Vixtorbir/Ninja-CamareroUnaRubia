@@ -234,19 +234,34 @@ bool Map::Load(std::string path, std::string fileName)
         // L08 TODO 7: Assign collider type
         // Iterate the object groups and create colliders
         for (pugi::xml_node objectGroupNode = mapFileXML.child("map").child("objectgroup"); objectGroupNode != NULL; objectGroupNode = objectGroupNode.next_sibling("objectgroup")) {
-            ObjectGroup* objectGroup = new ObjectGroup();
-            objectGroup->name = objectGroupNode.attribute("name").as_string();
 
-            for (pugi::xml_node objectNode = objectGroupNode.child("object"); objectNode != NULL; objectNode = objectNode.next_sibling("object")) {
-                Object* object = new Object();
-                object->x = objectNode.attribute("x").as_float();
-                object->y = objectNode.attribute("y").as_float();
-                object->width = objectNode.attribute("width").as_float();
-                object->height = objectNode.attribute("height").as_float();
-                objectGroup->objects.push_back(object);
+            std::string objectLayerName = objectGroupNode.attribute("name").as_string();
+
+            ColliderType colliderType = ColliderType::UNKNOWN;
+
+            if (objectLayerName == "Floor") {
+                colliderType = ColliderType::PLATFORM;
+            }
+            else if (objectLayerName == "Wall") {
+                colliderType = ColliderType::WALL;
             }
 
-            mapData.objectGroups.push_back(objectGroup);
+            for (pugi::xml_node objectNode = objectGroupNode.child("object"); objectNode != NULL; objectNode = objectNode.next_sibling("object")) {
+                Vector2D position;
+                position.setX(objectNode.attribute("x").as_float());
+                position.setY(objectNode.attribute("y").as_float());
+                float width = objectNode.attribute("width").as_float();
+                float height = objectNode.attribute("height").as_float();
+
+                PhysBody* platform = Engine::GetInstance().physics->CreateRectangle(
+                    position.getX() + width / 2,
+                    position.getY() + height / 2,
+                    width, height,
+                    bodyType::STATIC
+                );
+
+                platform->ctype = colliderType;
+            }
         }
 
         ret = true;
@@ -273,15 +288,6 @@ bool Map::Load(std::string path, std::string fileName)
                 LOG("id : %d name : %s", layer->id, layer->name.c_str());
                 LOG("Layer width : %d Layer height : %d", layer->width, layer->height);
             }
-
-            LOG("Object Groups----");
-
-            for (const auto& objectGroup : mapData.objectGroups) {
-                LOG("name : %s", objectGroup->name.c_str());
-                for (const auto& object : objectGroup->objects) {
-                    LOG("Object x: %f y: %f width: %f height: %f", object->x, object->y, object->width, object->height);
-                }
-            }
         }
         else {
             LOG("Error while parsing map file: %s", mapPathName.c_str());
@@ -294,7 +300,6 @@ bool Map::Load(std::string path, std::string fileName)
     mapLoaded = ret;
     return ret;
 }
-
 
 void Map::UpdateAnimatedTiles(float dt) {
     static int elapsedTime = 0;
@@ -399,9 +404,9 @@ bool Map::IsTileCollidable(int x, int y) {
         return false;
     }
 
-    // Verifica las colisiones en las capas de tiles
+    // Itera sobre las capas del mapa para encontrar la capa de colisiones
     for (const auto& mapLayer : mapData.layers) {
-        if (mapLayer->name == "Floor" || mapLayer->name == "Wall") {
+        if (mapLayer->name == "Floor") {
             int gid = mapLayer->Get(x, y);
             // Verifica si el gid es diferente de 0, lo que indica que el tile es colisionable
             if (gid != 0) {
@@ -410,34 +415,8 @@ bool Map::IsTileCollidable(int x, int y) {
         }
     }
 
-    // Verifica las colisiones en los ObjectGroupLayers
-    for (const auto& objectGroup : mapData.objectGroups) {
-        std::string objectLayerName = objectGroup->name;
-
-        if (objectLayerName == "Floor" || objectLayerName == "Wall") {
-            for (const auto& object : objectGroup->objects) {
-                float objX = object->x / mapData.tileWidth;
-                float objY = object->y / mapData.tileHeight;
-                float objWidth = object->width / mapData.tileWidth;
-                float objHeight = object->height / mapData.tileHeight;
-
-                // Verifica si las coordenadas del tile están dentro del objeto de colisión
-                if (x >= objX && x < objX + objWidth && y >= objY && y < objY + objHeight) {
-                    return true;
-                }
-            }
-        }
-    }
-
     return false;
 }
-
-bool Map::IsPositionCollidable(float x, float y) {
-    int tileX = static_cast<int>(x / mapData.tileWidth);
-    int tileY = static_cast<int>(y / mapData.tileHeight);
-    return IsTileCollidable(tileX, tileY);
-}
-
 
 
 
