@@ -88,9 +88,9 @@ public:
 	bool isHoldingJump = false;
 
 	bool touchingWall = false;  
-	float wallJumpForce = 40.5f; 
-	float wallJumpPush = 2.0f;  
-	float wallClimbSpeed = -1.5f;
+	float wallJumpForce = 90.5f; 
+	float wallJumpPush = 102.0f;  
+	float wallClimbSpeed = -2.0f;
 
 
 	bool canDash = true;

@@ -137,10 +137,10 @@ bool Map::Load(std::string path, std::string fileName)
     pugi::xml_document mapFileXML;
     pugi::xml_parse_result result = mapFileXML.load_file(mapPathName.c_str());
 
-    if(result == NULL)
-	{
-		LOG("Could not load map xml file %s. pugi error: %s", mapPathName.c_str(), result.description());
-		ret = false;
+    if (result == NULL)
+    {
+        LOG("Could not load map xml file %s. pugi error: %s", mapPathName.c_str(), result.description());
+        ret = false;
     }
     else {
 
@@ -165,12 +165,12 @@ bool Map::Load(std::string path, std::string fileName)
         }
 
         // L06: TODO 4: Implement the LoadTileSet function to load the tileset properties
-       
+
         //Iterate the Tileset
-        for(pugi::xml_node tilesetNode = mapFileXML.child("map").child("tileset"); tilesetNode!=NULL; tilesetNode = tilesetNode.next_sibling("tileset"))
-		{
+        for (pugi::xml_node tilesetNode = mapFileXML.child("map").child("tileset"); tilesetNode != NULL; tilesetNode = tilesetNode.next_sibling("tileset"))
+        {
             //Load Tileset attributes
-			TileSet* tileSet = new TileSet();
+            TileSet* tileSet = new TileSet();
             tileSet->firstGid = tilesetNode.attribute("firstgid").as_int();
             tileSet->name = tilesetNode.attribute("name").as_string();
             tileSet->tileWidth = tilesetNode.attribute("tilewidth").as_int();
@@ -200,12 +200,12 @@ bool Map::Load(std::string path, std::string fileName)
                     tileSet->animatedTiles[gid] = animTile;
                 }
             }
-			//Load the tileset image
-			std::string imgName = tilesetNode.child("image").attribute("source").as_string();
-            tileSet->texture = Engine::GetInstance().textures->Load((mapPath+imgName).c_str());
+            //Load the tileset image
+            std::string imgName = tilesetNode.child("image").attribute("source").as_string();
+            tileSet->texture = Engine::GetInstance().textures->Load((mapPath + imgName).c_str());
 
-			mapData.tilesets.push_back(tileSet);
-		}
+            mapData.tilesets.push_back(tileSet);
+        }
 
         // L07: TODO 3: Iterate all layers in the TMX and load each of them
         for (pugi::xml_node layerNode = mapFileXML.child("map").child("layer"); layerNode != NULL; layerNode = layerNode.next_sibling("layer")) {
@@ -230,61 +230,43 @@ bool Map::Load(std::string path, std::string fileName)
             mapData.layers.push_back(mapLayer);
         }
 
+        // L08 TODO 3: Create colliders
+        // L08 TODO 7: Assign collider type
+        // Iterate the object groups and create colliders
         for (pugi::xml_node objectGroupNode = mapFileXML.child("map").child("objectgroup"); objectGroupNode != NULL; objectGroupNode = objectGroupNode.next_sibling("objectgroup")) {
+            ObjectGroup* objectGroup = new ObjectGroup();
+            objectGroup->name = objectGroupNode.attribute("name").as_string();
 
-            std::string objectLayerName = objectGroupNode.attribute("name").as_string();
+            for (pugi::xml_node objectNode = objectGroupNode.child("object"); objectNode != NULL; objectNode = objectNode.next_sibling("object")) {
+                Object* object = new Object();
+                object->x = objectNode.attribute("x").as_float();
+                object->y = objectNode.attribute("y").as_float();
+                object->width = objectNode.attribute("width").as_float();
+                object->height = objectNode.attribute("height").as_float();
+                objectGroup->objects.push_back(object);
 
-            ColliderType colliderType = ColliderType::UNKNOWN;
+                // Crear colisiones
+                PhysBody* platform = Engine::GetInstance().physics->CreateRectangle(
+                    object->x + object->width / 2,
+                    object->y + object->height / 2,
+                    object->width, object->height,
+                    bodyType::STATIC
+                );
 
-            if (objectLayerName == "CollisionsDown") {
-                colliderType = ColliderType::FLOOR;
-            }
-            else if (objectLayerName == "CollisionsUp") {
-                colliderType = ColliderType::WALL;
-            }
-
-                for (pugi::xml_node objectNode = objectGroupNode.child("object"); objectNode != NULL; objectNode = objectNode.next_sibling("object")) {
-                    Vector2D position;
-                    position.setX(objectNode.attribute("x").as_float());
-                    position.setY(objectNode.attribute("y").as_float());
-                    float width = objectNode.attribute("width").as_float();
-                    float height = objectNode.attribute("height").as_float();
-
-                    PhysBody* platform = Engine::GetInstance().physics->CreateRectangle(
-                        position.getX() + width / 2,
-                        position.getY() + height / 2,
-                        width, height,
-                        bodyType::STATIC
-                    );
-
-                    platform->ctype = colliderType;
+                if (objectGroup->name == "Floor") {
+                    platform->ctype = ColliderType::PLATFORM;
                 }
+                else if (objectGroup->name == "Wall") {
+                    platform->ctype = ColliderType::WALL;
+                }
+            }
+
+            mapData.objectGroups.push_back(objectGroup);
         }
 
         ret = true;
-        // L08 TODO 3: Create colliders
-        // L08 TODO 7: Assign collider type
-        // Later you can create a function here to load and create the colliders from the map
 
-        //Iterate the layer and create colliders
-       /* for (const auto& mapLayer : mapData.layers) {
-            if (mapLayer->name == "Collisions") {
-                for (int i = 0; i < mapData.width; i++) {
-                    for (int j = 0; j < mapData.height; j++) {
-                        int gid = mapLayer->Get(i, j);
-                        if (gid == 49) {
-                            Vector2D mapCoord = MapToWorld(i, j);
-                            PhysBody* c1 = Engine::GetInstance().physics.get()->CreateRectangle(mapCoord.getX()+ mapData.tileWidth/2, mapCoord.getY()+ mapData.tileHeight/2, mapData.tileWidth, mapData.tileHeight, STATIC);
-                            c1->ctype = ColliderType::PLATFORM;
-                        }
-                    }
-                }
-            }
-        }
-
-        ret = true;*/
-
-        // L06: TODO 5: LOG all the data loaded iterate all tilesetsand LOG everything
+        // L06: TODO 5: LOG all the data loaded iterate all tilesets and LOG everything
         if (ret == true)
         {
             LOG("Successfully parsed map XML file :%s", fileName.c_str());
@@ -299,13 +281,13 @@ bool Map::Load(std::string path, std::string fileName)
                 LOG("tile width : %d tile height : %d", tileset->tileWidth, tileset->tileHeight);
                 LOG("spacing : %d margin : %d", tileset->spacing, tileset->margin);
             }
-            			
+
             LOG("Layers----");
 
             for (const auto& layer : mapData.layers) {
                 LOG("id : %d name : %s", layer->id, layer->name.c_str());
-				LOG("Layer width : %d Layer height : %d", layer->width, layer->height);
-            }   
+                LOG("Layer width : %d Layer height : %d", layer->width, layer->height);
+            }
         }
         else {
             LOG("Error while parsing map file: %s", mapPathName.c_str());
@@ -318,6 +300,7 @@ bool Map::Load(std::string path, std::string fileName)
     mapLoaded = ret;
     return ret;
 }
+
 void Map::UpdateAnimatedTiles(float dt) {
     static int elapsedTime = 0;
     elapsedTime += static_cast<int>(dt) * 10;
@@ -434,6 +417,27 @@ bool Map::IsTileCollidable(int x, int y) {
 
     return false;
 }
+
+bool Map::IsObjectGroupCollidable(int x, int y) {
+    Vector2D mapCoords = WorldToMap(x, y);
+
+    for (const auto& objectGroup : mapData.objectGroups) {
+        for (const auto& object : objectGroup->objects) {
+            float objX = object->x;
+            float objY = object->y;
+            float objWidth = object->width;
+            float objHeight = object->height;
+
+            if (mapCoords.getX() >= objX && mapCoords.getX() < objX + objWidth &&
+                mapCoords.getY() >= objY && mapCoords.getY() < objY + objHeight) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
 
 
 

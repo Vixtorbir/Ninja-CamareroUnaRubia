@@ -191,6 +191,7 @@ bool Player::Update(float dt)
 
 	if (touchingWall && Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_W) == KEY_REPEAT) {
 		pbody->body->SetLinearVelocity(b2Vec2(0, wallClimbSpeed));
+		currentAnimation = &idle; //climb cuando este
 	}
 
 

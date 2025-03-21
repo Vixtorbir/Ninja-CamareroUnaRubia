@@ -95,6 +95,18 @@ struct TileSet
 
 };
 
+struct Object {
+    float x;
+    float y;
+    float width;
+    float height;
+};
+
+struct ObjectGroup {
+    std::string name;
+    std::vector<Object*> objects;
+};
+
 // L06: TODO 1: Create a struct needed to hold the information to Map node
 struct MapData
 {
@@ -108,6 +120,7 @@ struct MapData
 
     // L07: TODO 2: Add the info to the MapLayer Struct
     std::list<MapLayer*> layers;
+    std::vector<ObjectGroup*> objectGroups;
 };
 
 class Map : public Module
@@ -164,8 +177,10 @@ public:
     }
 
     MapLayer* GetNavigationLayer();
-
+  
     bool IsTileCollidable(int x, int y);
+
+    bool IsObjectGroupCollidable(int x, int y);
 
 
 public: 
