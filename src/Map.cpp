@@ -234,34 +234,34 @@ bool Map::Load(std::string path, std::string fileName)
         // L08 TODO 7: Assign collider type
         // Iterate the object groups and create colliders
         for (pugi::xml_node objectGroupNode = mapFileXML.child("map").child("objectgroup"); objectGroupNode != NULL; objectGroupNode = objectGroupNode.next_sibling("objectgroup")) {
-
-            std::string objectLayerName = objectGroupNode.attribute("name").as_string();
-
-            ColliderType colliderType = ColliderType::UNKNOWN;
-
-            if (objectLayerName == "Floor") {
-                colliderType = ColliderType::PLATFORM;
-            }
-            else if (objectLayerName == "Wall") {
-                colliderType = ColliderType::WALL;
-            }
+            ObjectGroup* objectGroup = new ObjectGroup();
+            objectGroup->name = objectGroupNode.attribute("name").as_string();
 
             for (pugi::xml_node objectNode = objectGroupNode.child("object"); objectNode != NULL; objectNode = objectNode.next_sibling("object")) {
-                Vector2D position;
-                position.setX(objectNode.attribute("x").as_float());
-                position.setY(objectNode.attribute("y").as_float());
-                float width = objectNode.attribute("width").as_float();
-                float height = objectNode.attribute("height").as_float();
+                Object* object = new Object();
+                object->x = objectNode.attribute("x").as_float();
+                object->y = objectNode.attribute("y").as_float();
+                object->width = objectNode.attribute("width").as_float();
+                object->height = objectNode.attribute("height").as_float();
+                objectGroup->objects.push_back(object);
 
+                // Crear colisiones
                 PhysBody* platform = Engine::GetInstance().physics->CreateRectangle(
-                    position.getX() + width / 2,
-                    position.getY() + height / 2,
-                    width, height,
+                    object->x + object->width / 2,
+                    object->y + object->height / 2,
+                    object->width, object->height,
                     bodyType::STATIC
                 );
 
-                platform->ctype = colliderType;
+                if (objectGroup->name == "Floor") {
+                    platform->ctype = ColliderType::PLATFORM;
+                }
+                else if (objectGroup->name == "Wall") {
+                    platform->ctype = ColliderType::WALL;
+                }
             }
+
+            mapData.objectGroups.push_back(objectGroup);
         }
 
         ret = true;
@@ -417,6 +417,27 @@ bool Map::IsTileCollidable(int x, int y) {
 
     return false;
 }
+
+bool Map::IsObjectGroupCollidable(int x, int y) {
+    Vector2D mapCoords = WorldToMap(x, y);
+
+    for (const auto& objectGroup : mapData.objectGroups) {
+        for (const auto& object : objectGroup->objects) {
+            float objX = object->x;
+            float objY = object->y;
+            float objWidth = object->width;
+            float objHeight = object->height;
+
+            if (mapCoords.getX() >= objX && mapCoords.getX() < objX + objWidth &&
+                mapCoords.getY() >= objY && mapCoords.getY() < objY + objHeight) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
 
 
 

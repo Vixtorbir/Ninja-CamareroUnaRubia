@@ -177,9 +177,10 @@ public:
     }
 
     MapLayer* GetNavigationLayer();
-    bool IsPositionCollidable(float x, float y);
+  
     bool IsTileCollidable(int x, int y);
 
+    bool IsObjectGroupCollidable(int x, int y);
 
 
 public: 
