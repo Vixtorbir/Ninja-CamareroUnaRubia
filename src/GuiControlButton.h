@@ -18,6 +18,7 @@ public:
 	void CleanUp();
 
 	SDL_Texture* texture;
+	SDL_Texture* textureSelected;
 	bool isClicked = false;
 	bool isOptionA = false;
 	bool isOptionB = false;

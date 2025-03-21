@@ -247,6 +247,8 @@ void Scene::LoadTextures()
 }
 
 void Scene::SetState(GameState newState) {
+	Engine::GetInstance().guiManager->ClearControlsOfType(GuiControlType::BUTTON);
+
 	currentState = newState;
 }
 
@@ -339,6 +341,7 @@ void Scene::HandleInput()
 	{
 		if (currentState == GameState::MAIN_MENU)
 		{
+		
 			SetState(GameState::PLAYING);
 			startButton->CleanUp();
 			optionsButton->CleanUp();
