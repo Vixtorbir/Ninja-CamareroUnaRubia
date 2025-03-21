@@ -54,7 +54,7 @@ bool Render::Awake()
 	TTF_Init();
 
 	//load a font into memory
-	font = TTF_OpenFont("Assets/Fonts/arial/arial.ttf", 100);
+	font = TTF_OpenFont("Assets/Fonts/shinkansen/shinkansen.regular.ttf", 100);
 
 	return ret;
 }
@@ -253,7 +253,7 @@ bool Render::DrawTexturedRectangle(SDL_Texture* texture, int posX, int posY, int
 
 	if (SDL_RenderCopy(renderer, texture, NULL, &rect) != 0)
 	{
-		LOG("Cannot draw textured rectangle to screen. SDL_RenderCopy error: %s", SDL_GetError());
+		//LOG("Cannot draw textured rectangle to screen. SDL_RenderCopy error: %s", SDL_GetError());
 		ret = false;
 	}
 
@@ -317,7 +317,7 @@ bool Render::DrawCircle(int x, int y, int radius, Uint8 r, Uint8 g, Uint8 b, Uin
 bool Render::DrawText(const char* text, int posx, int posy, int w, int h) const
 {
 
-	SDL_Color color = { 255, 255, 255 };
+	SDL_Color color = { 0, 0, 0 };
 	SDL_Surface* surface = TTF_RenderText_Solid(font, text, color);
 	SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
 

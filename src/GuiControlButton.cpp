@@ -15,7 +15,20 @@ GuiControlButton::GuiControlButton(int id, SDL_Rect bounds, const char* text) : 
 	
 	
 }
+GuiControlButton::GuiControlButton(int id, SDL_Rect bounds, const char* text, bool optionA, bool optionB) : GuiControl(GuiControlType::BUTTON, id)
+{
+	this->bounds = bounds;
 
+	this->text = text;
+
+	canClick = true;
+	drawBasic = false;
+
+	this->isOptionA = optionA;
+	unkillable = false;
+	this->isOptionB = optionB;
+
+}
 GuiControlButton::~GuiControlButton()
 {
 
@@ -58,6 +71,12 @@ bool GuiControlButton::Update(float dt)
 			break;
 		case GuiControlState::NORMAL:
 			Engine::GetInstance().render->DrawTexturedRectangle(texture, bounds.x-200,bounds.y-170,600,400, false);
+
+			if (isOptionA || isOptionB)
+			{
+				Engine::GetInstance().render->DrawTexturedRectangle(texture, bounds.x - 200, bounds.y - 170, 600, 400, false);
+			}
+
 			break;
 		case GuiControlState::FOCUSED:
 			Engine::GetInstance().render->DrawRectangle(bounds, 0, 0, 20, 255, true, false);

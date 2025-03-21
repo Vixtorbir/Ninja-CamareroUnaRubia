@@ -52,7 +52,7 @@ private:
 	SDL_Rect optionAPos = { 1000, 550, 300,150 };
 	SDL_Rect optionBPos = { 1000, 800, 300,150 };
 	
-	bool isBranching = false;
+	int isBranching = 0;
 
 	pugi::xml_document dialogFile;
 	std::vector<std::pair<std::string, std::string>> dialogues;

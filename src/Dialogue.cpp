@@ -118,26 +118,6 @@ bool Dialogue::Update(float dt)
             fullTextDisplayed = true;
         }
 
-        Vector2D mousePos = Engine::GetInstance().input->GetMousePosition();
-        if (mousePos.getX() > bounds.x && mousePos.getX() < bounds.x + bounds.w &&
-            mousePos.getY() > bounds.y && mousePos.getY() < bounds.y + bounds.h)
-        {
-            state = GuiControlState::FOCUSED;
-
-            if (Engine::GetInstance().input->GetMouseButtonDown(SDL_BUTTON_LEFT) == KEY_REPEAT)
-            {
-                state = GuiControlState::PRESSED;
-            }
-
-            if (Engine::GetInstance().input->GetMouseButtonDown(SDL_BUTTON_LEFT) == KEY_UP)
-            {
-                NotifyObserver();
-            }
-        }
-        else
-        {
-            state = GuiControlState::NORMAL;
-        }
     
         switch (state)
         {
