@@ -37,19 +37,36 @@ private:
 
     bool IsNextTileCollidable();
     bool IsPlayerInRange();
+    void LoadEnemyFx();
 
 	//fx
-	int walk1FxId;
-	int walk2FxId;
-	int meleAttack1FxId;
-	int meleAttack2FxId;
-	int rangeAttack1FxId;
-	int rangeAttack2FxId;
-	int jump1FxId;
-	int jump2FxId;
-	int dieFxId;
-	int hit1FxId;
-	int hit2FxId;
+    //centinel
+	int centinelWalk1FxId;
+	int centinelWalk2FxId;
+	int centinelMeleAttack1FxId;
+	int centinelMeleAttack2FxId;
+	int centinelRangeAttack1FxId;
+	int centinelRangeAttack2FxId;
+	int centinelJump1FxId;
+	int centinelJump2FxId;
+	int centinelDieFxId;
+	int centinelHit1FxId;
+	int centinelHit2FxId;
+    //skull
+    int skullFlyFxId;
+    int skullAttack1FxId;
+    int skullAttack2FxId;
+    int skullHit1FxId;
+    int skullHit2FxId;
+    int skulldieFxId;
+    //bat
+    int batFlyFxId;
+    int batAttack1FxId;
+    int batAttack2FxId;
+    int batHit1FxId;
+    int batHit2FxId;
+    int batdieFxId;
+   
     void PerformAttack();
 
     bool IsPlayerInAttackRange();

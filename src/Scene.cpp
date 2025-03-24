@@ -113,7 +113,7 @@ bool Scene::Start()
 	startButton->Start();
 	optionsButton->Start();
 	exitButton->Start();
-
+	
 
 	return true;
 }
