@@ -93,9 +93,6 @@
     <ClCompile Include="src\GuiManager.cpp">
       <Filter>Source Files\Engine</Filter>
     </ClCompile>
-    <ClCompile Include="src\Shurikens.cpp">
-      <Filter>Source Files\Game</Filter>
-    </ClCompile>
     <ClCompile Include="src\DialogueManager.cpp">
       <Filter>Source Files\Engine</Filter>
     </ClCompile>
@@ -112,6 +109,9 @@
       <Filter>Source Files\Engine</Filter>
     </ClCompile>
     <ClCompile Include="src\NPC.cpp">
+      <Filter>Source Files\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Title.cpp">
       <Filter>Source Files\Game</Filter>
     </ClCompile>
   </ItemGroup>
@@ -188,9 +188,6 @@
     <ClInclude Include="src\GuiManager.h">
       <Filter>Source Files\Engine</Filter>
     </ClInclude>
-    <ClInclude Include="src\Shurikens.h">
-      <Filter>Source Files\Game</Filter>
-    </ClInclude>
     <ClInclude Include="src\DynArray.h">
       <Filter>Source Files\Utils</Filter>
     </ClInclude>
@@ -213,6 +210,9 @@
       <Filter>Source Files\Engine</Filter>
     </ClInclude>
     <ClInclude Include="src\NPC.h">
+      <Filter>Source Files\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Title.h">
       <Filter>Source Files\Game</Filter>
     </ClInclude>
   </ItemGroup>
