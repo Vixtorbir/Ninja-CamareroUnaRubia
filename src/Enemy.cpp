@@ -63,15 +63,32 @@ bool Enemy::Update(float dt)
 {
 	//ZoneScoped;
 	// 
+	if (Engine::GetInstance().scene.get()->currentState == GameState::PAUSED) {
 	
+		pbody->body->SetLinearVelocity(b2Vec2(0, 0));
+
+		b2Transform pbodyPos = pbody->body->GetTransform();
+		position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 2);
+		position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
+		Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
+		currentAnimation->Update();
+
+		return true;
+	
+	}
+
 	if (Engine::GetInstance().scene.get()->currentState != GameState::PLAYING) return true;
+
 
 	Vector2D playerPos = Engine::GetInstance().scene.get()->player->GetPosition();
 	Vector2D enemyPos = GetPosition();
-	Vector2D enemyTilePos = Engine::GetInstance().map.get()->WorldToMap(enemyPos.getX(), enemyPos.getY());
-	Vector2D playerTilePos = Engine::GetInstance().map.get()->WorldToMap(playerPos.getX(), playerPos.getY());
+	Vector2D enemyTilePos = Engine::GetInstance().map.get()->WorldToMap((int)enemyPos.getX(), (int)enemyPos.getY());
+	Vector2D playerTilePos = Engine::GetInstance().map.get()->WorldToMap((int)playerPos.getX(), (int)playerPos.getY());
 
-	if (IsPlayerInRange()) {
+	if (IsPlayerInLineOfSight()) {
+		state = EnemyState::AGGRESSIVE;
+	}
+	else if (IsPlayerInRange()) {
 		if (IsPlayerInAttackRange() && attackCooldownTimer.ReadSec() >= 3) {
 			state = EnemyState::ATTACK;
 			attackDurationTimer.Start();
@@ -120,13 +137,18 @@ bool Enemy::Update(float dt)
 		// Lógica de ataque
 		PerformAttack();
 
-		Engine::GetInstance().physics.get()->DeletePhysBody(attackHitbox);
-		attackHitbox = nullptr;
-		attackCooldownTimer.Start();
-		state = EnemyState::AGGRESSIVE;
-
+		if (attackDurationTimer.ReadSec() >= 1) {
+			// Elimina la hitbox del ataque después de 1 segundo
+			Engine::GetInstance().physics.get()->DeletePhysBody(attackHitbox);
+			attackHitbox = nullptr;
+			attackCooldownTimer.Start();
+			state = EnemyState::AGGRESSIVE;
+		}
 		break;
 	}
+
+	// Dibuja la línea de visión del enemigo
+	DrawLineOfSight();
 
 	// Propagate the pathfinding algorithm using A* with the selected heuristic
 	ResetPath();
@@ -149,6 +171,9 @@ bool Enemy::Update(float dt)
 
 	return true;
 }
+
+
+
 
 bool Enemy::CleanUp()
 {
@@ -294,4 +319,97 @@ bool Enemy::IsPlayerInAttackRange() {
 	int distance = abs(playerTilePos.getX() - enemyTilePos.getX());
 	return distance <= 3;
 }
+void Enemy::LoadEnemyFx()
+{
+	//centinel
+	 centinelWalk1FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/Jump1.ogg");
+	 centinelWalk2FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/Jump1.ogg");
+	 centinelMeleAttack1FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/Jump1.ogg");
+	 centinelMeleAttack2FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/Jump1.ogg");
+	 centinelRangeAttack1FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/Jump1.ogg");
+	 centinelRangeAttack2FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/Jump1.ogg");
+	 centinelJump1FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/Jump1.ogg");
+	 centinelJump2FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/Jump1.ogg");
+	 centinelDieFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/Jump1.ogg");
+	 centinelHit1FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/Jump1.ogg");
+	 centinelHit2FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/Jump1.ogg");
+	//skull
+	 skullFlyFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/Jump1.ogg");
+	 skullAttack1FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/Jump1.ogg");
+	 skullAttack2FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/Jump1.ogg");
+	 skullHit1FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/Jump1.ogg");
+	 skullHit2FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/Jump1.ogg");
+	 skulldieFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/Jump1.ogg");
+	//bat
+	 batFlyFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/Jump1.ogg");
+	 batAttack1FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/Jump1.ogg");
+	 batAttack2FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/Jump1.ogg");
+	 batHit1FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/Jump1.ogg");
+	 batHit2FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/Jump1.ogg");
+	 batdieFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/Jump1.ogg");
+	//spirit
+	//ghost soldier
+}
+
+bool Enemy::IsPlayerInLineOfSight() {
+	Vector2D playerPos = Engine::GetInstance().scene.get()->player->GetPosition();
+	Vector2D enemyPos = GetPosition();
+	Vector2D enemyTilePos = Engine::GetInstance().map.get()->WorldToMap((int)enemyPos.getX(), (int)enemyPos.getY());
+	Vector2D playerTilePos = Engine::GetInstance().map.get()->WorldToMap((int)playerPos.getX(), (int)playerPos.getY());
+
+	int distance = abs(playerTilePos.getX() - enemyTilePos.getX());
+
+	// Verifica si el jugador está dentro de la línea de visión de 5 tiles
+	if (distance <= 5) {
+		if (direction == 0 && playerTilePos.getX() < enemyTilePos.getX()) { // Izquierda
+			for (int i = 1; i <= 5; ++i) {
+				if (Engine::GetInstance().map.get()->IsTileCollidable(enemyTilePos.getX() - i, enemyTilePos.getY())) {
+					return false; // Hay una colisión en la línea de visión
+				}
+				if (playerTilePos.getX() == enemyTilePos.getX() - i) {
+					return true; // El jugador está en la línea de visión
+				}
+			}
+		}
+		else if (direction == 1 && playerTilePos.getX() > enemyTilePos.getX()) { // Derecha
+			for (int i = 1; i <= 5; ++i) {
+				if (Engine::GetInstance().map.get()->IsTileCollidable(enemyTilePos.getX() + i, enemyTilePos.getY())) {
+					return false; // Hay una colisión en la línea de visión
+				}
+				if (playerTilePos.getX() == enemyTilePos.getX() + i) {
+					return true; // El jugador está en la línea de visión
+				}
+			}
+		}
+	}
+
+	return false;
+}
+
+
+
+void Enemy::DrawLineOfSight() {
+	Vector2D enemyPos = GetPosition();
+	Vector2D enemyTilePos = Engine::GetInstance().map.get()->WorldToMap((int)enemyPos.getX(), (int)enemyPos.getY());
+
+	SDL_Renderer* renderer = Engine::GetInstance().render.get()->renderer;
+	SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255); // Color rojo para la línea de visión
+
+	for (int i = 1; i <= 5; ++i) {
+		int tileX = (direction == 0) ? enemyTilePos.getX() - i : enemyTilePos.getX() + i;
+		int tileY = enemyTilePos.getY();
+
+		if (Engine::GetInstance().map.get()->IsTileCollidable(tileX, tileY)) {
+			break; // Detén el dibujo si hay una colisión en la línea de visión
+		}
+
+		Vector2D tilePos = Engine::GetInstance().map.get()->MapToWorld(tileX, tileY);
+		SDL_Rect rect = { (int)tilePos.getX(), (int)enemyPos.getY(), Engine::GetInstance().map.get()->GetTileWidth(), Engine::GetInstance().map.get()->GetTileHeight() };
+		SDL_RenderDrawRect(renderer, &rect);
+	}
+}
+
+
+
+
 

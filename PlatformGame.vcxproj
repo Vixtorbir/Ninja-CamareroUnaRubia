@@ -156,6 +156,7 @@
     <ClCompile Include="src\GuiControlButton.cpp" />
     <ClCompile Include="src\GuiManager.cpp" />
     <ClCompile Include="src\GuiPopup.cpp" />
+    <ClCompile Include="src\GuiSlider.cpp" />
     <ClCompile Include="src\Input.cpp" />
     <ClCompile Include="src\Item.cpp" />
     <ClCompile Include="src\Log.cpp" />
@@ -190,6 +191,7 @@
     <ClInclude Include="src\GuiControlButton.h" />
     <ClInclude Include="src\GuiManager.h" />
     <ClInclude Include="src\GuiPopup.h" />
+    <ClInclude Include="src\GuiSlider.h" />
     <ClInclude Include="src\Input.h" />
     <ClInclude Include="src\Item.h" />
     <ClInclude Include="src\List.h" />

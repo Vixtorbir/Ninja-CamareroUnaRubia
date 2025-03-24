@@ -75,13 +75,15 @@ bool GuiControlButton::Update(float dt)
 
             if (isOptionA || isOptionB)
             {
-                Engine::GetInstance().render->DrawTexturedRectangle(texture, bounds.x - 200, bounds.y - 170, 600, 400, false);
-            }
+                Engine::GetInstance().render->DrawText(text.c_str(), bounds.x, bounds.y, 150, 100);
 
+            }
             break;
+
         case GuiControlState::FOCUSED:
             Engine::GetInstance().render->DrawTexturedRectangle(textureSelected, bounds.x - 200, bounds.y - 170, 600, 400, false);
             break;
+
         case GuiControlState::PRESSED:
             Engine::GetInstance().render->DrawTexturedRectangle(textureSelected, bounds.x - 200, bounds.y - 170, 600, 400, false);
             isClicked = true;
@@ -102,7 +104,7 @@ bool GuiControlButton::Update(float dt)
         int textY = bounds.y + (bounds.h - textH) / 2;
 
         // Render the text
-        Engine::GetInstance().render->DrawText(text.c_str(), textX, textY, textW, textH);
+        if(!isOptionA && !isOptionB ) Engine::GetInstance().render->DrawText(text.c_str(), textX, textY, textW, textH);
     }
 
     return false;
@@ -112,6 +114,7 @@ void GuiControlButton::CleanUp()
 	if (texture != nullptr)
 	{
 		SDL_DestroyTexture(texture);
+        SDL_DestroyTexture(textureSelected);
 		texture = nullptr;
 	}
 

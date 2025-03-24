@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <config>
 	<engine>
-		<title>My platformer game</title>
+		<title>Jade Theory</title>
 		<maxFrameDuration value="16" />
 	</engine>
 	<render>
@@ -19,7 +19,7 @@
 		<map path="Assets/Maps/" name="MapTemplate.tmx" />
 		<entities>
 			<player x="800" y="1100" w="111" h="271" texture="Assets/Textures/player/Idle.png" gravity="true">
-				<animations>
+				<animations> 
 					<idle loop="true" speed="0.5">
 						<frame x="0" y="0" w="111" h="271" />
 					</idle>
@@ -27,7 +27,6 @@
 						<frame x="0" y="276" w="111" h="271" />
 						<frame x="111" y="276" w="111" h="271" />
 						<frame x="222" y="276" w="111" h="271" />
-
 					</walk>
 				</animations>
 			</player>
@@ -73,31 +72,6 @@
 			</enemies>
 		</entities>
 	</scene>
-	<UI path="Assets/UI/UI buttons spritesheet.png">
-		<playButton x="250" y="250" w="250" h="250" state ="unselected">
-		</playButton>
-		<settingsButton x="250" y="250"  w="250" h="250" state ="unselected">
-		</settingsButton>
-		<stopButton x="250" y="250"  w="250" h="250" state ="unselected">
-		</stopButton>
-		<forwardButton x="250" y="250"  w="250" h="250" state ="unselected">
-		</forwardButton>
-		<backwardsButton x="250" y="250" w="250" h="250" state ="unselected">
-		</backwardsButton>
-		<saveButton x="250" y="250" w="250" h="250" state ="unselected">
-		</saveButton>
-		<loadButton x="250" y="250" w="250" h="250" state ="unselected">
-		</loadButton>
-		<exitButton x="250" y="250" w="250" h="250" state ="unselected">
-		</exitButton>
-		<scroll x="500" y="250" w="250" h="250" >
-		</scroll>
-		<scrollControl x="250" y="250"  w="250" h="250">
-		</scrollControl>
-		<checkBox x="250" y="250"  w="250" h="250" state ="inactive">
-		</checkBox>
-		<dialogueBox x="250" y="250"  w="1500" h="500">
-		</dialogueBox>
-	</UI>
+
 
 </config>

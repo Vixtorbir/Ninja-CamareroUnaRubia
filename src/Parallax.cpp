@@ -9,7 +9,7 @@ Parallax::Parallax() {
 }
 
 bool Parallax::ChangeTextures() {
-    std::vector<float> speeds = { 0.09f, 0.1f, 0.3f, 0.5f, 0.7f }; 
+    std::vector<float> speeds = { 0.09f, 0.3f, 0.6f, 0.5f, 0.7f }; 
 
     for (size_t i = 0; i < layers.size(); ++i) {
         std::string texturePath = "Assets/Backgrounds/Map" + std::to_string(i) + ".png";

@@ -8,7 +8,7 @@
 
 enum class DialogueEngine
 {
-	MENTORSHIP,
+	MENTORSHIP, MENTORSHIP1, MENTORSHIP2,
 	RAIDEDVILLAGE,
 	EMPTY
 };
@@ -22,7 +22,13 @@ public:
 	
 	void Update();
 
+	DialogueEngine GetDialogueEngineFromString(const std::string& dialogueName);
+
+	std::vector<std::pair<std::string, std::string>> GetCurrentOptions();
+
 	void ShowNextDialogue();
+
+	void ShowNextDialogueWithIndex(int optionDialogueIndex);
 	
 	void SetModule(Module* module);
 	void CastDialogue(DialogueEngine dialogueEngine);
@@ -45,6 +51,7 @@ public:
 	SDL_Texture* Hanzo = nullptr;
 
 private:
+
 	bool dialogueEnded = false;
 	SDL_Rect namePos = { 500, 550, 300,150 };
 	SDL_Rect dialoguePos = { 0, 700, 1920,300 };
@@ -57,5 +64,7 @@ private:
 	pugi::xml_document dialogFile;
 	std::vector<std::pair<std::string, std::string>> dialogues;
 	int currentDialogueIndex = 0;
+
+	int optionIndex = 0;
 };
 

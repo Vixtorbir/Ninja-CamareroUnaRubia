@@ -18,70 +18,84 @@
 
 Title::Title() : Module()
 {
-	name = "scene";
+    name = "scene";
+    showStartButton = true; // Initialize the button as visible
 }
 
 // Destructor
 Title::~Title()
-{}
+{
+}
 
 // Called before render is available
 bool Title::Awake()
 {
+    LOG("Loading Title");
+    bool ret = true;
 
-	LOG("Loading Title");
-	bool ret = true;
-
-	return ret;
+    return ret;
 }
 
 // Called before the first frame
 bool Title::Start()
 {
-	//L06 TODO 3: Call the function to load the map. 
+    if (showStartButton)
+    {
+        SDL_Rect btPos = { 520, 350, 120, 20 };
+        guiBt = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 1, "Start", btPos, this);
+        LOG("Start button created with ID: %d", guiBt->id); // Debug log
+    }
 
-	return true;
+    return true;
 }
 
 // Called each loop iteration
 bool Title::PreUpdate()
 {
-	return true;
+    return true;
 }
 
 // Called each loop iteration
 bool Title::Update(float dt)
 {
+    // Hide the button when the "Enter" key is pressed
+    if (showStartButton && Engine::GetInstance().input->GetKey(SDL_SCANCODE_RETURN) == KeyState::KEY_DOWN)
+    {
+        LOG("Enter key pressed, hiding Start button"); // Debug log
+        showStartButton = false;
+        Engine::GetInstance().guiManager->ClearControlsOfType(GuiControlType::BUTTON);
+    }
 
-
-
-	return true;
+    return true;
 }
 
 // Called each loop iteration
 bool Title::PostUpdate()
 {
-	bool ret = true;
+    bool ret = true;
 
-
-	return ret;
+    return ret;
 }
 
 // Called before quitting
 bool Title::CleanUp()
 {
-	LOG("Freeing Title");
-	return true;
+    LOG("Freeing Title");
+    return true;
 }
 
-
-// L15 TODO 1: Implement the Load function
-
+// Handle GUI click events
 bool Title::OnGuiMouseClickEvent(GuiControl* control)
 {
-	// L15: DONE 5: Implement the OnGuiMouseClickEvent method
-	LOG("Press Gui Control: %d", control->id);
+    LOG("GUI Control Clicked: ID = %d", control->id); // Debug log
 
-	return true;
+    // Check if the clicked control is the "Start" button
+    if (control->id == 1) // Assuming the "Start" button has ID 1
+    {
+        LOG("Start button clicked, hiding button"); // Debug log
+        showStartButton = false; // Hide the button
+        Engine::GetInstance().guiManager->ClearControlsOfType(GuiControlType::BUTTON); // Remove the button from the GUI
+    }
+
+    return true;
 }
-
