@@ -384,7 +384,6 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 }
 void Scene::UpdateMainMenu(float dt) {
 	
-
 	startButton->Update(dt);
 	optionsButton->Update(dt);	
 	exitButton->Update(dt);
