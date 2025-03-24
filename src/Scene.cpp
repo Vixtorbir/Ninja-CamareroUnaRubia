@@ -97,6 +97,7 @@ bool Scene::Start()
 	SDL_Rect startButtonPos = { 800, 300, 200, 50 };
 	SDL_Rect optionsButtonPos = { 800, 550, 200, 50 };
 	SDL_Rect exitButtonPos = { 800, 800, 200, 50 };
+	
 
 	// Create buttons if they don't already exist
 
@@ -110,9 +111,13 @@ bool Scene::Start()
 
 	exitButton = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(
 		GuiControlType::BUTTON, 3, "Exit", exitButtonPos, this);
+
+
+
 	startButton->Start();
 	optionsButton->Start();
 	exitButton->Start();
+	
 
 
 	return true;
@@ -337,11 +342,11 @@ void Scene::LoadState() {
 }
 void Scene::HandleInput()
 {
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_RETURN) == KEY_DOWN||startButton->isClicked==true)
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_RETURN) == KEY_DOWN || startButton->isClicked == true)
 	{
 		if (currentState == GameState::MAIN_MENU)
 		{
-		
+
 			SetState(GameState::PLAYING);
 			startButton->CleanUp();
 			optionsButton->CleanUp();
@@ -352,6 +357,15 @@ void Scene::HandleInput()
 		{
 			SetState(GameState::MAIN_MENU);
 		}
+	}
+	if (returnButton!=nullptr) {
+
+		if(returnButton->isClicked == true)
+		SetState(GameState::PLAYING);
+		returnButton->CleanUp();
+
+
+
 	}
 
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_P) == KEY_DOWN)
@@ -367,21 +381,7 @@ void Scene::HandleInput()
 	}
 
 }
-bool Scene::OnGuiMouseClickEvent(GuiControl* control)
-{
-	// L15: DONE 5: Implement the OnGuiMouseClickEvent method
-	LOG("Press Gui Control: %d", control->id);
 
-	if (control->id == 1) // ID del startButton
-	{
-		SetState(GameState::PLAYING);
-		startButton->CleanUp();
-		optionsButton->CleanUp();
-		exitButton->CleanUp();
-	}
-
-	return true;
-}
 void Scene::UpdateMainMenu(float dt) {
 	
 	startButton->Update(dt);
@@ -407,9 +407,38 @@ void Scene::UpdatePlaying(float dt) {
 }
 
 void Scene::UpdatePaused(float dt) {
+	SDL_Rect returnButtonPos = { 800, 550, 200, 50 };
+	returnButton = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(
+		GuiControlType::BUTTON, 4, "Return", returnButtonPos, this);
+	returnButton->Start();
+	returnButton->Update(dt);
+	exitButton->Update(dt);
+
 	Engine::GetInstance().render.get()->DrawText("PAUSED: Press enter to start", 600, 400, 750, 255);
 }
 
 void Scene::UpdateGameOver(float dt) {
 	Engine::GetInstance().render.get()->DrawText("GAME OVER:Press enter to start", 600, 400, 750, 255);
+}
+
+bool Scene::OnGuiMouseClickEvent(GuiControl* control)
+{
+	// L15: DONE 5: Implement the OnGuiMouseClickEvent method
+	LOG("Press Gui Control: %d", control->id);
+
+	if (control->id == 1) // ID del startButton
+	{
+		SetState(GameState::PLAYING);
+		startButton->CleanUp();
+		optionsButton->CleanUp();
+		exitButton->CleanUp();
+	}
+	if (control->id == 4) {
+
+		SetState(GameState::PLAYING);
+		returnButton->CleanUp();
+
+	}
+
+	return true;
 }

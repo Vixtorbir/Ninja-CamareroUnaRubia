@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include "Module.h"
@@ -10,24 +9,16 @@
 #include "DialogueManager.h"
 #include "Parallax.h"
 
-#include "Npc.h"
-
 struct SDL_Texture;
 
-enum class GameState {
-	MAIN_MENU,
-	PLAYING,
-	PAUSED,
-	GAME_OVER
-};
-
-class Scene : public Module
+class Title : public Module
 {
 public:
-	Scene();
+
+	Title();
 
 	// Destructor
-	virtual ~Scene();
+	virtual ~Title();
 
 	// Called before render is available
 	bool Awake();
@@ -60,36 +51,18 @@ public:
 
 	void LoadTextures();
 
-	void SetState(GameState newState);
-	GameState GetState() const;
-
-
-	void UpdateMainMenu(float dt);
-	void UpdatePlaying(float dt);
-	void UpdatePaused(float dt);
-	void UpdateGameOver(float dt);
-
-
 public:
 	// Get tilePosDebug value
-	std::string GetTilePosDebug() {
-		return tilePosDebug;
-	}
 
 public:
-	SDL_Texture* mouseTileTex = nullptr;
-	SDL_Texture* textureBuffer = nullptr;
-	SDL_Texture* Hanzo = nullptr;
 
-	std::string tilePosDebug = "[0,0]";
+
 	bool once = false;
 
 	//L03: TODO 3b: Declare a Player attribute
 	Player* player;
 	std::vector<Enemy*> enemyList;
 
-	NPC* npc;
-	std::vector<NPC*> npcs;
 
 	// L16: TODO 2: Declare a GUI Control Button 
 	GuiControlButton* guiBt;
@@ -97,18 +70,6 @@ public:
 	Dialogue* dialogue;
 	DialogueManager* dialogueManager;
 
-	bool watchtitle = false;
-
-	GameState currentState = GameState::MAIN_MENU;
-
-	void HandleInput();
-
-	GuiControlButton* startButton = nullptr;
-	GuiControlButton* optionsButton = nullptr;
-	GuiControlButton* exitButton = nullptr;
-	GuiControlButton* returnButton = nullptr;
-
 private:
-	Parallax* parallax = nullptr;
-	
+
 };
