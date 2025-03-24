@@ -119,7 +119,6 @@ bool Scene::Start()
 	exitButton->Start();
 	
 
-
 	return true;
 }
 
