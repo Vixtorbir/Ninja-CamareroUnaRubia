@@ -29,9 +29,13 @@ public:
 	// Load a WAV in memory
 	int LoadFx(const char* path);
 	int LoadMusic(const char* path);
-
+    bool musicVolume(int v);
 	// Play a previously loaded WAV
 	bool PlayFx(int fx, int repeat = 0);
+	int randomFx(int min, int max);
+
+	
+	
 
 private:
 

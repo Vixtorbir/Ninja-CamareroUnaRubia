@@ -3,6 +3,8 @@
 #include "Engine.h"
 #include "Audio.h"
 #include "Textures.h"
+#include "Scene.h"
+
 GuiPopup::GuiPopup(int id, SDL_Rect bounds, const char* text) : GuiControl(GuiControlType::BUTTON, id)
 {
 	this->bounds = bounds;
@@ -22,6 +24,9 @@ bool GuiPopup::Start()
 }
 bool GuiPopup::Update(float dt)
 {
+	if (Engine::GetInstance().scene.get()->currentState != GameState::PLAYING) return true;
+
+
 	if (isActive)
 	{
 		if (state != GuiControlState::DISABLED)

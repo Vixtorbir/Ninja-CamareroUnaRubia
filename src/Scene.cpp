@@ -66,6 +66,7 @@ bool Scene::Awake()
 	//SDL_Rect btPos2 = { 0, 700, 1920,300 };
 	//dialogue = (Dialogue*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::DIALOGUE, 1, "dialogo moment", btPos2, this);
 	//
+
 	dialogueManager->SetModule(this);
 	player->sceneModule = this;
 
@@ -140,6 +141,8 @@ bool Scene::Update(float dt)
 
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
 		Engine::GetInstance().render.get()->camera.x += ceil(camSpeed * dt);
+
+
 
 	// L10 TODO 6: Implement a method that repositions the player in the map with a mouse click
 
@@ -244,6 +247,8 @@ void Scene::LoadTextures()
 }
 
 void Scene::SetState(GameState newState) {
+	Engine::GetInstance().guiManager->ClearControlsOfType(GuiControlType::BUTTON);
+
 	currentState = newState;
 }
 
@@ -251,7 +256,6 @@ void Scene::SetState(GameState newState) {
 GameState Scene::GetState() const {
 	return currentState;
 }
-
 
 void Scene::SaveState() {
 
@@ -337,6 +341,7 @@ void Scene::HandleInput()
 	{
 		if (currentState == GameState::MAIN_MENU)
 		{
+		
 			SetState(GameState::PLAYING);
 			startButton->CleanUp();
 			optionsButton->CleanUp();

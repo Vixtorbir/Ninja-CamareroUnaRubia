@@ -3,6 +3,7 @@
 #include "Engine.h"
 #include "Audio.h"
 #include "Textures.h"
+#include "Scene.h"
 
 Dialogue::Dialogue(int id, SDL_Rect bounds, const char* text) : GuiControl(GuiControlType::BUTTON, id)
 {
@@ -44,6 +45,9 @@ bool Dialogue::Start()
 
 bool Dialogue::Update(float dt)
 {
+
+    if (Engine::GetInstance().scene.get()->currentState != GameState::PLAYING) return true;
+
     if (!started) Start();
     if (state != GuiControlState::DISABLED)
     {
@@ -114,26 +118,6 @@ bool Dialogue::Update(float dt)
             fullTextDisplayed = true;
         }
 
-        Vector2D mousePos = Engine::GetInstance().input->GetMousePosition();
-        if (mousePos.getX() > bounds.x && mousePos.getX() < bounds.x + bounds.w &&
-            mousePos.getY() > bounds.y && mousePos.getY() < bounds.y + bounds.h)
-        {
-            state = GuiControlState::FOCUSED;
-
-            if (Engine::GetInstance().input->GetMouseButtonDown(SDL_BUTTON_LEFT) == KEY_REPEAT)
-            {
-                state = GuiControlState::PRESSED;
-            }
-
-            if (Engine::GetInstance().input->GetMouseButtonDown(SDL_BUTTON_LEFT) == KEY_UP)
-            {
-                NotifyObserver();
-            }
-        }
-        else
-        {
-            state = GuiControlState::NORMAL;
-        }
     
         switch (state)
         {

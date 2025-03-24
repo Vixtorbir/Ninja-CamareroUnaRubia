@@ -64,6 +64,7 @@ bool Enemy::Update(float dt)
 	//ZoneScoped;
 	// 
 	
+	if (Engine::GetInstance().scene.get()->currentState != GameState::PLAYING) return true;
 
 	Vector2D playerPos = Engine::GetInstance().scene.get()->player->GetPosition();
 	Vector2D enemyPos = GetPosition();
@@ -118,68 +119,13 @@ bool Enemy::Update(float dt)
 	case EnemyState::ATTACK:
 		// Lógica de ataque
 		PerformAttack();
-		
+
 		Engine::GetInstance().physics.get()->DeletePhysBody(attackHitbox);
 		attackHitbox = nullptr;
 		attackCooldownTimer.Start();
 		state = EnemyState::AGGRESSIVE;
-		
+
 		break;
-	}
-
-
-	// Pathfinding testing inputs
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_R) == KEY_DOWN) {
-		Vector2D pos = GetPosition();
-		Vector2D tilePos = Engine::GetInstance().map.get()->WorldToMap(pos.getX(),pos.getY());
-		pathfinding->ResetPath(tilePos);
-	}
-
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_J) == KEY_DOWN) {
-		pathfinding->PropagateBFS();
-	}
-
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_J) == KEY_REPEAT &&
-		Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT) {
-		pathfinding->PropagateBFS();
-	}
-
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_K) == KEY_DOWN) {
-		pathfinding->PropagateDijkstra();
-	}
-
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_K) == KEY_REPEAT &&
-		Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT) {
-		pathfinding->PropagateDijkstra();
-	}
-
-	// L13: TODO 3:	Add the key inputs to propagate the A* algorithm with different heuristics (Manhattan, Euclidean, Squared)
-
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_B) == KEY_DOWN) {
-		pathfinding->PropagateAStar(MANHATTAN);
-	}
-
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_B) == KEY_REPEAT &&
-		Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT) {
-		pathfinding->PropagateAStar(MANHATTAN);
-	}
-
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_N) == KEY_DOWN) {
-		pathfinding->PropagateAStar(EUCLIDEAN);
-	}
-
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_N) == KEY_REPEAT &&
-		Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT) {
-		pathfinding->PropagateAStar(EUCLIDEAN);
-	}
-
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_M) == KEY_DOWN) {
-		pathfinding->PropagateAStar(SQUARED);
-	}
-
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_M) == KEY_REPEAT &&
-		Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT) {
-		pathfinding->PropagateAStar(SQUARED);
 	}
 
 	// Propagate the pathfinding algorithm using A* with the selected heuristic
@@ -252,15 +198,26 @@ bool Enemy::IsNextTileCollidable() {
 	Vector2D pos = GetPosition();
 	Vector2D tilePos = Engine::GetInstance().map.get()->WorldToMap(pos.getX(), pos.getY());
 
-	if (direction == 0) { 
+	// Calcular la posición de la siguiente tile en la dirección actual
+	if (direction == 0) { // Izquierda
 		tilePos.setX(tilePos.getX() - 1);
 	}
-	else { 
+	else { // Derecha
 		tilePos.setX(tilePos.getX() + 1);
 	}
 
-	return Engine::GetInstance().map.get()->IsTileCollidable(tilePos.getX(), tilePos.getY() + 1); 
+	// Verificar si la siguiente tile es colisionable (pared o plataforma)
+	bool nextTileCollidable = Engine::GetInstance().map.get()->IsTileCollidable(tilePos.getX(), tilePos.getY());
+	bool nextObjectGroupCollidable = Engine::GetInstance().map.get()->IsObjectGroupCollidable(tilePos.getX(), tilePos.getY());
+
+	// Verificar si hay suelo debajo de la siguiente tile
+	bool floorBelowNextTile = Engine::GetInstance().map.get()->IsTileCollidable(tilePos.getX(), tilePos.getY() + 1) ||
+		Engine::GetInstance().map.get()->IsObjectGroupCollidable(tilePos.getX(), tilePos.getY() + 1);
+
+	// Si la siguiente tile es colisionable o no hay suelo debajo, no se puede mover
+	return nextTileCollidable || nextObjectGroupCollidable || !floorBelowNextTile;
 }
+
 
 
 bool Enemy::IsPlayerInRange() {

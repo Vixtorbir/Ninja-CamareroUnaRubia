@@ -18,7 +18,7 @@
 	<scene>
 		<map path="Assets/Maps/" name="MapTemplate.tmx" />
 		<entities>
-			<player x="871" y="600" w="111" h="271" texture="Assets/Textures/player/Idle.png" gravity="true">
+			<player x="800" y="1100" w="111" h="271" texture="Assets/Textures/player/Idle.png" gravity="true">
 				<animations>
 					<idle loop="true" speed="0.5">
 						<frame x="0" y="0" w="111" h="271" />
@@ -31,14 +31,14 @@
 					</walk>
 				</animations>
 			</player>
-			<npcMENTORSHIP x="871" y="1800" w="111" h="271" texture="Assets/Textures/npcMENTORSHIP.png" gravity="true">
+			<npcMENTORSHIP x="1000" y="1100" w="111" h="271" texture="Assets/Textures/npcMENTORSHIP.png" gravity="true">
 				<animations>
 					<idle loop="true" speed="0.5">
 						<frame x="0" y="0" w="111" h="271" />
 					</idle>
 				</animations>
 			</npcMENTORSHIP>
-			<npcVILLAGE1 x="871" y="1800" w="111" h="271" texture="Assets/Textures/player/Idle.png" gravity="true">
+			<npcVILLAGE1 x="871" y="1200" w="111" h="271" texture="Assets/Textures/player/Idle.png" gravity="true">
 				<animations>
 					<idle loop="true" speed="0.5">
 						<frame x="0" y="0" w="111" h="271" />

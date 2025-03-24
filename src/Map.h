@@ -1,8 +1,10 @@
 #pragma once
 
 #include "Module.h"
+#include "Physics.h"
 #include <list>
 #include <vector>
+#include <map>
 
 // L10: TODO 2: Define a property to store the Map Orientation and Load it from the map
 enum MapOrientation
@@ -53,7 +55,16 @@ struct MapLayer
         return tiles[(j * width) + i];
     }
 };
+struct AnimationFrame {
+    int tileId;
+    int duration;
+};
 
+struct AnimatedTile {
+    int gid;
+    std::vector<AnimationFrame> frames;
+    int totalDuration;
+};
 // L06: TODO 2: Create a struct to hold information for a TileSet
 // Ignore Terrain Types and Tile Types for now, but we want the image!
 
@@ -68,7 +79,7 @@ struct TileSet
     int tileCount;
     int columns;
     SDL_Texture* texture;
-
+    std::map<int, AnimatedTile> animatedTiles;
     // L07: TODO 7: Implement the method that receives the gid and returns a Rect
     SDL_Rect GetRect(unsigned int gid) {
         SDL_Rect rect = { 0 };
@@ -84,6 +95,18 @@ struct TileSet
 
 };
 
+struct Object {
+    float x;
+    float y;
+    float width;
+    float height;
+};
+
+struct ObjectGroup {
+    std::string name;
+    std::vector<Object*> objects;
+};
+
 // L06: TODO 1: Create a struct needed to hold the information to Map node
 struct MapData
 {
@@ -97,6 +120,7 @@ struct MapData
 
     // L07: TODO 2: Add the info to the MapLayer Struct
     std::list<MapLayer*> layers;
+    std::vector<ObjectGroup*> objectGroups;
 };
 
 class Map : public Module
@@ -117,6 +141,7 @@ public:
     // Called each loop iteration
     bool Update(float dt);
 
+    void UpdateAnimatedTiles(float dt);
     // Called before quitting
     bool CleanUp();
 
@@ -152,8 +177,10 @@ public:
     }
 
     MapLayer* GetNavigationLayer();
-
+  
     bool IsTileCollidable(int x, int y);
+
+    bool IsObjectGroupCollidable(int x, int y);
 
 
 public: 
