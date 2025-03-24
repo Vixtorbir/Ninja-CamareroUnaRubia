@@ -2,6 +2,7 @@
 
 #include "Module.h"
 #include "Entity.h"
+#include "NPC.h"
 #include <list>
 
 class EntityManager : public Module
@@ -27,6 +28,8 @@ public:
 
 	// Additional methods
 	Entity* CreateEntity(EntityType type);
+
+	Entity* CreateNamedCharacter(EntityType type, DialogueEngine name);
 
 	void DestroyEntity(Entity* entity);
 

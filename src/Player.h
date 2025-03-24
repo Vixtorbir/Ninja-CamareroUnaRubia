@@ -4,11 +4,19 @@
 #include "SDL2/SDL.h"
 #include "Box2D/Box2D.h"
 #include "Animation.h"
-#include "Shurikens.h"
+
+#include "GuiPopup.h"
+#include "GuiControl.h"
+#include "Module.h"
 #include <vector>
+
 
 struct SDL_Texture;
 
+enum class GuiPopups
+{
+	E_Interact
+};
 
 class Player : public Entity
 {
@@ -28,6 +36,8 @@ public:
 
 	bool CleanUp();
 
+	void GuiPOPup(GuiPopups guiPopup);
+
 	// L08 TODO 6: Define OnCollision function for the player. 
 	void OnCollision(PhysBody* physA, PhysBody* physB);
 
@@ -41,7 +51,11 @@ public:
 
 	Vector2D GetPosition();
 
-	void ShootShuriken();
+	void TakeDamage(int damage);
+
+	void Die();
+
+	
 
 
 public:
@@ -89,6 +103,18 @@ public:
 	Animation idle;
 	Animation walk;
 
-	std::vector<Shuriken*> shurikens;
+	
+	GuiPopup* popup;
+	SDL_Rect btPos = { 960, 520, 40, 40};
+	Module* sceneModule = nullptr;
 	EntityDirections playerDirection = EntityDirections::RIGHT;
+
+	int hp; 
+	const int maxHp = 3;
+
+	float damageCooldown = 3.0f; 
+	float timeSinceLastDamage = 0.0f; 
+	bool canTakeDamage = true;
+
+	SDL_Texture* hpIconTexture;
 };

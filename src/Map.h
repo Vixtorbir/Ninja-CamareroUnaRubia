@@ -153,6 +153,8 @@ public:
 
     MapLayer* GetNavigationLayer();
 
+    bool IsTileCollidable(int x, int y);
+
 
 public: 
     std::string mapFileName;

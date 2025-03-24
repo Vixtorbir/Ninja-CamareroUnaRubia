@@ -35,6 +35,13 @@ private:
     SDL_Texture* Overlay;
     SDL_Texture* OverlayPortrait;
 
+    int screenWidth;
+    int screenHeight;
+
     SDL_Texture* Hanzo;
     SDL_Texture* Mikado;
+    SDL_Texture* Mentor;
+
+    pugi::xml_document config;
+
 };

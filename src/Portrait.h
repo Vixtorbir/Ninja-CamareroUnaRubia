@@ -14,9 +14,10 @@ public:
 
 	// Called each loop iteration
 	bool Update(float dt);
-	SDL_Texture* Hanzo = NULL;
 
 private:
+
+	SDL_Texture* Hanzo = NULL;
 
 	bool canClick = true;
 	bool drawBasic = false;

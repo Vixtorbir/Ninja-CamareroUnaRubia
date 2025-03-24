@@ -30,7 +30,8 @@ enum class ColliderType {
 	ENEMY,
 	SHURIKEN,
 	UNKNOWN,
-	WALL
+	WALL,
+	NPC
 	// ..
 };
 
@@ -55,7 +56,27 @@ public:
 	Entity* listener;
 	ColliderType ctype;
 };
+class PhysBodyGround
+{
+public:
+	PhysBodyGround() : listener(NULL), body(NULL), ctype(ColliderType::UNKNOWN)
+	{
+	}
 
+	~PhysBodyGround() {}
+
+	void GetPosition(int& x, int& y) const;
+	float GetRotation() const;
+	bool Contains(int x, int y) const;
+	int RayCast(int x1, int y1, int x2, int y2, float& normal_x, float& normal_y) const;
+
+public:
+	int width = 0;
+	int height = 0;
+	b2Body* body;
+	Entity* listener;
+	ColliderType ctype;
+};
 // Module --------------------------------------
 class Physics : public Module, public b2ContactListener // TODO
 {

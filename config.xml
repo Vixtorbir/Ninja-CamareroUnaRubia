@@ -12,7 +12,7 @@
 		<camera zoom="1" />
 		<fullscreen value="false" />
 		<borderless value="false" />
-		<resizable value="false" />
+		<resizable value="true" />
 		<fullscreen_window value="false" />
 	</window>
 	<scene>
@@ -31,6 +31,20 @@
 					</walk>
 				</animations>
 			</player>
+			<npcMENTORSHIP x="871" y="1800" w="111" h="271" texture="Assets/Textures/npcMENTORSHIP.png" gravity="true">
+				<animations>
+					<idle loop="true" speed="0.5">
+						<frame x="0" y="0" w="111" h="271" />
+					</idle>
+				</animations>
+			</npcMENTORSHIP>
+			<npcVILLAGE1 x="871" y="1800" w="111" h="271" texture="Assets/Textures/player/Idle.png" gravity="true">
+				<animations>
+					<idle loop="true" speed="0.5">
+						<frame x="0" y="0" w="111" h="271" />
+					</idle>
+				</animations>
+			</npcVILLAGE1>
 			<items>
 				<item name="coin" x="200" y="672" w="32" h="32" texture="Assets/Textures/goldCoin.png" gravity="true">
 					<animations>
@@ -59,4 +73,31 @@
 			</enemies>
 		</entities>
 	</scene>
+	<UI path="Assets/UI/UI buttons spritesheet.png">
+		<playButton x="250" y="250" w="250" h="250" state ="unselected">
+		</playButton>
+		<settingsButton x="250" y="250"  w="250" h="250" state ="unselected">
+		</settingsButton>
+		<stopButton x="250" y="250"  w="250" h="250" state ="unselected">
+		</stopButton>
+		<forwardButton x="250" y="250"  w="250" h="250" state ="unselected">
+		</forwardButton>
+		<backwardsButton x="250" y="250" w="250" h="250" state ="unselected">
+		</backwardsButton>
+		<saveButton x="250" y="250" w="250" h="250" state ="unselected">
+		</saveButton>
+		<loadButton x="250" y="250" w="250" h="250" state ="unselected">
+		</loadButton>
+		<exitButton x="250" y="250" w="250" h="250" state ="unselected">
+		</exitButton>
+		<scroll x="500" y="250" w="250" h="250" >
+		</scroll>
+		<scrollControl x="250" y="250"  w="250" h="250">
+		</scrollControl>
+		<checkBox x="250" y="250"  w="250" h="250" state ="inactive">
+		</checkBox>
+		<dialogueBox x="250" y="250"  w="1500" h="500">
+		</dialogueBox>
+	</UI>
+
 </config>

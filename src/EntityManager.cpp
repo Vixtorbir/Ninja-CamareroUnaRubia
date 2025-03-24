@@ -6,6 +6,7 @@
 #include "Log.h"
 #include "Item.h"
 #include "Enemy.h"
+#include "NPC.h"
 //#include "tracy/Tracy.hpp"
 
 EntityManager::EntityManager() : Module()
@@ -88,7 +89,24 @@ Entity* EntityManager::CreateEntity(EntityType type)
 
 	return entity;
 }
+Entity* EntityManager::CreateNamedCharacter(EntityType type, DialogueEngine name)
+{
+	Entity* entity = nullptr;
 
+	//L04: TODO 3a: Instantiate entity according to the type and add the new entity to the list of Entities
+	switch (type)
+	{
+	case EntityType::NPC:
+		entity = new NPC(name);
+		break;
+	default:
+		break;
+	}
+
+	entities.push_back(entity);
+
+	return entity;
+}
 void EntityManager::DestroyEntity(Entity* entity)
 {
 	for (auto it = entities.begin(); it != entities.end(); ++it)
