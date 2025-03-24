@@ -54,6 +54,8 @@ private:
 
     bool IsPlayerInAttackRange();
     void CheckAttackCollision();
+    bool IsPlayerInLineOfSight();
+    void DrawLineOfSight();
 
     SDL_Texture* texture;
     SDL_Texture* attackTexture;
