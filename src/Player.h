@@ -9,6 +9,7 @@
 #include "GuiControl.h"
 #include "Module.h"
 #include <vector>
+#include "GuiSlider.h"
 
 
 struct SDL_Texture;
@@ -110,6 +111,7 @@ public:
 
 	
 	GuiPopup* popup;
+	GuiSlider* HP_Slider;
 	SDL_Rect btPos = { 960, 520, 40, 40};
 	Module* sceneModule = nullptr;
 	EntityDirections playerDirection = EntityDirections::RIGHT;

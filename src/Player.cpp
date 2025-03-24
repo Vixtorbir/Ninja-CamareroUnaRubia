@@ -53,7 +53,8 @@ bool Player::Start() {
 	pbody->body->SetFixedRotation(true);
 
 	popup = (GuiPopup*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::POPUP, 1, "E", btPos, sceneModule);
-	
+	HP_Slider = (GuiSlider*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::SLIDER, 1, " ", btPos, sceneModule);
+
 
 	// Set the gravity of the body
 	if (!parameters.attribute("gravity").as_bool()) pbody->body->SetGravityScale(0);
