@@ -106,6 +106,7 @@ public:
 	GuiControlButton* startButton = nullptr;
 	GuiControlButton* optionsButton = nullptr;
 	GuiControlButton* exitButton = nullptr;
+	GuiControlButton* returnButton = nullptr;
 
 private:
 	Parallax* parallax = nullptr;

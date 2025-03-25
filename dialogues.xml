@@ -17,18 +17,6 @@
 			</dialogues>
 		</MENTORSHIP>
 
-		<MENTORSHIP1>
-			<dialogues size="1">
-				<dialogue1 character="Mentor" text="Option 1 Selected" branching="0" />
-			</dialogues>
-		</MENTORSHIP1>
-
-		<MENTORSHIP2>
-			<dialogues size="1">
-				<dialogue1 character="Mentor" text="Option 2 Selected" branching="0" />
-			</dialogues>
-		</MENTORSHIP2>
-
 		<SECRET>
 			<dialogues size="1">
 				<dialogue1 character="Mystery" text="You found a secret!" branching="0" />

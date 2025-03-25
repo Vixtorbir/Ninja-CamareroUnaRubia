@@ -6,7 +6,7 @@
 #include "Dialogue.h"
 #include "Portrait.h"
 #include "GuiPopup.h"
-
+#include "GuiSlider.h"
 #include "Audio.h"
 
 GuiManager::GuiManager() :Module()
@@ -44,9 +44,11 @@ GuiControl* GuiManager::CreateGuiControl(GuiControlType type, int id, const char
 	case GuiControlType::OPTIONA:
 		guiControl = new GuiControlButton(id, bounds, text, true, false);
 		break;
-		
 	case GuiControlType::OPTIONB:
 		guiControl = new GuiControlButton(id, bounds, text, false, true);
+		break;
+	case GuiControlType::HPSLIDER:
+		guiControl = new GuiSlider(id, bounds, text, 0, 100, 100);
 		break;
 	}
 
