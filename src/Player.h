@@ -113,6 +113,8 @@ public:
 	GuiPopup* popup;
 	GuiSlider* HP_Slider;
 	SDL_Rect btPos = { 960, 520, 40, 40};
+	SDL_Rect hpPos = { 10, 30, 1000, 100};
+
 	Module* sceneModule = nullptr;
 	EntityDirections playerDirection = EntityDirections::RIGHT;
 	
@@ -153,6 +155,8 @@ private:
 	bool canTakeDamage = true;
 
 	SDL_Texture* hpIconTexture;
+	SDL_Texture* BackgroundSliderHP;
+
 
 	bool crouched;
 };
