@@ -1,3 +1,4 @@
+
 #pragma once
 
 #include "Module.h"
@@ -8,6 +9,7 @@
 #include "Dialogue.h"
 #include "DialogueManager.h"
 #include "Parallax.h"
+
 #include "Npc.h"
 
 struct SDL_Texture;
@@ -22,7 +24,6 @@ enum class GameState {
 class Scene : public Module
 {
 public:
-
 	Scene();
 
 	// Destructor
@@ -59,15 +60,20 @@ public:
 
 	void LoadTextures();
 
-	void SetState(GameState newState); 
-	GameState GetState() const;    
-	
+	void SetState(GameState newState);
+	GameState GetState() const;
+
+
+	void UpdateMainMenu(float dt);
+	void UpdatePlaying(float dt);
+	void UpdatePaused(float dt);
+	void UpdateGameOver(float dt);
+
 
 public:
 	// Get tilePosDebug value
 	std::string GetTilePosDebug() {
 		return tilePosDebug;
-
 	}
 
 public:
@@ -95,12 +101,13 @@ public:
 
 	GameState currentState = GameState::MAIN_MENU;
 
-	void UpdateMainMenu();
-	void UpdateGameplay(float dt);
-	void UpdatePauseMenu();
-	void UpdateGameOver();
+	void HandleInput();
+
+	GuiControlButton* startButton = nullptr;
+	GuiControlButton* optionsButton = nullptr;
+	GuiControlButton* exitButton = nullptr;
+
 private:
 	Parallax* parallax = nullptr;
-
+	
 };
-

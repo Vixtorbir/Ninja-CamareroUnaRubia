@@ -54,7 +54,7 @@ bool Render::Awake()
 	TTF_Init();
 
 	//load a font into memory
-	font = TTF_OpenFont("Assets/Fonts/arial/arial.ttf", 100);
+	font = TTF_OpenFont("Assets/Fonts/shinkansen/shinkansen.regular.ttf", 100);
 
 	return ret;
 }
@@ -232,6 +232,33 @@ bool Render::DrawRectangle(const SDL_Rect& rect, Uint8 r, Uint8 g, Uint8 b, Uint
 
 	return ret;
 }
+bool Render::DrawTexturedRectangle(SDL_Texture* texture, int posX, int posY, int width, int height, bool use_camera) const
+{
+	bool ret = true;
+	int scale = Engine::GetInstance().window.get()->GetScale();
+
+	SDL_Rect rect;
+	rect.x = posX;
+	rect.y = posY;
+	rect.w = width;
+	rect.h = height;
+
+	if (use_camera)
+	{
+		rect.x = (int)(camera.x + posX * scale);
+		rect.y = (int)(camera.y + posY * scale);
+		rect.w *= scale;
+		rect.h *= scale;
+	}
+
+	if (SDL_RenderCopy(renderer, texture, NULL, &rect) != 0)
+	{
+		//LOG("Cannot draw textured rectangle to screen. SDL_RenderCopy error: %s", SDL_GetError());
+		ret = false;
+	}
+
+	return ret;
+}
 
 bool Render::DrawLine(int x1, int y1, int x2, int y2, Uint8 r, Uint8 g, Uint8 b, Uint8 a, bool use_camera) const
 {
@@ -290,7 +317,7 @@ bool Render::DrawCircle(int x, int y, int radius, Uint8 r, Uint8 g, Uint8 b, Uin
 bool Render::DrawText(const char* text, int posx, int posy, int w, int h) const
 {
 
-	SDL_Color color = { 255, 255, 255 };
+	SDL_Color color = { 0, 0, 0 };
 	SDL_Surface* surface = TTF_RenderText_Solid(font, text, color);
 	SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
 

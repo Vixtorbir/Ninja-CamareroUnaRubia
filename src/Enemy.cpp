@@ -63,14 +63,32 @@ bool Enemy::Update(float dt)
 {
 	//ZoneScoped;
 	// 
+	if (Engine::GetInstance().scene.get()->currentState == GameState::PAUSED) {
 	
+		pbody->body->SetLinearVelocity(b2Vec2(0, 0));
+
+		b2Transform pbodyPos = pbody->body->GetTransform();
+		position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 2);
+		position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
+		Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
+		currentAnimation->Update();
+
+		return true;
+	
+	}
+
+	if (Engine::GetInstance().scene.get()->currentState != GameState::PLAYING) return true;
+
 
 	Vector2D playerPos = Engine::GetInstance().scene.get()->player->GetPosition();
 	Vector2D enemyPos = GetPosition();
-	Vector2D enemyTilePos = Engine::GetInstance().map.get()->WorldToMap(enemyPos.getX(), enemyPos.getY());
-	Vector2D playerTilePos = Engine::GetInstance().map.get()->WorldToMap(playerPos.getX(), playerPos.getY());
+	Vector2D enemyTilePos = Engine::GetInstance().map.get()->WorldToMap((int)enemyPos.getX(), (int)enemyPos.getY());
+	Vector2D playerTilePos = Engine::GetInstance().map.get()->WorldToMap((int)playerPos.getX(), (int)playerPos.getY());
 
-	if (IsPlayerInRange()) {
+	if (IsPlayerInLineOfSight()) {
+		state = EnemyState::AGGRESSIVE;
+	}
+	else if (IsPlayerInRange()) {
 		if (IsPlayerInAttackRange() && attackCooldownTimer.ReadSec() >= 3) {
 			state = EnemyState::ATTACK;
 			attackDurationTimer.Start();
@@ -118,69 +136,19 @@ bool Enemy::Update(float dt)
 	case EnemyState::ATTACK:
 		// Lógica de ataque
 		PerformAttack();
-		
-		Engine::GetInstance().physics.get()->DeletePhysBody(attackHitbox);
-		attackHitbox = nullptr;
-		attackCooldownTimer.Start();
-		state = EnemyState::AGGRESSIVE;
-		
+
+		if (attackDurationTimer.ReadSec() >= 1) {
+			// Elimina la hitbox del ataque después de 1 segundo
+			Engine::GetInstance().physics.get()->DeletePhysBody(attackHitbox);
+			attackHitbox = nullptr;
+			attackCooldownTimer.Start();
+			state = EnemyState::AGGRESSIVE;
+		}
 		break;
 	}
 
-
-	// Pathfinding testing inputs
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_R) == KEY_DOWN) {
-		Vector2D pos = GetPosition();
-		Vector2D tilePos = Engine::GetInstance().map.get()->WorldToMap(pos.getX(),pos.getY());
-		pathfinding->ResetPath(tilePos);
-	}
-
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_J) == KEY_DOWN) {
-		pathfinding->PropagateBFS();
-	}
-
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_J) == KEY_REPEAT &&
-		Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT) {
-		pathfinding->PropagateBFS();
-	}
-
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_K) == KEY_DOWN) {
-		pathfinding->PropagateDijkstra();
-	}
-
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_K) == KEY_REPEAT &&
-		Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT) {
-		pathfinding->PropagateDijkstra();
-	}
-
-	// L13: TODO 3:	Add the key inputs to propagate the A* algorithm with different heuristics (Manhattan, Euclidean, Squared)
-
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_B) == KEY_DOWN) {
-		pathfinding->PropagateAStar(MANHATTAN);
-	}
-
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_B) == KEY_REPEAT &&
-		Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT) {
-		pathfinding->PropagateAStar(MANHATTAN);
-	}
-
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_N) == KEY_DOWN) {
-		pathfinding->PropagateAStar(EUCLIDEAN);
-	}
-
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_N) == KEY_REPEAT &&
-		Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT) {
-		pathfinding->PropagateAStar(EUCLIDEAN);
-	}
-
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_M) == KEY_DOWN) {
-		pathfinding->PropagateAStar(SQUARED);
-	}
-
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_M) == KEY_REPEAT &&
-		Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT) {
-		pathfinding->PropagateAStar(SQUARED);
-	}
+	// Dibuja la línea de visión del enemigo
+	DrawLineOfSight();
 
 	// Propagate the pathfinding algorithm using A* with the selected heuristic
 	ResetPath();
@@ -203,6 +171,9 @@ bool Enemy::Update(float dt)
 
 	return true;
 }
+
+
+
 
 bool Enemy::CleanUp()
 {
@@ -252,15 +223,26 @@ bool Enemy::IsNextTileCollidable() {
 	Vector2D pos = GetPosition();
 	Vector2D tilePos = Engine::GetInstance().map.get()->WorldToMap(pos.getX(), pos.getY());
 
-	if (direction == 0) { 
+	// Calcular la posición de la siguiente tile en la dirección actual
+	if (direction == 0) { // Izquierda
 		tilePos.setX(tilePos.getX() - 1);
 	}
-	else { 
+	else { // Derecha
 		tilePos.setX(tilePos.getX() + 1);
 	}
 
-	return Engine::GetInstance().map.get()->IsTileCollidable(tilePos.getX(), tilePos.getY() + 1); 
+	// Verificar si la siguiente tile es colisionable (pared o plataforma)
+	bool nextTileCollidable = Engine::GetInstance().map.get()->IsTileCollidable(tilePos.getX(), tilePos.getY());
+	bool nextObjectGroupCollidable = Engine::GetInstance().map.get()->IsObjectGroupCollidable(tilePos.getX(), tilePos.getY());
+
+	// Verificar si hay suelo debajo de la siguiente tile
+	bool floorBelowNextTile = Engine::GetInstance().map.get()->IsTileCollidable(tilePos.getX(), tilePos.getY() + 1) ||
+		Engine::GetInstance().map.get()->IsObjectGroupCollidable(tilePos.getX(), tilePos.getY() + 1);
+
+	// Si la siguiente tile es colisionable o no hay suelo debajo, no se puede mover
+	return nextTileCollidable || nextObjectGroupCollidable || !floorBelowNextTile;
 }
+
 
 
 bool Enemy::IsPlayerInRange() {
@@ -337,4 +319,66 @@ bool Enemy::IsPlayerInAttackRange() {
 	int distance = abs(playerTilePos.getX() - enemyTilePos.getX());
 	return distance <= 3;
 }
+
+bool Enemy::IsPlayerInLineOfSight() {
+	Vector2D playerPos = Engine::GetInstance().scene.get()->player->GetPosition();
+	Vector2D enemyPos = GetPosition();
+	Vector2D enemyTilePos = Engine::GetInstance().map.get()->WorldToMap((int)enemyPos.getX(), (int)enemyPos.getY());
+	Vector2D playerTilePos = Engine::GetInstance().map.get()->WorldToMap((int)playerPos.getX(), (int)playerPos.getY());
+
+	int distance = abs(playerTilePos.getX() - enemyTilePos.getX());
+
+	// Verifica si el jugador está dentro de la línea de visión de 5 tiles
+	if (distance <= 5) {
+		if (direction == 0 && playerTilePos.getX() < enemyTilePos.getX()) { // Izquierda
+			for (int i = 1; i <= 5; ++i) {
+				if (Engine::GetInstance().map.get()->IsTileCollidable(enemyTilePos.getX() - i, enemyTilePos.getY())) {
+					return false; // Hay una colisión en la línea de visión
+				}
+				if (playerTilePos.getX() == enemyTilePos.getX() - i) {
+					return true; // El jugador está en la línea de visión
+				}
+			}
+		}
+		else if (direction == 1 && playerTilePos.getX() > enemyTilePos.getX()) { // Derecha
+			for (int i = 1; i <= 5; ++i) {
+				if (Engine::GetInstance().map.get()->IsTileCollidable(enemyTilePos.getX() + i, enemyTilePos.getY())) {
+					return false; // Hay una colisión en la línea de visión
+				}
+				if (playerTilePos.getX() == enemyTilePos.getX() + i) {
+					return true; // El jugador está en la línea de visión
+				}
+			}
+		}
+	}
+
+	return false;
+}
+
+
+
+void Enemy::DrawLineOfSight() {
+	Vector2D enemyPos = GetPosition();
+	Vector2D enemyTilePos = Engine::GetInstance().map.get()->WorldToMap((int)enemyPos.getX(), (int)enemyPos.getY());
+
+	SDL_Renderer* renderer = Engine::GetInstance().render.get()->renderer;
+	SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255); // Color rojo para la línea de visión
+
+	for (int i = 1; i <= 5; ++i) {
+		int tileX = (direction == 0) ? enemyTilePos.getX() - i : enemyTilePos.getX() + i;
+		int tileY = enemyTilePos.getY();
+
+		if (Engine::GetInstance().map.get()->IsTileCollidable(tileX, tileY)) {
+			break; // Detén el dibujo si hay una colisión en la línea de visión
+		}
+
+		Vector2D tilePos = Engine::GetInstance().map.get()->MapToWorld(tileX, tileY);
+		SDL_Rect rect = { (int)tilePos.getX(), (int)enemyPos.getY(), Engine::GetInstance().map.get()->GetTileWidth(), Engine::GetInstance().map.get()->GetTileHeight() };
+		SDL_RenderDrawRect(renderer, &rect);
+	}
+}
+
+
+
+
 

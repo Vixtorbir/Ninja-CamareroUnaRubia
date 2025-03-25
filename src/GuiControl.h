@@ -20,7 +20,9 @@ enum class GuiControlType
 	DIALOGUE,
 	SPINNER,
 	POPUP,
-	PORTRAIT
+	PORTRAIT,
+	OPTIONA,
+	OPTIONB
 };
 
 enum class GuiControlState

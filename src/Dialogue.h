@@ -24,7 +24,7 @@ private:
     SDL_Rect portraitPos;
 
     bool started = false;
-
+    
     std::string text;
     std::string displayText;
     int charIndex = 0;

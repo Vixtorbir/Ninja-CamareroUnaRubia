@@ -51,9 +51,16 @@ public:
 
 	Vector2D GetPosition();
 
-	void TakeDamage(int damage);
+	void ShootShuriken();
+	
+	//sound
+	void LoadPlayerFx();
 
+	//damage
+	void TakeDamage(int damage);
 	void Die();
+
+	void ChangeHitboxSize(float width, float height);
 
 	
 
@@ -66,8 +73,6 @@ public:
 	int texW, texH;
 	int camX, camY;
 	float smoothFactor = 0.1f;
-	//Audio fx
-	int pickCoinFxId;
 
 	// L08 TODO 5: Add physics to the player - declare a Physics body
 	PhysBody* pbody;
@@ -83,15 +88,15 @@ public:
 	bool isHoldingJump = false;
 
 	bool touchingWall = false;  
-	float wallJumpForce = 40.5f; 
-	float wallJumpPush = 2.0f;  
-	float wallClimbSpeed = -1.5f;
+	float wallJumpForce = 90.5f; 
+	float wallJumpPush = 102.0f;  
+	float wallClimbSpeed = -2.0f;
 
 
 	bool canDash = true;
 	bool isDashing = false;
 	float dashDuration = 2;
-	float dashCooldown = 1; 
+	float dashCooldown = 1;
 	float dashTimer = 0.0f;
 	float dashSpeed = 10;
 	float dashElapsedTime = 0;
@@ -108,6 +113,35 @@ public:
 	SDL_Rect btPos = { 960, 520, 40, 40};
 	Module* sceneModule = nullptr;
 	EntityDirections playerDirection = EntityDirections::RIGHT;
+	
+private:
+		//Audio fx
+		int jump1FxId;
+		int jump2FxId;
+		int jump3FxId;
+		int doubleJump1FxId;
+		int doubleJump2FxId;
+		int walk1FxId;
+		int walk2FxId;
+		int walk3FxId;
+		int walk4FxId;
+		int walk5FxId;
+		int dash1FxId;
+		int dash2FxId;
+		int dash3FxId;
+		int throwShuriken1FxId;
+		int throwShuriken2FxId;
+		int throwShuriken3FxId;
+		int weakKatana1FxId;
+		int weakKatana2FxId;
+		int weakKatana3FxId;
+		int strongKatana1FxId;
+		int strongKatana2FxId;
+		int dieFxId;
+		int hit1FxId;
+		int hit2FxId;
+		int pickUpItemFxId;
+		
 
 	int hp; 
 	const int maxHp = 3;
@@ -117,4 +151,6 @@ public:
 	bool canTakeDamage = true;
 
 	SDL_Texture* hpIconTexture;
+
+	bool crouched;
 };

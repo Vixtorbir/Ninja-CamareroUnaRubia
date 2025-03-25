@@ -14,6 +14,7 @@
 Player::Player() : Entity(EntityType::PLAYER)
 {
 	name = "Player";
+	crouched = false;
 }
 
 Player::~Player() {
@@ -26,7 +27,7 @@ bool Player::Awake() {
 }
 
 bool Player::Start() {
-
+	
 	//L03: TODO 2: Initialize Player parameters
 	texture = Engine::GetInstance().textures.get()->Load(parameters.attribute("texture").as_string());
 	position.setX(parameters.attribute("x").as_int());
@@ -58,7 +59,7 @@ bool Player::Start() {
 	if (!parameters.attribute("gravity").as_bool()) pbody->body->SetGravityScale(0);
 
 	//initialize audio effect
-	pickCoinFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/retro-video-game-coin-pickup-38299.ogg");
+	LoadPlayerFx();
 
 	hp = maxHp;
 	timeSinceLastDamage = damageCooldown;
@@ -71,6 +72,9 @@ bool Player::Start() {
 
 bool Player::Update(float dt)
 {
+
+	if (Engine::GetInstance().scene.get()->currentState != GameState::PLAYING) return true;
+
 	if (!canDash) {
 		dashTimer += dt / 1000;
 		if (dashTimer >= dashCooldown) {
@@ -112,17 +116,28 @@ bool Player::Update(float dt)
 	}
 	*/
 	// Move down
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) {
-		velocity.y = 0.2 * 16;
+
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_DOWN) {
+		currentAnimation = &idle; // Cambiar a animación de agachado después
+		ChangeHitboxSize(texW, texH / 2); // Reduce el hitbox
+	}
+
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_UP) {
+		currentAnimation = &idle;
+		ChangeHitboxSize(texW, texH); // Restaura el hitbox
 	}
 
 	//Jump
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_W) == KEY_DOWN && hasAlreadyJumpedOnce == 0) {
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_W) == KEY_DOWN && hasAlreadyJumpedOnce == 0) 
+	{
 		isHoldingJump = true;
 		jumpHoldTimer = 0.0f;
+		
+		
 	}
 
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_W) == KEY_REPEAT && isHoldingJump) {
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_W) == KEY_REPEAT && isHoldingJump)
+	{
 		jumpHoldTimer += dt;
 
 		if (jumpHoldTimer >= maxHoldTime) {
@@ -131,10 +146,15 @@ bool Player::Update(float dt)
 			hasAlreadyJumpedOnce++;
 			isHoldingJump = false;
 			isJumping = true;
+			
 		}
+		int jumpId = Engine::GetInstance().audio.get()->randomFx(jump1FxId, jump3FxId);
+		Engine::GetInstance().audio.get()->PlayFx(jumpId);
+	
 	}
 
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_W) == KEY_UP && isHoldingJump) {
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_W) == KEY_UP && isHoldingJump) 
+	{
 		float holdPercentage = jumpHoldTimer / maxHoldTime;
 		float jumpMultiplier = minJumpMultiplier + (holdPercentage * (maxJumpMultiplier - minJumpMultiplier));
 		float jumpStrength = jumpForce * jumpMultiplier;
@@ -151,6 +171,9 @@ bool Player::Update(float dt)
 		pbody->body->ApplyLinearImpulseToCenter(b2Vec2(0, -jumpForce), true);
 		hasAlreadyJumpedOnce++;
 		isJumping = true;
+		int doubleJumpId = Engine::GetInstance().audio.get()->randomFx(doubleJump1FxId, doubleJump2FxId);
+		Engine::GetInstance().audio.get()->PlayFx(doubleJumpId);
+	
 	}
 
 	// Wall Jump
@@ -168,6 +191,7 @@ bool Player::Update(float dt)
 
 	if (touchingWall && Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_W) == KEY_REPEAT) {
 		pbody->body->SetLinearVelocity(b2Vec2(0, wallClimbSpeed));
+		currentAnimation = &idle; //climb cuando este
 	}
 
 
@@ -183,6 +207,8 @@ bool Player::Update(float dt)
 		dashTimer = 0.0f;
 		isDashing = true;
 		dashElapsedTime = 0.0f;
+		int dashId = Engine::GetInstance().audio.get()->randomFx(dash1FxId,dash3FxId);
+		Engine::GetInstance().audio.get()->PlayFx(dashId);
 	}
 
 	if (isDashing) {
@@ -281,13 +307,15 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 		touchingWall = true;
 		break;
 	case ColliderType::ITEM:
-		Engine::GetInstance().audio.get()->PlayFx(pickCoinFxId);
+		Engine::GetInstance().audio.get()->PlayFx(pickUpItemFxId);
 		Engine::GetInstance().physics.get()->DeletePhysBody(physB); // Deletes the body of the item from the physics world
 		break;
 	case ColliderType::UNKNOWN:
 		break;
 
 	case ColliderType::ENEMY:
+		int damageId = Engine::GetInstance().audio.get()->randomFx(hit1FxId, hit2FxId);
+		Engine::GetInstance().audio.get()->PlayFx(damageId);
 		TakeDamage(1); // El jugador recibe 1 punto de da�o
 		break;
 	}
@@ -323,6 +351,35 @@ Vector2D Player::GetPosition() {
 	Vector2D pos = Vector2D(METERS_TO_PIXELS(bodyPos.x), METERS_TO_PIXELS(bodyPos.y));
 	return pos;
 }
+void Player::LoadPlayerFx()
+{
+	
+	 jump1FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/Jump1.ogg");
+	 jump2FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/Jump2.ogg");
+	 jump3FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/Jump3.ogg");
+	 doubleJump1FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/doubleJump1.ogg");
+	 doubleJump2FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/doubleJump2.ogg");
+	 walk1FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/wood-step1.ogg");
+	 walk2FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/wood-step2.ogg");
+	 walk3FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/wood-step3.ogg");
+	 walk4FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/wood-step4.ogg");
+	 walk5FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/wood-step5.ogg");
+	 dash1FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/dash1.ogg");
+	 dash2FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/dash2.ogg");
+	 dash3FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/dash3.ogg");
+	 throwShuriken1FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/shootShuriken1.ogg");
+	 throwShuriken2FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/shootShuriken2.ogg");
+	 throwShuriken3FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/shootShuriken3.ogg");
+	 weakKatana1FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/lightSwordSlash1.ogg");
+	 weakKatana2FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/lightSwordSlash2.ogg");
+	 weakKatana3FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/lightSwordSlash3.ogg");
+	 strongKatana1FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/heavySwordSlash1.ogg");
+	 strongKatana2FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/heavySwordSlash2.ogg");
+	 dieFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/die.ogg");
+	 hit1FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/hit1.ogg");
+	 hit2FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/hit2.ogg");
+	 pickUpItemFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/coinSound.ogg");
+}
 
 void Player::TakeDamage(int damage) {
 	if (canTakeDamage) {
@@ -339,7 +396,28 @@ void Player::TakeDamage(int damage) {
 void Player::Die() {
 	
 	LOG("Player has died");
+	Engine::GetInstance().audio.get()->PlayFx(dieFxId);
 	// Puedes reiniciar el nivel, mostrar una pantalla de game over, etc.
 }
 
+void Player::ChangeHitboxSize(float width, float height) {
+	// Destroy the current fixture
+	b2Fixture* fixture = pbody->body->GetFixtureList();
+	while (fixture != nullptr) {
+		b2Fixture* next = fixture->GetNext();
+		pbody->body->DestroyFixture(fixture);
+		fixture = next;
+	}
+
+	// Create a new fixture with the new size
+	if (height == texH / 2) {
+	pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX()+55, (int)position.getY()+200, width, height, bodyType::DYNAMIC);
+	}
+	else {
+		pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX()+55, (int)position.getY()+100, width, height, bodyType::DYNAMIC);
+	}
+	pbody->listener = this;
+	pbody->ctype = ColliderType::PLAYER;
+	pbody->body->SetFixedRotation(true);
+}
 
