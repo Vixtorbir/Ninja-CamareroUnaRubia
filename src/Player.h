@@ -10,7 +10,9 @@
 #include "Module.h"
 #include <vector>
 #include "GuiSlider.h"
+#include "GuiImage.h"
 
+#define MAXHP 100
 
 struct SDL_Texture;
 
@@ -65,7 +67,6 @@ public:
 
 	
 
-
 public:
 
 	//Declare player parameters
@@ -74,6 +75,7 @@ public:
 	int texW, texH;
 	int camX, camY;
 	float smoothFactor = 0.1f;
+	int HP = MAXHP;
 
 	// L08 TODO 5: Add physics to the player - declare a Physics body
 	PhysBody* pbody;
@@ -111,9 +113,12 @@ public:
 
 	
 	GuiPopup* popup;
+	GuiImage* backgroundSliderImage;
+	GuiImage* foregroundSliderImage;
+
 	GuiSlider* HP_Slider;
 	SDL_Rect btPos = { 960, 520, 40, 40};
-	SDL_Rect hpPos = { 10, 30, 1000, 100};
+	SDL_Rect hpPos = { 500, 100, 1000, 100};
 
 	Module* sceneModule = nullptr;
 	EntityDirections playerDirection = EntityDirections::RIGHT;
@@ -156,6 +161,7 @@ private:
 
 	SDL_Texture* hpIconTexture;
 	SDL_Texture* BackgroundSliderHP;
+	SDL_Texture* ForeGroundSliderHP;
 
 
 	bool crouched;
