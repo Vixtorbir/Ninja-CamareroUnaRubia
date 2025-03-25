@@ -12,6 +12,10 @@ GuiSlider::GuiSlider(int id, SDL_Rect bounds, const char* text, int minValue, in
 
     sliderBar = { bounds.x, bounds.y + bounds.h / 2 - 5, bounds.w, 10 };
     sliderThumb = { bounds.x + ((defaultValue - minValue) * bounds.w / (maxValue - minValue)) - 5, bounds.y, 10, bounds.h };
+
+    backgroundSliderHP = Engine::GetInstance().textures.get()->Load("Assets/UI/lifeBarBack.png");
+    SDL_QueryTexture(backgroundSliderHP, NULL, NULL, &SliderTextureW, &SliderTextureH);
+    SDL_Rect backgroundSliderSizes = { 0, 0, SliderTextureW, SliderTextureH };
 }
 
 GuiSlider::~GuiSlider()
@@ -59,6 +63,14 @@ bool GuiSlider::Draw(std::shared_ptr<Render> render)
     {
         render->DrawRectangle(sliderBar, 200, 200, 200, 255, true, false);
 
+        int textX = bounds.x + (bounds.w - SliderTextureW);
+        int textY = bounds.y + (bounds.h - SliderTextureH);
+        Engine::GetInstance().render.get()->DrawTexture(backgroundSliderHP,Engine::GetInstance().render->camera.x,Engine::GetInstance().render->camera.y, &backgroundSliderSizes);
+        std::cout << "textX: " << textX
+            << ", textY: " << textY
+            << ", Camera X: " << Engine::GetInstance().render->camera.x
+            << ", Camera Y: " << Engine::GetInstance().render->camera.y
+            << std::endl;
         switch (state)
         {
         case GuiControlState::DISABLED:

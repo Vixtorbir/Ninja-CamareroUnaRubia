@@ -24,6 +24,10 @@ private:
     int currentValue;
 
     Vector2D mousePos;
+    SDL_Texture* backgroundSliderHP;
+    int SliderTextureW;
+    int SliderTextureH;
+    SDL_Rect backgroundSliderSizes;
 
     SDL_Rect sliderBar;
     SDL_Rect sliderThumb;
