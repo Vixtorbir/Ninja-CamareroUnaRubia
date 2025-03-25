@@ -86,7 +86,7 @@ bool Player::Update(float dt)
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_J) == KEY_DOWN) HP -= 20;
 	if (HP >= MAXHP) HP = MAXHP; else if (HP <= 0) HP = 0;
 
-	if (Engine::GetInstance().scene.get()->currentState != GameState::PLAYING) return true;
+	
 
 	if (!canDash) {
 		dashTimer += dt / 1000;
