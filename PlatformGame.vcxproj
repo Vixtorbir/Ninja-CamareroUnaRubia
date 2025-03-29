@@ -154,6 +154,7 @@
     <ClCompile Include="src\Engine.cpp" />
     <ClCompile Include="src\EntityManager.cpp" />
     <ClCompile Include="src\GuiControlButton.cpp" />
+    <ClCompile Include="src\GuiImage.cpp" />
     <ClCompile Include="src\GuiManager.cpp" />
     <ClCompile Include="src\GuiPopup.cpp" />
     <ClCompile Include="src\GuiSlider.cpp" />
@@ -189,6 +190,7 @@
     <ClInclude Include="src\EntityManager.h" />
     <ClInclude Include="src\GuiControl.h" />
     <ClInclude Include="src\GuiControlButton.h" />
+    <ClInclude Include="src\GuiImage.h" />
     <ClInclude Include="src\GuiManager.h" />
     <ClInclude Include="src\GuiPopup.h" />
     <ClInclude Include="src\GuiSlider.h" />

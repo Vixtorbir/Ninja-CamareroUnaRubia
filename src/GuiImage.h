@@ -3,15 +3,15 @@
 #include "GuiControl.h"
 #include "Vector2D.h"
 #include "Engine.h"
+#include "Textures.h"
 
-class GuiControlButton : public GuiControl
+class GuiImage : public GuiControl
 {
 
 public:
 
-	GuiControlButton(int id, SDL_Rect bounds, const char* text);
-	GuiControlButton(int id, SDL_Rect bounds, const char* text, bool optionA, bool optionB);
-	virtual ~GuiControlButton();
+	GuiImage(int id, SDL_Rect bounds, const char* text, SDL_Texture* texture);
+	virtual ~GuiImage();
 
 	bool Start();
 	bool Update(float dt);
@@ -23,6 +23,10 @@ public:
 	bool isOptionA = false;
 	bool isOptionB = false;
 private:
+	SDL_Rect imagePos;
+	int textX;
+	int textY;
+
 	bool canClick = true;
 	bool drawBasic = false;
 
