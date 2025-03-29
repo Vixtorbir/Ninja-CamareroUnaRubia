@@ -9,6 +9,7 @@
 #include "Dialogue.h"
 #include "DialogueManager.h"
 #include "Parallax.h"
+#include "GuiImage.h"
 
 #include "Npc.h"
 
@@ -80,6 +81,7 @@ public:
 	SDL_Texture* mouseTileTex = nullptr;
 	SDL_Texture* textureBuffer = nullptr;
 	SDL_Texture* Hanzo = nullptr;
+	SDL_Texture* MenuBackgroundImage = nullptr;
 
 	std::string tilePosDebug = "[0,0]";
 	bool once = false;
@@ -107,6 +109,8 @@ public:
 	GuiControlButton* optionsButton = nullptr;
 	GuiControlButton* exitButton = nullptr;
 	GuiControlButton* returnButton = nullptr;
+
+	GuiImage* menuBackgroundImage = nullptr;
 
 private:
 	Parallax* parallax = nullptr;
