@@ -189,6 +189,7 @@ bool Scene::Update(float dt)
 		}
 	}
 
+
 	HandleInput();
 
 	switch (currentState) {
