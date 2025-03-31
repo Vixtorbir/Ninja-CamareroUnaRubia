@@ -10,12 +10,29 @@ GuiSlider::GuiSlider(int id, SDL_Rect bounds, const char* text, int minValue, in
     this->bounds = bounds;
     this->text = text;
 
+    // Default slider bar dimensions (customizable)
     sliderBar = { bounds.x, bounds.y + bounds.h / 2 - 5, bounds.w, 10 };
+    sliderBarInner = { bounds.x, bounds.y + bounds.h / 2 - 5, bounds.w, 10 };
+
     sliderThumb = { bounds.x + ((defaultValue - minValue) * bounds.w / (maxValue - minValue)) - 5, bounds.y, 10, bounds.h };
+
+    backgroundSliderHP = Engine::GetInstance().textures.get()->Load("Assets/UI/lifeBarBack.png");
+    SDL_QueryTexture(backgroundSliderHP, NULL, NULL, &SliderTextureW, &SliderTextureH);
+    SDL_Rect backgroundSliderSizes = { 0, 0, SliderTextureW, SliderTextureH };
 }
 
-GuiSlider::~GuiSlider()
+GuiSlider::~GuiSlider() {}
+
+// Method to update slider bar size
+void GuiSlider::SetSliderBarSize(int width, int height)
 {
+    sliderBar.w = width;
+    sliderBar.h = height;
+}
+void GuiSlider::SetSliderBarInnerSize(int width, int height)
+{
+    sliderBarInner.w = width;
+    sliderBarInner.h = height;
 }
 
 bool GuiSlider::Update(float dt)
@@ -57,7 +74,10 @@ bool GuiSlider::Draw(std::shared_ptr<Render> render)
 {
     if (visible)
     {
-        render->DrawRectangle(sliderBar, 200, 200, 200, 255, true, false);
+        // Draw the slider bar with custom dimensions
+
+        render->DrawRectangle(sliderBar, 400, 400, 200, 255, true, false);
+        render->DrawRectangle(sliderBarInner, 0, 0, 200, 255, true, false);
 
         switch (state)
         {
