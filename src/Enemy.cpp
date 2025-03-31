@@ -42,15 +42,17 @@ bool Enemy::Start() {
 	currentAnimation = &idle;
 
 	// Agregar física al enemigo
-	pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX(), (int)position.getY(), texW, texH, bodyType::DYNAMIC);
+	pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX() + texW, (int)position.getY() + texH, texW, texH, bodyType::DYNAMIC);
+	soundRange = Engine::GetInstance().physics.get()->CreateCircleSensor((int)position.getX() + texW, (int)position.getY() + texH, SOUND_RADIUS, bodyType::DYNAMIC);
+	
+	soundRange->ctype = ColliderType::ENEMY;
+	soundRange->listener = this;
 
-	// Asignar tipo de colisionador
 	pbody->ctype = ColliderType::ENEMY;
 	pbody->listener = this;
 
 	// Asignar gravedad al enemigo
 	pbody->body->SetFixedRotation(true);
-
 	// Establecer la gravedad del cuerpo
 	if (!parameters.attribute("gravity").as_bool()) pbody->body->SetGravityScale(0);
 
@@ -71,9 +73,10 @@ bool Enemy::Update(float dt)
 		pbody->body->SetLinearVelocity(b2Vec2(0, 0));
 
 		b2Transform pbodyPos = pbody->body->GetTransform();
-		position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texW / 6);
-		position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 6);
-		Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
+		position.setX(METERS_TO_PIXELS(pbodyPos.p.x));
+		position.setY(METERS_TO_PIXELS(pbodyPos.p.y));
+
+		Engine::GetInstance().render.get()->DrawEntity(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame(), 1, 0, 0, 0, direction);
 		currentAnimation->Update();
 
 		return true;

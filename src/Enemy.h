@@ -6,6 +6,8 @@
 #include "Pathfinding.h"
 #include "Timer.h"
 
+#define SOUND_RADIUS 4
+
 struct SDL_Texture;
 
 enum class EnemyState {
@@ -92,7 +94,12 @@ private:
     std::deque<Vector2D> swordTrail;
     const int maxTrailLength = 10;
     PhysBody* attackHitbox = nullptr;
+    PhysBody* soundRange = nullptr;
+
     Timer attackCooldownTimer;
     Timer attackDurationTimer;
+
+    EntityDirections enemyDirections = EntityDirections::RIGHT;
+
 };
 

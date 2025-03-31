@@ -90,6 +90,7 @@ public:
 	// Main module steps
 	bool Start();
 	bool PreUpdate();
+	PhysBody* CreateCircleSensor(int x, int y, int radius, bodyType type);
 	bool PostUpdate();
 	bool CleanUp();
 
