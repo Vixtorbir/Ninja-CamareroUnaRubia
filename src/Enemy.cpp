@@ -42,11 +42,14 @@ bool Enemy::Start() {
 	currentAnimation = &idle;
 
 	// Agregar física al enemigo
-	pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() + texH / 2, (int)position.getY() + texH / 2, texH / 2, bodyType::DYNAMIC);
+	pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX(), (int)position.getY(), texW, texH, bodyType::DYNAMIC);
 
 	// Asignar tipo de colisionador
 	pbody->ctype = ColliderType::ENEMY;
 	pbody->listener = this;
+
+	// Asignar gravedad al enemigo
+	pbody->body->SetFixedRotation(true);
 
 	// Establecer la gravedad del cuerpo
 	if (!parameters.attribute("gravity").as_bool()) pbody->body->SetGravityScale(0);
@@ -68,8 +71,8 @@ bool Enemy::Update(float dt)
 		pbody->body->SetLinearVelocity(b2Vec2(0, 0));
 
 		b2Transform pbodyPos = pbody->body->GetTransform();
-		position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 2);
-		position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
+		position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texW / 6);
+		position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 6);
 		Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
 		currentAnimation->Update();
 
@@ -85,13 +88,19 @@ bool Enemy::Update(float dt)
 	Vector2D enemyTilePos = Engine::GetInstance().map.get()->WorldToMap((int)enemyPos.getX(), (int)enemyPos.getY());
 	Vector2D playerTilePos = Engine::GetInstance().map.get()->WorldToMap((int)playerPos.getX(), (int)playerPos.getY());
 
+
+	if (abs(playerTilePos.getX() - enemyTilePos.getX()) > 35) {
+		pbody->body->SetLinearVelocity(b2Vec2(0, 0));
+		return true;
+	}
+
 	if (IsPlayerInLineOfSight()) {
 		state = EnemyState::AGGRESSIVE;
 	}
 	else if (IsPlayerInRange()) {
-		if (IsPlayerInAttackRange() && attackCooldownTimer.ReadSec() >= 3) {
+		if (IsPlayerInAttackRange()) {
 			state = EnemyState::ATTACK;
-			attackDurationTimer.Start();
+			
 		}
 		else {
 			state = EnemyState::AGGRESSIVE;
@@ -104,7 +113,7 @@ bool Enemy::Update(float dt)
 	switch (state) {
 	case EnemyState::PATROL:
 		// Movimiento de patrulla
-		if (!IsNextTileCollidable() || tilesMovedInSameDirection >= 150) {
+		if (!IsNextTileCollidable() || tilesMovedInSameDirection >= 250) {
 			direction = (direction == 0) ? 1 : 0;
 			tilesMovedInSameDirection = 0;
 		}
@@ -137,13 +146,12 @@ bool Enemy::Update(float dt)
 		// Lógica de ataque
 		PerformAttack();
 
-		if (attackDurationTimer.ReadSec() >= 1) {
-			// Elimina la hitbox del ataque después de 1 segundo
+		
 			Engine::GetInstance().physics.get()->DeletePhysBody(attackHitbox);
 			attackHitbox = nullptr;
 			attackCooldownTimer.Start();
 			state = EnemyState::AGGRESSIVE;
-		}
+		
 		break;
 	}
 
@@ -159,8 +167,8 @@ bool Enemy::Update(float dt)
 
 	// L08 TODO 4: Add a physics to an item - update the position of the object from the physics.  
 	b2Transform pbodyPos = pbody->body->GetTransform();
-	position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 2);
-	position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
+	position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texW / 6);
+	position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 6);
 
 	Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
 	currentAnimation->Update();
@@ -262,7 +270,7 @@ void Enemy::PerformAttack() {
 	
 	if (attackHitbox == nullptr) {
 		// Crea la hitbox del ataque
-		attackHitbox = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX()+2, (int)position.getY(), texW, texH, bodyType::STATIC);
+		attackHitbox = Engine::GetInstance().physics.get()->CreateRectangleSensor((int)position.getX()+110, (int)position.getY()+10, 104, 128, bodyType::STATIC);
 		attackHitbox->ctype = ColliderType::ENEMY;
 		attackHitbox->listener = this;
 	}
@@ -317,7 +325,7 @@ bool Enemy::IsPlayerInAttackRange() {
 	Vector2D playerTilePos = Engine::GetInstance().map.get()->WorldToMap(playerPos.getX(), playerPos.getY());
 
 	int distance = abs(playerTilePos.getX() - enemyTilePos.getX());
-	return distance <= 3;
+	return distance <= 6;
 }
 void Enemy::LoadEnemyFx()
 {
