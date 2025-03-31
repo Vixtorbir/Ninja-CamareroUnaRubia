@@ -10,6 +10,9 @@ enum class DialogueEngine
 {
 	MENTORSHIP,
 	RAIDEDVILLAGE,
+	ISAMU,
+	KAEDE,
+	HANZO,
 	EMPTY
 };
 

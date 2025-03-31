@@ -39,10 +39,21 @@ bool Scene::Awake()
 	player = (Player*)Engine::GetInstance().entityManager->CreateEntity(EntityType::PLAYER);
 	player->SetParameters(configParameters.child("entities").child("player"));
 
-	npc = (NPC*)Engine::GetInstance().entityManager->CreateNamedCharacter(EntityType::NPC, DialogueEngine::MENTORSHIP);
-	npc->SetParameters(configParameters.child("entities").child("npcMENTORSHIP"));
-	npcs.push_back(npc);
+	npcMentor = (NPC*)Engine::GetInstance().entityManager->CreateNamedCharacter(EntityType::NPC, DialogueEngine::MENTORSHIP);
+	npcMentor->SetParameters(configParameters.child("entities").child("npcMENTORSHIP"));
+	npcs.push_back(npcMentor);
 
+	npcIsamu = (NPC*)Engine::GetInstance().entityManager->CreateNamedCharacter(EntityType::NPC, DialogueEngine::ISAMU);
+	npcIsamu->SetParameters(configParameters.child("entities").child("npcISAMU"));
+	npcs.push_back(npcIsamu);
+
+	npcKaede = (NPC*)Engine::GetInstance().entityManager->CreateNamedCharacter(EntityType::NPC, DialogueEngine::KAEDE);
+	npcKaede->SetParameters(configParameters.child("entities").child("npcKAEDE"));
+	npcs.push_back(npcKaede);
+
+	npcHanzo = (NPC*)Engine::GetInstance().entityManager->CreateNamedCharacter(EntityType::NPC, DialogueEngine::HANZO);
+	npcHanzo->SetParameters(configParameters.child("entities").child("npcHANZO"));
+	npcs.push_back(npcHanzo);
 	//L08 Create a new item using the entity manager and set the position to (200, 672) to test
 	for (pugi::xml_node itemNode = configParameters.child("entities").child("items").child("item"); itemNode; itemNode = itemNode.next_sibling("item"))
 	{
@@ -84,7 +95,6 @@ bool Scene::Start()
 	// Texture to highligh mouse position 
 	mouseTileTex = Engine::GetInstance().textures.get()->Load("Assets/Maps/MapMetadata.png");
 
-	dialogueManager->CastDialogue(DialogueEngine::RAIDEDVILLAGE);
 
 	// Initalize the camera position
 	int w, h;
@@ -184,7 +194,7 @@ bool Scene::Update(float dt)
 	{
 		if (npc->showcaseDialogue)
 		{
-			dialogueManager->CastDialogue(npc->dialogueName);
+		dialogueManager->CastDialogue(npc->dialogueName);
 			npc->showcaseDialogue = false;
 		}
 	}
