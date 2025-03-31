@@ -438,6 +438,14 @@ bool Map::IsObjectGroupCollidable(int x, int y) {
     return false;
 }
 
+bool Map::IsPlayerAtEndOfMap(int playerX, int playerY) {
+    // Define los límites del mapa donde se considera el "final"
+    const int endOfMapX = mapData.width * mapData.tileWidth - 100; // Ajusta según tu mapa
+    const int endOfMapY = mapData.height * mapData.tileHeight - 100; // Ajusta según tu mapa
+
+    return (playerX >= endOfMapX || playerY >= endOfMapY);
+}
+
 
 
 

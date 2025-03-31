@@ -131,6 +131,18 @@ bool Scene::PreUpdate()
 // Called each loop iteration
 bool Scene::Update(float dt)
 {
+
+	// Obtén la posición del jugador
+	Vector2D playerPos = player->GetPosition();
+
+	// Verifica si el jugador ha llegado al final del mapa actual
+	if (Engine::GetInstance().map->IsPlayerAtEndOfMap(playerPos.getX(), playerPos.getY())) {
+		// Carga el segundo mapa
+		Engine::GetInstance().map->Load("Assets/Map/MapTemplate2.tmx");
+
+		// Reposiciona al jugador en el inicio del segundo mapa
+		player->SetPosition(Vector2D(100, 100)); // Ajusta las coordenadas según el segundo mapa
+	}
 	//L03 TODO 3: Make the camera movement independent of framerate
 	float camSpeed = 1;
 
