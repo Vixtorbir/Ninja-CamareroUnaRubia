@@ -13,6 +13,8 @@
 #include "Item.h"
 #include "Enemy.h"
 #include "GuiControl.h"
+#include "GuiImage.h"
+
 #include "GuiManager.h"
 #include "DialogueManager.h"
 #include "NPC.h"
@@ -70,6 +72,8 @@ bool Scene::Awake()
 	dialogueManager->SetModule(this);
 	player->sceneModule = this;
 
+
+
 	return ret;
 
 
@@ -78,6 +82,9 @@ bool Scene::Awake()
 // Called before the first frame
 bool Scene::Start()
 {
+
+	MenuBackgroundImage = Engine::GetInstance().textures.get()->Load("Assets/UI/Menu.png");
+
 	//L06 TODO 3: Call the function to load the map. 
 	Engine::GetInstance().map->Load(configParameters.child("map").attribute("path").as_string(), configParameters.child("map").attribute("name").as_string());
 
@@ -98,6 +105,9 @@ bool Scene::Start()
 	SDL_Rect optionsButtonPos = { 800, 550, 200, 50 };
 	SDL_Rect exitButtonPos = { 800, 800, 200, 50 };
 	
+	SDL_Rect btPos = { 0, 0, 0, 0 };
+
+	menuBackgroundImage = (GuiImage*)Engine::GetInstance().guiManager->CreateGuiImage(GuiControlType::IMAGE, 1, " ", btPos, this, MenuBackgroundImage);
 
 	// Create buttons if they don't already exist
 
@@ -112,8 +122,7 @@ bool Scene::Start()
 	exitButton = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(
 		GuiControlType::BUTTON, 3, "Exit", exitButtonPos, this);
 
-
-
+	
 	startButton->Start();
 	optionsButton->Start();
 	exitButton->Start();
@@ -350,6 +359,7 @@ void Scene::HandleInput()
 			startButton->CleanUp();
 			optionsButton->CleanUp();
 			exitButton->CleanUp();
+			menuBackgroundImage->CleanUp();
 
 		}
 		else if (currentState == GameState::GAME_OVER)
