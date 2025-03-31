@@ -182,7 +182,6 @@ public:
 
     bool IsObjectGroupCollidable(int x, int y);
 
-    bool IsPlayerAtEndOfMap(int playerX, int playerY);
 public: 
     std::string mapFileName;
     std::string mapPath;
