@@ -25,21 +25,24 @@ public:
 
 	// Play a music file
 	bool PlayMusic(const char* path, float fadeTime = DEFAULT_MUSIC_FADE_TIME);
+    int LoadMusic(const char* path);
+	bool StopMusic();
+    bool musicVolume(int v);
 
 	// Load a WAV in memory
 	int LoadFx(const char* path);
-	int LoadMusic(const char* path);
-    bool musicVolume(int v);
-	// Play a previously loaded WAV
 	bool PlayFx(int fx, int repeat = 0);
-	int randomFx(int min, int max);
+   	int randomFx(int min, int max);
+	bool StopFx(int id);//lowers fx volume until it finishes
+	
+	
+
 
 	
 	
 
 private:
-
-	_Mix_Music* music;
+	Mix_Music* music;
 	std::list<Mix_Chunk*> fx;
 	std::list<_Mix_Music*> tracks;
 };

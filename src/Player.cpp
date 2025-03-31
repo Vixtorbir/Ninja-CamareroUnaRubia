@@ -69,6 +69,7 @@ bool Player::Start() {
 
 	//initialize audio effect
 	LoadPlayerFx();
+	
 
 	timeSinceLastDamage = damageCooldown;
 	canTakeDamage = true;
@@ -110,18 +111,34 @@ bool Player::Update(float dt)
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_A) == KEY_REPEAT) {
 		velocity.x = -0.2 * 16;
 		playerDirection = EntityDirections::LEFT;
+	
 	}
 
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_D) == KEY_REPEAT) {
 		velocity.x = 0.2 * 16;
 		playerDirection = EntityDirections::RIGHT;
+
 	}
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_A) == KEY_REPEAT ||
-		Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_D) == KEY_REPEAT) {
+		Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_D) == KEY_REPEAT) 
+	{
 		currentAnimation = &walk;
+		if (startWalk == false)
+		{ 
+			Engine::GetInstance().audio.get()->PlayFx(walkFxId);
+			startWalk = true;
+
+		}
+	   
+			
 	}
-	else {
+	
+	else 
+	{
 		currentAnimation = &idle;
+		Engine::GetInstance().audio.get()->StopFx(walkFxId);
+		startWalk = false;
+	
 	}
 	// Move Up
 	/*if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_W) == KEY_REPEAT) {
@@ -133,6 +150,8 @@ bool Player::Update(float dt)
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_DOWN) {
 		currentAnimation = &idle; // Cambiar a animación de agachado después
 		ChangeHitboxSize(texW, texH / 2); // Reduce el hitbox
+		Engine::GetInstance().audio.get()->PlayFx(crouchFxId);
+
 	}
 
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_UP) {
@@ -200,6 +219,8 @@ bool Player::Update(float dt)
 		jumpHoldTimer = 0.0f;
 
 		playerDirection = (playerDirection == EntityDirections::LEFT) ? EntityDirections::RIGHT : EntityDirections::LEFT;
+		int doubleJumpId = Engine::GetInstance().audio.get()->randomFx(doubleJump1FxId, doubleJump2FxId);
+		Engine::GetInstance().audio.get()->PlayFx(doubleJumpId);
 	}
 
 	if (touchingWall && Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_W) == KEY_REPEAT) {
@@ -372,11 +393,8 @@ void Player::LoadPlayerFx()
 	 jump3FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/Jump3.ogg");
 	 doubleJump1FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/doubleJump1.ogg");
 	 doubleJump2FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/doubleJump2.ogg");
-	 walk1FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/wood-step1.ogg");
-	 walk2FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/wood-step2.ogg");
-	 walk3FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/wood-step3.ogg");
-	 walk4FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/wood-step4.ogg");
-	 walk5FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/wood-step5.ogg");
+	 walkFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/playerRunLoopFx.ogg");
+	 crouchFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/crouchFx.ogg");
 	 dash1FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/dash1.ogg");
 	 dash2FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/dash2.ogg");
 	 dash3FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/dash3.ogg");
@@ -391,7 +409,7 @@ void Player::LoadPlayerFx()
 	 dieFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/die.ogg");
 	 hit1FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/hit1.ogg");
 	 hit2FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/hit2.ogg");
-	 pickUpItemFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/coinSound.ogg");
+	 pickUpItemFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/ExtraFx/pickUpItem.ogg");
 }
 
 void Player::TakeDamage(int damage) {
