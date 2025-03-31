@@ -41,18 +41,16 @@ bool Enemy::Start() {
 	attackAnimation.LoadAnimations(parameters.child("animations").child("attack"));
 	currentAnimation = &idle;
 
-	// Agregar fï¿½sica al enemigo
-	pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX() + texW, (int)position.getY() + texH, texW, texH, bodyType::DYNAMIC);
-	soundRange = Engine::GetInstance().physics.get()->CreateCircleSensor((int)position.getX() + texW, (int)position.getY() + texH, SOUND_RADIUS, bodyType::DYNAMIC);
-	
-	soundRange->ctype = ColliderType::ENEMY;
-	soundRange->listener = this;
+	// Agregar física al enemigo
+	pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX(), (int)position.getY(), texW, texH, bodyType::DYNAMIC);
 
+	// Asignar tipo de colisionador
 	pbody->ctype = ColliderType::ENEMY;
 	pbody->listener = this;
 
 	// Asignar gravedad al enemigo
 	pbody->body->SetFixedRotation(true);
+
 	// Establecer la gravedad del cuerpo
 	if (!parameters.attribute("gravity").as_bool()) pbody->body->SetGravityScale(0);
 
@@ -141,7 +139,7 @@ bool Enemy::Update(float dt)
         break;
 
     case EnemyState::ATTACK:
-        // Lï¿½gica de ataque
+        // Lógica de ataque
         PerformAttack();
 
         Engine::GetInstance().physics.get()->DeletePhysBody(attackHitbox);
@@ -151,7 +149,7 @@ bool Enemy::Update(float dt)
         break;
     }
 
-    // Dibuja la lï¿½nea de visiï¿½n del enemigo
+    // Dibuja la línea de visión del enemigo
     DrawLineOfSight();
 
     // Propagate the pathfinding algorithm using A* with the selected heuristic
@@ -228,7 +226,7 @@ bool Enemy::IsNextTileCollidable() {
 	Vector2D pos = GetPosition();
 	Vector2D tilePos = Engine::GetInstance().map.get()->WorldToMap(pos.getX(), pos.getY());
 
-	// Calcular la posiciï¿½n de la siguiente tile en la direcciï¿½n actual
+	// Calcular la posición de la siguiente tile en la dirección actual
 	if (direction == 0) { // Izquierda
 		tilePos.setX(tilePos.getX() - 1);
 	}
@@ -259,7 +257,7 @@ bool Enemy::IsPlayerInRange() {
 	int distance = abs(playerTilePos.getX() - enemyTilePos.getX());
 	bool isInRange = distance <= 10;
 
-	// Verificar si el enemigo estï¿½ mirando en la direcciï¿½n del jugador
+	// Verificar si el enemigo está mirando en la dirección del jugador
 	bool isFacingPlayer = (direction == 0 && playerTilePos.getX() < enemyTilePos.getX()) ||
 		(direction == 1 && playerTilePos.getX() > enemyTilePos.getX());
 
@@ -272,18 +270,18 @@ void Enemy::PerformAttack() {
 	pbody->body->SetLinearVelocity(b2Vec2(0, 0));
 
 	if (attackHitbox == nullptr) {
-		// Determina la direcciï¿½n del ataque
+		// Determina la dirección del ataque
 		Vector2D playerPos = Engine::GetInstance().scene.get()->player->GetPosition();
 		Vector2D enemyPos = GetPosition();
 		int attackOffsetX = 0;
 
 		if (playerPos.getX() < enemyPos.getX()) {
-			// El jugador estï¿½ a la izquierda del enemigo
-			attackOffsetX = -80; // Ajusta este valor segï¿½n sea necesario
+			// El jugador está a la izquierda del enemigo
+			attackOffsetX = -80; // Ajusta este valor según sea necesario
 		}
 		else {
-			// El jugador estï¿½ a la derecha del enemigo
-			attackOffsetX = 110; // Ajusta este valor segï¿½n sea necesario
+			// El jugador está a la derecha del enemigo
+			attackOffsetX = 110; // Ajusta este valor según sea necesario
 		}
 
 		// Crea la hitbox del ataque
@@ -295,7 +293,7 @@ void Enemy::PerformAttack() {
 	Engine::GetInstance().render.get()->DrawTexture(attackTexture, (int)position.getX(), (int)position.getY(), &attackAnimation.GetCurrentFrame());
 	attackAnimation.Update();
 
-	// Agrega la posiciï¿½n actual al trazo de la espada
+	// Agrega la posición actual al trazo de la espada
 	swordTrail.push_back(position);
 	if (swordTrail.size() > maxTrailLength) {
 		swordTrail.pop_front();
@@ -386,25 +384,25 @@ bool Enemy::IsPlayerInLineOfSight() {
 
 	int distance = abs(playerTilePos.getX() - enemyTilePos.getX());
 
-	// Verifica si el jugador estï¿½ dentro de la lï¿½nea de visiï¿½n de 5 tiles
+	// Verifica si el jugador está dentro de la línea de visión de 5 tiles
 	if (distance <= 10) {
 		if (direction == 0 && playerTilePos.getX() < enemyTilePos.getX()) { // Izquierda
 			for (int i = 1; i <= 5; ++i) {
 				if (Engine::GetInstance().map.get()->IsTileCollidable(enemyTilePos.getX() - i, enemyTilePos.getY())) {
-					return false; // Hay una colisiï¿½n en la lï¿½nea de visiï¿½n
+					return false; // Hay una colisión en la línea de visión
 				}
 				if (playerTilePos.getX() == enemyTilePos.getX() - i) {
-					return true; // El jugador estï¿½ en la lï¿½nea de visiï¿½n
+					return true; // El jugador está en la línea de visión
 				}
 			}
 		}
 		else if (direction == 1 && playerTilePos.getX() > enemyTilePos.getX()) { // Derecha
 			for (int i = 1; i <= 5; ++i) {
 				if (Engine::GetInstance().map.get()->IsTileCollidable(enemyTilePos.getX() + i, enemyTilePos.getY())) {
-					return false; // Hay una colisiï¿½n en la lï¿½nea de visiï¿½n
+					return false; // Hay una colisión en la línea de visión
 				}
 				if (playerTilePos.getX() == enemyTilePos.getX() + i) {
-					return true; // El jugador estï¿½ en la lï¿½nea de visiï¿½n
+					return true; // El jugador está en la línea de visión
 				}
 			}
 		}
@@ -420,14 +418,14 @@ void Enemy::DrawLineOfSight() {
 	Vector2D enemyTilePos = Engine::GetInstance().map.get()->WorldToMap((int)enemyPos.getX(), (int)enemyPos.getY());
 
 	SDL_Renderer* renderer = Engine::GetInstance().render.get()->renderer;
-	SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255); // Color rojo para la lï¿½nea de visiï¿½n
+	SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255); // Color rojo para la línea de visión
 
 	for (int i = 1; i <= 5; ++i) {
 		int tileX = (direction == 0) ? enemyTilePos.getX() - i : enemyTilePos.getX() + i;
 		int tileY = enemyTilePos.getY();
 
 		if (Engine::GetInstance().map.get()->IsTileCollidable(tileX, tileY)) {
-			break; // Detï¿½n el dibujo si hay una colisiï¿½n en la lï¿½nea de visiï¿½n
+			break; // Detén el dibujo si hay una colisión en la línea de visión
 		}
 
 		Vector2D tilePos = Engine::GetInstance().map.get()->MapToWorld(tileX, tileY);
