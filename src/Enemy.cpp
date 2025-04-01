@@ -109,10 +109,6 @@ bool Enemy::Update(float dt)
     if (Engine::GetInstance().scene.get()->currentState != GameState::PLAYING) return true;
 
 
-    Vector2D playerPos = Engine::GetInstance().scene.get()->player->GetPosition();
-    Vector2D enemyPos = GetPosition();
-    Vector2D enemyTilePos = Engine::GetInstance().map.get()->WorldToMap((int)enemyPos.getX(), (int)enemyPos.getY());
-    Vector2D playerTilePos = Engine::GetInstance().map.get()->WorldToMap((int)playerPos.getX(), (int)playerPos.getY());
 
 
     if (abs(playerTilePos.getX() - enemyTilePos.getX()) > 35) {
@@ -201,7 +197,7 @@ bool Enemy::Update(float dt)
     }
 
     // L08 TODO 4: Add a physics to an item - update the position of the object from the physics.  
-    b2Transform pbodyPos = pbody->body->GetTransform();
+  
     position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texW / 6);
     position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 6);
 

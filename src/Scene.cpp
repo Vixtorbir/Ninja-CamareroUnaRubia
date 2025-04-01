@@ -93,6 +93,10 @@ bool Scene::Awake()
 // Called before the first frame
 bool Scene::Start()
 {
+	logo = Engine::GetInstance().textures->Load("Assets/UI/logo.png");
+
+	// Inicializar el estado de la pantalla de presentación
+	SetState(GameState::LOGO);
 
 	MenuBackgroundImage = Engine::GetInstance().textures.get()->Load("Assets/UI/Menu.png");
 
@@ -223,9 +227,18 @@ bool Scene::Update(float dt)
 	case GameState::GAME_OVER:
 		UpdateGameOver(dt);
 		break;
+	case GameState::FADE_IN:
+		break;
+	case GameState::FADE_OUT:
+
+		break;
+	case GameState::LOGO:
+		UpdateLogo(dt);
+		break;
 	default:
 		break;
 	}
+
 
 	return true;
 }
@@ -441,7 +454,32 @@ void Scene::UpdatePaused(float dt) {
 void Scene::UpdateGameOver(float dt) {
 	Engine::GetInstance().render.get()->DrawText("GAME OVER:Press enter to start", 600, 400, 750, 255);
 }
+void Scene::UpdateLogo(float dt) {
+	// Manejar el fade in
+	if (opacity < 1.0f && logoTimer < 3.0f) {
+		opacity += dt / fadeDuration;
+		if (opacity > 1.0f) {
+			opacity = 1.0f;
+		}
+	}
 
+	SDL_SetTextureAlphaMod(logo, static_cast<Uint8>(opacity * 255));
+
+	// Incrementar el temporizador del logo
+	logoTimer += dt;
+
+	// Manejar el fade out
+	if (logoTimer >= 100.0f) {
+		opacity -= dt / fadeDuration;
+		if (opacity <= 0.0f) {
+			opacity = 0.0f;
+			SetState(GameState::MAIN_MENU);
+		}
+	}
+
+	// Aplicar la opacidad al logo
+
+}
 bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 {
 	// L15: DONE 5: Implement the OnGuiMouseClickEvent method
