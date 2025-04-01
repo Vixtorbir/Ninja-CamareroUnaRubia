@@ -163,9 +163,5 @@ private:
 	SDL_Texture* BackgroundSliderHP;
 	SDL_Texture* ForeGroundSliderHP;
 
-	bool loadLevel1 = false;
-	bool loadLevel2 = false;
-
-
 	bool crouched;
 };

@@ -41,6 +41,8 @@ public:
 	// Called each loop iteration
 	bool Update(float dt);
 
+	void LoadMap1();
+	void LoadMap2();
 	// Called before all Updates
 	bool PostUpdate();
 
@@ -52,6 +54,7 @@ public:
 
 	//L15 TODO 1: Implement the Load function
 	void LoadState();
+	void SafeLoadMap(const char* mapName, Vector2D playerPos);
 	//L15 TODO 2: Implement the Save function
 	void SaveState();
 

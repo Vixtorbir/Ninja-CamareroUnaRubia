@@ -217,6 +217,13 @@ bool Scene::PostUpdate()
 
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN)
 		ret = false;
+
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F1) == KEY_DOWN)
+		SafeLoadMap("MapTemplate1.tmx", Vector2D(22112, 4032)); // Posición específica Mapa 1
+
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F2) == KEY_DOWN)
+		SafeLoadMap("MapTemplate2.tmx", Vector2D(193, 3845)); // Posición específica Mapa 2
+
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F6) == KEY_DOWN)
 		LoadState();
 
@@ -338,6 +345,25 @@ void Scene::LoadState() {
 		}
 
 	}
+}
+void Scene::SafeLoadMap(const char* mapName, Vector2D playerPos) {
+	// 1. Cargar el NUEVO mapa primero (¡sin limpiar el viejo todavía!)
+	std::string path = configParameters.child("map").attribute("path").as_string();
+	if (!Engine::GetInstance().map->Load(path.c_str(), mapName)) {
+		LOG("Error cargando %s", mapName);
+		return; // Si falla, conservamos el mapa anterior
+	}
+
+	// 2. Ahora sí, limpiamos el mapa VIEJO (ya tenemos uno nuevo activo)
+	Engine::GetInstance().map->CleanUp(); // Esto solo limpia recursos antiguos
+
+	// 3. Reposicionar jugador y cámara
+	player->SetPosition(playerPos);
+	Engine::GetInstance().render->camera.x = 0;
+	Engine::GetInstance().render->camera.y = 0;
+
+	// 4. Debug (opcional)
+	LOG("Mapa cambiado a %s", mapName);
 }
 void Scene::HandleInput()
 {
