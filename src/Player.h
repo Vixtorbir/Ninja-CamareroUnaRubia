@@ -126,6 +126,7 @@ public:
 private:
 		//Audio fx
 	bool startWalk = false;
+	int walkChannel;
 		int jump1FxId;
 		int jump2FxId;
 		int jump3FxId;

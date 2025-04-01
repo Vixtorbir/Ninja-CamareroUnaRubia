@@ -184,7 +184,7 @@ bool StopMusic()
 }
 
 // Play WAV
-bool Audio::PlayFx(int id, int repeat)
+bool Audio::PlayFx(int id, int repeat,int channel)
 {
 	bool ret = false;
 
@@ -195,7 +195,7 @@ bool Audio::PlayFx(int id, int repeat)
 	{
 		auto fxIt = fx.begin();
 		std::advance(fxIt, id-1);
-		Mix_PlayChannel(-1, *fxIt, repeat);
+		Mix_PlayChannel(channel, *fxIt, repeat);
 	}
 
 	return ret;
@@ -205,17 +205,22 @@ int Audio::randomFx(int min, int max)
 	int randomId = min + (rand() % (max - min + 1));
 	return randomId;
 }
-bool  Audio::StopFx(int id)
+bool  Audio::StopFxChannel(int channel)
 {
 	bool ret = true;
 	
-	auto fxIt = fx.begin();
-	std::advance(fxIt, id - 1);
-	if ((id - 1) == id)
+		Mix_HaltChannel(channel);
+		
+	return ret;
+}
+bool Audio::VolumeFx(int id, int v)
+{
+	bool ret = true;
+	if (id > 0 && id <= fx.size())
 	{
-		Mix_VolumeChunk(*fxIt, 0);
+		auto fxIt = fx.begin();
+		std::advance(fxIt, id - 1);
+		Mix_VolumeChunk(*fxIt, v);
 	}
-
-	
 	return ret;
 }

@@ -125,9 +125,8 @@ bool Player::Update(float dt)
 		currentAnimation = &walk;
 		if (startWalk == false)
 		{ 
-			Engine::GetInstance().audio.get()->PlayFx(walkFxId);
+            walkChannel = Engine::GetInstance().audio.get()->PlayFx(walkFxId);//play sound and store which channel plays it
 			startWalk = true;
-
 		}
 	   
 			
@@ -136,7 +135,8 @@ bool Player::Update(float dt)
 	else 
 	{
 		currentAnimation = &idle;
-		Engine::GetInstance().audio.get()->StopFx(walkFxId);
+		Engine::GetInstance().audio.get()->StopFxChannel(walkChannel);
+		
 		startWalk = false;
 	
 	}
@@ -157,6 +157,7 @@ bool Player::Update(float dt)
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_UP) {
 		currentAnimation = &idle;
 		ChangeHitboxSize(texW, texH); // Restaura el hitbox
+		
 	}
 
 	//Jump

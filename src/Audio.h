@@ -31,9 +31,10 @@ public:
 
 	// Load a WAV in memory
 	int LoadFx(const char* path);
-	bool PlayFx(int fx, int repeat = 0);
+	bool PlayFx(int fx, int repeat = 0, int channel = -1);
    	int randomFx(int min, int max);
-	bool StopFx(int id);//lowers fx volume until it finishes
+	bool StopFxChannel(int channel);//lowers fx volume until it finishes
+	bool VolumeFx(int id,int v);//lowers fx volume until it finishes
 	
 	
 
