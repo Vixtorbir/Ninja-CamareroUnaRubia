@@ -85,6 +85,12 @@ bool Enemy::Update(float dt)
 	Vector2D enemyTilePos = Engine::GetInstance().map.get()->WorldToMap((int)enemyPos.getX(), (int)enemyPos.getY());
 	Vector2D playerTilePos = Engine::GetInstance().map.get()->WorldToMap((int)playerPos.getX(), (int)playerPos.getY());
 
+
+	if (abs(playerTilePos.getX() - enemyTilePos.getX()) > 35) {
+		pbody->body->SetLinearVelocity(b2Vec2(0, 0));
+		return true;
+	}
+
 	if (IsPlayerInLineOfSight()) {
 		state = EnemyState::AGGRESSIVE;
 	}
@@ -104,7 +110,7 @@ bool Enemy::Update(float dt)
 	switch (state) {
 	case EnemyState::PATROL:
 		// Movimiento de patrulla
-		if (!IsNextTileCollidable() || tilesMovedInSameDirection >= 150) {
+		if (!IsNextTileCollidable() || tilesMovedInSameDirection >= 250) {
 			direction = (direction == 0) ? 1 : 0;
 			tilesMovedInSameDirection = 0;
 		}

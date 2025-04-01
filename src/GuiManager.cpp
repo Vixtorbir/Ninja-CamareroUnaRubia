@@ -8,7 +8,8 @@
 #include "GuiPopup.h"
 #include "GuiSlider.h"
 #include "Audio.h"
-
+#include "GuiImage.h"
+#include "Textures.h"
 GuiManager::GuiManager() :Module()
 {
 	name = "guiManager";
@@ -59,7 +60,25 @@ GuiControl* GuiManager::CreateGuiControl(GuiControlType type, int id, const char
 
 	return guiControl;
 }
+GuiControl* GuiManager::CreateGuiImage(GuiControlType type, int id, const char* text, SDL_Rect bounds, Module* observer, SDL_Texture* texture)
+{
+	GuiControl* guiControl = nullptr;
 
+	// Call the constructor according to the GuiControlType
+	switch (type)
+	{
+	case GuiControlType::IMAGE:
+		guiControl = new GuiImage(id, bounds, text, texture);
+		break;
+	}
+
+	// Set the observer
+	guiControl->observer = observer;
+
+	guiControlsList.push_back(guiControl);
+
+	return guiControl;
+}
 void GuiManager::ClearControlsOfType(GuiControlType type)
 {
 	auto it = guiControlsList.begin();

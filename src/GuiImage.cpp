@@ -4,42 +4,26 @@
 #include "Audio.h"
 #include "Textures.h"
 
-#define LOG(msg) std::cerr << msg << std::endl
-GuiImage::GuiImage(int id, SDL_Rect bounds, const char* text) : GuiControl(GuiControlType::BUTTON, id)
+GuiImage::GuiImage(int id, SDL_Rect bounds, const char* text, SDL_Texture* texture) : GuiControl(GuiControlType::IMAGE, id)
 {
 	this->bounds = bounds;
 	this->text = text;
 
-	canClick = true;
-	drawBasic = false;
-	
-	
-}
-GuiImage::GuiImage(int id, SDL_Rect bounds, const char* text, bool optionA, bool optionB) : GuiControl(GuiControlType::BUTTON, id)
-{
-	this->bounds = bounds;
-
-	this->text = text;
+    this->texture = texture;
 
 	canClick = true;
 	drawBasic = false;
+	
 
-	this->isOptionA = optionA;
-	unkillable = false;
-	this->isOptionB = optionB;
-
+    SDL_QueryTexture(texture, NULL, NULL, &textX, &textY);
+    imagePos = { 0, 0, textX, textY };
 }
+
 GuiImage::~GuiImage()
 {
 
 }
-bool GuiImage::Start()
-{
-	texture = Engine::GetInstance().textures.get()->Load("Assets/UI/individualUIsprites/textName.png");
-    textureSelected = Engine::GetInstance().textures.get()->Load("Assets/UI/individualUIsprites/selectedButton.png");
 
-    return false;
-}
 bool GuiImage::Update(float dt)
 {
     if (state != GuiControlState::DISABLED)
@@ -67,44 +51,23 @@ bool GuiImage::Update(float dt)
         switch (state)
         {
         case GuiControlState::DISABLED:
-            Engine::GetInstance().render->DrawTexturedRectangle(texture, bounds.x - 200, bounds.y - 300, 600, 400, false);
+            Engine::GetInstance().render->DrawTexturedRectangle(texture, 50, -50, textX, textY, false);
 
             break;
         case GuiControlState::NORMAL:
-            Engine::GetInstance().render->DrawTexturedRectangle(texture, bounds.x - 200, bounds.y - 170, 600, 400, false);
-
-            if (isOptionA || isOptionB)
-            {
-                Engine::GetInstance().render->DrawText(text.c_str(), bounds.x, bounds.y, 150, 100);
-
-            }
+            Engine::GetInstance().render->DrawTexturedRectangle(texture, 50, -50, textX, textY, false);
             break;
 
         case GuiControlState::FOCUSED:
-            Engine::GetInstance().render->DrawTexturedRectangle(textureSelected, bounds.x - 200, bounds.y - 170, 600, 400, false);
+            Engine::GetInstance().render->DrawTexturedRectangle(texture, 50, -50, textX, textY, false);
             break;
 
         case GuiControlState::PRESSED:
-            Engine::GetInstance().render->DrawTexturedRectangle(textureSelected, bounds.x - 200, bounds.y - 170, 600, 400, false);
-            isClicked = true;
+            Engine::GetInstance().render->DrawTexturedRectangle(texture, 50, -50, textX, textY, false);
             break;
         }
 
-        // Calculate the text size
-        int textW = 0, textH = 0;
-        TTF_SizeText(Engine::GetInstance().render->font, text.c_str(), &textW, &textH);
-
-        // Ensure the text width doesn't exceed button width
-        if (textW > bounds.w) {
-            textW = bounds.w;
-        }
-
-        // Calculate position to center text within the button
-        int textX = bounds.x + (bounds.w - textW) / 2;
-        int textY = bounds.y + (bounds.h - textH) / 2;
-
-        // Render the text
-        if(!isOptionA && !isOptionB ) Engine::GetInstance().render->DrawText(text.c_str(), textX, textY, textW, textH);
+ 
     }
 
     return false;
