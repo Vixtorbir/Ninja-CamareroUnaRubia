@@ -182,7 +182,6 @@ public:
 
     bool IsObjectGroupCollidable(int x, int y);
 
-
 public: 
     std::string mapFileName;
     std::string mapPath;
