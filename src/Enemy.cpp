@@ -42,11 +42,14 @@ bool Enemy::Start() {
 	currentAnimation = &idle;
 
 	// Agregar física al enemigo
-	pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() + texH / 2, (int)position.getY() + texH / 2, texH / 2, bodyType::DYNAMIC);
+	pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX(), (int)position.getY(), texW, texH, bodyType::DYNAMIC);
 
 	// Asignar tipo de colisionador
 	pbody->ctype = ColliderType::ENEMY;
 	pbody->listener = this;
+
+	// Asignar gravedad al enemigo
+	pbody->body->SetFixedRotation(true);
 
 	// Establecer la gravedad del cuerpo
 	if (!parameters.attribute("gravity").as_bool()) pbody->body->SetGravityScale(0);
@@ -61,6 +64,7 @@ bool Enemy::Start() {
 
 bool Enemy::Update(float dt)
 {
+
 	//ZoneScoped;
 	// 
 	if (Engine::GetInstance().scene.get()->currentState == GameState::PAUSED)
@@ -85,69 +89,37 @@ bool Enemy::Update(float dt)
 	Vector2D enemyTilePos = Engine::GetInstance().map.get()->WorldToMap(enemyPos.getX(), enemyPos.getY());
 	Vector2D playerTilePos = Engine::GetInstance().map.get()->WorldToMap(playerPos.getX(), playerPos.getY());
 
-	if (IsPlayerInRange()) {
-		if (IsPlayerInAttackRange() && attackCooldownTimer.ReadSec() >= 3) {
-			state = EnemyState::ATTACK;
-			attackDurationTimer.Start();
-		}
-		else {
-			state = EnemyState::AGGRESSIVE;
-		}
-	}
-	else {
-		state = EnemyState::PATROL;
-	}
+    //ZoneScoped;
+    // 
+    if (Engine::GetInstance().scene.get()->currentState == GameState::PAUSED) {
 
-	switch (state) {
-	case EnemyState::PATROL:
-		// Movimiento de patrulla
-		if (!IsNextTileCollidable() || tilesMovedInSameDirection >= 150) {
-			direction = (direction == 0) ? 1 : 0;
-			tilesMovedInSameDirection = 0;
-		}
+        pbody->body->SetLinearVelocity(b2Vec2(0, 0));
+ 
 
-		if (direction == 0) {
-			pbody->body->SetLinearVelocity(b2Vec2(-2, 0));
-		}
-		else {
-			pbody->body->SetLinearVelocity(b2Vec2(2, 0));
-		}
-		tilesMovedInSameDirection++;
-		break;
+        b2Transform pbodyPos = pbody->body->GetTransform();
+        position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texW / 6);
+        position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 6);
+        Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
+        currentAnimation->Update();
 
-	case EnemyState::AGGRESSIVE:
-		// Movimiento agresivo
-		if (playerTilePos.getX() < enemyTilePos.getX() && IsNextTileCollidable()) {
-			pbody->body->SetLinearVelocity(b2Vec2(-2, 0));
-			direction = 0;
-		}
-		else if (playerTilePos.getX() > enemyTilePos.getX() && IsNextTileCollidable()) {
-			pbody->body->SetLinearVelocity(b2Vec2(2, 0));
-			direction = 1;
-		}
-		else {
-			pbody->body->SetLinearVelocity(b2Vec2(0, 0));
-		}
-		break;
+        return true;
 
-	case EnemyState::ATTACK:
-		// Lógica de ataque
-		PerformAttack();
+    }
 
-		Engine::GetInstance().physics.get()->DeletePhysBody(attackHitbox);
-		attackHitbox = nullptr;
-		attackCooldownTimer.Start();
-		state = EnemyState::AGGRESSIVE;
+    if (Engine::GetInstance().scene.get()->currentState != GameState::PLAYING) return true;
 
-		break;
-	}
 
-	// Propagate the pathfinding algorithm using A* with the selected heuristic
-	ResetPath();
-	while (pathfinding->pathTiles.empty())
-	{
-		pathfinding->PropagateAStar(SQUARED);
-	}
+    Vector2D playerPos = Engine::GetInstance().scene.get()->player->GetPosition();
+    Vector2D enemyPos = GetPosition();
+    Vector2D enemyTilePos = Engine::GetInstance().map.get()->WorldToMap((int)enemyPos.getX(), (int)enemyPos.getY());
+    Vector2D playerTilePos = Engine::GetInstance().map.get()->WorldToMap((int)playerPos.getX(), (int)playerPos.getY());
+
+
+    if (abs(playerTilePos.getX() - enemyTilePos.getX()) > 35) {
+        pbody->body->SetLinearVelocity(b2Vec2(0, 0));
+        return true;
+    }
+
 
 	// L08 TODO 4: Add a physics to an item - update the position of the object from the physics.  
 	
@@ -162,7 +134,91 @@ bool Enemy::Update(float dt)
 	Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
 	currentAnimation->Update();
 	return true;
+
+    if (IsPlayerInRange()) {
+        if (IsPlayerInAttackRange()) {
+            state = EnemyState::ATTACK;
+        }
+        else {
+            state = EnemyState::AGGRESSIVE;
+        }
+    }
+    else {
+        state = EnemyState::PATROL;
+    }
+
+    switch (state) {
+    case EnemyState::PATROL:
+        // Movimiento de patrulla
+        if (!IsNextTileCollidable() || tilesMovedInSameDirection >= 350) {
+            direction = (direction == 0) ? 1 : 0;
+            tilesMovedInSameDirection = 0;
+        }
+
+        if (direction == 0) {
+            pbody->body->SetLinearVelocity(b2Vec2(-2, 0));
+        }
+        else {
+            pbody->body->SetLinearVelocity(b2Vec2(2, 0));
+        }
+        tilesMovedInSameDirection++;
+        break;
+
+    case EnemyState::AGGRESSIVE:
+        // Movimiento agresivo
+        if (playerTilePos.getX() < enemyTilePos.getX() && IsNextTileCollidable()) {
+            pbody->body->SetLinearVelocity(b2Vec2(-2, 0));
+            direction = 0;
+        }
+        else if (playerTilePos.getX() > enemyTilePos.getX() && IsNextTileCollidable()) {
+            pbody->body->SetLinearVelocity(b2Vec2(2, 0));
+            direction = 1;
+        }
+        else {
+            pbody->body->SetLinearVelocity(b2Vec2(0, 0));
+        }
+        break;
+
+    case EnemyState::ATTACK:
+        // Lógica de ataque
+        PerformAttack();
+
+        Engine::GetInstance().physics.get()->DeletePhysBody(attackHitbox);
+        attackHitbox = nullptr;
+        attackCooldownTimer.Start();
+        state = EnemyState::AGGRESSIVE;
+        break;
+    }
+
+    // Dibuja la línea de visión del enemigo
+    DrawLineOfSight();
+
+    // Propagate the pathfinding algorithm using A* with the selected heuristic
+    ResetPath();
+    while (pathfinding->pathTiles.empty())
+    {
+        pathfinding->PropagateAStar(SQUARED);
+    }
+
+    // L08 TODO 4: Add a physics to an item - update the position of the object from the physics.  
+    b2Transform pbodyPos = pbody->body->GetTransform();
+    position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texW / 6);
+    position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 6);
+
+    Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
+    currentAnimation->Update();
+
+    // Draw pathfinding 
+
+    if (Engine::GetInstance().physics.get()->debug) pathfinding->DrawPath();
+
+    return true;
+
 }
+
+
+
+
 
 bool Enemy::CleanUp()
 {
@@ -241,21 +297,40 @@ bool Enemy::IsPlayerInRange() {
 	Vector2D playerTilePos = Engine::GetInstance().map.get()->WorldToMap(playerPos.getX(), playerPos.getY());
 
 	int distance = abs(playerTilePos.getX() - enemyTilePos.getX());
-	return distance <= 10;
+	bool isInRange = distance <= 10;
+
+	// Verificar si el enemigo está mirando en la dirección del jugador
+	bool isFacingPlayer = (direction == 0 && playerTilePos.getX() < enemyTilePos.getX()) ||
+		(direction == 1 && playerTilePos.getX() > enemyTilePos.getX());
+
+	return isInRange && isFacingPlayer;
 }
 
+
 void Enemy::PerformAttack() {
-	
 	// Detiene al enemigo
 	pbody->body->SetLinearVelocity(b2Vec2(0, 0));
-	
+
 	if (attackHitbox == nullptr) {
+		// Determina la dirección del ataque
+		Vector2D playerPos = Engine::GetInstance().scene.get()->player->GetPosition();
+		Vector2D enemyPos = GetPosition();
+		int attackOffsetX = 0;
+
+		if (playerPos.getX() < enemyPos.getX()) {
+			// El jugador está a la izquierda del enemigo
+			attackOffsetX = -80; // Ajusta este valor según sea necesario
+		}
+		else {
+			// El jugador está a la derecha del enemigo
+			attackOffsetX = 110; // Ajusta este valor según sea necesario
+		}
+
 		// Crea la hitbox del ataque
-		attackHitbox = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX()+2, (int)position.getY(), texW, texH, bodyType::STATIC);
+		attackHitbox = Engine::GetInstance().physics.get()->CreateRectangleSensor((int)position.getX() + attackOffsetX, (int)position.getY() + 10, 104, 128, bodyType::STATIC);
 		attackHitbox->ctype = ColliderType::ENEMY;
 		attackHitbox->listener = this;
 	}
-		
 
 	Engine::GetInstance().render.get()->DrawTexture(attackTexture, (int)position.getX(), (int)position.getY(), &attackAnimation.GetCurrentFrame());
 	attackAnimation.Update();
@@ -273,6 +348,8 @@ void Enemy::PerformAttack() {
 	// Verifica colisiones con el jugador
 	CheckAttackCollision();
 }
+
+
 
 void Enemy::CheckAttackCollision() {
 	if (attackHitbox != nullptr) {
@@ -306,6 +383,100 @@ bool Enemy::IsPlayerInAttackRange() {
 	Vector2D playerTilePos = Engine::GetInstance().map.get()->WorldToMap(playerPos.getX(), playerPos.getY());
 
 	int distance = abs(playerTilePos.getX() - enemyTilePos.getX());
-	return distance <= 3;
+	return distance <= 6;
 }
+
+void Enemy::LoadEnemyFx()
+{
+	//centinel
+	 centinelWalk1FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/Jump1.ogg");
+	 centinelWalk2FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/Jump1.ogg");
+	 centinelMeleAttack1FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/Jump1.ogg");
+	 centinelMeleAttack2FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/Jump1.ogg");
+	 centinelRangeAttack1FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/Jump1.ogg");
+	 centinelRangeAttack2FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/Jump1.ogg");
+	 centinelJump1FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/Jump1.ogg");
+	 centinelJump2FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/Jump1.ogg");
+	 centinelDieFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/Jump1.ogg");
+	 centinelHit1FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/Jump1.ogg");
+	 centinelHit2FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/Jump1.ogg");
+	//skull
+	 skullFlyFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/Jump1.ogg");
+	 skullAttack1FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/Jump1.ogg");
+	 skullAttack2FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/Jump1.ogg");
+	 skullHit1FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/Jump1.ogg");
+	 skullHit2FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/Jump1.ogg");
+	 skulldieFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/Jump1.ogg");
+	//bat
+	 batFlyFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/Jump1.ogg");
+	 batAttack1FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/Jump1.ogg");
+	 batAttack2FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/Jump1.ogg");
+	 batHit1FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/Jump1.ogg");
+	 batHit2FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/Jump1.ogg");
+	 batdieFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/Jump1.ogg");
+	//spirit
+	//ghost soldier
+}
+
+bool Enemy::IsPlayerInLineOfSight() {
+	Vector2D playerPos = Engine::GetInstance().scene.get()->player->GetPosition();
+	Vector2D enemyPos = GetPosition();
+	Vector2D enemyTilePos = Engine::GetInstance().map.get()->WorldToMap((int)enemyPos.getX(), (int)enemyPos.getY());
+	Vector2D playerTilePos = Engine::GetInstance().map.get()->WorldToMap((int)playerPos.getX(), (int)playerPos.getY());
+
+	int distance = abs(playerTilePos.getX() - enemyTilePos.getX());
+
+	// Verifica si el jugador está dentro de la línea de visión de 5 tiles
+	if (distance <= 10) {
+		if (direction == 0 && playerTilePos.getX() < enemyTilePos.getX()) { // Izquierda
+			for (int i = 1; i <= 5; ++i) {
+				if (Engine::GetInstance().map.get()->IsTileCollidable(enemyTilePos.getX() - i, enemyTilePos.getY())) {
+					return false; // Hay una colisión en la línea de visión
+				}
+				if (playerTilePos.getX() == enemyTilePos.getX() - i) {
+					return true; // El jugador está en la línea de visión
+				}
+			}
+		}
+		else if (direction == 1 && playerTilePos.getX() > enemyTilePos.getX()) { // Derecha
+			for (int i = 1; i <= 5; ++i) {
+				if (Engine::GetInstance().map.get()->IsTileCollidable(enemyTilePos.getX() + i, enemyTilePos.getY())) {
+					return false; // Hay una colisión en la línea de visión
+				}
+				if (playerTilePos.getX() == enemyTilePos.getX() + i) {
+					return true; // El jugador está en la línea de visión
+				}
+			}
+		}
+	}
+
+	return false;
+}
+
+
+
+void Enemy::DrawLineOfSight() {
+	Vector2D enemyPos = GetPosition();
+	Vector2D enemyTilePos = Engine::GetInstance().map.get()->WorldToMap((int)enemyPos.getX(), (int)enemyPos.getY());
+
+	SDL_Renderer* renderer = Engine::GetInstance().render.get()->renderer;
+	SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255); // Color rojo para la línea de visión
+
+	for (int i = 1; i <= 5; ++i) {
+		int tileX = (direction == 0) ? enemyTilePos.getX() - i : enemyTilePos.getX() + i;
+		int tileY = enemyTilePos.getY();
+
+		if (Engine::GetInstance().map.get()->IsTileCollidable(tileX, tileY)) {
+			break; // Detén el dibujo si hay una colisión en la línea de visión
+		}
+
+		Vector2D tilePos = Engine::GetInstance().map.get()->MapToWorld(tileX, tileY);
+		SDL_Rect rect = { (int)tilePos.getX(), (int)enemyPos.getY(), Engine::GetInstance().map.get()->GetTileWidth(), Engine::GetInstance().map.get()->GetTileHeight() };
+		SDL_RenderDrawRect(renderer, &rect);
+	}
+}
+
+
+
+
 

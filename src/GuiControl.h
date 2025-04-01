@@ -22,7 +22,9 @@ enum class GuiControlType
 	POPUP,
 	PORTRAIT,
 	OPTIONA,
-	OPTIONB
+	OPTIONB,
+	HPSLIDER,
+	IMAGE
 };
 
 enum class GuiControlState

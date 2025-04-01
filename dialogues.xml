@@ -9,6 +9,7 @@
 		</dialogues>
 	</RAIDEDVILLAGE>
 	<MENTORSHIP>
+
 		<dialogues size="1">
 			<dialogue1 character="Mentor" text="I am mentoring you"  branching="1"/>
 			<options a="ok" b="no"/>
@@ -45,4 +46,17 @@
 			<dialogue1  character="" text=""  branching="0"/>
 		</dialogues>
 	</EMPTY>
+	    <dialogues size="3">
+		    <dialogue1 character="Mentor" text="I am mentoring you" branching="0" />
+	     	<dialogue2 character="Mentor" text="Option one Selected" branching="0" />
+		    <dialogue3 character="Mentor" text="Option twp  Selected" branching="0" />
+		    <options option1="MENTORSHIP1" option2="MENTORSHIP2" option3="SECRET" />
+	    </dialogues>
+
+
+<SECRET>
+			<dialogues size="1">
+				<dialogue1 character="Mystery" text="You found a secret!" branching="0" />
+			</dialogues>
+		</SECRET>
 </dialogues>

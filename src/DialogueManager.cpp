@@ -97,11 +97,23 @@ void DialogueManager::CastDialogue(DialogueEngine dialogueEngine)
 
 void DialogueManager::Update()
 {
-   
-
     if (!dialogueEnded && Engine::GetInstance().input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
     {
         Engine::GetInstance().guiManager->ClearControlsOfType(GuiControlType::DIALOGUE);
+        ShowNextDialogue();
+    }
+
+    if (!dialogueEnded && Engine::GetInstance().input->GetKey(SDL_SCANCODE_UP) == KEY_DOWN)
+    {
+        Engine::GetInstance().guiManager->ClearControlsOfType(GuiControlType::DIALOGUE);
+        ShowNextDialogue();
+
+    }
+
+    if (!dialogueEnded && Engine::GetInstance().input->GetKey(SDL_SCANCODE_DOWN) == KEY_DOWN)
+    {
+        Engine::GetInstance().guiManager->ClearControlsOfType(GuiControlType::DIALOGUE);
+        ShowNextDialogue();
         ShowNextDialogue();
     }
 }
@@ -125,16 +137,60 @@ void DialogueManager::ShowNextDialogue()
 
             std::string optionA = "Option A";
             std::string optionB = "Option B";
-
+            
             Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::OPTIONA, 1, optionA.c_str(), optionAPos, module);
             Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::OPTIONB, 1, optionB.c_str(), optionBPos, module);
-            
+
+            if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT) optionIndex = 1;
+
+            if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT) optionIndex = 2;
+
         }
 
         // Display the current dialogue and character name
         Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::DIALOGUE, 1, text.c_str(), dialoguePos, module);
         Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::DIALOGUE, 1, character.c_str(), namePos, module);
 
+    }
+    else
+    {
+        LOG("No more dialogues to display!");
+        dialogueEnded = true;
+    }
+}
+
+void DialogueManager::ShowNextDialogueWithIndex(int optionDialogueIndex)
+{
+    Engine::GetInstance().guiManager->ClearControlsOfType(GuiControlType::DIALOGUE);
+
+    if (currentDialogueIndex < dialogues.size())
+    {
+        std::string character = dialogues[currentDialogueIndex].first;
+        std::string text = dialogues[currentDialogueIndex].second;
+
+        // Display the current dialogue and character name
+        Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::DIALOGUE, 1, text.c_str(), dialoguePos, module);
+        Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::DIALOGUE, 1, character.c_str(), namePos, module);
+
+        // If not branching, move to the next dialogue automatically
+        if (!isBranching)
+        {
+            currentDialogueIndex++;
+        }
+        else
+        {
+
+            std::string optionA = "Option A";
+            std::string optionB = "Option B";
+
+            Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::OPTIONA, 1, optionA.c_str(), optionAPos, module);
+            Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::OPTIONB, 1, optionB.c_str(), optionBPos, module);
+
+            if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT) optionIndex = 1;
+
+            if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT) optionIndex = 2;
+
+        }
     }
     else
     {
