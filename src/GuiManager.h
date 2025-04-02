@@ -36,5 +36,8 @@ public:
 	std::list<GuiControl*> guiControlsList;
 	SDL_Texture* texture;
 
+	//Audio
+	
+
 };
 

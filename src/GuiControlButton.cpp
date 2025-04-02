@@ -38,6 +38,11 @@ bool GuiControlButton::Start()
 	texture = Engine::GetInstance().textures.get()->Load("Assets/UI/individualUIsprites/textName.png");
     textureSelected = Engine::GetInstance().textures.get()->Load("Assets/UI/individualUIsprites/selectedButton.png");
 
+    //Audio
+    buttonSelectedFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/ExtraFx/selectButton.ogg");
+    buttonPressedFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/ExtraFx/clickButton.ogg");
+   /* logoFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/ExtraFx/logoFx.ogg");
+    titleFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/ExtraFx/TittleFx.ogg");*/
     return false;
 }
 bool GuiControlButton::Update(float dt)
@@ -48,28 +53,29 @@ bool GuiControlButton::Update(float dt)
         Vector2D mousePos = Engine::GetInstance().input->GetMousePosition();
 
         // If the position of the mouse is inside the bounds of the button 
-        if (mousePos.getX() > bounds.x && mousePos.getX() < bounds.x + bounds.w && mousePos.getY() > bounds.y && mousePos.getY() < bounds.y + bounds.h) {
+        if (mousePos.getX() > bounds.x && mousePos.getX() < bounds.x + bounds.w && mousePos.getY() > bounds.y && mousePos.getY() < bounds.y + bounds.h) 
+        {
             state = GuiControlState::FOCUSED;
+            Engine::GetInstance().audio.get()->PlayFx(buttonSelectedFxId);
 
             if (Engine::GetInstance().input->GetMouseButtonDown(SDL_BUTTON_LEFT) == KEY_REPEAT) {
                 state = GuiControlState::PRESSED;
+                Engine::GetInstance().audio.get()->PlayFx(buttonPressedFxId);
             }
 
             if (Engine::GetInstance().input->GetMouseButtonDown(SDL_BUTTON_LEFT) == KEY_UP) {
                 NotifyObserver();
             }
         }
-        else {
+        else 
+        {
             state = GuiControlState::NORMAL;
         }
 
         // L16: TODO 4: Draw the button according to the GuiControl State
         switch (state)
         {
-        case GuiControlState::DISABLED:
-            Engine::GetInstance().render->DrawTexturedRectangle(texture, bounds.x - 200, bounds.y - 300, 600, 400, false);
-
-            break;
+       
         case GuiControlState::NORMAL:
             Engine::GetInstance().render->DrawTexturedRectangle(texture, bounds.x - 200, bounds.y - 170, 600, 400, false);
 
@@ -82,11 +88,14 @@ bool GuiControlButton::Update(float dt)
 
         case GuiControlState::FOCUSED:
             Engine::GetInstance().render->DrawTexturedRectangle(textureSelected, bounds.x - 200, bounds.y - 170, 600, 400, false);
+           
             break;
+           
 
         case GuiControlState::PRESSED:
             Engine::GetInstance().render->DrawTexturedRectangle(textureSelected, bounds.x - 200, bounds.y - 170, 600, 400, false);
             isClicked = true;
+          
             break;
         }
 

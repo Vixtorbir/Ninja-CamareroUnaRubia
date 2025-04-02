@@ -19,7 +19,10 @@ enum class GameState {
 	MAIN_MENU,
 	PLAYING,
 	PAUSED,
-	GAME_OVER
+	GAME_OVER,
+	FADE_IN,
+	FADE_OUT,
+	LOGO
 };
 
 class Scene : public Module
@@ -69,6 +72,7 @@ public:
 	void UpdatePlaying(float dt);
 	void UpdatePaused(float dt);
 	void UpdateGameOver(float dt);
+	void UpdateLogo(float dt);
 
 
 public:
@@ -90,7 +94,10 @@ public:
 	Player* player;
 	std::vector<Enemy*> enemyList;
 
-	NPC* npc;
+	NPC* npcMentor;
+	NPC* npcIsamu;
+	NPC* npcKaede;
+	NPC* npcHanzo;
 	std::vector<NPC*> npcs;
 
 	// L16: TODO 2: Declare a GUI Control Button 
@@ -101,7 +108,7 @@ public:
 
 	bool watchtitle = false;
 
-	GameState currentState = GameState::MAIN_MENU;
+	GameState currentState = GameState::LOGO;
 
 	void HandleInput();
 
@@ -111,6 +118,11 @@ public:
 	GuiControlButton* returnButton = nullptr;
 
 	GuiImage* menuBackgroundImage = nullptr;
+
+	float logoTimer = 0.0f;
+	float fadeDuration = 1.0f; // Duración del fade in y fade out en segundos
+	float opacity = 0.0f;
+	SDL_Texture* logo = nullptr;
 
 private:
 	Parallax* parallax = nullptr;
