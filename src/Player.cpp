@@ -81,6 +81,25 @@ bool Player::Start() {
 
 bool Player::Update(float dt)
 {
+
+	if (Engine::GetInstance().scene.get()->currentState == GameState::PAUSED)
+	{
+		pbody->body->SetLinearVelocity(b2Vec2(0, 0));
+		b2Transform pbodyPos = pbody->body->GetTransform();
+		position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 2);
+		position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
+
+
+		Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
+		currentAnimation->Update();
+		return true;
+	}
+
+	if (Engine::GetInstance().scene.get()->currentState != GameState::PLAYING)
+	{
+		return true;
+	}
+
 	//HP
 	HP_Slider->SetSliderBarInnerSize(HP*4, 50);
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_H) == KEY_DOWN) HP += 20;

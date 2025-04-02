@@ -89,47 +89,11 @@ bool Enemy::Update(float dt)
 	Vector2D enemyTilePos = Engine::GetInstance().map.get()->WorldToMap(enemyPos.getX(), enemyPos.getY());
 	Vector2D playerTilePos = Engine::GetInstance().map.get()->WorldToMap(playerPos.getX(), playerPos.getY());
 
-    //ZoneScoped;
-    // 
-    if (Engine::GetInstance().scene.get()->currentState == GameState::PAUSED) {
-
-        pbody->body->SetLinearVelocity(b2Vec2(0, 0));
- 
-
-        b2Transform pbodyPos = pbody->body->GetTransform();
-        position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texW / 6);
-        position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 6);
-        Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
-        currentAnimation->Update();
-
-        return true;
-
-    }
-
-    if (Engine::GetInstance().scene.get()->currentState != GameState::PLAYING) return true;
-
-
-
-
     if (abs(playerTilePos.getX() - enemyTilePos.getX()) > 35) {
         pbody->body->SetLinearVelocity(b2Vec2(0, 0));
         return true;
     }
 
-
-	// L08 TODO 4: Add a physics to an item - update the position of the object from the physics.  
-	
-	// Draw pathfinding 
-
-	if (Engine::GetInstance().physics.get()->debug) pathfinding->DrawPath();
-	b2Transform pbodyPos = pbody->body->GetTransform();
-	position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 2);
-	position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
-
-
-	Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
-	currentAnimation->Update();
-	return true;
 
     if (IsPlayerInRange()) {
         if (IsPlayerInAttackRange()) {
@@ -198,6 +162,7 @@ bool Enemy::Update(float dt)
 
     // L08 TODO 4: Add a physics to an item - update the position of the object from the physics.  
   
+    b2Transform pbodyPos = pbody->body->GetTransform();
     position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texW / 6);
     position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 6);
 
