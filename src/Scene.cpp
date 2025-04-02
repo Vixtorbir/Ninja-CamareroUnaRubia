@@ -41,10 +41,21 @@ bool Scene::Awake()
 	player = (Player*)Engine::GetInstance().entityManager->CreateEntity(EntityType::PLAYER);
 	player->SetParameters(configParameters.child("entities").child("player"));
 
-	npc = (NPC*)Engine::GetInstance().entityManager->CreateNamedCharacter(EntityType::NPC, DialogueEngine::MENTORSHIP);
-	npc->SetParameters(configParameters.child("entities").child("npcMENTORSHIP"));
-	npcs.push_back(npc);
+	npcMentor = (NPC*)Engine::GetInstance().entityManager->CreateNamedCharacter(EntityType::NPC, DialogueEngine::MENTORSHIP);
+	npcMentor->SetParameters(configParameters.child("entities").child("npcMENTORSHIP"));
+	npcs.push_back(npcMentor);
 
+	npcIsamu = (NPC*)Engine::GetInstance().entityManager->CreateNamedCharacter(EntityType::NPC, DialogueEngine::ISAMU);
+	npcIsamu->SetParameters(configParameters.child("entities").child("npcISAMU"));
+	npcs.push_back(npcIsamu);
+
+	npcKaede = (NPC*)Engine::GetInstance().entityManager->CreateNamedCharacter(EntityType::NPC, DialogueEngine::KAEDE);
+	npcKaede->SetParameters(configParameters.child("entities").child("npcKAEDE"));
+	npcs.push_back(npcKaede);
+
+	npcHanzo = (NPC*)Engine::GetInstance().entityManager->CreateNamedCharacter(EntityType::NPC, DialogueEngine::HANZO);
+	npcHanzo->SetParameters(configParameters.child("entities").child("npcHANZO"));
+	npcs.push_back(npcHanzo);
 	//L08 Create a new item using the entity manager and set the position to (200, 672) to test
 	for (pugi::xml_node itemNode = configParameters.child("entities").child("items").child("item"); itemNode; itemNode = itemNode.next_sibling("item"))
 	{
@@ -82,6 +93,10 @@ bool Scene::Awake()
 // Called before the first frame
 bool Scene::Start()
 {
+	logo = Engine::GetInstance().textures->Load("Assets/UI/logo.png");
+
+	// Inicializar el estado de la pantalla de presentación
+	SetState(GameState::LOGO);
 
 	MenuBackgroundImage = Engine::GetInstance().textures.get()->Load("Assets/UI/Menu.png");
 
@@ -91,7 +106,6 @@ bool Scene::Start()
 	// Texture to highligh mouse position 
 	mouseTileTex = Engine::GetInstance().textures.get()->Load("Assets/Maps/MapMetadata.png");
 
-	dialogueManager->CastDialogue(DialogueEngine::RAIDEDVILLAGE);
 
 	// Initalize the camera position
 	int w, h;
@@ -180,7 +194,8 @@ bool Scene::Update(float dt)
 	}
 
 	//If mouse button is pressed modify enemy position
-	if (enemyList.size() > 0 && Engine::GetInstance().input.get()->GetMouseButtonDown(1) == KEY_REPEAT) {
+	if (enemyList.size() > 0 && Engine::GetInstance().input.get()->GetMouseButtonDown(1) == KEY_REPEAT&& currentState == GameState::PLAYING) {
+		
 		enemyList[0]->SetPosition(Vector2D(highlightTile.getX(), highlightTile.getY()));
 		enemyList[0]->ResetPath();
 	}
@@ -191,10 +206,11 @@ bool Scene::Update(float dt)
 	{
 		if (npc->showcaseDialogue)
 		{
-			dialogueManager->CastDialogue(npc->dialogueName);
+		dialogueManager->CastDialogue(npc->dialogueName);
 			npc->showcaseDialogue = false;
 		}
 	}
+
 
 	HandleInput();
 
@@ -211,9 +227,18 @@ bool Scene::Update(float dt)
 	case GameState::GAME_OVER:
 		UpdateGameOver(dt);
 		break;
+	case GameState::FADE_IN:
+		break;
+	case GameState::FADE_OUT:
+
+		break;
+	case GameState::LOGO:
+		UpdateLogo(dt);
+		break;
 	default:
 		break;
 	}
+
 
 	return true;
 }
@@ -429,7 +454,32 @@ void Scene::UpdatePaused(float dt) {
 void Scene::UpdateGameOver(float dt) {
 	Engine::GetInstance().render.get()->DrawText("GAME OVER:Press enter to start", 600, 400, 750, 255);
 }
+void Scene::UpdateLogo(float dt) {
+	// Manejar el fade in
+	if (opacity < 1.0f && logoTimer < 3.0f) {
+		opacity += dt / fadeDuration;
+		if (opacity > 1.0f) {
+			opacity = 1.0f;
+		}
+	}
 
+	SDL_SetTextureAlphaMod(logo, static_cast<Uint8>(opacity * 255));
+
+	// Incrementar el temporizador del logo
+	logoTimer += dt;
+
+	// Manejar el fade out
+	if (logoTimer >= 100.0f) {
+		opacity -= dt / fadeDuration;
+		if (opacity <= 0.0f) {
+			opacity = 0.0f;
+			SetState(GameState::MAIN_MENU);
+		}
+	}
+
+	// Aplicar la opacidad al logo
+
+}
 bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 {
 	// L15: DONE 5: Implement the OnGuiMouseClickEvent method

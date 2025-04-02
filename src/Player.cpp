@@ -429,7 +429,7 @@ void Player::Die() {
 	
 	LOG("Player has died");
 	Engine::GetInstance().audio.get()->PlayFx(dieFxId);
-	// Puedes reiniciar el nivel, mostrar una pantalla de game over, etc.
+	Engine::GetInstance().scene->SetState(GameState::GAME_OVER);
 }
 
 void Player::ChangeHitboxSize(float width, float height) {
