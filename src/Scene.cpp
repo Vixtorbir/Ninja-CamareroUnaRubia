@@ -95,7 +95,7 @@ bool Scene::Start()
 {
 	logo = Engine::GetInstance().textures->Load("Assets/UI/logo.png");
 
-	// Inicializar el estado de la pantalla de presentaci�n
+	// Inicializar el estado de la pantalla de presentaci�n
 	SetState(GameState::LOGO);
 
 	MenuBackgroundImage = Engine::GetInstance().textures.get()->Load("Assets/UI/Menu.png");
@@ -252,10 +252,10 @@ bool Scene::PostUpdate()
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN)
 		ret = false;
 
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F1) == KEY_DOWN)
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F2) == KEY_DOWN)
 		SafeLoadMap("MapTemplate1.tmx", Vector2D(22112, 4032)); // Posición específica Mapa 1
 
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F2) == KEY_DOWN)
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F3) == KEY_DOWN)
 		SafeLoadMap("MapTemplate2.tmx", Vector2D(193, 3845)); // Posición específica Mapa 2
 
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F6) == KEY_DOWN)
