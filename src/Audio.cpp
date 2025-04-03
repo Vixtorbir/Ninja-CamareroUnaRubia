@@ -130,7 +130,25 @@ bool Audio::PlayMusic(const char* path, float fadeTime)
 	LOG("Successfully playing %s", path);
 	return ret;
 }
+int  Audio::LoadMusic(const char* path)
+{
+	int ret = 0;
+	if (!active)
+		return 0;
 
+    _Mix_Music* track = Mix_LoadMUS(path);
+
+	if (track == NULL)
+	{
+		LOG("Cannot load music wav %s. Mix_GetError(): %s", path, Mix_GetError());
+	}
+	else
+	{
+		tracks.push_back(track);
+		ret = (int)tracks.size();
+	}
+
+}
 // Load WAV
 int Audio::LoadFx(const char* path)
 {
@@ -153,34 +171,20 @@ int Audio::LoadFx(const char* path)
 
 	return ret;
 }
-int  Audio::LoadMusic(const char* path)
-{
-	int ret = 0;
-	if (!active)
-		return 0;
 
-    _Mix_Music* track = Mix_LoadMUS(path);
-
-	if (track == NULL)
-	{
-		LOG("Cannot load music wav %s. Mix_GetError(): %s", path, Mix_GetError());
-	}
-	else
-	{
-		tracks.push_back(track);
-		ret = (int)tracks.size();
-	}
-
-}
 bool Audio::musicVolume(int v)
 {
 	bool ret = true;
 	return ret;
 
 }
+bool StopMusic()
+{
+	return true;
+}
 
 // Play WAV
-bool Audio::PlayFx(int id, int repeat)
+bool Audio::PlayFx(int id, int repeat,int channel)
 {
 	bool ret = false;
 
@@ -191,7 +195,7 @@ bool Audio::PlayFx(int id, int repeat)
 	{
 		auto fxIt = fx.begin();
 		std::advance(fxIt, id-1);
-		Mix_PlayChannel(-1, *fxIt, repeat);
+		Mix_PlayChannel(channel, *fxIt, repeat);
 	}
 
 	return ret;
@@ -200,4 +204,23 @@ int Audio::randomFx(int min, int max)
 {
 	int randomId = min + (rand() % (max - min + 1));
 	return randomId;
+}
+bool  Audio::StopFxChannel(int channel)
+{
+	bool ret = true;
+	
+		Mix_HaltChannel(channel);
+		
+	return ret;
+}
+bool Audio::VolumeFx(int id, int v)
+{
+	bool ret = true;
+	if (id > 0 && id <= fx.size())
+	{
+		auto fxIt = fx.begin();
+		std::advance(fxIt, id - 1);
+		Mix_VolumeChunk(*fxIt, v);
+	}
+	return ret;
 }

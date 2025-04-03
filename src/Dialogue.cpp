@@ -106,6 +106,30 @@ bool Dialogue::Update(float dt)
             Engine::GetInstance().render.get()->DrawTexture(OverlayPortrait, screenHeight / 3 - Engine::GetInstance().render->camera.x, screenHeight / 2 - Engine::GetInstance().render->camera.y, &overlayPos);
 
         }
+        else if (buttonText == "Isamu") {
+            SDL_QueryTexture(Mentor, NULL, NULL, &textureWidth, &textureHeight);
+            SDL_Rect portraitPos = { 0, 0, textureWidth, textureHeight };
+
+            Engine::GetInstance().render.get()->DrawTexture(Mentor, (textX - 700) - Engine::GetInstance().render->camera.x, (textY - 550) - Engine::GetInstance().render->camera.y, &portraitPos);
+            Engine::GetInstance().render.get()->DrawTexture(OverlayPortrait, screenHeight / 3 - Engine::GetInstance().render->camera.x, screenHeight / 2 - Engine::GetInstance().render->camera.y, &overlayPos);
+
+        }
+        else if (buttonText == "Kaede") {
+            SDL_QueryTexture(Mentor, NULL, NULL, &textureWidth, &textureHeight);
+            SDL_Rect portraitPos = { 0, 0, textureWidth, textureHeight };
+
+            Engine::GetInstance().render.get()->DrawTexture(Mentor, (textX - 700) - Engine::GetInstance().render->camera.x, (textY - 550) - Engine::GetInstance().render->camera.y, &portraitPos);
+            Engine::GetInstance().render.get()->DrawTexture(OverlayPortrait, screenHeight / 3 - Engine::GetInstance().render->camera.x, screenHeight / 2 - Engine::GetInstance().render->camera.y, &overlayPos);
+
+        }
+        else if (buttonText == "Hanzo") {
+            SDL_QueryTexture(Mentor, NULL, NULL, &textureWidth, &textureHeight);
+            SDL_Rect portraitPos = { 0, 0, textureWidth, textureHeight };
+
+            Engine::GetInstance().render.get()->DrawTexture(Mentor, (textX - 700) - Engine::GetInstance().render->camera.x, (textY - 550) - Engine::GetInstance().render->camera.y, &portraitPos);
+            Engine::GetInstance().render.get()->DrawTexture(OverlayPortrait, screenHeight / 3 - Engine::GetInstance().render->camera.x, screenHeight / 2 - Engine::GetInstance().render->camera.y, &overlayPos);
+
+        }
         else
         {
             Engine::GetInstance().render.get()->DrawTexture(Overlay, 480. - Engine::GetInstance().render->camera.x, 550 - Engine::GetInstance().render->camera.y, &overlayPos2);

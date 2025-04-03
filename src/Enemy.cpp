@@ -64,35 +64,36 @@ bool Enemy::Start() {
 
 bool Enemy::Update(float dt)
 {
-    //ZoneScoped;
-    // 
-    if (Engine::GetInstance().scene.get()->currentState == GameState::PAUSED) {
 
-        pbody->body->SetLinearVelocity(b2Vec2(0, 0));
-
-        b2Transform pbodyPos = pbody->body->GetTransform();
-        position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texW / 6);
-        position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 6);
-        Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
-        currentAnimation->Update();
-
-        return true;
-
-    }
-
-    if (Engine::GetInstance().scene.get()->currentState != GameState::PLAYING) return true;
+	//ZoneScoped;
+	// 
+	if (Engine::GetInstance().scene.get()->currentState == GameState::PAUSED)
+	{
+		pbody->body->SetLinearVelocity(b2Vec2(0,0));
+		b2Transform pbodyPos = pbody->body->GetTransform();
+		position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 2);
+		position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
 
 
-    Vector2D playerPos = Engine::GetInstance().scene.get()->player->GetPosition();
-    Vector2D enemyPos = GetPosition();
-    Vector2D enemyTilePos = Engine::GetInstance().map.get()->WorldToMap((int)enemyPos.getX(), (int)enemyPos.getY());
-    Vector2D playerTilePos = Engine::GetInstance().map.get()->WorldToMap((int)playerPos.getX(), (int)playerPos.getY());
-
+		Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
+		currentAnimation->Update();
+		return true;
+	}
+	if (Engine::GetInstance().scene.get()->currentState != GameState::PLAYING)
+	{
+		return true;
+	}
+	
+	Vector2D playerPos = Engine::GetInstance().scene.get()->player->GetPosition();
+	Vector2D enemyPos = GetPosition();
+	Vector2D enemyTilePos = Engine::GetInstance().map.get()->WorldToMap(enemyPos.getX(), enemyPos.getY());
+	Vector2D playerTilePos = Engine::GetInstance().map.get()->WorldToMap(playerPos.getX(), playerPos.getY());
 
     if (abs(playerTilePos.getX() - enemyTilePos.getX()) > 35) {
         pbody->body->SetLinearVelocity(b2Vec2(0, 0));
         return true;
     }
+
 
     if (IsPlayerInRange()) {
         if (IsPlayerInAttackRange()) {
@@ -160,6 +161,7 @@ bool Enemy::Update(float dt)
     }
 
     // L08 TODO 4: Add a physics to an item - update the position of the object from the physics.  
+  
     b2Transform pbodyPos = pbody->body->GetTransform();
     position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texW / 6);
     position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 6);
@@ -172,6 +174,7 @@ bool Enemy::Update(float dt)
     if (Engine::GetInstance().physics.get()->debug) pathfinding->DrawPath();
 
     return true;
+
 }
 
 
@@ -347,17 +350,16 @@ bool Enemy::IsPlayerInAttackRange() {
 void Enemy::LoadEnemyFx()
 {
 	//centinel
-	 centinelWalk1FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/Jump1.ogg");
-	 centinelWalk2FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/Jump1.ogg");
-	 centinelMeleAttack1FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/Jump1.ogg");
-	 centinelMeleAttack2FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/Jump1.ogg");
-	 centinelRangeAttack1FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/Jump1.ogg");
-	 centinelRangeAttack2FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/Jump1.ogg");
-	 centinelJump1FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/Jump1.ogg");
-	 centinelJump2FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/Jump1.ogg");
-	 centinelDieFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/Jump1.ogg");
-	 centinelHit1FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/Jump1.ogg");
-	 centinelHit2FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/Jump1.ogg");
+	 ninjaWalk1FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/Jump1.ogg");
+	 ninjaMeleAttack1FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/Jump1.ogg");
+	 ninjaMeleAttack2FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/Jump1.ogg");
+	 ninjaRangeAttack1FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/Jump1.ogg");
+	 ninjaRangeAttack2FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/Jump1.ogg");
+	 ninjaJump1FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/Jump1.ogg");
+	 ninjaJump2FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/Jump1.ogg");
+	 ninjaDieFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/Jump1.ogg");
+	 ninjaHit1FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/Jump1.ogg");
+	 ninjaHit2FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/Jump1.ogg");
 	//skull
 	 skullFlyFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/Jump1.ogg");
 	 skullAttack1FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/Jump1.ogg");
