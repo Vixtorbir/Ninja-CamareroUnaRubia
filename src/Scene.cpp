@@ -315,18 +315,21 @@ void Scene::SaveState() {
 	sceneNode.child("entities").child("player").attribute("y").set_value(player->GetPosition().getY());
 
 	pugi::xml_node enemiesNode = sceneNode.child("entities").child("enemies");
+
+	// Ensure enemies node exists
 	if (!enemiesNode) {
 		enemiesNode = sceneNode.child("entities").append_child("enemies");
 	}
 
-
-	for (auto& enemy : enemyList) {
-		pugi::xml_node enemyNode = enemiesNode.append_child("enemy");
-		sceneNode.child("entities").child("enemies").child("enemy").attribute("x").set_value(enemy->GetPosition().getX());
-		sceneNode.child("entities").child("enemies").child("enemy").attribute("x").set_value(enemy->GetPosition().getY());
-
-		
-
+	// Loop through existing enemies and update their positions
+	for (pugi::xml_node enemyNode = enemiesNode.child("enemy"); enemyNode; enemyNode = enemyNode.next_sibling("enemy")) {
+		// Find the corresponding enemy in your list
+		for (auto& enemy : enemyList) {
+			 {
+				enemyNode.attribute("x").set_value(enemy->GetPosition().getX());
+				enemyNode.attribute("y").set_value(enemy->GetPosition().getY());
+			}
+		}
 	}
 
 	pugi::xml_node ItemsNode = sceneNode.child("entities").child("items");
