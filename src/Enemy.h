@@ -41,17 +41,16 @@ private:
 
 	//fx
     //centinel
-	int centinelWalk1FxId;
-	int centinelWalk2FxId;
-	int centinelMeleAttack1FxId;
-	int centinelMeleAttack2FxId;
-	int centinelRangeAttack1FxId;
-	int centinelRangeAttack2FxId;
-	int centinelJump1FxId;
-	int centinelJump2FxId;
-	int centinelDieFxId;
-	int centinelHit1FxId;
-	int centinelHit2FxId;
+	int ninjaWalk1FxId;
+	int ninjaMeleAttack1FxId;
+	int ninjaMeleAttack2FxId;
+	int ninjaRangeAttack1FxId;
+	int ninjaRangeAttack2FxId;
+	int ninjaJump1FxId;
+	int ninjaJump2FxId;
+	int ninjaDieFxId;
+	int ninjaHit1FxId;
+	int ninjaHit2FxId;
     //skull
     int skullFlyFxId;
     int skullAttack1FxId;

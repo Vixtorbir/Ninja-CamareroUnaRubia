@@ -125,16 +125,15 @@ public:
 	
 private:
 		//Audio fx
+	bool startWalk = false;
+	int walkChannel;
 		int jump1FxId;
 		int jump2FxId;
 		int jump3FxId;
 		int doubleJump1FxId;
 		int doubleJump2FxId;
-		int walk1FxId;
-		int walk2FxId;
-		int walk3FxId;
-		int walk4FxId;
-		int walk5FxId;
+		int walkFxId;
+		int crouchFxId;
 		int dash1FxId;
 		int dash2FxId;
 		int dash3FxId;
@@ -162,10 +161,6 @@ private:
 	SDL_Texture* hpIconTexture;
 	SDL_Texture* BackgroundSliderHP;
 	SDL_Texture* ForeGroundSliderHP;
-
-	bool loadLevel1 = false;
-	bool loadLevel2 = false;
-
 
 	bool crouched;
 };

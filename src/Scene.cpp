@@ -1,4 +1,4 @@
-#include "Engine.h"
+ï»¿#include "Engine.h"
 #include "Input.h"
 #include "Textures.h"
 #include "Audio.h"
@@ -41,10 +41,21 @@ bool Scene::Awake()
 	player = (Player*)Engine::GetInstance().entityManager->CreateEntity(EntityType::PLAYER);
 	player->SetParameters(configParameters.child("entities").child("player"));
 
-	npc = (NPC*)Engine::GetInstance().entityManager->CreateNamedCharacter(EntityType::NPC, DialogueEngine::MENTORSHIP);
-	npc->SetParameters(configParameters.child("entities").child("npcMENTORSHIP"));
-	npcs.push_back(npc);
+	npcMentor = (NPC*)Engine::GetInstance().entityManager->CreateNamedCharacter(EntityType::NPC, DialogueEngine::MENTORSHIP);
+	npcMentor->SetParameters(configParameters.child("entities").child("npcMENTORSHIP"));
+	npcs.push_back(npcMentor);
 
+	npcIsamu = (NPC*)Engine::GetInstance().entityManager->CreateNamedCharacter(EntityType::NPC, DialogueEngine::ISAMU);
+	npcIsamu->SetParameters(configParameters.child("entities").child("npcISAMU"));
+	npcs.push_back(npcIsamu);
+
+	npcKaede = (NPC*)Engine::GetInstance().entityManager->CreateNamedCharacter(EntityType::NPC, DialogueEngine::KAEDE);
+	npcKaede->SetParameters(configParameters.child("entities").child("npcKAEDE"));
+	npcs.push_back(npcKaede);
+
+	npcHanzo = (NPC*)Engine::GetInstance().entityManager->CreateNamedCharacter(EntityType::NPC, DialogueEngine::HANZO);
+	npcHanzo->SetParameters(configParameters.child("entities").child("npcHANZO"));
+	npcs.push_back(npcHanzo);
 	//L08 Create a new item using the entity manager and set the position to (200, 672) to test
 	for (pugi::xml_node itemNode = configParameters.child("entities").child("items").child("item"); itemNode; itemNode = itemNode.next_sibling("item"))
 	{
@@ -82,6 +93,10 @@ bool Scene::Awake()
 // Called before the first frame
 bool Scene::Start()
 {
+	logo = Engine::GetInstance().textures->Load("Assets/UI/logo.png");
+
+	// Inicializar el estado de la pantalla de presentaciï¿½n
+	SetState(GameState::LOGO);
 
 	MenuBackgroundImage = Engine::GetInstance().textures.get()->Load("Assets/UI/Menu.png");
 
@@ -91,7 +106,6 @@ bool Scene::Start()
 	// Texture to highligh mouse position 
 	mouseTileTex = Engine::GetInstance().textures.get()->Load("Assets/Maps/MapMetadata.png");
 
-	dialogueManager->CastDialogue(DialogueEngine::RAIDEDVILLAGE);
 
 	// Initalize the camera position
 	int w, h;
@@ -140,18 +154,6 @@ bool Scene::PreUpdate()
 // Called each loop iteration
 bool Scene::Update(float dt)
 {
-
-	// Obtén la posición del jugador
-	Vector2D playerPos = player->GetPosition();
-
-	// Verifica si el jugador ha llegado al final del mapa actual
-	if (Engine::GetInstance().map->IsPlayerAtEndOfMap(playerPos.getX(), playerPos.getY())) {
-		// Carga el segundo mapa
-		Engine::GetInstance().map->Load("Assets/Map/MapTemplate2.tmx");
-
-		// Reposiciona al jugador en el inicio del segundo mapa
-		player->SetPosition(Vector2D(100, 100)); // Ajusta las coordenadas según el segundo mapa
-	}
 	//L03 TODO 3: Make the camera movement independent of framerate
 	float camSpeed = 1;
 
@@ -192,7 +194,8 @@ bool Scene::Update(float dt)
 	}
 
 	//If mouse button is pressed modify enemy position
-	if (enemyList.size() > 0 && Engine::GetInstance().input.get()->GetMouseButtonDown(1) == KEY_REPEAT) {
+	if (enemyList.size() > 0 && Engine::GetInstance().input.get()->GetMouseButtonDown(1) == KEY_REPEAT&& currentState == GameState::PLAYING) {
+		
 		enemyList[0]->SetPosition(Vector2D(highlightTile.getX(), highlightTile.getY()));
 		enemyList[0]->ResetPath();
 	}
@@ -203,10 +206,11 @@ bool Scene::Update(float dt)
 	{
 		if (npc->showcaseDialogue)
 		{
-			dialogueManager->CastDialogue(npc->dialogueName);
+		dialogueManager->CastDialogue(npc->dialogueName);
 			npc->showcaseDialogue = false;
 		}
 	}
+
 
 	HandleInput();
 
@@ -223,9 +227,18 @@ bool Scene::Update(float dt)
 	case GameState::GAME_OVER:
 		UpdateGameOver(dt);
 		break;
+	case GameState::FADE_IN:
+		break;
+	case GameState::FADE_OUT:
+
+		break;
+	case GameState::LOGO:
+		UpdateLogo(dt);
+		break;
 	default:
 		break;
 	}
+
 
 	return true;
 }
@@ -238,6 +251,13 @@ bool Scene::PostUpdate()
 
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN)
 		ret = false;
+
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F2) == KEY_DOWN)
+		SafeLoadMap("MapTemplate1.tmx", Vector2D(22112, 4032)); // PosiciÃ³n especÃ­fica Mapa 1
+
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F3) == KEY_DOWN)
+		SafeLoadMap("MapTemplate2.tmx", Vector2D(193, 3845)); // PosiciÃ³n especÃ­fica Mapa 2
+
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F6) == KEY_DOWN)
 		LoadState();
 
@@ -360,6 +380,24 @@ void Scene::LoadState() {
 
 	}
 }
+void Scene::SafeLoadMap(const char* mapName, Vector2D playerPos) {
+	Engine::GetInstance().map->CleanUp(); // Esto solo limpia recursos antiguos
+
+	std::string path = configParameters.child("map").attribute("path").as_string();
+	if (!Engine::GetInstance().map->Load(path.c_str(), mapName)) {
+		LOG("Error cargando %s", mapName);
+		return; // Si falla, conservamos el mapa anterior
+	}
+	// 3. Reposicionar jugador y cï¿½mara
+	player->SetPosition(playerPos);
+	Engine::GetInstance().render->camera.x = 0;
+	Engine::GetInstance().render->camera.y = 0;
+
+	// 4. Debug (opcional)
+	LOG("Mapa cambiado a %s", mapName);
+}
+
+
 void Scene::HandleInput()
 {
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_RETURN) == KEY_DOWN || startButton->isClicked == true)
@@ -441,7 +479,32 @@ void Scene::UpdatePaused(float dt) {
 void Scene::UpdateGameOver(float dt) {
 	Engine::GetInstance().render.get()->DrawText("GAME OVER:Press enter to start", 600, 400, 750, 255);
 }
+void Scene::UpdateLogo(float dt) {
+	// Manejar el fade in
+	if (opacity < 1.0f && logoTimer < 3.0f) {
+		opacity += dt / fadeDuration;
+		if (opacity > 1.0f) {
+			opacity = 1.0f;
+		}
+	}
 
+	SDL_SetTextureAlphaMod(logo, static_cast<Uint8>(opacity * 255));
+
+	// Incrementar el temporizador del logo
+	logoTimer += dt;
+
+	// Manejar el fade out
+	if (logoTimer >= 100.0f) {
+		opacity -= dt / fadeDuration;
+		if (opacity <= 0.0f) {
+			opacity = 0.0f;
+			SetState(GameState::MAIN_MENU);
+		}
+	}
+
+	// Aplicar la opacidad al logo
+
+}
 bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 {
 	// L15: DONE 5: Implement the OnGuiMouseClickEvent method
