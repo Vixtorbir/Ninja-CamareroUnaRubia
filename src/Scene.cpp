@@ -40,7 +40,7 @@ bool Scene::Awake()
 	//L04: TODO 3b: Instantiate the player using the entity manager
 	player = (Player*)Engine::GetInstance().entityManager->CreateEntity(EntityType::PLAYER);
 	player->SetParameters(configParameters.child("entities").child("player"));
-
+	/*
 	npcMentor = (NPC*)Engine::GetInstance().entityManager->CreateNamedCharacter(EntityType::NPC, DialogueEngine::MENTORSHIP);
 	npcMentor->SetParameters(configParameters.child("entities").child("npcMENTORSHIP"));
 	npcs.push_back(npcMentor);
@@ -71,6 +71,7 @@ bool Scene::Awake()
 		enemyList.push_back(enemy);
 	}
 
+	*/
 	// L16: TODO 2: Instantiate a new GuiControlButton in the Scene
 	SDL_Rect btPos = { -10000, 350, 120,20 };
 	guiBt = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 1, "MyButton", btPos, this);
@@ -382,6 +383,20 @@ void Scene::LoadState() {
 }
 void Scene::SafeLoadMap(const char* mapName, Vector2D playerPos) {
 	Engine::GetInstance().map->CleanUp(); // Esto solo limpia recursos antiguos
+
+	for (auto& enemy : enemyList) {
+		enemy->CleanUp();
+	}
+
+	enemyList.clear();
+
+	for (auto& npc : npcs) {
+		npc->CleanUp();
+	}
+
+	npcs.clear();
+
+
 
 	std::string path = configParameters.child("map").attribute("path").as_string();
 	if (!Engine::GetInstance().map->Load(path.c_str(), mapName)) {

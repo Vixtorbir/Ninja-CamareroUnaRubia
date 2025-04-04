@@ -186,9 +186,11 @@ public:
 public: 
     std::string mapFileName;
     std::string mapPath;
+    std::vector<PhysBody*> collisionBodies;
 
 private:
     bool mapLoaded;
     // L06: DONE 1: Declare a variable data of the struct MapData
     MapData mapData;
+
 };
