@@ -162,6 +162,5 @@ private:
 	SDL_Texture* BackgroundSliderHP;
 	SDL_Texture* ForeGroundSliderHP;
 
-
 	bool crouched;
 };

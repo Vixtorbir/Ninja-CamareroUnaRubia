@@ -1,4 +1,4 @@
-#include "Engine.h"
+﻿#include "Engine.h"
 #include "Input.h"
 #include "Textures.h"
 #include "Audio.h"
@@ -40,7 +40,7 @@ bool Scene::Awake()
 	//L04: TODO 3b: Instantiate the player using the entity manager
 	player = (Player*)Engine::GetInstance().entityManager->CreateEntity(EntityType::PLAYER);
 	player->SetParameters(configParameters.child("entities").child("player"));
-
+	
 	npcMentor = (NPC*)Engine::GetInstance().entityManager->CreateNamedCharacter(EntityType::NPC, DialogueEngine::MENTORSHIP);
 	npcMentor->SetParameters(configParameters.child("entities").child("npcMENTORSHIP"));
 	npcs.push_back(npcMentor);
@@ -62,7 +62,7 @@ bool Scene::Awake()
 		Item* item = (Item*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ITEM);
 		item->SetParameters(itemNode);
 	}
-
+/*
 	// Create a enemy using the entity manager 
 	for (pugi::xml_node enemyNode = configParameters.child("entities").child("enemies").child("enemy"); enemyNode; enemyNode = enemyNode.next_sibling("enemy"))
 	{
@@ -71,6 +71,7 @@ bool Scene::Awake()
 		enemyList.push_back(enemy);
 	}
 
+	*/
 	// L16: TODO 2: Instantiate a new GuiControlButton in the Scene
 	SDL_Rect btPos = { -10000, 350, 120,20 };
 	guiBt = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 1, "MyButton", btPos, this);
@@ -95,7 +96,7 @@ bool Scene::Start()
 {
 	logo = Engine::GetInstance().textures->Load("Assets/UI/logo.png");
 
-	// Inicializar el estado de la pantalla de presentaci�n
+	// Inicializar el estado de la pantalla de presentaci�n
 	SetState(GameState::LOGO);
 
 	MenuBackgroundImage = Engine::GetInstance().textures.get()->Load("Assets/UI/Menu.png");
@@ -246,6 +247,13 @@ bool Scene::PostUpdate()
 
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN)
 		ret = false;
+
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F2) == KEY_DOWN)
+		SafeLoadMap("MapTemplate1.tmx", Vector2D(22112, 4032)); // Posición específica Mapa 1
+
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F3) == KEY_DOWN)
+		SafeLoadMap("MapTemplate2.tmx", Vector2D(193, 3845)); // Posición específica Mapa 2
+
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F6) == KEY_DOWN)
 		LoadState();
 
@@ -371,6 +379,38 @@ void Scene::LoadState() {
 
 	}
 }
+void Scene::SafeLoadMap(const char* mapName, Vector2D playerPos) {
+	Engine::GetInstance().map->CleanUp(); // Esto solo limpia recursos antiguos
+
+	for (auto& enemy : enemyList) {
+		enemy->CleanUp();
+	}
+
+	enemyList.clear();
+
+	for (auto& npc : npcs) {
+		npc->CleanUp();
+	}
+
+	npcs.clear();
+
+
+
+	std::string path = configParameters.child("map").attribute("path").as_string();
+	if (!Engine::GetInstance().map->Load(path.c_str(), mapName)) {
+		LOG("Error cargando %s", mapName);
+		return; // Si falla, conservamos el mapa anterior
+	}
+	// 3. Reposicionar jugador y c�mara
+	player->SetPosition(playerPos);
+	Engine::GetInstance().render->camera.x = 0;
+	Engine::GetInstance().render->camera.y = 0;
+
+	// 4. Debug (opcional)
+	LOG("Mapa cambiado a %s", mapName);
+}
+
+
 void Scene::HandleInput()
 {
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_RETURN) == KEY_DOWN || startButton->isClicked == true)
