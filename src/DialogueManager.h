@@ -64,6 +64,8 @@ private:
 	std::vector<std::pair<std::string, std::string>> branchingOptions;
 	int isBranching = 0;
 
+	bool isFirstOption = false;
+
 	pugi::xml_document dialogFile;
 	std::vector<std::pair<std::string, std::string>> dialogues;
 	int currentDialogueIndex = 0;
