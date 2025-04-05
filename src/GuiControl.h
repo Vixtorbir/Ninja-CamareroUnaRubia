@@ -53,7 +53,7 @@ public:
 		color.r = 255; color.g = 255; color.b = 255;
 		texture = NULL;
 	}
-
+	
 	// Called each loop iteration
 	virtual bool Update(float dt)
 	{
@@ -93,4 +93,7 @@ public:
 	SDL_Rect section;       // Texture atlas base section
 	bool unkillable = true;
 	Module* observer;        // Observer 
+	
+
+
 };
