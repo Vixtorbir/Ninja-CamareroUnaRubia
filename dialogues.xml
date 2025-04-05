@@ -27,18 +27,31 @@
 	</MENTORSHIP2>
 	<ISAMU>
 		<dialogues size="1">
-			<dialogue1 character="Isamu" text="Holiwis"  branching="0"/>
+			<dialogue1 character="Isamu" text="Ah Ren! After all this years of training, let me give you some advice."  branching="0"/>
+			<dialogue2 character="Isamu" text="You see, I stood beside Ryoji once. And Hanzo. We bled under the same banner. Back then, we believed we were righteous."  branching="0"/>
+			<dialogue3 character="Isamu" text="But power corrupts even the best men. Ryoji lost himself chasing a lost cause. And Hanzo..."  branching="0"/>
+			<dialogue4 character="Isamu" text="Hanzo clutches to order so tightly, I wonder if he still remembers freedom"  branching="0"/>
+			<dialogue5 character="Isamu" text="Question everything, even those you serve. Especially them"  branching="0"/>
+		
 		</dialogues>
 		
 	</ISAMU>
 	<KAEDE>
 		<dialogues size="1">
-			<dialogue1 character="Kaede" text="putero"  branching="0"/>
+			<dialogue1 character="Kaede" text="Ren! What’s it like… being chosen by Lord Hanzo?"  branching="0"/>
+			<dialogue2 character="Kaede" text="He’s... he’s like a legend. The others say he never falters. Never forgives. But you—he trusts you."  branching="0"/>
+			<dialogue3 character="Kaede" text="I seek to be like you when I grow up, Sir Ren!"  branching="0"/>
 		</dialogues>
 	</KAEDE>
 	<HANZO>
 		<dialogues size="1">
-			<dialogue1 character="Hanzo" text="Hanzoooooooooooo"  branching="0"/>
+			<dialogue1 character="Hanzo" text="I trust you, Ren, my strongest and most loyal soldier, for this dangerous mission."  branching="0"/>
+			<dialogue2 character="Hanzo" text="You’ve heard the stories. The Jade Damsels — sacred protectors, tied to balance, all that nonsense. "  branching="0"/>
+			<dialogue3 character="Hanzo" text="But balance is fragile. And people like Ryoji use that fragility to justify control."  branching="0"/>
+			<dialogue4 character="Hanzo" text="He didn’t take them to protect the world. He took them to own it. Wrapped his ambition in prophecy so no one would question him."  branching="0"/>
+			<dialogue5 character="Hanzo" text="We used to fight side by side. He was brilliant. Charismatic. But that kind of man doesn’t stop at victory."  branching="0"/>
+			<dialogue6 character="Hanzo" text="That's why you have to rescue the Three Jade Damsels, Ren"  branching="1"/>
+			<options a="You can trust me, Hanzo" b="I will not disappoint you"/>
 		</dialogues>
 	</HANZO>
 	<EMPTY>
