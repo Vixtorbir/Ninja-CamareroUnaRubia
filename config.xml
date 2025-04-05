@@ -18,7 +18,7 @@
 	<scene>
 		<map path="Assets/Maps/" name="MapTemplate1.tmx" />
 		<entities>
-			<player x="1000" y="1047" w="512" h="512" texture="Assets/Animations/PlayerAnims/renRunSpriteSheet.png" gravity="true">
+			<player x="1000" y="1047" w="100" h="512" texture="Assets/Animations/PlayerAnims/renRunSpriteSheet.png" gravity="true">
 				<animations>
 					<idle loop="true" speed="0.5">
 						<frame x="0" y="0" w="512" h="512" />

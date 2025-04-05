@@ -2,8 +2,9 @@
 
 #include "GuiControl.h"
 #include "Vector2D.h"
+#include <vector>
 #include <string>
-
+#include <sstream> // Add this at the top for istringstream
 class Dialogue : public GuiControl
 {
 public:
@@ -13,6 +14,11 @@ public:
     bool Start();
 
     bool Update(float dt);
+
+    std::vector<std::string> SplitLines(const std::string& text);
+
+    std::string WrapText(const std::string& text, int maxWidth, TTF_Font* font);
+
 
 private:
     bool canClick = true;
