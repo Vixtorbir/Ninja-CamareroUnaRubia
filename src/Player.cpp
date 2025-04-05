@@ -15,6 +15,7 @@ Player::Player() : Entity(EntityType::PLAYER)
 {
 	name = "Player";
 	crouched = false;
+	godMode = false;
 }
 
 Player::~Player() {
@@ -106,7 +107,12 @@ bool Player::Update(float dt)
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_J) == KEY_DOWN) HP -= 20;
 	if (HP >= MAXHP) HP = MAXHP; else if (HP <= 0) HP = 0;
 
-	
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F10) == KEY_DOWN) {
+		godMode = true;
+	}
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F11) == KEY_DOWN) {
+		godMode = false;
+	}
 
 	if (!canDash) {
 		dashTimer += dt / 1000;
@@ -368,9 +374,11 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 		break;
 
 	case ColliderType::ENEMY:
-		int damageId = Engine::GetInstance().audio.get()->randomFx(hit1FxId, hit2FxId);
-		Engine::GetInstance().audio.get()->PlayFx(damageId);
-		TakeDamage(1); // El jugador recibe 1 punto de da�o
+		if (!godMode) {
+			int damageId = Engine::GetInstance().audio.get()->randomFx(hit1FxId, hit2FxId);
+			Engine::GetInstance().audio.get()->PlayFx(damageId);
+			TakeDamage(1);
+		}// El jugador recibe 1 punto de da�o
 		break;
 	}
 }

@@ -95,6 +95,7 @@ public:
 	float wallJumpPush = 102.0f;  
 	float wallClimbSpeed = -2.0f;
 
+	bool godMode = false;
 
 	bool canDash = true;
 	bool isDashing = false;
