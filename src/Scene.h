@@ -10,6 +10,7 @@
 #include "DialogueManager.h"
 #include "Parallax.h"
 #include "GuiImage.h"
+#include "Item.h"
 
 #include "Npc.h"
 
@@ -102,7 +103,7 @@ public:
 	NPC* npcKaede;
 	NPC* npcHanzo;
 	std::vector<NPC*> npcs;
-
+	std::vector<Item*> items;
 	// L16: TODO 2: Declare a GUI Control Button 
 	GuiControlButton* guiBt;
 

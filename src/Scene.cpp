@@ -61,8 +61,9 @@ bool Scene::Awake()
 	{
 		Item* item = (Item*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ITEM);
 		item->SetParameters(itemNode);
+		items.push_back(item);
 	}
-/*
+
 	// Create a enemy using the entity manager 
 	for (pugi::xml_node enemyNode = configParameters.child("entities").child("enemies").child("enemy"); enemyNode; enemyNode = enemyNode.next_sibling("enemy"))
 	{
@@ -71,7 +72,7 @@ bool Scene::Awake()
 		enemyList.push_back(enemy);
 	}
 
-	*/
+	
 	// L16: TODO 2: Instantiate a new GuiControlButton in the Scene
 	SDL_Rect btPos = { -10000, 350, 120,20 };
 	guiBt = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 1, "MyButton", btPos, this);
@@ -170,9 +171,6 @@ bool Scene::Update(float dt)
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
 		Engine::GetInstance().render.get()->camera.x += ceil(camSpeed * dt);
 
-
-
-	// L10 TODO 6: Implement a method that repositions the player in the map with a mouse click
 
 	//Get mouse position and obtain the map coordinate
 	int scale = Engine::GetInstance().window.get()->GetScale();
@@ -384,19 +382,23 @@ void Scene::LoadState() {
 void Scene::SafeLoadMap(const char* mapName, Vector2D playerPos) {
 	Engine::GetInstance().map->CleanUp(); // Esto solo limpia recursos antiguos
 
-	for (auto& enemy : enemyList) {
+	for (const auto enemy : enemyList) {
 		enemy->CleanUp();
 	}
 
 	enemyList.clear();
 
-	for (auto& npc : npcs) {
+	for (const auto npc : npcs) {
 		npc->CleanUp();
 	}
 
 	npcs.clear();
 
+	/*for (const auto item : items) {
+		item->CleanUp();
+	}
 
+	items.clear();*/
 
 	std::string path = configParameters.child("map").attribute("path").as_string();
 	if (!Engine::GetInstance().map->Load(path.c_str(), mapName)) {
