@@ -226,11 +226,6 @@ bool Scene::Update(float dt)
 	case GameState::GAME_OVER:
 		UpdateGameOver(dt);
 		break;
-	case GameState::FADE_IN:
-		break;
-	case GameState::FADE_OUT:
-
-		break;
 	case GameState::LOGO:
 		UpdateLogo(dt);
 		break;
@@ -321,18 +316,21 @@ void Scene::SaveState() {
 	sceneNode.child("entities").child("player").attribute("y").set_value(player->GetPosition().getY());
 
 	pugi::xml_node enemiesNode = sceneNode.child("entities").child("enemies");
+
+	// Ensure enemies node exists
 	if (!enemiesNode) {
 		enemiesNode = sceneNode.child("entities").append_child("enemies");
 	}
 
-
-	for (auto& enemy : enemyList) {
-		pugi::xml_node enemyNode = enemiesNode.append_child("enemy");
-		sceneNode.child("entities").child("enemies").child("enemy").attribute("x").set_value(enemy->GetPosition().getX());
-		sceneNode.child("entities").child("enemies").child("enemy").attribute("x").set_value(enemy->GetPosition().getY());
-
-		
-
+	// Loop through existing enemies and update their positions
+	for (pugi::xml_node enemyNode = enemiesNode.child("enemy"); enemyNode; enemyNode = enemyNode.next_sibling("enemy")) {
+		// Find the corresponding enemy in your list
+		for (auto& enemy : enemyList) {
+			 {
+				enemyNode.attribute("x").set_value(enemy->GetPosition().getX());
+				enemyNode.attribute("y").set_value(enemy->GetPosition().getY());
+			}
+		}
 	}
 
 	pugi::xml_node ItemsNode = sceneNode.child("entities").child("items");
@@ -423,6 +421,7 @@ void Scene::HandleInput()
 		{
 
 			SetState(GameState::PLAYING);
+
 			startButton->CleanUp();
 			optionsButton->CleanUp();
 			exitButton->CleanUp();
@@ -498,28 +497,12 @@ void Scene::UpdateGameOver(float dt) {
 }
 void Scene::UpdateLogo(float dt) {
 	// Manejar el fade in
-	if (opacity < 1.0f && logoTimer < 3.0f) {
-		opacity += dt / fadeDuration;
-		if (opacity > 1.0f) {
-			opacity = 1.0f;
-		}
-	}
 
-	SDL_SetTextureAlphaMod(logo, static_cast<Uint8>(opacity * 255));
-
-	// Incrementar el temporizador del logo
-	logoTimer += dt;
-
-	// Manejar el fade out
-	if (logoTimer >= 100.0f) {
-		opacity -= dt / fadeDuration;
-		if (opacity <= 0.0f) {
-			opacity = 0.0f;
-			SetState(GameState::MAIN_MENU);
-		}
-	}
-
-	// Aplicar la opacidad al logo
+	
+	fadeDuration += dt;
+	FadeTransition(Engine::GetInstance().render.get()->renderer, logo, 3.0f);
+	SetState(GameState::MAIN_MENU);
+	
 
 }
 bool Scene::OnGuiMouseClickEvent(GuiControl* control)
@@ -542,4 +525,44 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 	}
 
 	return true;
+}
+void Scene::FadeTransition(SDL_Renderer* renderer, SDL_Texture* texture, float duration)
+{
+	Uint32 startTime = SDL_GetTicks();
+	Uint8 alpha = 0;
+	bool fadeIn = true;
+
+	SDL_Rect screenRect = { 0, 0, 1920, 1080 };
+	SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+
+	while (true)
+	{
+		Uint32 elapsedTime = SDL_GetTicks() - startTime;
+		float progress = (float)elapsedTime / (duration * 1000);
+
+		if (progress > 1.0f)
+		{
+			if (fadeIn)
+			{
+				fadeIn = false;
+				startTime = SDL_GetTicks();
+				progress = 0.0f;
+			}
+			else
+			{
+				break;
+			}
+		}
+
+		alpha = fadeIn
+			? (Uint8)(255 * progress)
+			: (Uint8)(255 * (1.0f - progress));
+
+		SDL_SetTextureAlphaMod(texture, alpha);
+		SDL_RenderClear(renderer);
+		SDL_RenderCopy(renderer, texture, NULL, &screenRect);
+		SDL_RenderPresent(renderer);
+
+		SDL_Delay(16);
+	}
 }
