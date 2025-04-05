@@ -9,14 +9,22 @@
 		</dialogues>
 	</RAIDEDVILLAGE>
 	<MENTORSHIP>
+
 		<dialogues size="1">
 			<dialogue1 character="Mentor" text="I am mentoring you"  branching="1"/>
-			<dialogue2 character="Mentor" text="a"  branching="0"/>
-			<dialogue2 character="Mentor" text="b"  branching="0"/>
-
 			<options a="ok" b="no"/>
 		</dialogues>
 	</MENTORSHIP>
+	<MENTORSHIP1>
+		<dialogues size="1">
+			<dialogue1 character="Mentor" text="option1"  branching="0"/>
+		</dialogues>
+	</MENTORSHIP1>
+	<MENTORSHIP2>
+		<dialogues size="1">
+			<dialogue1 character="Mentor" text="option2"  branching="0"/>
+		</dialogues>
+	</MENTORSHIP2>
 	<ISAMU>
 		<dialogues size="1">
 			<dialogue1 character="Isamu" text="Holiwis"  branching="0"/>

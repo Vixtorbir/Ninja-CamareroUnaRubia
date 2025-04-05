@@ -134,7 +134,6 @@ void DialogueManager::ShowNextDialogue()
         }
         else
         {
-            currentDialogueIndex++;
 
             std::string optionA = "Option A";
             std::string optionB = "Option B";

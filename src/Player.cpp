@@ -30,7 +30,6 @@ bool Player::Start() {
 	
 	//L03: TODO 2: Initialize Player parameters
 	texture = Engine::GetInstance().textures.get()->Load(parameters.attribute("texture").as_string());
-
 	BackgroundSliderHP = Engine::GetInstance().textures.get()->Load("Assets/UI/lifeBarBack.png");
 	ForeGroundSliderHP = Engine::GetInstance().textures.get()->Load("Assets/UI/lifeBarFront.png");
 
@@ -57,13 +56,13 @@ bool Player::Start() {
 	pbody->body->SetFixedRotation(true);
 
 	popup = (GuiPopup*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::POPUP, 1, "E", btPos, sceneModule);
-	
+
 	backgroundSliderImage = (GuiImage*)Engine::GetInstance().guiManager->CreateGuiImage(GuiControlType::IMAGE, 1, " ", btPos, sceneModule, BackgroundSliderHP);
 	foregroundSliderImage = (GuiImage*)Engine::GetInstance().guiManager->CreateGuiImage(GuiControlType::IMAGE, 1, " ", btPos, sceneModule, ForeGroundSliderHP);
 
 	HP_Slider = (GuiSlider*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::HPSLIDER, 1, " ", hpPos, sceneModule);
-	HP_Slider->SetSliderBarSize(200, 25);
-	HP_Slider->SetSliderBarInnerSize(200, 25);
+	HP_Slider->SetSliderBarSize(400, 50);
+	HP_Slider->SetSliderBarInnerSize(400, 50);
 
 	// Set the gravity of the body
 	if (!parameters.attribute("gravity").as_bool()) pbody->body->SetGravityScale(0);
@@ -82,6 +81,7 @@ bool Player::Start() {
 
 bool Player::Update(float dt)
 {
+
 	if (Engine::GetInstance().scene.get()->currentState == GameState::PAUSED)
 	{
 		pbody->body->SetLinearVelocity(b2Vec2(0, 0));
@@ -89,7 +89,7 @@ bool Player::Update(float dt)
 		position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 2);
 		position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
 
-	
+
 		Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
 		currentAnimation->Update();
 		return true;
