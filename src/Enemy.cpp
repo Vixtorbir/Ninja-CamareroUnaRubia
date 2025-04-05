@@ -184,6 +184,7 @@ bool Enemy::Update(float dt)
 bool Enemy::CleanUp()
 {
 	Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
+	Engine::GetInstance().entityManager.get()->entities.remove(this);
 	return true;
 }
 
