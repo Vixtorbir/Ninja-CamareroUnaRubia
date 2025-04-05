@@ -121,15 +121,12 @@ void NPC::OnCollision(PhysBody* physA, PhysBody* physB) {
 		break;
 	}
 }
-
 void NPC::OnCollisionEnd(PhysBody* physA, PhysBody* physB)
 {
 	switch (physB->ctype)
 	{
-	case ColliderType::PLATFORM:
-		break;
 	case ColliderType::PLAYER:
-		once = false;
+		once = true; // Change from false to true
 		Engine::GetInstance().guiManager->ClearControlsOfType(GuiControlType::DIALOGUE);
 		break;
 	}

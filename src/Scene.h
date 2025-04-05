@@ -21,8 +21,6 @@ enum class GameState {
 	PLAYING,
 	PAUSED,
 	GAME_OVER,
-	FADE_IN,
-	FADE_OUT,
 	LOGO
 };
 
@@ -65,6 +63,10 @@ public:
 
 	// Handles multiple Gui Event methods
 	bool OnGuiMouseClickEvent(GuiControl* control);
+
+	void FadeTransition(SDL_Renderer* renderer, SDL_Texture* texture, float duration);
+
+	
 
 	void LoadTextures();
 
@@ -124,7 +126,7 @@ public:
 	GuiImage* menuBackgroundImage = nullptr;
 
 	float logoTimer = 0.0f;
-	float fadeDuration = 1.0f; // Duración del fade in y fade out en segundos
+	float fadeDuration = 0.0f; // Duración del fade in y fade out en segundos
 	float opacity = 0.0f;
 	SDL_Texture* logo = nullptr;
 
