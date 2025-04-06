@@ -56,7 +56,12 @@ bool GuiControlButton::Update(float dt)
         if (mousePos.getX() > bounds.x && mousePos.getX() < bounds.x + bounds.w && mousePos.getY() > bounds.y && mousePos.getY() < bounds.y + bounds.h) 
         {
             state = GuiControlState::FOCUSED;
-            Engine::GetInstance().audio.get()->PlayFx(buttonSelectedFxId);
+
+            if (!fxPlayed)
+            {
+                Engine::GetInstance().audio.get()->PlayFx(buttonSelectedFxId);
+                fxPlayed = true;
+            }
 
             if (Engine::GetInstance().input->GetMouseButtonDown(SDL_BUTTON_LEFT) == KEY_REPEAT) {
                 state = GuiControlState::PRESSED;
@@ -69,6 +74,8 @@ bool GuiControlButton::Update(float dt)
         }
         else 
         {
+            fxPlayed = false;
+
             state = GuiControlState::NORMAL;
         }
 

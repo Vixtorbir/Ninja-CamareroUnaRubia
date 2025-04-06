@@ -30,7 +30,7 @@ private:
     SDL_Rect portraitPos;
 
     bool started = false;
-    
+    bool isName = false;
     std::string text;
     std::string displayText;
     int charIndex = 0;
