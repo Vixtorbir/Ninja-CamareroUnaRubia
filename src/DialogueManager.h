@@ -59,8 +59,8 @@ private:
 	SDL_Rect namePos = { 500, 550, 300,150 };
 	SDL_Rect dialoguePos = { 0, 700, 1920,300 };
 
-	SDL_Rect optionAPos = { 1000, 550, 300,150 };
-	SDL_Rect optionBPos = { 1000, 800, 300,150 };
+	SDL_Rect optionAPos = { 1500, 600, 300,150 };
+	SDL_Rect optionBPos = { 1500, 800, 300,150 };
 	std::vector<std::pair<std::string, std::string>> branchingOptions;
 	int isBranching = 0;
 

@@ -1,4 +1,4 @@
-#include "DialogueManager.h"
+﻿#include "DialogueManager.h"
 #include "Log.h"
 #include "Engine.h"
 #include "GuiControl.h"
@@ -145,9 +145,9 @@ void DialogueManager::ShowNextDialogue()
         {
             currentDialogueIndex++;
 
-            std::string optionA = "Option A";
-            std::string optionB = "Option B";
-            
+            std::string optionA = "A (UP arrow)";
+            std::string optionB = "B  (DOWN arrow)";
+
             Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::OPTIONA, 1, optionA.c_str(), optionAPos, module);
             Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::OPTIONB, 1, optionB.c_str(), optionBPos, module);
 
@@ -189,9 +189,8 @@ void DialogueManager::ShowNextDialogueWithIndex(int optionDialogueIndex)
         }
         else
         {
-
-            std::string optionA = "Option A";
-            std::string optionB = "Option B";
+            std::string optionA = "A (🢁 key)";
+            std::string optionB = "B  (🢃 key)";
 
             Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::OPTIONA, 1, optionA.c_str(), optionAPos, module);
             Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::OPTIONB, 1, optionB.c_str(), optionBPos, module);
