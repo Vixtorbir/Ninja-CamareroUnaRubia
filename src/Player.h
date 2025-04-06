@@ -111,6 +111,10 @@ public:
 	Animation* currentAnimation = nullptr;
 	Animation idle;
 	Animation walk;
+	Animation jump;
+	Animation dash;
+	Animation crouch;
+
 
 	
 	GuiPopup* popup;
