@@ -211,9 +211,7 @@ bool Player::Update(float dt)
 	{
 		isHoldingJump = true;
 		jumpHoldTimer = 0.0f;
-		currentAnimation = &jump;
-		int jumpId = Engine::GetInstance().audio.get()->randomFx(jump1FxId, jump3FxId);
-		Engine::GetInstance().audio.get()->PlayFx(jumpId);
+		
 		
 	}
 
@@ -229,9 +227,9 @@ bool Player::Update(float dt)
 			isJumping = true;
 			
 		}
-		//currentAnimation = &jump;
-		/*int jumpId = Engine::GetInstance().audio.get()->randomFx(jump1FxId, jump3FxId);
-		Engine::GetInstance().audio.get()->PlayFx(jumpId);*/
+		currentAnimation = &jump;
+		int jumpId = Engine::GetInstance().audio.get()->randomFx(jump1FxId, jump3FxId);
+		Engine::GetInstance().audio.get()->PlayFx(jumpId);
 	
 	}
 
