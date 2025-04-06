@@ -71,8 +71,8 @@ bool Enemy::Update(float dt)
 	{
 		pbody->body->SetLinearVelocity(b2Vec2(0,0));
 		b2Transform pbodyPos = pbody->body->GetTransform();
-		position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 2);
-		position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
+		position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 6);
+		position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 6);
 
 
 		Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
@@ -89,8 +89,16 @@ bool Enemy::Update(float dt)
 	Vector2D enemyTilePos = Engine::GetInstance().map.get()->WorldToMap(enemyPos.getX(), enemyPos.getY());
 	Vector2D playerTilePos = Engine::GetInstance().map.get()->WorldToMap(playerPos.getX(), playerPos.getY());
 
-    if (abs(playerTilePos.getX() - enemyTilePos.getX()) > 35) {
+    if (abs(playerTilePos.getX() - enemyTilePos.getX()) > 55) {
         pbody->body->SetLinearVelocity(b2Vec2(0, 0));
+		b2Transform pbodyPos = pbody->body->GetTransform();
+		position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 6);
+		position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 6);
+
+
+		Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
+		currentAnimation->Update();
+
         return true;
     }
 
@@ -259,7 +267,7 @@ bool Enemy::IsPlayerInRange() {
 	Vector2D playerTilePos = Engine::GetInstance().map.get()->WorldToMap(playerPos.getX(), playerPos.getY());
 
 	int distance = abs(playerTilePos.getX() - enemyTilePos.getX());
-	bool isInRange = distance <= 10;
+	bool isInRange = distance <= 12;
 
 	// Verificar si el enemigo está mirando en la dirección del jugador
 	bool isFacingPlayer = (direction == 0 && playerTilePos.getX() < enemyTilePos.getX()) ||

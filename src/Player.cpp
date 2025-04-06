@@ -308,7 +308,7 @@ bool Player::Update(float dt)
 	pbody->body->SetLinearVelocity(velocity);
 
 	b2Transform pbodyPos = pbody->body->GetTransform();
-	position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texW / 2);
+	position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texW-140);
 	position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
 
 	Engine::GetInstance().render.get()->DrawEntity(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame(), 1, 0, 0, 0, (int)playerDirection);
@@ -483,10 +483,10 @@ void Player::ChangeHitboxSize(float width, float height) {
 
 	// Create a new fixture with the new size
 	if (height == texH / 2) {
-	pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX()+55, (int)position.getY()+200, width, height, bodyType::DYNAMIC);
+	pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX()+240, (int)position.getY()+350, width, height, bodyType::DYNAMIC);
 	}
 	else {
-		pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX()+55, (int)position.getY()+100, width, height, bodyType::DYNAMIC);
+		pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX()+240, (int)position.getY()+200, width, height, bodyType::DYNAMIC);
 	}
 	pbody->listener = this;
 	pbody->ctype = ColliderType::PLAYER;
