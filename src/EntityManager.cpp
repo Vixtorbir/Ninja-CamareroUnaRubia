@@ -53,9 +53,10 @@ bool EntityManager::Start() {
 bool EntityManager::CleanUp()
 {
 	bool ret = true;
-
+	
 	for(const auto entity : entities)
 	{
+	
 		if (entity->active == false) continue;
 		ret = entity->CleanUp();
 	}

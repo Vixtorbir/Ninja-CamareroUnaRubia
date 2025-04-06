@@ -85,8 +85,6 @@ bool Scene::Awake()
 	dialogueManager->SetModule(this);
 	player->sceneModule = this;
 
-
-
 	return ret;
 
 
@@ -97,11 +95,15 @@ bool Scene::Start()
 {
 	logo = Engine::GetInstance().textures->Load("Assets/UI/logo.png");
 	logoFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/ExtraFx/logoFx.ogg");
+	MenuBackgroundImage = Engine::GetInstance().textures.get()->Load("Assets/UI/Menu.png");
 
 	// Inicializar el estado de la pantalla de presentaci�n
 	SetState(GameState::LOGO);
 
-	MenuBackgroundImage = Engine::GetInstance().textures.get()->Load("Assets/UI/Menu.png");
+	SDL_Rect btPosMenu = { 0, 0, 0, 0 };
+
+	menuBackgroundImage = (GuiImage*)Engine::GetInstance().guiManager->CreateGuiImage(GuiControlType::IMAGE, 1, " ", btPosMenu, this, MenuBackgroundImage);
+
 
 	//L06 TODO 3: Call the function to load the map. 
 	Engine::GetInstance().map->Load(configParameters.child("map").attribute("path").as_string(), configParameters.child("map").attribute("name").as_string());
@@ -122,9 +124,7 @@ bool Scene::Start()
 	SDL_Rect optionsButtonPos = { 800, 550, 200, 50 };
 	SDL_Rect exitButtonPos = { 800, 800, 200, 50 };
 	
-	SDL_Rect btPos = { 0, 0, 0, 0 };
 
-	menuBackgroundImage = (GuiImage*)Engine::GetInstance().guiManager->CreateGuiImage(GuiControlType::IMAGE, 1, " ", btPos, this, MenuBackgroundImage);
 
 	// Create buttons if they don't already exist
 
@@ -139,7 +139,7 @@ bool Scene::Start()
 	exitButton = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(
 		GuiControlType::BUTTON, 3, "Exit", exitButtonPos, this);
 
-	
+
 	startButton->Start();
 	optionsButton->Start();
 	exitButton->Start();
@@ -461,12 +461,12 @@ void Scene::HandleInput()
 }
 
 void Scene::UpdateMainMenu(float dt) {
-	
+	menuBackgroundImage->Update(dt);
 	startButton->Update(dt);
 	optionsButton->Update(dt);	
 	exitButton->Update(dt);
 
-	
+	player->inGame = false;
 	
 
 	// Render the main menu text
@@ -478,6 +478,8 @@ void Scene::UpdateMainMenu(float dt) {
 void Scene::UpdatePlaying(float dt) {
 	// Handle gameplay logic
 	// Example: Update player, enemies, and other game entities
+	player->inGame = true;
+
 	player->Update(dt);
 	for (auto& enemy : enemyList) {
 		enemy->Update(dt);

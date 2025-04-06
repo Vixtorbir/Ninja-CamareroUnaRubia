@@ -128,6 +128,8 @@ public:
 	Module* sceneModule = nullptr;
 	EntityDirections playerDirection = EntityDirections::RIGHT;
 	
+	bool inGame = false;
+
 private:
 		//Audio fx
 	bool startWalk = false;
