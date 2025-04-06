@@ -115,6 +115,8 @@ public:
 	Animation dash;
 	Animation crouch;
 
+	bool inBubble = false;
+
 	bool loadLevel2 = false;
 
 	bool loadLevel1 = false;

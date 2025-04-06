@@ -164,7 +164,7 @@ bool Scene::Update(float dt)
 	//L03 TODO 3: Make the camera movement independent of framerate
 	float camSpeed = 1;
 
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
+	/*if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
 		Engine::GetInstance().render.get()->camera.y -= ceil(camSpeed * dt);
 
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
@@ -175,7 +175,7 @@ bool Scene::Update(float dt)
 
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
 		Engine::GetInstance().render.get()->camera.x += ceil(camSpeed * dt);
-
+*/
 
 	//Get mouse position and obtain the map coordinate
 	int scale = Engine::GetInstance().window.get()->GetScale();
@@ -221,9 +221,11 @@ bool Scene::Update(float dt)
 	switch (currentState)
 	{
 	case GameState::MAIN_MENU:
+		
 		UpdateMainMenu(dt);
 		break;
 	case GameState::PLAYING:
+		
 		UpdatePlaying(dt);
 		break;
 	case GameState::PAUSED:
@@ -345,7 +347,6 @@ void Scene::LoadTextures()
 {
 	Hanzo = Engine::GetInstance().textures.get()->Load("Assets/Portraits/Hanzo.png");
 	dialogueManager->Hanzo = Hanzo;
-	dialogueManager->CastDialogue(DialogueEngine::EMPTY);
 
 }
 
@@ -485,7 +486,8 @@ void Scene::HandleInput()
 		{
 
 			SetState(GameState::PLAYING);
-
+			Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/gameplaySongPlaceholder.wav");
+			Engine::GetInstance().audio.get()->musicVolume(50);
 			startButton->CleanUp();
 			optionsButton->CleanUp();
 			exitButton->CleanUp();
@@ -568,7 +570,10 @@ void Scene::UpdateLogo(float dt) {
 	fadeDuration += dt;
 	
 	FadeTransition(Engine::GetInstance().render.get()->renderer, logo, .1f);
+	
 	SetState(GameState::MAIN_MENU);
+	Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/titleSongPlaceholder.wav");
+	Engine::GetInstance().audio.get()->musicVolume(50);
 	
 
 }

@@ -85,12 +85,12 @@ bool Audio::PlayMusic(const char* path, float fadeTime, int trackId)
 	if(!active)
 		return false;
 
-	if (trackId > 0 && trackId <= tracks.size())
+	/*if (trackId > 0 && trackId <= tracks.size())
 	{
 		auto musIt = tracks.begin();
 		std::advance(musIt, trackId - 1);
 		music = *musIt;
-	}
+	}*/
 	if(music != NULL)
 	{
 		if(fadeTime > 0.0f)
