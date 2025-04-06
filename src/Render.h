@@ -41,6 +41,8 @@ public:
 	bool DrawLine(int x1, int y1, int x2, int y2, Uint8 r, Uint8 g, Uint8 b, Uint8 a = 255, bool useCamera = true) const;
 	bool DrawCircle(int x1, int y1, int redius, Uint8 r, Uint8 g, Uint8 b, Uint8 a = 255, bool useCamera = true) const;
 	bool DrawText(const char* text, int posX, int posY, int w, int h) const;
+
+	bool DrawWhiteText(const char* text, int posx, int posy, int w, int h) const;
 	
 
 	// Set background color

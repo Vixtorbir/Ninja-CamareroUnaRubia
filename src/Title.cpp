@@ -39,12 +39,7 @@ bool Title::Awake()
 // Called before the first frame
 bool Title::Start()
 {
-    if (showStartButton)
-    {
-        SDL_Rect btPos = { 520, 350, 120, 20 };
-        guiBt = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 1, "Start", btPos, this);
-        LOG("Start button created with ID: %d", guiBt->id); // Debug log
-    }
+ 
 
     return true;
 }
