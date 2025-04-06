@@ -135,5 +135,8 @@ public:
 
 private:
 	Parallax* parallax = nullptr;
+	//music
+	int mainMenuMusicId;
+	int gameplayMusicId;
 	
 };

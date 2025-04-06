@@ -217,6 +217,7 @@ bool Scene::Update(float dt)
 	switch (currentState)
 	{
 	case GameState::MAIN_MENU:
+		Engine::GetInstance().audio.get()->PlayFx(logoFxId);
 		UpdateMainMenu(dt);
 		break;
 	case GameState::PLAYING:

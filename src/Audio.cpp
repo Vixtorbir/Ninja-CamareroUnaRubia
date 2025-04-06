@@ -78,13 +78,19 @@ bool Audio::CleanUp()
 }
 
 // Play a music file
-bool Audio::PlayMusic(const char* path, float fadeTime)
+bool Audio::PlayMusic(const char* path, float fadeTime, int trackId)
 {
 	bool ret = true;
 
 	if(!active)
 		return false;
 
+	if (trackId > 0 && trackId <= tracks.size())
+	{
+		auto musIt = tracks.begin();
+		std::advance(musIt, trackId - 1);
+		music = *musIt;
+	}
 	if(music != NULL)
 	{
 		if(fadeTime > 0.0f)
@@ -99,9 +105,9 @@ bool Audio::PlayMusic(const char* path, float fadeTime)
 		// this call blocks until fade out is done
 		Mix_FreeMusic(music);
 	}
-
+	
 	music = Mix_LoadMUS(path);
-
+	
 	if(music == NULL)
 	{
 		LOG("Cannot load music %s. Mix_GetError(): %s\n", path, Mix_GetError());
@@ -175,12 +181,21 @@ int Audio::LoadFx(const char* path)
 bool Audio::musicVolume(int v)
 {
 	bool ret = true;
+	if (music!= NULL)
+	{
+		Mix_VolumeMusic(v);
+	}
 	return ret;
 
 }
-bool StopMusic()
+bool Audio::StopMusic()
 {
-	return true;
+	bool ret = true;
+	if (music != NULL)
+	{
+		Mix_HaltMusic();
+	}
+	return ret;
 }
 
 // Play WAV
