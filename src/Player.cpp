@@ -145,19 +145,19 @@ bool Player::Update(float dt)
 	}
 	
 	// Move left/right
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_A) == KEY_REPEAT) {
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT) {
 		velocity.x = -0.2 * 16;
 		playerDirection = EntityDirections::LEFT;
 	
 	}
 
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_D) == KEY_REPEAT) {
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT) {
 		velocity.x = 0.2 * 16;
 		playerDirection = EntityDirections::RIGHT;
 
 	}
-	bool moving = Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_A) == KEY_REPEAT ||
-		Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_D) == KEY_REPEAT;
+	bool moving = Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT ||
+		Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT;
 
 	bool grounded = !isJumping && !isDashing && !touchingWall;
 
@@ -191,7 +191,7 @@ bool Player::Update(float dt)
 	*/
 	// Move down
 
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_DOWN)
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_DOWN) == KEY_DOWN)
 	{
 		currentAnimation = &crouch; // Cambiar a animación de agachado después
 		ChangeHitboxSize(texW, texH / 2); // Reduce el hitbox
@@ -199,7 +199,7 @@ bool Player::Update(float dt)
 
 	}
 
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_UP) 
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_DOWN) == KEY_UP)
 	{
 		currentAnimation = &idle;
 		ChangeHitboxSize(texW, texH); // Restaura el hitbox
@@ -207,7 +207,7 @@ bool Player::Update(float dt)
 	}
 
 	//Jump
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_W) == KEY_DOWN && hasAlreadyJumpedOnce == 0) 
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN && hasAlreadyJumpedOnce == 0) 
 	{
 		isHoldingJump = true;
 		jumpHoldTimer = 0.0f;
@@ -215,7 +215,7 @@ bool Player::Update(float dt)
 		
 	}
 
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_W) == KEY_REPEAT && isHoldingJump)
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_REPEAT && isHoldingJump)
 	{
 		jumpHoldTimer += dt;
 
@@ -233,7 +233,7 @@ bool Player::Update(float dt)
 	
 	}
 
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_W) == KEY_UP && isHoldingJump) 
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_UP && isHoldingJump)
 	{
 		float holdPercentage = jumpHoldTimer / maxHoldTime;
 		float jumpMultiplier = minJumpMultiplier + (holdPercentage * (maxJumpMultiplier - minJumpMultiplier));
@@ -246,7 +246,7 @@ bool Player::Update(float dt)
 	}
 
 	
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_W) == KEY_DOWN && hasAlreadyJumpedOnce == 1) {
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN && hasAlreadyJumpedOnce == 1) {
 		pbody->body->SetLinearVelocity(b2Vec2(pbody->body->GetLinearVelocity().x, 0)); 
 		pbody->body->ApplyLinearImpulseToCenter(b2Vec2(0, -jumpForce), true);
 		hasAlreadyJumpedOnce++;
@@ -272,7 +272,7 @@ bool Player::Update(float dt)
 		Engine::GetInstance().audio.get()->PlayFx(doubleJumpId);
 	}
 
-	if (touchingWall && Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_W) == KEY_REPEAT) {
+	if (touchingWall && Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_REPEAT) {
 		pbody->body->SetLinearVelocity(b2Vec2(0, wallClimbSpeed));
 		currentAnimation = &idle; //climb cuando este
 	}

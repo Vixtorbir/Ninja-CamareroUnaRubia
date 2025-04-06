@@ -93,7 +93,8 @@ bool GuiControlButton::Update(float dt)
 
             if (isOptionA || isOptionB)
             {
-                Engine::GetInstance().render->DrawText(text.c_str(), bounds.x, bounds.y, 150, 100);
+
+                Engine::GetInstance().render->DrawTextWhite(text.c_str(), bounds.x, bounds.y, 150, 100);
 
             }
             break;
