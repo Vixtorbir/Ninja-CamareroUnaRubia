@@ -500,7 +500,7 @@ void Scene::UpdateLogo(float dt) {
 
 	
 	fadeDuration += dt;
-	FadeTransition(Engine::GetInstance().render.get()->renderer, logo, 3.0f);
+	FadeTransition(Engine::GetInstance().render.get()->renderer, logo, .1f);
 	SetState(GameState::MAIN_MENU);
 	
 

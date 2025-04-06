@@ -30,7 +30,7 @@ private:
 	int buttonSelectedFxId;
 	int buttonPressedFxId;
 
-	
+	bool fxPlayed = false;
 };
 
 #pragma once
