@@ -130,7 +130,10 @@ public:
 	float opacity = 0.0f;
 	SDL_Texture* logo = nullptr;
 
-private:
+private:		
+	
+	int curPopupMusic;
+
 	Parallax* parallax = nullptr;
 	
 };

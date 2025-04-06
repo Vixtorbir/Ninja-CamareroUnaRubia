@@ -161,7 +161,7 @@ private:
 	int step1, step2, step3, step4, step5;
 	int stepSounds;
 	float footstepTimer = 0.0f;
-	float footstepDelay = 0.4f; // how often to play a step (adjust as needed)
+	float footstepDelay = 0.4f;
 	int hp; 
 	const int maxHp = 3;
 

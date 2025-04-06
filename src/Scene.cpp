@@ -87,17 +87,21 @@ bool Scene::Awake()
 
 	return ret;
 
-
 }
 
 // Called before the first frame
 bool Scene::Start()
 {
+	curPopupMusic = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Music/ScreamAngry.ogg");
+
 	logo = Engine::GetInstance().textures->Load("Assets/UI/logo.png");
 	MenuBackgroundImage = Engine::GetInstance().textures.get()->Load("Assets/UI/Menu.png");
 
 	// Inicializar el estado de la pantalla de presentaci�n
+
 	SetState(GameState::LOGO);
+	Engine::GetInstance().audio.get()->PlayFx(curPopupMusic);
+
 
 	SDL_Rect btPosMenu = { 0, 0, 0, 0 };
 
@@ -502,7 +506,7 @@ void Scene::UpdateLogo(float dt) {
 
 	
 	fadeDuration += dt;
-	FadeTransition(Engine::GetInstance().render.get()->renderer, logo, .1f);
+	FadeTransition(Engine::GetInstance().render.get()->renderer, logo, 3);
 	SetState(GameState::MAIN_MENU);
 	
 
