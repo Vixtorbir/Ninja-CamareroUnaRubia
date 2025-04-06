@@ -131,7 +131,7 @@ bool Player::Update(float dt)
 	if (!parameters.attribute("gravity").as_bool()) {
 		velocity = b2Vec2(0, 0);
 	}
-
+	
 	// Move left
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_A) == KEY_REPEAT) {
 		velocity.x = -0.2 * 16;
@@ -144,27 +144,34 @@ bool Player::Update(float dt)
 		playerDirection = EntityDirections::RIGHT;
 
 	}
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_A) == KEY_REPEAT ||
-		Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_D) == KEY_REPEAT) 
+	bool moving = Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_A) == KEY_REPEAT ||
+		Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_D) == KEY_REPEAT;
+
+	bool grounded = !isJumping && !isDashing && !touchingWall;
+
+	if (moving && grounded)
 	{
 		currentAnimation = &walk;
-		if (startWalk == false)
-		{ 
-            walkChannel = Engine::GetInstance().audio.get()->PlayFx(walkFxId);//play sound and store which channel plays it
-			startWalk = true;
+		isWalking = true;
+
+		footstepTimer += dt / 1000.0f;
+
+		if (footstepTimer >= footstepDelay)
+		{
+			int stepSounds[] = { step1, step2, step3, step4, step5 };
+			int randomIndex = rand() % 5;
+			Engine::GetInstance().audio.get()->PlayFx(stepSounds[randomIndex]);
+			footstepTimer = 0.0f;
 		}
-	   
-			
 	}
-	
-	else 
+	else
 	{
 		currentAnimation = &idle;
-		Engine::GetInstance().audio.get()->StopFxChannel(walkChannel);
-		
-		startWalk = false;
-	
+		isWalking = false;
+		footstepTimer = footstepDelay;
 	}
+	
+
 	// Move Up
 	/*if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_W) == KEY_REPEAT) {
 		velocity.y = -0.2 * 16;
@@ -438,6 +445,12 @@ void Player::LoadPlayerFx()
 	 hit1FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/hit1.ogg");
 	 hit2FxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/PlayerFx/hit2.ogg");
 	 pickUpItemFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/ExtraFx/pickUpItem.ogg");
+	 step1 = Engine::GetInstance().audio->LoadFx("Assets/Audio/Fx/PlayerFx/wood-step1.ogg");
+	 step2 = Engine::GetInstance().audio->LoadFx("Assets/Audio/Fx/PlayerFx/wood-step2.ogg");
+	 step3 = Engine::GetInstance().audio->LoadFx("Assets/Audio/Fx/PlayerFx/wood-step3.ogg");
+	 step4 = Engine::GetInstance().audio->LoadFx("Assets/Audio/Fx/PlayerFx/wood-step4.ogg");
+	 step5 = Engine::GetInstance().audio->LoadFx("Assets/Audio/Fx/PlayerFx/wood-step5.ogg");
+
 }
 
 void Player::TakeDamage(int damage) {
