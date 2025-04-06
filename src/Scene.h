@@ -49,6 +49,8 @@ public:
 	// Called before all Updates
 	bool PostUpdate();
 
+	void FadeTransition(SDL_Renderer* renderer, bool fadeIn, float duration);
+
 	// Called before quitting
 	bool CleanUp();
 

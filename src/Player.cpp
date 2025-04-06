@@ -356,6 +356,18 @@ bool Player::Update(float dt)
 		Engine::GetInstance().render.get()->DrawTexture(hpIconTexture, 10 + i * 40, 10);
 	}
 
+	/*if (GetPosition().getX() >= 4208 && GetPosition().getY() >= 3600 && currentLevel == 2) {
+		if (loadLevel1 == false) {
+			loadLevel1 = true;
+		}
+	}*/
+
+	if (GetPosition().getX() >= 20480 && GetPosition().getY() >= 4320 && currentLevel == 1) {
+		if (loadLevel2 == false) {
+			loadLevel2 = true;
+		}
+	}
+
 	return true;
 }
 float Player::Lerp(float start, float end, float factor) {
