@@ -97,7 +97,7 @@ void DialogueManager::CastDialogue(DialogueEngine dialogueEngine)
 
 void DialogueManager::Update()
 {
-    if (!dialogueEnded && Engine::GetInstance().input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
+    if (!dialogueEnded && Engine::GetInstance().input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN && !isBranching)
     {
         Engine::GetInstance().guiManager->ClearControlsOfType(GuiControlType::DIALOGUE);
         if (!isFirstOption)
