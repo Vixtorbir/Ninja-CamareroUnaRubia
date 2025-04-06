@@ -221,7 +221,6 @@ bool Scene::Update(float dt)
 	switch (currentState)
 	{
 	case GameState::MAIN_MENU:
-		Engine::GetInstance().audio.get()->PlayFx(logoFxId);
 		UpdateMainMenu(dt);
 		break;
 	case GameState::PLAYING:
@@ -234,7 +233,6 @@ bool Scene::Update(float dt)
 		UpdateGameOver(dt);
 		break;
 	case GameState::LOGO:
-		Engine::GetInstance().audio.get()->PlayFx(logoFxId);
 		UpdateLogo(dt);
 		break;
 	default:
@@ -511,7 +509,7 @@ void Scene::UpdateLogo(float dt) {
 	
 	fadeDuration += dt;
 	
-	FadeTransition(Engine::GetInstance().render.get()->renderer, logo, 3.0f);
+	FadeTransition(Engine::GetInstance().render.get()->renderer, logo, .1f);
 	SetState(GameState::MAIN_MENU);
 	
 
