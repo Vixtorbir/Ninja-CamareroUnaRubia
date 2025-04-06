@@ -41,7 +41,7 @@ bool GuiControlButton::Start()
     //Audio
     buttonSelectedFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/ExtraFx/selectButton.ogg");
     buttonPressedFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/ExtraFx/clickButton.ogg");
-   /* logoFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/ExtraFx/logoFx.ogg");
+   /* 
     titleFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/ExtraFx/TittleFx.ogg");*/
     return false;
 }
@@ -65,7 +65,12 @@ bool GuiControlButton::Update(float dt)
 
             if (Engine::GetInstance().input->GetMouseButtonDown(SDL_BUTTON_LEFT) == KEY_REPEAT) {
                 state = GuiControlState::PRESSED;
-                Engine::GetInstance().audio.get()->PlayFx(buttonPressedFxId);
+                if (!pressed)
+                {
+                    Engine::GetInstance().audio.get()->PlayFx(buttonPressedFxId);
+                    pressed = true;
+                }
+               
             }
 
             if (Engine::GetInstance().input->GetMouseButtonDown(SDL_BUTTON_LEFT) == KEY_UP) {
