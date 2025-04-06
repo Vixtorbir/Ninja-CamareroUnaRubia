@@ -221,9 +221,11 @@ bool Scene::Update(float dt)
 	switch (currentState)
 	{
 	case GameState::MAIN_MENU:
+		
 		UpdateMainMenu(dt);
 		break;
 	case GameState::PLAYING:
+		
 		UpdatePlaying(dt);
 		break;
 	case GameState::PAUSED:
@@ -485,7 +487,8 @@ void Scene::HandleInput()
 		{
 
 			SetState(GameState::PLAYING);
-
+			Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/gameplaySongPlaceholder.wav");
+			Engine::GetInstance().audio.get()->musicVolume(50);
 			startButton->CleanUp();
 			optionsButton->CleanUp();
 			exitButton->CleanUp();
@@ -568,7 +571,10 @@ void Scene::UpdateLogo(float dt) {
 	fadeDuration += dt;
 	
 	FadeTransition(Engine::GetInstance().render.get()->renderer, logo, .1f);
+	
 	SetState(GameState::MAIN_MENU);
+	Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/titleSongPlaceholder.wav");
+	Engine::GetInstance().audio.get()->musicVolume(50);
 	
 
 }
