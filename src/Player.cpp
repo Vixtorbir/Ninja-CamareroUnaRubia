@@ -50,7 +50,7 @@ bool Player::Start() {
 	currentAnimation = &idle;
 
 	// L08 TODO 5: Add physics to the player - initialize physics body
-	pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX(),  (int)position.getY(), 100, texH, bodyType::DYNAMIC);
+	pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX(),  (int)position.getY(), texW, texH, bodyType::DYNAMIC);
 
 	// L08 TODO 6: Assign player class (using "this") to the listener of the pbody. This makes the Physics module to call the OnCollision method
 	pbody->listener = this;
@@ -66,8 +66,8 @@ bool Player::Start() {
 	foregroundSliderImage = (GuiImage*)Engine::GetInstance().guiManager->CreateGuiImage(GuiControlType::IMAGE, 1, " ", btPos, sceneModule, ForeGroundSliderHP);
 
 	HP_Slider = (GuiSlider*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::HPSLIDER, 1, " ", hpPos, sceneModule);
-	HP_Slider->SetSliderBarSize(200, 25);
-	HP_Slider->SetSliderBarInnerSize(200, 25);
+	HP_Slider->SetSliderBarSize(200, 15);
+	HP_Slider->SetSliderBarInnerSize(100, 10);
 
 	backgroundSliderImage->visible = false;
 	foregroundSliderImage->visible = false;
@@ -145,19 +145,19 @@ bool Player::Update(float dt)
 	}
 	
 	// Move left/right
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_A) == KEY_REPEAT) {
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT) {
 		velocity.x = -0.2 * 16;
 		playerDirection = EntityDirections::LEFT;
 	
 	}
 
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_D) == KEY_REPEAT) {
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT) {
 		velocity.x = 0.2 * 16;
 		playerDirection = EntityDirections::RIGHT;
 
 	}
-	bool moving = Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_A) == KEY_REPEAT ||
-		Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_D) == KEY_REPEAT;
+	bool moving = Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT ||
+		Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT;
 
 	bool grounded = !isJumping && !isDashing && !touchingWall;
 
@@ -191,7 +191,7 @@ bool Player::Update(float dt)
 	*/
 	// Move down
 
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_DOWN)
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_DOWN) == KEY_DOWN)
 	{
 		currentAnimation = &crouch; // Cambiar a animación de agachado después
 		ChangeHitboxSize(texW, texH / 2); // Reduce el hitbox
@@ -199,7 +199,7 @@ bool Player::Update(float dt)
 
 	}
 
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_UP) 
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_DOWN) == KEY_UP)
 	{
 		currentAnimation = &idle;
 		ChangeHitboxSize(texW, texH); // Restaura el hitbox
@@ -207,7 +207,7 @@ bool Player::Update(float dt)
 	}
 
 	//Jump
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_W) == KEY_DOWN && hasAlreadyJumpedOnce == 0) 
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN && hasAlreadyJumpedOnce == 0 && !inBubble)
 	{
 		isHoldingJump = true;
 		jumpHoldTimer = 0.0f;
@@ -215,7 +215,7 @@ bool Player::Update(float dt)
 		
 	}
 
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_W) == KEY_REPEAT && isHoldingJump)
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_REPEAT && isHoldingJump && !inBubble)
 	{
 		jumpHoldTimer += dt;
 
@@ -233,7 +233,7 @@ bool Player::Update(float dt)
 	
 	}
 
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_W) == KEY_UP && isHoldingJump) 
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_UP && isHoldingJump && !inBubble)
 	{
 		float holdPercentage = jumpHoldTimer / maxHoldTime;
 		float jumpMultiplier = minJumpMultiplier + (holdPercentage * (maxJumpMultiplier - minJumpMultiplier));
@@ -246,7 +246,7 @@ bool Player::Update(float dt)
 	}
 
 	
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_W) == KEY_DOWN && hasAlreadyJumpedOnce == 1) {
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN && hasAlreadyJumpedOnce == 1 && !inBubble) {
 		pbody->body->SetLinearVelocity(b2Vec2(pbody->body->GetLinearVelocity().x, 0)); 
 		pbody->body->ApplyLinearImpulseToCenter(b2Vec2(0, -jumpForce), true);
 		hasAlreadyJumpedOnce++;
@@ -272,7 +272,7 @@ bool Player::Update(float dt)
 		Engine::GetInstance().audio.get()->PlayFx(doubleJumpId);
 	}
 
-	if (touchingWall && Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_W) == KEY_REPEAT) {
+	if (touchingWall && Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_REPEAT) {
 		pbody->body->SetLinearVelocity(b2Vec2(0, wallClimbSpeed));
 		currentAnimation = &idle; //climb cuando este
 	}
@@ -318,7 +318,7 @@ bool Player::Update(float dt)
 	}
 
 
-	if (isJumping == true)
+	if (isJumping == true )
 	{
 		velocity.y = pbody->body->GetLinearVelocity().y;
 	}
@@ -356,6 +356,18 @@ bool Player::Update(float dt)
 		Engine::GetInstance().render.get()->DrawTexture(hpIconTexture, 10 + i * 40, 10);
 	}
 
+	/*if (GetPosition().getX() >= 4208 && GetPosition().getY() >= 3600 && currentLevel == 2) {
+		if (loadLevel1 == false) {
+			loadLevel1 = true;
+		}
+	}*/
+
+	if (GetPosition().getX() >= 20480 && GetPosition().getY() >= 4320 && currentLevel == 1) {
+		if (loadLevel2 == false) {
+			loadLevel2 = true;
+		}
+	}
+
 	return true;
 }
 float Player::Lerp(float start, float end, float factor) {
@@ -387,6 +399,7 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 		hasAlreadyJumpedOnce = 0;
 		break;
 	case ColliderType::NPC:
+		inBubble = true;
 		GuiPOPup(GuiPopups::E_Interact);
 		break;
 	case ColliderType::WALL:
@@ -417,7 +430,7 @@ void Player::OnCollisionEnd(PhysBody* physA, PhysBody* physB)
 		break;
 	case ColliderType::NPC:
 		popup->isActive = false;
-
+		inBubble = false;
 		break;
 	case ColliderType::UNKNOWN:
 		break;

@@ -334,7 +334,7 @@ bool Render::DrawText(const char* text, int posx, int posy, int w, int h) const
 	return true;
 }
 bool Render::DrawWhiteText(const char* text, int posx, int posy, int w, int h) const
-{
+
 
 	SDL_Color color = { 255, 255, 255 };
 	SDL_Surface* surface = TTF_RenderText_Solid(font, text, color);
@@ -354,3 +354,5 @@ bool Render::DrawWhiteText(const char* text, int posx, int posy, int w, int h) c
 }
 
 
+	return true;
+}
