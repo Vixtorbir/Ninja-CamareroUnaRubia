@@ -79,7 +79,7 @@ public:
 
 	// L08 TODO 5: Add physics to the player - declare a Physics body
 	PhysBody* pbody;
-	float jumpForce = 78.0f; // The force to apply when jumping
+	float jumpForce = 65.0f; // The force to apply when jumping
 	bool isJumping = false; // Flag to check if the player is currently jumping
 	int hasAlreadyJumpedOnce = 0;
 	bool isRolling = false;
@@ -115,7 +115,11 @@ public:
 	Animation dash;
 	Animation crouch;
 
+	bool loadLevel2 = false;
 
+	bool loadLevel1 = false;
+
+	int currentLevel = 1;
 	
 	GuiPopup* popup;
 	GuiImage* backgroundSliderImage;
@@ -172,6 +176,7 @@ private:
 	SDL_Texture* hpIconTexture;
 	SDL_Texture* BackgroundSliderHP;
 	SDL_Texture* ForeGroundSliderHP;
+
 
 	bool crouched;
 };
