@@ -50,7 +50,7 @@ bool Player::Start() {
 	currentAnimation = &idle;
 
 	// L08 TODO 5: Add physics to the player - initialize physics body
-	pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX(), (int)position.getY(), texW, texH, bodyType::DYNAMIC);
+	pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX(),  (int)position.getY(), texW, texH, bodyType::DYNAMIC);
 
 	// L08 TODO 6: Assign player class (using "this") to the listener of the pbody. This makes the Physics module to call the OnCollision method
 	pbody->listener = this;
@@ -66,8 +66,8 @@ bool Player::Start() {
 	foregroundSliderImage = (GuiImage*)Engine::GetInstance().guiManager->CreateGuiImage(GuiControlType::IMAGE, 1, " ", btPos, sceneModule, ForeGroundSliderHP);
 
 	HP_Slider = (GuiSlider*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::HPSLIDER, 1, " ", hpPos, sceneModule);
-	HP_Slider->SetSliderBarSize(200, 25);
-	HP_Slider->SetSliderBarInnerSize(200, 25);
+	HP_Slider->SetSliderBarSize(200, 15);
+	HP_Slider->SetSliderBarInnerSize(100, 10);
 
 	backgroundSliderImage->visible = false;
 	foregroundSliderImage->visible = false;
@@ -211,9 +211,7 @@ bool Player::Update(float dt)
 	{
 		isHoldingJump = true;
 		jumpHoldTimer = 0.0f;
-		currentAnimation = &jump;
-		int jumpId = Engine::GetInstance().audio.get()->randomFx(jump1FxId, jump3FxId);
-		Engine::GetInstance().audio.get()->PlayFx(jumpId);
+		
 		
 	}
 
@@ -229,9 +227,9 @@ bool Player::Update(float dt)
 			isJumping = true;
 			
 		}
-		//currentAnimation = &jump;
-		/*int jumpId = Engine::GetInstance().audio.get()->randomFx(jump1FxId, jump3FxId);
-		Engine::GetInstance().audio.get()->PlayFx(jumpId);*/
+		currentAnimation = &jump;
+		int jumpId = Engine::GetInstance().audio.get()->randomFx(jump1FxId, jump3FxId);
+		Engine::GetInstance().audio.get()->PlayFx(jumpId);
 	
 	}
 
@@ -329,7 +327,7 @@ bool Player::Update(float dt)
 	pbody->body->SetLinearVelocity(velocity);
 
 	b2Transform pbodyPos = pbody->body->GetTransform();
-	position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texW-140);
+	position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texW-20);
 	position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
 
 	Engine::GetInstance().render.get()->DrawEntity(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame(), 1, 0, 0, 0, (int)playerDirection);
@@ -356,6 +354,18 @@ bool Player::Update(float dt)
 
 	for (int i = 0; i < hp; ++i) {
 		Engine::GetInstance().render.get()->DrawTexture(hpIconTexture, 10 + i * 40, 10);
+	}
+
+	/*if (GetPosition().getX() >= 4208 && GetPosition().getY() >= 3600 && currentLevel == 2) {
+		if (loadLevel1 == false) {
+			loadLevel1 = true;
+		}
+	}*/
+
+	if (GetPosition().getX() >= 20480 && GetPosition().getY() >= 4320 && currentLevel == 1) {
+		if (loadLevel2 == false) {
+			loadLevel2 = true;
+		}
 	}
 
 	return true;
@@ -504,10 +514,10 @@ void Player::ChangeHitboxSize(float width, float height) {
 
 	// Create a new fixture with the new size
 	if (height == texH / 2) {
-	pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX()+240, (int)position.getY()+350, width, height, bodyType::DYNAMIC);
+	pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX()+120, (int)position.getY()+170, width, height, bodyType::DYNAMIC);
 	}
 	else {
-		pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX()+240, (int)position.getY()+200, width, height, bodyType::DYNAMIC);
+		pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX()+120, (int)position.getY()+100, width, height, bodyType::DYNAMIC);
 	}
 	pbody->listener = this;
 	pbody->ctype = ColliderType::PLAYER;

@@ -87,18 +87,22 @@ bool Scene::Awake()
 
 	return ret;
 
-
 }
 
 // Called before the first frame
 bool Scene::Start()
 {
+	curPopupMusic = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Music/ScreamAngry.ogg");
+
 	logo = Engine::GetInstance().textures->Load("Assets/UI/logo.png");
 	logoFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/ExtraFx/logoFx.ogg");
 	MenuBackgroundImage = Engine::GetInstance().textures.get()->Load("Assets/UI/Menu.png");
 
 	// Inicializar el estado de la pantalla de presentaci�n
+
 	SetState(GameState::LOGO);
+	Engine::GetInstance().audio.get()->PlayFx(curPopupMusic);
+
 
 	SDL_Rect btPosMenu = { 0, 0, 0, 0 };
 
@@ -217,7 +221,6 @@ bool Scene::Update(float dt)
 	switch (currentState)
 	{
 	case GameState::MAIN_MENU:
-		Engine::GetInstance().audio.get()->PlayFx(logoFxId);
 		UpdateMainMenu(dt);
 		break;
 	case GameState::PLAYING:
@@ -230,7 +233,6 @@ bool Scene::Update(float dt)
 		UpdateGameOver(dt);
 		break;
 	case GameState::LOGO:
-		Engine::GetInstance().audio.get()->PlayFx(logoFxId);
 		UpdateLogo(dt);
 		break;
 	default:
@@ -252,18 +254,76 @@ bool Scene::PostUpdate()
 
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F2) == KEY_DOWN)
 		SafeLoadMap("MapTemplate1.tmx", Vector2D(22112, 4032)); // Posición específica Mapa 1
-
+		//Engine::GetInstance().scene.get()->player->currentLevel = 1;
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F3) == KEY_DOWN)
 		SafeLoadMap("MapTemplate2.tmx", Vector2D(193, 3845)); // Posición específica Mapa 2
-
+		//Engine::GetInstance().scene.get()->player->currentLevel = 2;
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F6) == KEY_DOWN)
 		LoadState();
 
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F5) == KEY_DOWN)
 		SaveState();
 
+	if (Engine::GetInstance().scene.get()->player->loadLevel1) {
+
+		FadeTransition(Engine::GetInstance().render.get()->renderer, false, 1.0f);
+		Engine::GetInstance().map->CleanUp(); // Esto solo limpia recursos antiguos
+
+		SafeLoadMap("MapTemplate1.tmx", Vector2D(22480, 4304));
+
+		Engine::GetInstance().scene.get()->player->loadLevel1 = false;
+		Engine::GetInstance().scene.get()->player->currentLevel = 1;
+
+	}
+
+	if (Engine::GetInstance().scene.get()->player->loadLevel2) {
+	
+		FadeTransition(Engine::GetInstance().render.get()->renderer, false, 1.0f);
+		Engine::GetInstance().map->CleanUp(); // Esto solo limpia recursos antiguos
+
+		SafeLoadMap("MapTemplate2.tmx", Vector2D(193, 3845));
+
+		Engine::GetInstance().scene.get()->player->loadLevel2 = false;
+		Engine::GetInstance().scene.get()->player->currentLevel = 2;
+
+	}
+
 	return ret;
 }
+
+void Scene::FadeTransition(SDL_Renderer* renderer, bool fadeIn, float duration)
+{
+	Uint32 startTime = SDL_GetTicks();
+	Uint8 alpha = fadeIn ? 255 : 0;
+	Uint8 targetAlpha = fadeIn ? 0 : 255;
+
+	SDL_Rect screenRect = { 0, 0, 1920, 1080 };
+	SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+
+	while (true)
+	{
+		Uint32 elapsedTime = SDL_GetTicks() - startTime;
+		float progress = (float)elapsedTime / (duration * 1000);
+
+		if (progress > 1.0f)
+			break;
+
+		alpha = fadeIn
+			? (Uint8)(255 * (1.0f - progress))
+			: (Uint8)(255 * progress);
+
+		SDL_SetRenderDrawColor(renderer, 0, 0, 0, alpha);
+		SDL_RenderFillRect(renderer, &screenRect);
+		SDL_RenderPresent(renderer);
+
+		SDL_Delay(16);
+	}
+
+	SDL_SetRenderDrawColor(renderer, 0, 0, 0, targetAlpha);
+	SDL_RenderFillRect(renderer, &screenRect);
+	SDL_RenderPresent(renderer);
+}
+
 
 // Called before quitting
 bool Scene::CleanUp()
@@ -507,7 +567,7 @@ void Scene::UpdateLogo(float dt) {
 	
 	fadeDuration += dt;
 	
-	FadeTransition(Engine::GetInstance().render.get()->renderer, logo, 3.0f);
+	FadeTransition(Engine::GetInstance().render.get()->renderer, logo, .1f);
 	SetState(GameState::MAIN_MENU);
 	
 
