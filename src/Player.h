@@ -123,7 +123,7 @@ public:
 
 	GuiSlider* HP_Slider;
 	SDL_Rect btPos = { 960, 520, 40, 40};
-	SDL_Rect hpPos = { 500, 100, 1000, 100};
+	SDL_Rect hpPos = { 150, 100, 200, 15};
 
 	Module* sceneModule = nullptr;
 	EntityDirections playerDirection = EntityDirections::RIGHT;
