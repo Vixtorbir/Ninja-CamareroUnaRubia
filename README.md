@@ -32,5 +32,5 @@ Implemented features:
 - Custom assets
 - 4 NPC's with dialogues and branching
 
--All game assets are made by our-
+-All game assets are made by ourselves-
 
