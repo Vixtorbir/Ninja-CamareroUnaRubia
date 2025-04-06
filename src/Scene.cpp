@@ -95,6 +95,7 @@ bool Scene::Start()
 	curPopupMusic = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Music/ScreamAngry.ogg");
 
 	logo = Engine::GetInstance().textures->Load("Assets/UI/logo.png");
+	logoFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/ExtraFx/logoFx.ogg");
 	MenuBackgroundImage = Engine::GetInstance().textures.get()->Load("Assets/UI/Menu.png");
 
 	// Inicializar el estado de la pantalla de presentaci�n
@@ -217,8 +218,10 @@ bool Scene::Update(float dt)
 
 	HandleInput();
 
-	switch (currentState) {
+	switch (currentState)
+	{
 	case GameState::MAIN_MENU:
+		Engine::GetInstance().audio.get()->PlayFx(logoFxId);
 		UpdateMainMenu(dt);
 		break;
 	case GameState::PLAYING:
@@ -231,6 +234,7 @@ bool Scene::Update(float dt)
 		UpdateGameOver(dt);
 		break;
 	case GameState::LOGO:
+		Engine::GetInstance().audio.get()->PlayFx(logoFxId);
 		UpdateLogo(dt);
 		break;
 	default:
@@ -506,7 +510,8 @@ void Scene::UpdateLogo(float dt) {
 
 	
 	fadeDuration += dt;
-	FadeTransition(Engine::GetInstance().render.get()->renderer, logo, 3);
+	
+	FadeTransition(Engine::GetInstance().render.get()->renderer, logo, 3.0f);
 	SetState(GameState::MAIN_MENU);
 	
 
