@@ -43,6 +43,9 @@ bool Player::Start() {
 	//Load animations
 	idle.LoadAnimations(parameters.child("animations").child("idle"));
 	walk.LoadAnimations(parameters.child("animations").child("walk"));
+	jump.LoadAnimations(parameters.child("animations").child("jump"));
+	dash.LoadAnimations(parameters.child("animations").child("dash"));
+	crouch.LoadAnimations(parameters.child("animations").child("crouch"));
 
 	currentAnimation = &idle;
 
@@ -132,7 +135,7 @@ bool Player::Update(float dt)
 		velocity = b2Vec2(0, 0);
 	}
 	
-	// Move left
+	// Move left/right
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_A) == KEY_REPEAT) {
 		velocity.x = -0.2 * 16;
 		playerDirection = EntityDirections::LEFT;
@@ -179,14 +182,16 @@ bool Player::Update(float dt)
 	*/
 	// Move down
 
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_DOWN) {
-		currentAnimation = &idle; // Cambiar a animación de agachado después
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_DOWN)
+	{
+		currentAnimation = &crouch; // Cambiar a animación de agachado después
 		ChangeHitboxSize(texW, texH / 2); // Reduce el hitbox
 		Engine::GetInstance().audio.get()->PlayFx(crouchFxId);
 
 	}
 
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_UP) {
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_UP) 
+	{
 		currentAnimation = &idle;
 		ChangeHitboxSize(texW, texH); // Restaura el hitbox
 		
@@ -213,6 +218,7 @@ bool Player::Update(float dt)
 			isJumping = true;
 			
 		}
+		currentAnimation = &jump;
 		int jumpId = Engine::GetInstance().audio.get()->randomFx(jump1FxId, jump3FxId);
 		Engine::GetInstance().audio.get()->PlayFx(jumpId);
 	
@@ -238,6 +244,7 @@ bool Player::Update(float dt)
 		isJumping = true;
 		int doubleJumpId = Engine::GetInstance().audio.get()->randomFx(doubleJump1FxId, doubleJump2FxId);
 		Engine::GetInstance().audio.get()->PlayFx(doubleJumpId);
+		currentAnimation = &jump;
 	
 	}
 
@@ -276,6 +283,7 @@ bool Player::Update(float dt)
 		dashElapsedTime = 0.0f;
 		int dashId = Engine::GetInstance().audio.get()->randomFx(dash1FxId,dash3FxId);
 		Engine::GetInstance().audio.get()->PlayFx(dashId);
+		currentAnimation = &dash;
 	}
 
 	if (isDashing) {
@@ -284,9 +292,11 @@ bool Player::Update(float dt)
 
 		dashElapsedTime += dt;
 
-		if (dashElapsedTime >= dashDuration) {
+		if (dashElapsedTime >= dashDuration) 
+		{
 			isDashing = false;
 			targetDashVelocity = 0.0f;
+			currentAnimation = &idle;
 		}
 	}
 
