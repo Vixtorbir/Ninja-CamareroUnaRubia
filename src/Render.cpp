@@ -333,8 +333,8 @@ bool Render::DrawText(const char* text, int posx, int posy, int w, int h) const
 
 	return true;
 }
-bool Render::DrawTextWhite(const char* text, int posx, int posy, int w, int h) const
-{
+bool Render::DrawWhiteText(const char* text, int posx, int posy, int w, int h) const
+
 
 	SDL_Color color = { 255, 255, 255 };
 	SDL_Surface* surface = TTF_RenderText_Solid(font, text, color);
@@ -349,6 +349,10 @@ bool Render::DrawTextWhite(const char* text, int posx, int posy, int w, int h) c
 
 	SDL_DestroyTexture(texture);
 	SDL_FreeSurface(surface);
+
+	return true;
+}
+
 
 	return true;
 }
