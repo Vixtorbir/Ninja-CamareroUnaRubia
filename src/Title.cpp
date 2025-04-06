@@ -39,6 +39,7 @@ bool Title::Awake()
 // Called before the first frame
 bool Title::Start()
 {
+
     if (showStartButton)
     {
         SDL_Rect btPos = { 520, 350, 120, 20 };

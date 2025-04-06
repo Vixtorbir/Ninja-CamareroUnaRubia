@@ -283,7 +283,7 @@ bool Scene::PostUpdate()
 		FadeTransition(Engine::GetInstance().render.get()->renderer, false, 1.0f);
 		Engine::GetInstance().map->CleanUp(); // Esto solo limpia recursos antiguos
 
-		SafeLoadMap("MapTemplate2.tmx", Vector2D(193, 3845));
+		SafeLoadMap("MapTemplate2.tmx", Vector2D(1504, 3888));
 
 		Engine::GetInstance().scene.get()->player->loadLevel2 = false;
 		Engine::GetInstance().scene.get()->player->currentLevel = 2;
