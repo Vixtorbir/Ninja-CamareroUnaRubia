@@ -2,11 +2,11 @@ Jade Theory is a narrative-driven Metroidvania inspired in the feudal Japan. It 
 
 This game has been developed for the subject Project 2 by Camarero, Una Rubia!, a team formed by: 
 
-- Pau Gónzalez-Team Leader, Lead Game Designer and Programmer
-- Victor Cardenas- Lead Programmer
-- Paula Laguna- Lead Artist
-- Marc Amo- Level Designer
-- Noa Pont- Narrative Designer and Programmer
+- Pau Gónzalez - Team Leader, Lead Game Designer and Programmer - Link to GitHub: https://github.com/mxarc
+- Victor Cardenas - Lead Programmer - Link to GitHub: https://github.com/Vixtorbir
+- Paula Laguna - Lead Artist - Link to GitHub: https://github.com/kiwiipow
+- Marc Amo - Level Designer - Link to GitHub: https://github.com/mxarc
+- Noa Pont - Narrative Designer and Programmer - Link to GitHub: https://github.com/noapont
 
 Controls: 
 - Right and keft arrows - Right and Left movement
@@ -32,5 +32,5 @@ Implemented features:
 - Custom assets
 - 4 NPC's with dialogues and branching
 
-
+-All game assets are made by our-
 
