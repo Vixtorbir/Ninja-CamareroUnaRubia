@@ -100,12 +100,21 @@ void DialogueManager::Update()
     if (!dialogueEnded && Engine::GetInstance().input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
     {
         Engine::GetInstance().guiManager->ClearControlsOfType(GuiControlType::DIALOGUE);
-        ShowNextDialogue();
+        if (!isFirstOption)
+        {
+            ShowNextDialogue();
+        }
+        else {
+            ShowNextDialogue();
+            ShowNextDialogue();
+            isFirstOption = false;
+        }
     }
 
     if (!dialogueEnded && Engine::GetInstance().input->GetKey(SDL_SCANCODE_UP) == KEY_DOWN)
     {
         Engine::GetInstance().guiManager->ClearControlsOfType(GuiControlType::DIALOGUE);
+        isFirstOption = true;
         ShowNextDialogue();
 
     }

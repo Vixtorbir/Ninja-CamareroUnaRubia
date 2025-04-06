@@ -58,7 +58,8 @@ bool Dialogue::Update(float dt)
             {
                 timer = 0.0f;
                 charIndex++;
-                displayText = text.substr(0, charIndex);
+                std::string partialText = text.substr(0, charIndex);
+                displayText = WrapText(partialText, bounds.w - 20, Engine::GetInstance().render->font); // optional margin
 
                 if (charIndex >= text.length())
                 {
@@ -161,10 +162,56 @@ bool Dialogue::Update(float dt)
             break;
         }
    
-        Engine::GetInstance().render->DrawText(displayText.c_str(), textX, textY, textW, textH);
+        int paddingX = 400;
+        int paddingY = 10;
+        int lineHeight = 0;
+        TTF_SizeText(Engine::GetInstance().render->font, "A", nullptr, &lineHeight);
 
+        std::istringstream stream(displayText);
+        std::string line;
+        int offsetY = 0;
+
+        while (std::getline(stream, line))
+        {
+            int lineW = 0;
+            TTF_SizeText(Engine::GetInstance().render->font, line.c_str(), &lineW, nullptr);
+
+            int lineX = bounds.x + paddingX;
+            int lineY = bounds.y + paddingY + offsetY;
+
+            Engine::GetInstance().render->DrawText(line.c_str(), lineX, lineY, lineW, lineHeight);
+            offsetY += lineHeight + 4;
+        }
 
     }
 
     return false;
+}
+std::string Dialogue::WrapText(const std::string& input, int maxWidth, TTF_Font* font)
+{
+    std::string wrappedText;
+    std::istringstream words(input);
+    std::string word;
+    std::string line;
+
+    while (words >> word)
+    {
+        std::string testLine = line.empty() ? word : line + " " + word;
+
+        int w = 0, h = 0;
+        TTF_SizeUTF8(font, testLine.c_str(), &w, &h);
+
+        if (w > maxWidth - 900)
+        {
+            wrappedText += line + "\n";
+            line = word;
+        }
+        else
+        {
+            line = testLine;
+        }
+    }
+
+    wrappedText += line; // add the last line
+    return wrappedText;
 }
