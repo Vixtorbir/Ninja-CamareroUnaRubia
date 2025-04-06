@@ -207,7 +207,7 @@ bool Player::Update(float dt)
 	}
 
 	//Jump
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN && hasAlreadyJumpedOnce == 0) 
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN && hasAlreadyJumpedOnce == 0 && !inBubble)
 	{
 		isHoldingJump = true;
 		jumpHoldTimer = 0.0f;
@@ -215,7 +215,7 @@ bool Player::Update(float dt)
 		
 	}
 
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_REPEAT && isHoldingJump)
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_REPEAT && isHoldingJump && !inBubble)
 	{
 		jumpHoldTimer += dt;
 
@@ -233,7 +233,7 @@ bool Player::Update(float dt)
 	
 	}
 
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_UP && isHoldingJump)
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_UP && isHoldingJump && !inBubble)
 	{
 		float holdPercentage = jumpHoldTimer / maxHoldTime;
 		float jumpMultiplier = minJumpMultiplier + (holdPercentage * (maxJumpMultiplier - minJumpMultiplier));
@@ -246,7 +246,7 @@ bool Player::Update(float dt)
 	}
 
 	
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN && hasAlreadyJumpedOnce == 1) {
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN && hasAlreadyJumpedOnce == 1 && !inBubble) {
 		pbody->body->SetLinearVelocity(b2Vec2(pbody->body->GetLinearVelocity().x, 0)); 
 		pbody->body->ApplyLinearImpulseToCenter(b2Vec2(0, -jumpForce), true);
 		hasAlreadyJumpedOnce++;
@@ -318,7 +318,7 @@ bool Player::Update(float dt)
 	}
 
 
-	if (isJumping == true)
+	if (isJumping == true )
 	{
 		velocity.y = pbody->body->GetLinearVelocity().y;
 	}
@@ -399,6 +399,7 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 		hasAlreadyJumpedOnce = 0;
 		break;
 	case ColliderType::NPC:
+		inBubble = true;
 		GuiPOPup(GuiPopups::E_Interact);
 		break;
 	case ColliderType::WALL:
@@ -429,7 +430,7 @@ void Player::OnCollisionEnd(PhysBody* physA, PhysBody* physB)
 		break;
 	case ColliderType::NPC:
 		popup->isActive = false;
-
+		inBubble = false;
 		break;
 	case ColliderType::UNKNOWN:
 		break;

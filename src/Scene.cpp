@@ -164,7 +164,7 @@ bool Scene::Update(float dt)
 	//L03 TODO 3: Make the camera movement independent of framerate
 	float camSpeed = 1;
 
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
+	/*if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
 		Engine::GetInstance().render.get()->camera.y -= ceil(camSpeed * dt);
 
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
@@ -175,7 +175,7 @@ bool Scene::Update(float dt)
 
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
 		Engine::GetInstance().render.get()->camera.x += ceil(camSpeed * dt);
-
+*/
 
 	//Get mouse position and obtain the map coordinate
 	int scale = Engine::GetInstance().window.get()->GetScale();
@@ -345,7 +345,6 @@ void Scene::LoadTextures()
 {
 	Hanzo = Engine::GetInstance().textures.get()->Load("Assets/Portraits/Hanzo.png");
 	dialogueManager->Hanzo = Hanzo;
-	dialogueManager->CastDialogue(DialogueEngine::EMPTY);
 
 }
 
