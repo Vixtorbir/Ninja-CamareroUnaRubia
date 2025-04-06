@@ -48,24 +48,28 @@ bool GuiImage::Update(float dt)
         }
 
         // L16: TODO 4: Draw the button according to the GuiControl State
-        switch (state)
+        if (visible)
         {
-        case GuiControlState::DISABLED:
-            Engine::GetInstance().render->DrawTexturedRectangle(texture, 50, -50, textX, textY, false);
+            switch (state)
+            {
+            case GuiControlState::DISABLED:
+                Engine::GetInstance().render->DrawTexturedRectangle(texture, 50, -50, textX, textY, false);
 
-            break;
-        case GuiControlState::NORMAL:
-            Engine::GetInstance().render->DrawTexturedRectangle(texture, 50, -50, textX, textY, false);
-            break;
+                break;
+            case GuiControlState::NORMAL:
+                Engine::GetInstance().render->DrawTexturedRectangle(texture, 50, -50, textX, textY, false);
+                break;
 
-        case GuiControlState::FOCUSED:
-            Engine::GetInstance().render->DrawTexturedRectangle(texture, 50, -50, textX, textY, false);
-            break;
+            case GuiControlState::FOCUSED:
+                Engine::GetInstance().render->DrawTexturedRectangle(texture, 50, -50, textX, textY, false);
+                break;
 
-        case GuiControlState::PRESSED:
-            Engine::GetInstance().render->DrawTexturedRectangle(texture, 50, -50, textX, textY, false);
-            break;
+            case GuiControlState::PRESSED:
+                Engine::GetInstance().render->DrawTexturedRectangle(texture, 50, -50, textX, textY, false);
+                break;
+            }
         }
+       
 
  
     }

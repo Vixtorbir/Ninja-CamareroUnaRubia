@@ -69,6 +69,10 @@ bool Player::Start() {
 	HP_Slider->SetSliderBarSize(200, 25);
 	HP_Slider->SetSliderBarInnerSize(200, 25);
 
+	backgroundSliderImage->visible = false;
+	foregroundSliderImage->visible = false;
+	HP_Slider->visible = false;
+	
 	// Set the gravity of the body
 	if (!parameters.attribute("gravity").as_bool()) pbody->body->SetGravityScale(0);
 
@@ -86,6 +90,11 @@ bool Player::Start() {
 
 bool Player::Update(float dt)
 {
+	
+	backgroundSliderImage->visible = inGame;
+	foregroundSliderImage->visible = inGame;
+	HP_Slider->visible = inGame;
+	
 	if (Engine::GetInstance().scene.get()->currentState == GameState::PAUSED)
 	{
 		pbody->body->SetLinearVelocity(b2Vec2(0, 0));
