@@ -26,7 +26,11 @@ private:
 	bool canClick = true;
 	bool drawBasic = false;
 
-	
+	//Audio
+	int buttonSelectedFxId;
+	int buttonPressedFxId;
+
+	bool fxPlayed = false;
 };
 
 #pragma once

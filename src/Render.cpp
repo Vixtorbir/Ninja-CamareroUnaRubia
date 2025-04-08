@@ -54,7 +54,7 @@ bool Render::Awake()
 	TTF_Init();
 
 	//load a font into memory
-	font = TTF_OpenFont("Assets/Fonts/shinkansen/shinkansen.regular.ttf", 100);
+	font = TTF_OpenFont("Assets/Fonts/shinkansen/shinkansen.regular.ttf", 50);
 
 	return ret;
 }

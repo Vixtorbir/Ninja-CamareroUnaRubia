@@ -10,6 +10,7 @@
 #include "DialogueManager.h"
 #include "Parallax.h"
 #include "GuiImage.h"
+#include "Item.h"
 
 #include "Npc.h"
 
@@ -19,7 +20,8 @@ enum class GameState {
 	MAIN_MENU,
 	PLAYING,
 	PAUSED,
-	GAME_OVER
+	GAME_OVER,
+	LOGO
 };
 
 class Scene : public Module
@@ -47,6 +49,8 @@ public:
 	// Called before all Updates
 	bool PostUpdate();
 
+	void FadeTransition(SDL_Renderer* renderer, bool fadeIn, float duration);
+
 	// Called before quitting
 	bool CleanUp();
 
@@ -62,6 +66,10 @@ public:
 	// Handles multiple Gui Event methods
 	bool OnGuiMouseClickEvent(GuiControl* control);
 
+	void FadeTransition(SDL_Renderer* renderer, SDL_Texture* texture, float duration);
+
+	
+
 	void LoadTextures();
 
 	void SetState(GameState newState);
@@ -72,6 +80,7 @@ public:
 	void UpdatePlaying(float dt);
 	void UpdatePaused(float dt);
 	void UpdateGameOver(float dt);
+	void UpdateLogo(float dt);
 
 
 public:
@@ -93,9 +102,12 @@ public:
 	Player* player;
 	std::vector<Enemy*> enemyList;
 
-	NPC* npc;
+	NPC* npcMentor;
+	NPC* npcIsamu;
+	NPC* npcKaede;
+	NPC* npcHanzo;
 	std::vector<NPC*> npcs;
-
+	std::vector<Item*> items;
 	// L16: TODO 2: Declare a GUI Control Button 
 	GuiControlButton* guiBt;
 
@@ -104,7 +116,7 @@ public:
 
 	bool watchtitle = false;
 
-	GameState currentState = GameState::MAIN_MENU;
+	GameState currentState = GameState::LOGO;
 
 	void HandleInput();
 
@@ -114,6 +126,11 @@ public:
 	GuiControlButton* returnButton = nullptr;
 
 	GuiImage* menuBackgroundImage = nullptr;
+
+	float logoTimer = 0.0f;
+	float fadeDuration = 0.0f; // Duración del fade in y fade out en segundos
+	float opacity = 0.0f;
+	SDL_Texture* logo = nullptr;
 
 private:
 	Parallax* parallax = nullptr;

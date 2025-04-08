@@ -121,6 +121,19 @@ bool Map::CleanUp()
     }
     mapData.layers.clear();
 
+	// L08 TODO 2: clean up all object groups
+
+	for (const auto& objectGroup : mapData.objectGroups)
+	{
+		delete objectGroup;
+	}
+	mapData.objectGroups.clear();
+
+    for (auto body : collisionBodies) {
+        Engine::GetInstance().physics.get()->DeletePhysBody(body);
+    }
+    collisionBodies.clear();
+
     return true;
 }
 
@@ -255,9 +268,11 @@ bool Map::Load(std::string path, std::string fileName)
 
                 if (objectGroup->name == "Floor") {
                     platform->ctype = ColliderType::PLATFORM;
+					collisionBodies.push_back(platform);
                 }
                 else if (objectGroup->name == "Wall") {
                     platform->ctype = ColliderType::WALL;
+					collisionBodies.push_back(platform);
                 }
             }
 

@@ -85,8 +85,8 @@ public:
 	bool isRolling = false;
 
 	const float maxHoldTime = 1500.0f;  
-	const float minJumpMultiplier = 0.5f;
-	const float maxJumpMultiplier = 1.2f;
+	const float minJumpMultiplier = 1.2f;
+	const float maxJumpMultiplier = 2.0f;
 	float jumpHoldTimer = 0.0f;
 	bool isHoldingJump = false;
 
@@ -95,6 +95,7 @@ public:
 	float wallJumpPush = 102.0f;  
 	float wallClimbSpeed = -2.0f;
 
+	bool godMode = false;
 
 	bool canDash = true;
 	bool isDashing = false;
@@ -110,7 +111,15 @@ public:
 	Animation* currentAnimation = nullptr;
 	Animation idle;
 	Animation walk;
+	Animation jump;
+	Animation dash;
+	Animation crouch;
 
+	bool loadLevel2 = false;
+
+	bool loadLevel1 = false;
+
+	int currentLevel = 1;
 	
 	GuiPopup* popup;
 	GuiImage* backgroundSliderImage;
@@ -123,18 +132,19 @@ public:
 	Module* sceneModule = nullptr;
 	EntityDirections playerDirection = EntityDirections::RIGHT;
 	
+	bool inGame = false;
+
 private:
 		//Audio fx
+	bool startWalk = false;
+	int walkChannel;
 		int jump1FxId;
 		int jump2FxId;
 		int jump3FxId;
 		int doubleJump1FxId;
 		int doubleJump2FxId;
-		int walk1FxId;
-		int walk2FxId;
-		int walk3FxId;
-		int walk4FxId;
-		int walk5FxId;
+		int walkFxId;
+		int crouchFxId;
 		int dash1FxId;
 		int dash2FxId;
 		int dash3FxId;
@@ -151,7 +161,11 @@ private:
 		int hit2FxId;
 		int pickUpItemFxId;
 		
-
+		bool isWalking = false;
+	int step1, step2, step3, step4, step5;
+	int stepSounds;
+	float footstepTimer = 0.0f;
+	float footstepDelay = 0.4f; // how often to play a step (adjust as needed)
 	int hp; 
 	const int maxHp = 3;
 
@@ -162,6 +176,7 @@ private:
 	SDL_Texture* hpIconTexture;
 	SDL_Texture* BackgroundSliderHP;
 	SDL_Texture* ForeGroundSliderHP;
+
 
 	bool crouched;
 };

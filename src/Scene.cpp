@@ -40,16 +40,28 @@ bool Scene::Awake()
 	//L04: TODO 3b: Instantiate the player using the entity manager
 	player = (Player*)Engine::GetInstance().entityManager->CreateEntity(EntityType::PLAYER);
 	player->SetParameters(configParameters.child("entities").child("player"));
+	
+	npcMentor = (NPC*)Engine::GetInstance().entityManager->CreateNamedCharacter(EntityType::NPC, DialogueEngine::MENTORSHIP);
+	npcMentor->SetParameters(configParameters.child("entities").child("npcMENTORSHIP"));
+	npcs.push_back(npcMentor);
 
-	npc = (NPC*)Engine::GetInstance().entityManager->CreateNamedCharacter(EntityType::NPC, DialogueEngine::MENTORSHIP);
-	npc->SetParameters(configParameters.child("entities").child("npcMENTORSHIP"));
-	npcs.push_back(npc);
+	npcIsamu = (NPC*)Engine::GetInstance().entityManager->CreateNamedCharacter(EntityType::NPC, DialogueEngine::ISAMU);
+	npcIsamu->SetParameters(configParameters.child("entities").child("npcISAMU"));
+	npcs.push_back(npcIsamu);
 
+	npcKaede = (NPC*)Engine::GetInstance().entityManager->CreateNamedCharacter(EntityType::NPC, DialogueEngine::KAEDE);
+	npcKaede->SetParameters(configParameters.child("entities").child("npcKAEDE"));
+	npcs.push_back(npcKaede);
+
+	npcHanzo = (NPC*)Engine::GetInstance().entityManager->CreateNamedCharacter(EntityType::NPC, DialogueEngine::HANZO);
+	npcHanzo->SetParameters(configParameters.child("entities").child("npcHANZO"));
+	npcs.push_back(npcHanzo);
 	//L08 Create a new item using the entity manager and set the position to (200, 672) to test
 	for (pugi::xml_node itemNode = configParameters.child("entities").child("items").child("item"); itemNode; itemNode = itemNode.next_sibling("item"))
 	{
 		Item* item = (Item*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ITEM);
 		item->SetParameters(itemNode);
+		items.push_back(item);
 	}
 
 	// Create a enemy using the entity manager 
@@ -60,6 +72,7 @@ bool Scene::Awake()
 		enemyList.push_back(enemy);
 	}
 
+	
 	// L16: TODO 2: Instantiate a new GuiControlButton in the Scene
 	SDL_Rect btPos = { -10000, 350, 120,20 };
 	guiBt = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 1, "MyButton", btPos, this);
@@ -72,8 +85,6 @@ bool Scene::Awake()
 	dialogueManager->SetModule(this);
 	player->sceneModule = this;
 
-
-
 	return ret;
 
 
@@ -82,8 +93,16 @@ bool Scene::Awake()
 // Called before the first frame
 bool Scene::Start()
 {
-
+	logo = Engine::GetInstance().textures->Load("Assets/UI/logo.png");
 	MenuBackgroundImage = Engine::GetInstance().textures.get()->Load("Assets/UI/Menu.png");
+
+	// Inicializar el estado de la pantalla de presentaci�n
+	SetState(GameState::LOGO);
+
+	SDL_Rect btPosMenu = { 0, 0, 0, 0 };
+
+	menuBackgroundImage = (GuiImage*)Engine::GetInstance().guiManager->CreateGuiImage(GuiControlType::IMAGE, 1, " ", btPosMenu, this, MenuBackgroundImage);
+
 
 	//L06 TODO 3: Call the function to load the map. 
 	Engine::GetInstance().map->Load(configParameters.child("map").attribute("path").as_string(), configParameters.child("map").attribute("name").as_string());
@@ -91,7 +110,6 @@ bool Scene::Start()
 	// Texture to highligh mouse position 
 	mouseTileTex = Engine::GetInstance().textures.get()->Load("Assets/Maps/MapMetadata.png");
 
-	dialogueManager->CastDialogue(DialogueEngine::RAIDEDVILLAGE);
 
 	// Initalize the camera position
 	int w, h;
@@ -105,9 +123,7 @@ bool Scene::Start()
 	SDL_Rect optionsButtonPos = { 800, 550, 200, 50 };
 	SDL_Rect exitButtonPos = { 800, 800, 200, 50 };
 	
-	SDL_Rect btPos = { 0, 0, 0, 0 };
 
-	menuBackgroundImage = (GuiImage*)Engine::GetInstance().guiManager->CreateGuiImage(GuiControlType::IMAGE, 1, " ", btPos, this, MenuBackgroundImage);
 
 	// Create buttons if they don't already exist
 
@@ -122,7 +138,7 @@ bool Scene::Start()
 	exitButton = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(
 		GuiControlType::BUTTON, 3, "Exit", exitButtonPos, this);
 
-	
+
 	startButton->Start();
 	optionsButton->Start();
 	exitButton->Start();
@@ -156,9 +172,6 @@ bool Scene::Update(float dt)
 		Engine::GetInstance().render.get()->camera.x += ceil(camSpeed * dt);
 
 
-
-	// L10 TODO 6: Implement a method that repositions the player in the map with a mouse click
-
 	//Get mouse position and obtain the map coordinate
 	int scale = Engine::GetInstance().window.get()->GetScale();
 	Vector2D mousePos = Engine::GetInstance().input.get()->GetMousePosition();
@@ -180,9 +193,10 @@ bool Scene::Update(float dt)
 	}
 
 	//If mouse button is pressed modify enemy position
-	if (enemyList.size() > 0 && Engine::GetInstance().input.get()->GetMouseButtonDown(1) == KEY_REPEAT) {
-		enemyList[0]->SetPosition(Vector2D(highlightTile.getX(), highlightTile.getY()));
-		enemyList[0]->ResetPath();
+	if (Engine::GetInstance().scene.get()->player->godMode && Engine::GetInstance().input.get()->GetMouseButtonDown(1) == KEY_REPEAT && currentState == GameState::PLAYING) {
+		
+		player->SetPosition(Vector2D(highlightTile.getX(), highlightTile.getY()));
+		
 	}
 
 	//Dialogue things
@@ -191,10 +205,11 @@ bool Scene::Update(float dt)
 	{
 		if (npc->showcaseDialogue)
 		{
-			dialogueManager->CastDialogue(npc->dialogueName);
+		dialogueManager->CastDialogue(npc->dialogueName);
 			npc->showcaseDialogue = false;
 		}
 	}
+
 
 	HandleInput();
 
@@ -211,9 +226,13 @@ bool Scene::Update(float dt)
 	case GameState::GAME_OVER:
 		UpdateGameOver(dt);
 		break;
+	case GameState::LOGO:
+		UpdateLogo(dt);
+		break;
 	default:
 		break;
 	}
+
 
 	return true;
 }
@@ -227,20 +246,78 @@ bool Scene::PostUpdate()
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN)
 		ret = false;
 
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F1) == KEY_DOWN)
-		SafeLoadMap("MapTemplate1.tmx", Vector2D(22112, 4032)); // Posición específica Mapa 1
-
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F2) == KEY_DOWN)
+		SafeLoadMap("MapTemplate1.tmx", Vector2D(22112, 4032)); // Posición específica Mapa 1
+		//Engine::GetInstance().scene.get()->player->currentLevel = 1;
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F3) == KEY_DOWN)
 		SafeLoadMap("MapTemplate2.tmx", Vector2D(193, 3845)); // Posición específica Mapa 2
-
+		//Engine::GetInstance().scene.get()->player->currentLevel = 2;
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F6) == KEY_DOWN)
 		LoadState();
 
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F5) == KEY_DOWN)
 		SaveState();
 
+	if (Engine::GetInstance().scene.get()->player->loadLevel1) {
+
+		FadeTransition(Engine::GetInstance().render.get()->renderer, false, 1.0f);
+		Engine::GetInstance().map->CleanUp(); // Esto solo limpia recursos antiguos
+
+		SafeLoadMap("MapTemplate1.tmx", Vector2D(22480, 4304));
+
+		Engine::GetInstance().scene.get()->player->loadLevel1 = false;
+		Engine::GetInstance().scene.get()->player->currentLevel = 1;
+
+	}
+
+	if (Engine::GetInstance().scene.get()->player->loadLevel2) {
+	
+		FadeTransition(Engine::GetInstance().render.get()->renderer, false, 1.0f);
+		Engine::GetInstance().map->CleanUp(); // Esto solo limpia recursos antiguos
+
+		SafeLoadMap("MapTemplate2.tmx", Vector2D(193, 3845));
+
+		Engine::GetInstance().scene.get()->player->loadLevel2 = false;
+		Engine::GetInstance().scene.get()->player->currentLevel = 2;
+
+	}
+
 	return ret;
 }
+
+void Scene::FadeTransition(SDL_Renderer* renderer, bool fadeIn, float duration)
+{
+	Uint32 startTime = SDL_GetTicks();
+	Uint8 alpha = fadeIn ? 255 : 0;
+	Uint8 targetAlpha = fadeIn ? 0 : 255;
+
+	SDL_Rect screenRect = { 0, 0, 1920, 1080 };
+	SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+
+	while (true)
+	{
+		Uint32 elapsedTime = SDL_GetTicks() - startTime;
+		float progress = (float)elapsedTime / (duration * 1000);
+
+		if (progress > 1.0f)
+			break;
+
+		alpha = fadeIn
+			? (Uint8)(255 * (1.0f - progress))
+			: (Uint8)(255 * progress);
+
+		SDL_SetRenderDrawColor(renderer, 0, 0, 0, alpha);
+		SDL_RenderFillRect(renderer, &screenRect);
+		SDL_RenderPresent(renderer);
+
+		SDL_Delay(16);
+	}
+
+	SDL_SetRenderDrawColor(renderer, 0, 0, 0, targetAlpha);
+	SDL_RenderFillRect(renderer, &screenRect);
+	SDL_RenderPresent(renderer);
+}
+
 
 // Called before quitting
 bool Scene::CleanUp()
@@ -297,18 +374,21 @@ void Scene::SaveState() {
 	sceneNode.child("entities").child("player").attribute("y").set_value(player->GetPosition().getY());
 
 	pugi::xml_node enemiesNode = sceneNode.child("entities").child("enemies");
+
+	// Ensure enemies node exists
 	if (!enemiesNode) {
 		enemiesNode = sceneNode.child("entities").append_child("enemies");
 	}
 
-
-	for (auto& enemy : enemyList) {
-		pugi::xml_node enemyNode = enemiesNode.append_child("enemy");
-		sceneNode.child("entities").child("enemies").child("enemy").attribute("x").set_value(enemy->GetPosition().getX());
-		sceneNode.child("entities").child("enemies").child("enemy").attribute("x").set_value(enemy->GetPosition().getY());
-
-		
-
+	// Loop through existing enemies and update their positions
+	for (pugi::xml_node enemyNode = enemiesNode.child("enemy"); enemyNode; enemyNode = enemyNode.next_sibling("enemy")) {
+		// Find the corresponding enemy in your list
+		for (auto& enemy : enemyList) {
+			 {
+				enemyNode.attribute("x").set_value(enemy->GetPosition().getX());
+				enemyNode.attribute("y").set_value(enemy->GetPosition().getY());
+			}
+		}
 	}
 
 	pugi::xml_node ItemsNode = sceneNode.child("entities").child("items");
@@ -358,6 +438,24 @@ void Scene::LoadState() {
 void Scene::SafeLoadMap(const char* mapName, Vector2D playerPos) {
 	Engine::GetInstance().map->CleanUp(); // Esto solo limpia recursos antiguos
 
+	for (const auto enemy : enemyList) {
+		enemy->CleanUp();
+	}
+
+	enemyList.clear();
+
+	for (const auto npc : npcs) {
+		npc->CleanUp();
+	}
+
+	npcs.clear();
+
+	/*for (const auto item : items) {
+		item->CleanUp();
+	}
+
+	items.clear();*/
+
 	std::string path = configParameters.child("map").attribute("path").as_string();
 	if (!Engine::GetInstance().map->Load(path.c_str(), mapName)) {
 		LOG("Error cargando %s", mapName);
@@ -381,6 +479,7 @@ void Scene::HandleInput()
 		{
 
 			SetState(GameState::PLAYING);
+
 			startButton->CleanUp();
 			optionsButton->CleanUp();
 			exitButton->CleanUp();
@@ -417,12 +516,12 @@ void Scene::HandleInput()
 }
 
 void Scene::UpdateMainMenu(float dt) {
-	
+	menuBackgroundImage->Update(dt);
 	startButton->Update(dt);
 	optionsButton->Update(dt);	
 	exitButton->Update(dt);
 
-	
+	player->inGame = false;
 	
 
 	// Render the main menu text
@@ -434,6 +533,8 @@ void Scene::UpdateMainMenu(float dt) {
 void Scene::UpdatePlaying(float dt) {
 	// Handle gameplay logic
 	// Example: Update player, enemies, and other game entities
+	player->inGame = true;
+
 	player->Update(dt);
 	for (auto& enemy : enemyList) {
 		enemy->Update(dt);
@@ -454,7 +555,16 @@ void Scene::UpdatePaused(float dt) {
 void Scene::UpdateGameOver(float dt) {
 	Engine::GetInstance().render.get()->DrawText("GAME OVER:Press enter to start", 600, 400, 750, 255);
 }
+void Scene::UpdateLogo(float dt) {
+	// Manejar el fade in
 
+	
+	fadeDuration += dt;
+	FadeTransition(Engine::GetInstance().render.get()->renderer, logo, .1f);
+	SetState(GameState::MAIN_MENU);
+	
+
+}
 bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 {
 	// L15: DONE 5: Implement the OnGuiMouseClickEvent method
@@ -475,4 +585,44 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 	}
 
 	return true;
+}
+void Scene::FadeTransition(SDL_Renderer* renderer, SDL_Texture* texture, float duration)
+{
+	Uint32 startTime = SDL_GetTicks();
+	Uint8 alpha = 0;
+	bool fadeIn = true;
+
+	SDL_Rect screenRect = { 0, 0, 1920, 1080 };
+	SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+
+	while (true)
+	{
+		Uint32 elapsedTime = SDL_GetTicks() - startTime;
+		float progress = (float)elapsedTime / (duration * 1000);
+
+		if (progress > 1.0f)
+		{
+			if (fadeIn)
+			{
+				fadeIn = false;
+				startTime = SDL_GetTicks();
+				progress = 0.0f;
+			}
+			else
+			{
+				break;
+			}
+		}
+
+		alpha = fadeIn
+			? (Uint8)(255 * progress)
+			: (Uint8)(255 * (1.0f - progress));
+
+		SDL_SetTextureAlphaMod(texture, alpha);
+		SDL_RenderClear(renderer);
+		SDL_RenderCopy(renderer, texture, NULL, &screenRect);
+		SDL_RenderPresent(renderer);
+
+		SDL_Delay(16);
+	}
 }

@@ -9,15 +9,56 @@
 		</dialogues>
 	</RAIDEDVILLAGE>
 	<MENTORSHIP>
-			<dialogues size="3">
-				<dialogue1 character="Mentor" text="I am mentoring you" branching="0" />
-				<dialogue2 character="Mentor" text="Option one Selected" branching="0" />
-				<dialogue3 character="Mentor" text="Option twp  Selected" branching="0" />
-				<options option1="MENTORSHIP1" option2="MENTORSHIP2" option3="SECRET" />
-			</dialogues>
-		</MENTORSHIP>
+		<dialogues size="1">
+			<dialogue1 character="Mentor" text="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum"  branching="1"/>
+			<dialogue2 character="Mentor" text="this is the option A"  branching="0"/>
+			<dialogue2 character="Mentor" text="this is the option B"  branching="0"/>
+			<options a="ok" b="no"/>
+		</dialogues>
+	</MENTORSHIP>
+	<ISAMU>
+		<dialogues size="1">
+			<dialogue1 character="Isamu" text="Ah Ren! After all this years of training, let me give you some advice."  branching="0"/>
+			<dialogue2 character="Isamu" text="You see, I stood beside Ryoji once. And Hanzo. We bled under the same banner. Back then, we believed we were righteous."  branching="0"/>
+			<dialogue3 character="Isamu" text="But power corrupts even the best men. Ryoji lost himself chasing a lost cause. And Hanzo..."  branching="0"/>
+			<dialogue4 character="Isamu" text="Hanzo clutches to order so tightly, I wonder if he still remembers freedom"  branching="0"/>
+			<dialogue5 character="Isamu" text="Question everything, even those you serve. Especially them"  branching="0"/>
+		
+		</dialogues>
+		
+	</ISAMU>
+	<KAEDE>
+		<dialogues size="1">
+			<dialogue1 character="Kaede" text="Ren! What’s it like… being chosen by Lord Hanzo?"  branching="0"/>
+			<dialogue2 character="Kaede" text="He’s... he’s like a legend. The others say he never falters. Never forgives. But you—he trusts you."  branching="0"/>
+			<dialogue3 character="Kaede" text="I seek to be like you when I grow up, Sir Ren!"  branching="0"/>
+		</dialogues>
+	</KAEDE>
+	<HANZO>
+		<dialogues size="1">
+			<dialogue1 character="Hanzo" text="I trust you, Ren, my strongest and most loyal soldier, for this dangerous mission."  branching="0"/>
+			<dialogue2 character="Hanzo" text="You’ve heard the stories. The Jade Damsels — sacred protectors, tied to balance, all that nonsense. "  branching="0"/>
+			<dialogue3 character="Hanzo" text="But balance is fragile. And people like Ryoji use that fragility to justify control."  branching="0"/>
+			<dialogue4 character="Hanzo" text="He didn’t take them to protect the world. He took them to own it. Wrapped his ambition in prophecy so no one would question him."  branching="0"/>
+			<dialogue5 character="Hanzo" text="We used to fight side by side. He was brilliant. Charismatic. But that kind of man doesn’t stop at victory."  branching="0"/>
+			<dialogue6 character="Hanzo" text="That's why you have to rescue the Three Jade Damsels, Ren"  branching="1"/>
+			<options a="You can trust me, Hanzo" b="I will not disappoint you"/>
+		</dialogues>
+	</HANZO>
+	<EMPTY>
+		<dialogues size="1">
+			<dialogue1  character="" text=""  branching="0"/>
+		</dialogues>
+	</EMPTY>
+	    <dialogues size="3">
+		    <dialogue1 character="Mentor" text="I am mentoring you" branching="0" />
+	     	<dialogue2 character="Mentor" text="Option one Selected" branching="0" />
+		    <dialogue3 character="Mentor" text="Option twp  Selected" branching="0" />
+		    <options option1="MENTORSHIP1" option2="MENTORSHIP2" option3="SECRET" />
+	    </dialogues>
 
-		<SECRET>
+
+<SECRET>
 			<dialogues size="1">
 				<dialogue1 character="Mystery" text="You found a secret!" branching="0" />
 			</dialogues>

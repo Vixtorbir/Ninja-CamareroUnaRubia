@@ -22,6 +22,7 @@ public:
 	bool isClicked = false;
 	bool isOptionA = false;
 	bool isOptionB = false;
+	bool visible = true;
 private:
 	SDL_Rect imagePos;
 	int textX;

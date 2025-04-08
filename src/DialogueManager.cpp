@@ -38,9 +38,19 @@ void DialogueManager::CastDialogue(DialogueEngine dialogueEngine)
     case DialogueEngine::RAIDEDVILLAGE:
         dialogueType = "RAIDEDVILLAGE";
         break;
+    case DialogueEngine::ISAMU:
+		dialogueType = "ISAMU";
+		break;
+    case DialogueEngine::KAEDE:
+        dialogueType = "KAEDE";
+        break;
+    case DialogueEngine::HANZO:
+        dialogueType = "HANZO";
+        break;
     case DialogueEngine::EMPTY:
         dialogueType = "EMPTY";
         break;
+ 
     default:
         LOG("Unknown dialogue type");
         return;
@@ -90,12 +100,21 @@ void DialogueManager::Update()
     if (!dialogueEnded && Engine::GetInstance().input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
     {
         Engine::GetInstance().guiManager->ClearControlsOfType(GuiControlType::DIALOGUE);
-        ShowNextDialogue();
+        if (!isFirstOption)
+        {
+            ShowNextDialogue();
+        }
+        else {
+            ShowNextDialogue();
+            ShowNextDialogue();
+            isFirstOption = false;
+        }
     }
 
     if (!dialogueEnded && Engine::GetInstance().input->GetKey(SDL_SCANCODE_UP) == KEY_DOWN)
     {
         Engine::GetInstance().guiManager->ClearControlsOfType(GuiControlType::DIALOGUE);
+        isFirstOption = true;
         ShowNextDialogue();
 
     }
@@ -117,10 +136,6 @@ void DialogueManager::ShowNextDialogue()
         std::string character = dialogues[currentDialogueIndex].first;
         std::string text = dialogues[currentDialogueIndex].second;
 
-        // Display the current dialogue and character name
-        Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::DIALOGUE, 1, text.c_str(), dialoguePos, module);
-        Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::DIALOGUE, 1, character.c_str(), namePos, module);
-
         // If not branching, move to the next dialogue automatically
         if (!isBranching)
         {
@@ -128,6 +143,7 @@ void DialogueManager::ShowNextDialogue()
         }
         else
         {
+            currentDialogueIndex++;
 
             std::string optionA = "Option A";
             std::string optionB = "Option B";
@@ -140,6 +156,11 @@ void DialogueManager::ShowNextDialogue()
             if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT) optionIndex = 2;
 
         }
+
+        // Display the current dialogue and character name
+        Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::DIALOGUE, 1, text.c_str(), dialoguePos, module);
+        Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::DIALOGUE, 1, character.c_str(), namePos, module);
+
     }
     else
     {

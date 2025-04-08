@@ -10,6 +10,9 @@ enum class DialogueEngine
 {
 	MENTORSHIP, MENTORSHIP1, MENTORSHIP2,
 	RAIDEDVILLAGE,
+	ISAMU,
+	KAEDE,
+	HANZO,
 	EMPTY
 };
 
@@ -58,8 +61,10 @@ private:
 
 	SDL_Rect optionAPos = { 1000, 550, 300,150 };
 	SDL_Rect optionBPos = { 1000, 800, 300,150 };
-	
+	std::vector<std::pair<std::string, std::string>> branchingOptions;
 	int isBranching = 0;
+
+	bool isFirstOption = false;
 
 	pugi::xml_document dialogFile;
 	std::vector<std::pair<std::string, std::string>> dialogues;

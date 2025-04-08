@@ -58,7 +58,8 @@ bool Dialogue::Update(float dt)
             {
                 timer = 0.0f;
                 charIndex++;
-                displayText = text.substr(0, charIndex);
+                std::string partialText = text.substr(0, charIndex);
+                displayText = WrapText(partialText, bounds.w - 20, Engine::GetInstance().render->font); // optional margin
 
                 if (charIndex >= text.length())
                 {
@@ -88,7 +89,7 @@ bool Dialogue::Update(float dt)
 
             Engine::GetInstance().render.get()->DrawTexture(Hanzo, (textX - 700) - Engine::GetInstance().render->camera.x, (textY - 550) - Engine::GetInstance().render->camera.y, &portraitPos);
             Engine::GetInstance().render.get()->DrawTexture(OverlayPortrait, screenHeight / 3 - Engine::GetInstance().render->camera.x, screenHeight / 2 - Engine::GetInstance().render->camera.y, &overlayPos);
-
+            isName = true;
         }
         else if (buttonText == "Mikado") {
             SDL_QueryTexture(Mikado, NULL, NULL, &textureWidth, &textureHeight);
@@ -96,12 +97,36 @@ bool Dialogue::Update(float dt)
 
             Engine::GetInstance().render.get()->DrawTexture(Mikado, (textX - 700) - Engine::GetInstance().render->camera.x, (textY - 550) - Engine::GetInstance().render->camera.y, &portraitPos);
             Engine::GetInstance().render.get()->DrawTexture(OverlayPortrait, screenHeight / 3 - Engine::GetInstance().render->camera.x, screenHeight / 2 - Engine::GetInstance().render->camera.y, &overlayPos);
-
+            isName = true;
         }
         else if (buttonText == "Mentor") {
             SDL_QueryTexture(Mentor, NULL, NULL, &textureWidth, &textureHeight);
             SDL_Rect portraitPos = { 0, 0, textureWidth, textureHeight };
 
+            Engine::GetInstance().render.get()->DrawTexture(Mentor, (textX - 900) - Engine::GetInstance().render->camera.x, (textY - 550) - Engine::GetInstance().render->camera.y, &portraitPos);
+            Engine::GetInstance().render.get()->DrawTexture(OverlayPortrait, screenHeight / 3 - Engine::GetInstance().render->camera.x, screenHeight / 2 - Engine::GetInstance().render->camera.y, &overlayPos);
+            isName = true;
+        }
+        else if (buttonText == "Isamu") {
+            SDL_QueryTexture(Mentor, NULL, NULL, &textureWidth, &textureHeight);
+            SDL_Rect portraitPos = { 0, 0, textureWidth, textureHeight };
+            isName = true;
+            Engine::GetInstance().render.get()->DrawTexture(Mentor, (textX - 900) - Engine::GetInstance().render->camera.x, (textY - 550) - Engine::GetInstance().render->camera.y, &portraitPos);
+            Engine::GetInstance().render.get()->DrawTexture(OverlayPortrait, screenHeight / 3 - Engine::GetInstance().render->camera.x, screenHeight / 2 - Engine::GetInstance().render->camera.y, &overlayPos);
+
+        }
+        else if (buttonText == "Kaede") {
+            SDL_QueryTexture(Mentor, NULL, NULL, &textureWidth, &textureHeight);
+            SDL_Rect portraitPos = { 0, 0, textureWidth, textureHeight };
+            isName = true;
+            Engine::GetInstance().render.get()->DrawTexture(Mentor, (textX - 900) - Engine::GetInstance().render->camera.x, (textY - 550) - Engine::GetInstance().render->camera.y, &portraitPos);
+            Engine::GetInstance().render.get()->DrawTexture(OverlayPortrait, screenHeight / 3 - Engine::GetInstance().render->camera.x, screenHeight / 2 - Engine::GetInstance().render->camera.y, &overlayPos);
+
+        }
+        else if (buttonText == "Hanzo") {
+            SDL_QueryTexture(Mentor, NULL, NULL, &textureWidth, &textureHeight);
+            SDL_Rect portraitPos = { 0, 0, textureWidth, textureHeight };
+            isName = true;
             Engine::GetInstance().render.get()->DrawTexture(Mentor, (textX - 700) - Engine::GetInstance().render->camera.x, (textY - 550) - Engine::GetInstance().render->camera.y, &portraitPos);
             Engine::GetInstance().render.get()->DrawTexture(OverlayPortrait, screenHeight / 3 - Engine::GetInstance().render->camera.x, screenHeight / 2 - Engine::GetInstance().render->camera.y, &overlayPos);
 
@@ -136,11 +161,82 @@ bool Dialogue::Update(float dt)
             Engine::GetInstance().render->DrawRectangle(bounds, 0, 255, 0, 255, true, false);
             break;
         }
-   
-        Engine::GetInstance().render->DrawText(displayText.c_str(), textX, textY, textW, textH);
+        
+        if (!isName)
+        {
+            int paddingX = 550;
+            int paddingY = 10;
+            int lineHeight = 0;
+            TTF_SizeText(Engine::GetInstance().render->font, "A", nullptr, &lineHeight);
 
+            std::istringstream stream(displayText);
+            std::string line;
+            int offsetY = 0;
+            while (std::getline(stream, line))
+            {
+                int lineW = 0;
+                TTF_SizeText(Engine::GetInstance().render->font, line.c_str(), &lineW, nullptr);
 
+                int lineX = bounds.x + paddingX;
+                int lineY = bounds.y + paddingY + offsetY;
+
+                Engine::GetInstance().render->DrawText(line.c_str(), lineX, lineY, lineW, lineHeight);
+                offsetY += lineHeight + 4;
+            }
+
+        }
+        else {
+            int paddingX = 125;
+            int paddingY = 0;
+            int lineHeight = 0;
+            TTF_SizeText(Engine::GetInstance().render->font, "A", nullptr, &lineHeight);
+
+            std::istringstream stream(displayText);
+            std::string line;
+            int offsetY = 0;
+            while (std::getline(stream, line))
+            {
+                int lineW = 0;
+                TTF_SizeText(Engine::GetInstance().render->font, line.c_str(), &lineW, nullptr);
+
+                int lineX = bounds.x + paddingX;
+                int lineY = bounds.y + paddingY + offsetY;
+
+                Engine::GetInstance().render->DrawText(line.c_str(), lineX, lineY, lineW, lineHeight);
+                offsetY += lineHeight + 4;
+            }
+
+        }
+       
     }
 
     return false;
+}
+std::string Dialogue::WrapText(const std::string& input, int maxWidth, TTF_Font* font)
+{
+    std::string wrappedText;
+    std::istringstream words(input);
+    std::string word;
+    std::string line;
+
+    while (words >> word)
+    {
+        std::string testLine = line.empty() ? word : line + " " + word;
+
+        int w = 0, h = 0;
+        TTF_SizeUTF8(font, testLine.c_str(), &w, &h);
+
+        if (w > maxWidth - 1000)
+        {
+            wrappedText += line + "\n";
+            line = word;
+        }
+        else
+        {
+            line = testLine;
+        }
+    }
+
+    wrappedText += line; // add the last line
+    return wrappedText;
 }
