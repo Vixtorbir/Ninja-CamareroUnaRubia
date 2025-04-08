@@ -83,14 +83,16 @@ bool Render::Start()
 void Render::RenderMinimap() {
 	if (!minimapEnabled) return;
 
+	// Get data
 	Scene* scene = Engine::GetInstance().scene.get();
 	Vector2D playerPos = scene->GetPlayerPosition();
 	Map* map = Engine::GetInstance().map.get();
 
-
+	// Set render target
 	SDL_SetRenderTarget(renderer, minimapTexture);
 	SDL_RenderClear(renderer);
 
+	// Calculate view area
 	SDL_Rect minimapView = {
 		(int)(playerPos.getX() - (minimapRect.w / (2 * minimapZoom))),
 		(int)(playerPos.getY() - (minimapRect.h / (2 * minimapZoom))),
@@ -98,30 +100,77 @@ void Render::RenderMinimap() {
 		(int)(minimapRect.h / minimapZoom)
 	};
 
+	int mapWidth, mapHeight;
+	map->GetMapDimensions(mapWidth, mapHeight);
+	MapLayer* navLayer = map->GetNavigationLayer();
+
+	if (navLayer) {  // Only proceed if we found the layer
+		for (int y = 0; y < mapHeight; y++) {
+			for (int x = 0; x < mapWidth; x++) {
+				int tileIndex = y * mapWidth + x;
+				if (navLayer->tiles[tileIndex] != 0) {  // Access tiles through the layer
+					SDL_Rect tileRect = {
+						(int)((x * map->mapData.tileWidth - minimapView.x) * minimapZoom),
+						(int)((y * map->mapData.tileHeight - minimapView.y) * minimapZoom),
+						(int)(map->mapData.tileWidth * minimapZoom),
+						(int)(map->mapData.tileHeight * minimapZoom)
+					};
+					DrawRectangle(tileRect, 200, 200, 200, 255, true, false);
+				}
+			}
+		}
+	}
+	// Draw colliders (from previous implementation)
 	for (size_t i = 0; i < map->collisionBodies.size(); i++) {
 		PhysBody* body = map->collisionBodies[i];
 		int x, y;
 		body->GetPosition(x, y);
-
 		SDL_Rect rect = {
 			(int)((x - minimapView.x) * minimapZoom),
 			(int)((y - minimapView.y) * minimapZoom),
 			(int)(body->width * minimapZoom),
 			(int)(body->height * minimapZoom)
 		};
+		// Draw colliders in dark gray
 		DrawRectangle(rect, 100, 100, 100, 255, true, false);
 	}
+	MapLayer* tileLayer = nullptr;
+	const char* layerNames[] = { "Floor", "Walkable", "Navigation", "Tile Layer 1" };
+	for (const char* name : layerNames) {
+		tileLayer = map->GetLayer(name);
+		if (tileLayer) break;
+	}
 
+	if (tileLayer) {
+		for (int y = 0; y < tileLayer->height; y++) {
+			for (int x = 0; x < tileLayer->width; x++) {
+				int gid = tileLayer->Get(x, y);
+				if (gid > 0) {
+					SDL_Rect dest = {
+						(int)((x * 128 - minimapView.x) * minimapZoom),
+						(int)((y * 128 - minimapView.y) * minimapZoom),
+						(int)(128 * minimapZoom),
+						(int)(128 * minimapZoom)
+					};
+
+					// Draw walkable tiles as light gray
+					SDL_SetRenderDrawColor(renderer, 200, 200, 200, 255);
+					SDL_RenderFillRect(renderer, &dest);
+				}
+			}
+		}
+	}
+	// Draw player (red dot)
 	SDL_Rect playerRect = {
-		(int)(minimapRect.w / 2) - 2,
-		(int)(minimapRect.h / 2) - 2,
+		minimapRect.w / 2 - 2,
+		minimapRect.h / 2 - 2,
 		4, 4
 	};
 	DrawRectangle(playerRect, 255, 0, 0, 255, true, false);
 
+	// Reset render target
 	SDL_SetRenderTarget(renderer, nullptr);
-}
-// Called each loop iteration
+}// Called each loop iteration
 bool Render::PreUpdate()
 {
 	//ZoneScoped;

@@ -156,7 +156,18 @@ public:
 
     // L09: TODO 2: Implement function to the Tileset based on a tile id
     TileSet* GetTilesetFromTileId(int gid) const;
+    MapLayer* GetNavigationLayer() const {
+        for (const auto& layer : mapData.layers) {
+            if (layer->name == "Navigation") return layer;
+        }
+        return nullptr;
+    }
 
+    // Add this to get map dimensions
+    void GetMapDimensions(int& width, int& height) const {
+        width = mapData.width;
+        height = mapData.height;
+    }
     // L09: TODO 6: Load a group of properties 
     bool LoadProperties(pugi::xml_node& node, Properties& properties);
 
@@ -182,15 +193,20 @@ public:
 
     bool IsObjectGroupCollidable(int x, int y);
 
-
+    MapLayer* GetLayer(const char* name) {
+        for (auto layer : mapData.layers) {
+            if (layer->name == name) return layer;
+        }
+        return nullptr;
+    }
 public: 
     std::string mapFileName;
     std::string mapPath;
     std::vector<PhysBody*> collisionBodies;
+    MapData mapData;
 
 private:
     bool mapLoaded;
     // L06: DONE 1: Declare a variable data of the struct MapData
-    MapData mapData;
 
 };
