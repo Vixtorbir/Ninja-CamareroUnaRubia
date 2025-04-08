@@ -128,11 +128,20 @@ public:
 	GuiImage* menuBackgroundImage = nullptr;
 
 	float logoTimer = 0.0f;
-	float fadeDuration = 0.0f; // Duración del fade in y fade out en segundos
+	float fadeDuration = 3.0f; // Duración del fade in y fade out en segundos
 	float opacity = 0.0f;
 	SDL_Texture* logo = nullptr;
+	int logoFxId;
 
-private:
+	
+
+private:		
+	
+	int curPopupMusic;
+
 	Parallax* parallax = nullptr;
+	//music
+	int mainMenuMusicId;
+	int gameplayMusicId;
 	
 };

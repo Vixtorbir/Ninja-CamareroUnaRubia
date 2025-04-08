@@ -31,7 +31,8 @@
 		<dialogues size="1">
 			<dialogue1 character="Kaede" text="Ren! What’s it like… being chosen by Lord Hanzo?"  branching="0"/>
 			<dialogue2 character="Kaede" text="He’s... he’s like a legend. The others say he never falters. Never forgives. But you—he trusts you."  branching="0"/>
-			<dialogue3 character="Kaede" text="I seek to be like you when I grow up, Sir Ren!"  branching="0"/>
+			<dialogue3 character="Kaede" text="I seek to be like you when I grow up, Sir Ren!"  branching="1"/>
+			<options a="Keep training and you will success" b="Thanks recruit"/>
 		</dialogues>
 	</KAEDE>
 	<HANZO>

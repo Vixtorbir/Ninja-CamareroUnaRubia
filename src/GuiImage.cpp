@@ -53,19 +53,19 @@ bool GuiImage::Update(float dt)
             switch (state)
             {
             case GuiControlState::DISABLED:
-                Engine::GetInstance().render->DrawTexturedRectangle(texture, 50, -50, textX, textY, false);
+                Engine::GetInstance().render->DrawTexturedRectangle(texture, 0, -0, textX, textY, false);
 
                 break;
             case GuiControlState::NORMAL:
-                Engine::GetInstance().render->DrawTexturedRectangle(texture, 50, -50, textX, textY, false);
+                Engine::GetInstance().render->DrawTexturedRectangle(texture, 0, -0, textX, textY, false);
                 break;
 
             case GuiControlState::FOCUSED:
-                Engine::GetInstance().render->DrawTexturedRectangle(texture, 50, -50, textX, textY, false);
+                Engine::GetInstance().render->DrawTexturedRectangle(texture, 0, -0, textX, textY, false);
                 break;
 
             case GuiControlState::PRESSED:
-                Engine::GetInstance().render->DrawTexturedRectangle(texture, 50, -50, textX, textY, false);
+                Engine::GetInstance().render->DrawTexturedRectangle(texture, 0, -0, textX, textY, false);
                 break;
             }
         }

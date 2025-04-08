@@ -23,7 +23,7 @@
 					<idle loop="true" speed="0.5">
 						<frame x="0" y="768" w="256" h="256" />
 					</idle>
-					<walk loop="true" speed="0.5">
+					<walk loop="true" speed="0.15">
 						<frame x="0" y="0" w="256" h="256" />
 						<frame x="256" y="0" w="256" h="256" />
 						<frame x="512" y="0" w="256" h="256" />

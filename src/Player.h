@@ -70,7 +70,7 @@ public:
 public:
 
 	//Declare player parameters
-	float speed = 5.0f;
+	float speed = 30;
 	SDL_Texture* texture = NULL;
 	int texW, texH;
 	int camX, camY;
@@ -115,6 +115,8 @@ public:
 	Animation dash;
 	Animation crouch;
 
+	bool inBubble = false;
+
 	bool loadLevel2 = false;
 
 	bool loadLevel1 = false;
@@ -127,7 +129,7 @@ public:
 
 	GuiSlider* HP_Slider;
 	SDL_Rect btPos = { 960, 520, 40, 40};
-	SDL_Rect hpPos = { 500, 100, 1000, 100};
+	SDL_Rect hpPos = { 150, 100, 200, 15};
 
 	Module* sceneModule = nullptr;
 	EntityDirections playerDirection = EntityDirections::RIGHT;
@@ -165,7 +167,7 @@ private:
 	int step1, step2, step3, step4, step5;
 	int stepSounds;
 	float footstepTimer = 0.0f;
-	float footstepDelay = 0.4f; // how often to play a step (adjust as needed)
+	float footstepDelay = 0.4f;
 	int hp; 
 	const int maxHp = 3;
 

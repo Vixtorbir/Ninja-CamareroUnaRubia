@@ -41,7 +41,7 @@ bool GuiControlButton::Start()
     //Audio
     buttonSelectedFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/ExtraFx/selectButton.ogg");
     buttonPressedFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/ExtraFx/clickButton.ogg");
-   /* logoFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/ExtraFx/logoFx.ogg");
+   /* 
     titleFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/ExtraFx/TittleFx.ogg");*/
     return false;
 }
@@ -65,7 +65,12 @@ bool GuiControlButton::Update(float dt)
 
             if (Engine::GetInstance().input->GetMouseButtonDown(SDL_BUTTON_LEFT) == KEY_REPEAT) {
                 state = GuiControlState::PRESSED;
-                Engine::GetInstance().audio.get()->PlayFx(buttonPressedFxId);
+                if (!pressed)
+                {
+                    Engine::GetInstance().audio.get()->PlayFx(buttonPressedFxId);
+                    pressed = true;
+                }
+               
             }
 
             if (Engine::GetInstance().input->GetMouseButtonDown(SDL_BUTTON_LEFT) == KEY_UP) {
@@ -84,23 +89,24 @@ bool GuiControlButton::Update(float dt)
         {
        
         case GuiControlState::NORMAL:
-            Engine::GetInstance().render->DrawTexturedRectangle(texture, bounds.x - 200, bounds.y - 170, 600, 400, false);
+            Engine::GetInstance().render->DrawTexturedRectangle(texture, bounds.x - 200, bounds.y - 100, 600, 400, false);
 
             if (isOptionA || isOptionB)
             {
-                Engine::GetInstance().render->DrawText(text.c_str(), bounds.x, bounds.y, 150, 100);
+
+                Engine::GetInstance().render->DrawTextWhite(text.c_str(), bounds.x, bounds.y, 150, 100);
 
             }
             break;
 
         case GuiControlState::FOCUSED:
-            Engine::GetInstance().render->DrawTexturedRectangle(textureSelected, bounds.x - 200, bounds.y - 170, 600, 400, false);
+            Engine::GetInstance().render->DrawTexturedRectangle(textureSelected, bounds.x - 200, bounds.y - 100, 600, 400, false);
            
             break;
            
 
         case GuiControlState::PRESSED:
-            Engine::GetInstance().render->DrawTexturedRectangle(textureSelected, bounds.x - 200, bounds.y - 170, 600, 400, false);
+            Engine::GetInstance().render->DrawTexturedRectangle(textureSelected, bounds.x - 200, bounds.y - 100, 600, 400, false);
             isClicked = true;
           
             break;
@@ -117,7 +123,7 @@ bool GuiControlButton::Update(float dt)
 
         // Calculate position to center text within the button
         int textX = bounds.x + (bounds.w - textW) / 2;
-        int textY = bounds.y + (bounds.h - textH) / 2;
+        int textY = (bounds.y+80) + (bounds.h - textH) / 2;
 
         // Render the text
         if(!isOptionA && !isOptionB ) Engine::GetInstance().render->DrawText(text.c_str(), textX, textY, textW, textH);

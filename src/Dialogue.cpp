@@ -79,8 +79,6 @@ bool Dialogue::Update(float dt)
         SDL_QueryTexture(Overlay, NULL, NULL, &textureWidthOverlay2, &textureHeightOverlay2);
         SDL_Rect overlayPos2 = { 0, 0, textureWidthOverlay2, textureHeightOverlay2 };
 
-
-
         std::string buttonText = text;
 
         if (buttonText == "Hanzo") {
@@ -164,7 +162,7 @@ bool Dialogue::Update(float dt)
         
         if (!isName)
         {
-            int paddingX = 550;
+            int paddingX = 650;
             int paddingY = 10;
             int lineHeight = 0;
             TTF_SizeText(Engine::GetInstance().render->font, "A", nullptr, &lineHeight);
@@ -186,8 +184,8 @@ bool Dialogue::Update(float dt)
 
         }
         else {
-            int paddingX = 125;
-            int paddingY = 0;
+            int paddingX = 95;
+            int paddingY = -20;
             int lineHeight = 0;
             TTF_SizeText(Engine::GetInstance().render->font, "A", nullptr, &lineHeight);
 
@@ -226,7 +224,7 @@ std::string Dialogue::WrapText(const std::string& input, int maxWidth, TTF_Font*
         int w = 0, h = 0;
         TTF_SizeUTF8(font, testLine.c_str(), &w, &h);
 
-        if (w > maxWidth - 1000)
+        if (w > maxWidth - 1200)
         {
             wrappedText += line + "\n";
             line = word;

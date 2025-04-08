@@ -31,6 +31,7 @@ private:
 	int buttonPressedFxId;
 
 	bool fxPlayed = false;
+	bool pressed = false;
 };
 
 #pragma once

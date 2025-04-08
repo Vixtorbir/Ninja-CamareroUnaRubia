@@ -87,17 +87,22 @@ bool Scene::Awake()
 
 	return ret;
 
-
 }
 
 // Called before the first frame
 bool Scene::Start()
 {
+	curPopupMusic = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Music/ScreamAngry.ogg");
+
 	logo = Engine::GetInstance().textures->Load("Assets/UI/logo.png");
+	logoFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/ExtraFx/logoFx.ogg");
 	MenuBackgroundImage = Engine::GetInstance().textures.get()->Load("Assets/UI/Menu.png");
 
 	// Inicializar el estado de la pantalla de presentaci�n
+
 	SetState(GameState::LOGO);
+	Engine::GetInstance().audio.get()->PlayFx(curPopupMusic);
+
 
 	SDL_Rect btPosMenu = { 0, 0, 0, 0 };
 
@@ -159,7 +164,7 @@ bool Scene::Update(float dt)
 	//L03 TODO 3: Make the camera movement independent of framerate
 	float camSpeed = 1;
 
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
+	/*if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
 		Engine::GetInstance().render.get()->camera.y -= ceil(camSpeed * dt);
 
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
@@ -170,7 +175,7 @@ bool Scene::Update(float dt)
 
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
 		Engine::GetInstance().render.get()->camera.x += ceil(camSpeed * dt);
-
+*/
 
 	//Get mouse position and obtain the map coordinate
 	int scale = Engine::GetInstance().window.get()->GetScale();
@@ -213,11 +218,14 @@ bool Scene::Update(float dt)
 
 	HandleInput();
 
-	switch (currentState) {
+	switch (currentState)
+	{
 	case GameState::MAIN_MENU:
+		
 		UpdateMainMenu(dt);
 		break;
 	case GameState::PLAYING:
+		
 		UpdatePlaying(dt);
 		break;
 	case GameState::PAUSED:
@@ -247,7 +255,7 @@ bool Scene::PostUpdate()
 		ret = false;
 
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F2) == KEY_DOWN)
-		SafeLoadMap("MapTemplate1.tmx", Vector2D(22112, 4032)); // Posición específica Mapa 1
+		SafeLoadMap("MapTemplate1.tmx", Vector2D(17280, 4224)); // Posición específica Mapa 1
 		//Engine::GetInstance().scene.get()->player->currentLevel = 1;
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F3) == KEY_DOWN)
 		SafeLoadMap("MapTemplate2.tmx", Vector2D(193, 3845)); // Posición específica Mapa 2
@@ -275,7 +283,7 @@ bool Scene::PostUpdate()
 		FadeTransition(Engine::GetInstance().render.get()->renderer, false, 1.0f);
 		Engine::GetInstance().map->CleanUp(); // Esto solo limpia recursos antiguos
 
-		SafeLoadMap("MapTemplate2.tmx", Vector2D(193, 3845));
+		SafeLoadMap("MapTemplate2.tmx", Vector2D(1504, 3888));
 
 		Engine::GetInstance().scene.get()->player->loadLevel2 = false;
 		Engine::GetInstance().scene.get()->player->currentLevel = 2;
@@ -339,7 +347,6 @@ void Scene::LoadTextures()
 {
 	Hanzo = Engine::GetInstance().textures.get()->Load("Assets/Portraits/Hanzo.png");
 	dialogueManager->Hanzo = Hanzo;
-	dialogueManager->CastDialogue(DialogueEngine::EMPTY);
 
 }
 
@@ -479,7 +486,8 @@ void Scene::HandleInput()
 		{
 
 			SetState(GameState::PLAYING);
-
+			Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/gameplaySongPlaceholder.wav");
+			Engine::GetInstance().audio.get()->musicVolume(50);
 			startButton->CleanUp();
 			optionsButton->CleanUp();
 			exitButton->CleanUp();
@@ -560,8 +568,12 @@ void Scene::UpdateLogo(float dt) {
 
 	
 	fadeDuration += dt;
+	
 	FadeTransition(Engine::GetInstance().render.get()->renderer, logo, .1f);
+	
 	SetState(GameState::MAIN_MENU);
+	Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/titleSongPlaceholder.wav");
+	Engine::GetInstance().audio.get()->musicVolume(50);
 	
 
 }

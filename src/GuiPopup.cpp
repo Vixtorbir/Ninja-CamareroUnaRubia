@@ -55,20 +55,20 @@ bool GuiPopup::Update(float dt)
 			switch (state)
 			{
 			case GuiControlState::DISABLED:
-				Engine::GetInstance().render->DrawRectangle(bounds, 200, 200, 200, 255, true, false);
+				Engine::GetInstance().render->DrawRectangle(bounds, 200, 200, 200, 0, true, false);
 				break;
 			case GuiControlState::NORMAL:
-				Engine::GetInstance().render->DrawRectangle(bounds, 0, 0, 255, 255, true, false);
+				Engine::GetInstance().render->DrawRectangle(bounds, 0, 0, 255, 0, true, false);
 				break;
 			case GuiControlState::FOCUSED:
-				Engine::GetInstance().render->DrawRectangle(bounds, 0, 0, 20, 255, true, false);
+				Engine::GetInstance().render->DrawRectangle(bounds, 0, 0, 20, 0, true, false);
 				break;
 			case GuiControlState::PRESSED:
-				Engine::GetInstance().render->DrawRectangle(bounds, 0, 255, 0, 255, true, false);
+				Engine::GetInstance().render->DrawRectangle(bounds, 0, 255, 0, 0, true, false);
 				break;
 			}
 
-			Engine::GetInstance().render->DrawText(text.c_str(), bounds.x, bounds.y, bounds.w, bounds.h);
+			Engine::GetInstance().render->DrawWhiteText(text.c_str(), bounds.x, bounds.y, bounds.w, bounds.h);
 
 
 		}
