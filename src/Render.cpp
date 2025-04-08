@@ -63,12 +63,54 @@ bool Render::Awake()
 // Called before the first frame
 bool Render::Start()
 {
+	minimapTexture = SDL_CreateTexture(
+		renderer,
+		SDL_PIXELFORMAT_RGBA8888,
+		SDL_TEXTUREACCESS_TARGET,
+		256, 256  // Minimap resolution (adjust as needed)
+	);
+	minimapRect = { 1920 - 266, 10, 256, 256 };  // Top-right corner
+	minimapZoom = 0.2f;  // Show 5x more area than the main camera
+	minimapEnabled = true;
+
+
 	LOG("render start");
 	// back background
 	SDL_RenderGetViewport(renderer, &viewport);
 	return true;
 }
+void Render::RenderMinimap() {
+	if (!minimapEnabled) return;
 
+	// Set minimap as the render target
+	SDL_SetRenderTarget(renderer, minimapTexture);
+	SDL_RenderClear(renderer);
+
+	// Calculate the minimap's "camera" (centered on player, zoomed out)
+	SDL_Rect minimapCamera = {
+		(int)(camera.x + (camera.w / 2) - (minimapRect.w / (2 * minimapZoom))),
+		(int)(camera.y + (camera.h / 2) - (minimapRect.h / (2 * minimapZoom))),
+		(int)(minimapRect.w / minimapZoom),
+		(int)(minimapRect.h / minimapZoom)
+			};
+
+	// Render all game objects to the minimap (simplified versions)
+	// Example: Draw tiles (replace with your game's rendering logic)
+	/*for (auto& tile : worldTiles) {
+		SDL_Rect tileRect = {
+			(int)((tile.x - minimapCamera.x) * minimapZoom),
+			(int)((tile.y - minimapCamera.y) * minimapZoom),
+			(int)(tile.w * minimapZoom),
+			(int)(tile.h * minimapZoom)
+		};
+		SDL_RenderCopy(renderer, tile.texture, nullptr, &tileRect);
+	}*/
+
+	// Reset render target to the screen
+	SDL_SetRenderTarget(renderer, nullptr);
+
+
+}
 // Called each loop iteration
 bool Render::PreUpdate()
 {
@@ -89,9 +131,18 @@ bool Render::PostUpdate()
 {
 	//ZoneScoped;
 	// Code you want to profile
+	if (minimapEnabled) {
+		// Draw the minimap texture
+		SDL_RenderCopy(renderer, minimapTexture, nullptr, &minimapRect);
 
+		// Optional: Add a border
+		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+		SDL_RenderDrawRect(renderer, &minimapRect);
+	}
 	SDL_SetRenderDrawColor(renderer, background.r, background.g, background.g, background.a);
 	SDL_RenderPresent(renderer);
+	
+
 	return true;
 }
 

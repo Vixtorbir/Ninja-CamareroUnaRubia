@@ -132,10 +132,14 @@ public:
 	int logoFxId;
 
 	int levelIndex = 0;
-
+	bool showingMap = false;
+	bool canToggleMap = true;
 private:		
 	
 	int curPopupMusic;
+
+	SDL_Texture* mapBackgroundUI = nullptr;
+	GuiImage* mapBackgroundUIImage = nullptr;
 
 	Parallax* parallax = nullptr;
 	//music

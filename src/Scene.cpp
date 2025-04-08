@@ -97,7 +97,10 @@ bool Scene::Start()
 	logo = Engine::GetInstance().textures->Load("Assets/UI/logo.png");
 	logoFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/ExtraFx/logoFx.ogg");
 	MenuBackgroundImage = Engine::GetInstance().textures.get()->Load("Assets/UI/Menu.png");
-
+	mapBackgroundUI = Engine::GetInstance().textures.get()->Load("Assets/UI/MapBackgroundUI.png");
+	SDL_Rect btPos00 = { 0, 0, 0,0 };
+	mapBackgroundUIImage = (GuiImage*)Engine::GetInstance().guiManager->CreateGuiImage(GuiControlType::IMAGE, 1, "MyButton", btPos00, this, mapBackgroundUI);
+	mapBackgroundUIImage->visible = false;
 	// Inicializar el estado de la pantalla de presentaci�n
 
 	SetState(GameState::LOGO);
@@ -221,11 +224,9 @@ bool Scene::Update(float dt)
 	switch (currentState)
 	{
 	case GameState::MAIN_MENU:
-		
 		UpdateMainMenu(dt);
 		break;
 	case GameState::PLAYING:
-		
 		UpdatePlaying(dt);
 		break;
 	case GameState::PAUSED:
@@ -546,9 +547,24 @@ void Scene::UpdateMainMenu(float dt) {
 }
 
 void Scene::UpdatePlaying(float dt) {
-	// Handle gameplay logic
-	// Example: Update player, enemies, and other game entities
 	player->inGame = true;
+
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_TAB) == KEY_DOWN)
+	{
+		if (canToggleMap)
+		{
+			showingMap = !showingMap;
+			canToggleMap = false;
+		}
+	}
+	else
+	{
+		// Reset the toggle when the key is no longer pressed
+		canToggleMap = true;
+	}
+
+	// Control visibility based on showingMap
+	mapBackgroundUIImage->visible = showingMap;
 
 	player->Update(dt);
 	for (auto& enemy : enemyList) {

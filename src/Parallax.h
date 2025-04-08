@@ -22,7 +22,7 @@ public:
 	bool Update(float dt);
 	bool CleanUp();
 
-
+	
 	std::vector<Layer> layers;
 	float previousCamX;
 	int sizeW = 1421;

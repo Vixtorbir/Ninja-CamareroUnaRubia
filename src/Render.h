@@ -30,7 +30,7 @@ public:
 
 	void SetViewPort(const SDL_Rect& rect);
 	void ResetViewPort();
-
+	void RenderMinimap();
 	// Drawing
 	bool DrawTexture(SDL_Texture* texture, int x, int y, const SDL_Rect* section = NULL, float speed = 1.0f, double angle = 0, int pivotX = INT_MAX, int pivotY = INT_MAX) const;
 	bool DrawEntity(SDL_Texture* texture, int x, int y, const SDL_Rect* section, float speed, double angle, int pivotX, int pivotY, bool direction) const;
@@ -54,6 +54,10 @@ public:
 	void SetBackgroundColor(SDL_Color color);
 
 public:
+	SDL_Texture* minimapTexture;
+	SDL_Rect minimapRect;
+	float minimapZoom;
+	bool minimapEnabled;
 
 	SDL_Renderer* renderer;
 	SDL_Rect camera;
