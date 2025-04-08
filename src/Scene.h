@@ -131,7 +131,7 @@ public:
 	SDL_Texture* logo = nullptr;
 	int logoFxId;
 
-
+	int levelIndex = 0;
 
 private:		
 	
