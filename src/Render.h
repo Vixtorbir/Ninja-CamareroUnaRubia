@@ -20,6 +20,8 @@ public:
 	// Called before the first frame
 	bool Start();
 
+	void RenderMinimap();
+
 	// Called each loop iteration
 	bool PreUpdate();
 	bool Update(float dt);
@@ -30,8 +32,9 @@ public:
 
 	void SetViewPort(const SDL_Rect& rect);
 	void ResetViewPort();
-	void RenderMinimap();
-	// Drawing
+
+			// Use colliders and playerX/Y instead of scene/player
+		// Drawing
 	bool DrawTexture(SDL_Texture* texture, int x, int y, const SDL_Rect* section = NULL, float speed = 1.0f, double angle = 0, int pivotX = INT_MAX, int pivotY = INT_MAX) const;
 	bool DrawEntity(SDL_Texture* texture, int x, int y, const SDL_Rect* section, float speed, double angle, int pivotX, int pivotY, bool direction) const;
 	bool DrawTexture(SDL_Texture* texture, int x, int y, const SDL_Rect* section, float speed, double angle, int pivotX, int pivotY, bool direction) const;

@@ -2,6 +2,7 @@
 #include "Window.h"
 #include "Render.h"
 #include "Log.h"
+#include "Player.h"
 //#include "tracy/Tracy.hpp"
 
 #define VSYNC true
@@ -82,34 +83,51 @@ bool Render::Start()
 void Render::RenderMinimap() {
 	if (!minimapEnabled) return;
 
-	// Set minimap as the render target
+	// Get required data through Engine and Scene
+	Scene* scene = Engine::GetInstance().scene.get();
+	Map* map = Engine::GetInstance().map.get();
+	Player* player = scene->
+
+	// Set render target to minimap texture
 	SDL_SetRenderTarget(renderer, minimapTexture);
 	SDL_RenderClear(renderer);
 
-	// Calculate the minimap's "camera" (centered on player, zoomed out)
-	SDL_Rect minimapCamera = {
-		(int)(camera.x + (camera.w / 2) - (minimapRect.w / (2 * minimapZoom))),
-		(int)(camera.y + (camera.h / 2) - (minimapRect.h / (2 * minimapZoom))),
-		(int)(minimapRect.w / minimapZoom),
-		(int)(minimapRect.h / minimapZoom)
-			};
+	// Calculate minimap view area
+	SDL_Rect minimapView = {
+		static_cast<int>(player->position.x - (minimapRect.w / (2 * minimapZoom))),
+		static_cast<int>(player->position.y - (minimapRect.h / (2 * minimapZoom))),
+		static_cast<int>(minimapRect.w / minimapZoom),
+		static_cast<int>(minimapRect.h / minimapZoom)
+	};
 
-	// Render all game objects to the minimap (simplified versions)
-	// Example: Draw tiles (replace with your game's rendering logic)
-	/*for (auto& tile : worldTiles) {
-		SDL_Rect tileRect = {
-			(int)((tile.x - minimapCamera.x) * minimapZoom),
-			(int)((tile.y - minimapCamera.y) * minimapZoom),
-			(int)(tile.w * minimapZoom),
-			(int)(tile.h * minimapZoom)
-		};
-		SDL_RenderCopy(renderer, tile.texture, nullptr, &tileRect);
-	}*/
+	// Draw collision objects
+	const std::vector<ObjectGroup*>& objectGroups = map->GetObjectGroups();
+	for (size_t i = 0; i < objectGroups.size(); ++i) {
+		const ObjectGroup* group = objectGroups[i];
+		if (group->name == "Floor" || group->name == "Wall") {
+			for (size_t j = 0; j < group->objects.size(); ++j) {
+				const Object* obj = group->objects[j];
+				SDL_Rect rect = {
+					static_cast<int>((obj->x - minimapView.x) * minimapZoom),
+					static_cast<int>((obj->y - minimapView.y) * minimapZoom),
+					static_cast<int>(obj->width * minimapZoom),
+					static_cast<int>(obj->height * minimapZoom)
+				};
+				DrawRectangle(rect, 100, 100, 100, 255, true, false);
+			}
+		}
+	}
 
-	// Reset render target to the screen
+	// Draw player
+	SDL_Rect playerRect = {
+		minimapRect.w / 2 - 2,
+		minimapRect.h / 2 - 2,
+		4, 4
+	};
+	DrawRectangle(playerRect, 255, 0, 0, 255, true, false);
+
+	// Reset render target
 	SDL_SetRenderTarget(renderer, nullptr);
-
-
 }
 // Called each loop iteration
 bool Render::PreUpdate()

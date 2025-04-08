@@ -147,7 +147,7 @@ public:
 
     // Load new map
     bool Load(std::string path, std::string mapFileName);
-
+    const std::vector<ObjectGroup*>& GetObjectGroups() const { return mapData.objectGroups; }
     // L07: TODO 8: Create a method that translates x,y coordinates from map positions to world positions
     Vector2D MapToWorld(int x, int y) const;
 
