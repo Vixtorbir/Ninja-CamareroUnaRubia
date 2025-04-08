@@ -16,6 +16,7 @@ Player::Player() : Entity(EntityType::PLAYER)
 	name = "Player";
 	crouched = false;
 	godMode = false;
+
 }
 
 Player::~Player() {
@@ -34,6 +35,7 @@ bool Player::Start() {
 
 	BackgroundSliderHP = Engine::GetInstance().textures.get()->Load("Assets/UI/lifeBarBack.png");
 	ForeGroundSliderHP = Engine::GetInstance().textures.get()->Load("Assets/UI/lifeBarFront.png");
+	orbUiTexture = Engine::GetInstance().textures.get()->Load("Assets/UI/OrbUi.png");
 
 	position.setX(parameters.attribute("x").as_int());
 	position.setY(parameters.attribute("y").as_int());
@@ -61,9 +63,12 @@ bool Player::Start() {
 	pbody->body->SetFixedRotation(true);
 
 	popup = (GuiPopup*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::POPUP, 1, "Press E", btPos, sceneModule);
-	
+	orbCount = (Text*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::TEXT, 1, "0", OrbCountPos, sceneModule);
+
 	backgroundSliderImage = (GuiImage*)Engine::GetInstance().guiManager->CreateGuiImage(GuiControlType::IMAGE, 1, " ", btPos, sceneModule, BackgroundSliderHP);
 	foregroundSliderImage = (GuiImage*)Engine::GetInstance().guiManager->CreateGuiImage(GuiControlType::IMAGE, 1, " ", btPos, sceneModule, ForeGroundSliderHP);
+
+	orbUi = (GuiImage*)Engine::GetInstance().guiManager->CreateGuiImage(GuiControlType::IMAGE, 1, " ", btPos, sceneModule, orbUiTexture);
 
 	HP_Slider = (GuiSlider*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::HPSLIDER, 1, " ", hpPos, sceneModule);
 	HP_Slider->SetSliderBarSize(200, 15);
@@ -90,7 +95,7 @@ bool Player::Start() {
 
 bool Player::Update(float dt)
 {
-	
+	orbCount->SetText(std::to_string(Orbs));
 	backgroundSliderImage->visible = inGame;
 	foregroundSliderImage->visible = inGame;
 	HP_Slider->visible = inGame;
@@ -407,7 +412,9 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 		break;
 	case ColliderType::ITEM:
 		Engine::GetInstance().audio.get()->PlayFx(pickUpItemFxId);
-		Engine::GetInstance().physics.get()->DeletePhysBody(physB); // Deletes the body of the item from the physics world
+		Orbs++;
+		Engine::GetInstance().physics.get()->DeletePhysBody(physB);
+
 		break;
 	case ColliderType::UNKNOWN:
 		break;

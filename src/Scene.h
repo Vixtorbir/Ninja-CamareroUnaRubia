@@ -67,9 +67,7 @@ public:
 	bool OnGuiMouseClickEvent(GuiControl* control);
 
 	void FadeTransition(SDL_Renderer* renderer, SDL_Texture* texture, float duration);
-
 	
-
 	void LoadTextures();
 
 	void SetState(GameState newState);
@@ -133,7 +131,7 @@ public:
 	SDL_Texture* logo = nullptr;
 	int logoFxId;
 
-	
+
 
 private:		
 	

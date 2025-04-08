@@ -11,6 +11,7 @@
 #include <vector>
 #include "GuiSlider.h"
 #include "GuiImage.h"
+#include "Text.h"
 
 #define MAXHP 100
 
@@ -135,6 +136,14 @@ public:
 	EntityDirections playerDirection = EntityDirections::RIGHT;
 	
 	bool inGame = false;
+
+	int Orbs;
+	GuiImage* orbUi = nullptr;
+	SDL_Texture* orbUiTexture = nullptr;
+	SDL_Rect OrbPos = {1300, 500, 100,100};
+	SDL_Rect OrbCountPos = { 1400, 500, 100,100 };
+
+	Text* orbCount = nullptr;
 
 private:
 		//Audio fx
