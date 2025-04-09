@@ -10,6 +10,7 @@
 struct SDL_Texture;
 
 
+
 class NPC : public Entity
 {
 public:
