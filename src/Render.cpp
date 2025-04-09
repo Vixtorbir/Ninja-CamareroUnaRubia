@@ -115,7 +115,7 @@ void Render::RenderMinimap() {
 						(int)(map->mapData.tileWidth * minimapZoom),
 						(int)(map->mapData.tileHeight * minimapZoom)
 					};
-					DrawRectangle(tileRect, 200, 200, 200, 255, true, false);
+					DrawRectangle(tileRect, 0, 0, 0, 255, true, false);
 				}
 			}
 		}
@@ -132,7 +132,7 @@ void Render::RenderMinimap() {
 			(int)(body->height * minimapZoom *2 + 2)
 		};
 		// Draw colliders in dark gray
-		DrawRectangle(rect, 100, 100, 100, 255, true, false);
+		DrawRectangle(rect, 255, 255, 255, 255, true, false);
 	}
 	MapLayer* tileLayer = nullptr;
 	const char* layerNames[] = { "Floor", "Walkable", "Navigation", "Tile Layer 1" };
@@ -154,7 +154,7 @@ void Render::RenderMinimap() {
 					};
 
 					// Draw walkable tiles as light gray
-					SDL_SetRenderDrawColor(renderer, 200, 200, 200, 255);
+					SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 					SDL_RenderFillRect(renderer, &dest);
 				}
 			}
