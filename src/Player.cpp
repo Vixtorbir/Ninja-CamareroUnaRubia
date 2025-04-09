@@ -42,7 +42,7 @@ bool Player::Start() {
 	texW = parameters.attribute("w").as_int();
 	texH = parameters.attribute("h").as_int();
 
-	//Load animations
+	//Load animations1
 	idle.LoadAnimations(parameters.child("animations").child("idle"));
 	walk.LoadAnimations(parameters.child("animations").child("walk"));
 	jump.LoadAnimations(parameters.child("animations").child("jump"));
@@ -79,7 +79,7 @@ bool Player::Start() {
 	HP_Slider->visible = false;
 	
 	// Set the gravity of the body
-	if (!parameters.attribute("gravity").as_bool()) pbody->body->SetGravityScale(0);
+	pbody->body->SetGravityScale(2.5);
 
 	//initialize audio effect
 	LoadPlayerFx();
@@ -165,7 +165,7 @@ bool Player::Update(float dt)
 		Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT;
 
 	bool grounded = !isJumping && !isDashing && !touchingWall;
-
+	
 	if (moving && grounded)
 	{
 		currentAnimation = &walk;
