@@ -71,7 +71,7 @@ bool Render::Start()
 		256, 256  // Minimap resolution (adjust as needed)
 	);
 	minimapRect = { 1920 - 266, 10, 256, 256 };  // Top-right corner
-	minimapZoom = 0.2f;  // Show 5x more area than the main camera
+	minimapZoom = 0.05f;  // Show 5x more area than the main camera
 	minimapEnabled = true;
 
 
@@ -128,8 +128,8 @@ void Render::RenderMinimap() {
 		SDL_Rect rect = {
 			(int)((x - minimapView.x) * minimapZoom),
 			(int)((y - minimapView.y) * minimapZoom),
-			(int)(body->width * minimapZoom),
-			(int)(body->height * minimapZoom)
+			(int)(body->width * minimapZoom * 2 + 2),
+			(int)(body->height * minimapZoom *2 + 2)
 		};
 		// Draw colliders in dark gray
 		DrawRectangle(rect, 100, 100, 100, 255, true, false);
