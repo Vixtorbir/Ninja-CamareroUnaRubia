@@ -123,11 +123,12 @@ bool Player::Update(float dt) {
     b2Vec2 velocity = b2Vec2(0, pbody->body->GetLinearVelocity().y);
     if (!parameters.attribute("gravity").as_bool()) velocity = b2Vec2(0, 0);
 
-    // Movement input
+    // State management
     bool movingLeft = Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT;
     bool movingRight = Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT;
     bool moving = movingLeft || movingRight;
-
+    bool grounded = !isJumping && !isDashing && !touchingWall;
+    isWalking = false;
     if (movingLeft) {
         velocity.x = -speed * 16;
         playerDirection = EntityDirections::LEFT;
@@ -137,9 +138,7 @@ bool Player::Update(float dt) {
         playerDirection = EntityDirections::RIGHT;
     }
 
-    // State management
-    bool grounded = !isJumping && !isDashing && !touchingWall;
-
+   
     // Handle crouching
     if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_DOWN) == KEY_DOWN) {
         currentState = PlayerState::CROUCHING;
@@ -251,7 +250,28 @@ bool Player::Update(float dt) {
         }
     }
 
-    // Update animation based on current state
+    // State priority system (highest priority first)
+    if (isDashing) {
+        currentState = PlayerState::DASHING;
+    }
+    else if (isJumping) {
+        currentState = PlayerState::JUMPING;
+    }
+    else if (crouched) {
+        currentState = PlayerState::CROUCHING;
+    }
+    else if (touchingWall && !grounded) {
+        currentState = PlayerState::WALL_SLIDING;
+    }
+    else if (moving && grounded) {
+        currentState = PlayerState::WALKING;
+        isWalking = true;
+    }
+    else {
+        currentState = PlayerState::IDLE;
+    }
+
+    // Animation selection
     switch (currentState) {
     case PlayerState::DASHING:
         currentAnimation = &dash;
@@ -263,18 +283,17 @@ bool Player::Update(float dt) {
         currentAnimation = &crouch;
         break;
     case PlayerState::WALL_SLIDING:
-        currentAnimation = &idle; // Replace with wall slide animation when available
+        currentAnimation = &idle; // Replace with wall slide animation if available
         break;
     case PlayerState::WALKING:
         currentAnimation = &walk;
-        if (moving && grounded) {
-            footstepTimer += dt / 1000.0f;
-            if (footstepTimer >= footstepDelay) {
-                int stepSounds[] = { step1, step2, step3, step4, step5 };
-                int randomIndex = rand() % 5;
-                Engine::GetInstance().audio.get()->PlayFx(stepSounds[randomIndex]);
-                footstepTimer = 0.0f;
-            }
+        // Footstep sounds
+        footstepTimer += dt;
+        if (footstepTimer >= footstepDelay) {
+            int stepSounds[] = { step1, step2, step3, step4, step5 };
+            int randomIndex = rand() % 5;
+            Engine::GetInstance().audio.get()->PlayFx(stepSounds[randomIndex]);
+            footstepTimer = 0.0f;
         }
         break;
     case PlayerState::IDLE:
@@ -282,7 +301,6 @@ bool Player::Update(float dt) {
         currentAnimation = &idle;
         break;
     }
-
     // Apply velocity
     if (isJumping) velocity.y = pbody->body->GetLinearVelocity().y;
     pbody->body->SetLinearVelocity(velocity);
