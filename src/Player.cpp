@@ -139,15 +139,21 @@ bool Player::Update(float dt) {
     }
 
    
-    // Handle crouching
-    if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_DOWN) == KEY_DOWN) {
+    bool wantsToCrouch = Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT ||
+        Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_DOWN) == KEY_DOWN;
+
+    if (wantsToCrouch && grounded) {  // Only allow crouching when grounded
+        crouched = true;
         currentState = PlayerState::CROUCHING;
-        ChangeHitboxSize(texW, texH / 2);
-        Engine::GetInstance().audio.get()->PlayFx(crouchFxId);
+        if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_DOWN) == KEY_DOWN) {
+            ChangeHitboxSize(texW, texH / 2);
+            Engine::GetInstance().audio.get()->PlayFx(crouchFxId);
+        }
     }
-    else if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_DOWN) == KEY_UP && currentState == PlayerState::CROUCHING) {
-        currentState = PlayerState::IDLE;
+    else if (crouched && Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_DOWN) == KEY_UP) {
+        crouched = false;
         ChangeHitboxSize(texW, texH);
+        // Don't force IDLE state here - let the state priority system handle it
     }
 
     // Handle jumping
