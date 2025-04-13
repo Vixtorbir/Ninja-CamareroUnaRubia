@@ -16,13 +16,13 @@ struct Layer {
 class Parallax : public Module {
 public:
 	Parallax();
+	bool ChangeTextures(int levelIndex);
 	~Parallax() {}
 	bool Start();
 	bool Update(float dt);
 	bool CleanUp();
 
-	bool ChangeTextures();
-
+	
 	std::vector<Layer> layers;
 	float previousCamX;
 	int sizeW = 1421;
@@ -33,4 +33,10 @@ public:
 	std::string textureName3;
 	std::string textureName4;
 	std::string textureName5;
+
+	std::string textureName1lvl1;
+	std::string textureName2lvl1;
+	std::string textureName3lvl1;
+	std::string textureName4lvl1;
+	std::string textureName5lvl1;
 };

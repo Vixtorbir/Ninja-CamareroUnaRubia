@@ -67,9 +67,7 @@ public:
 	bool OnGuiMouseClickEvent(GuiControl* control);
 
 	void FadeTransition(SDL_Renderer* renderer, SDL_Texture* texture, float duration);
-
 	
-
 	void LoadTextures();
 
 	void SetState(GameState newState);
@@ -133,11 +131,15 @@ public:
 	SDL_Texture* logo = nullptr;
 	int logoFxId;
 
-	
-
+	int levelIndex = 0;
+	bool showingMap = false;
+	bool canToggleMap = true;
 private:		
 	
 	int curPopupMusic;
+
+	SDL_Texture* mapBackgroundUI = nullptr;
+	GuiImage* mapBackgroundUIImage = nullptr;
 
 	Parallax* parallax = nullptr;
 	//music

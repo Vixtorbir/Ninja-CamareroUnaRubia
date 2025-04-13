@@ -50,7 +50,7 @@ bool Item::Update(float dt)
 
 	if (Engine::GetInstance().scene.get()->currentState != GameState::PLAYING) return true;
 
-
+	
 	b2Transform pbodyPos = pbody->body->GetTransform();
 	position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 2);
 	position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);

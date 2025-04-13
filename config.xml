@@ -33,7 +33,6 @@
 						<frame x="1536" y="0" w="256" h="256" />
 						<frame x="1792" y="0" w="256" h="256" />
 						<frame x="2048" y="0" w="256" h="256" />
-
 					</walk>
 					<jump loop="true" speed="0.5">
 						<frame x="0" y="256" w="256" h="256" />
@@ -82,7 +81,7 @@
 				</animations>
 			</npcHANZO>
 			<items>
-				<item name="coin" x="200" y="672" w="32" h="32" texture="Assets/Textures/goldCoin.png" gravity="true">
+				<item name="coin" x="600" y="672" w="32" h="32" texture="Assets/Textures/goldCoin.png" gravity="true">
 					<animations>
 						<idle loop="true" speed="0.5">
 							<frame x="0" y="0" w="32" h="32" />

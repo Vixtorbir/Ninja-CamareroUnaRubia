@@ -172,6 +172,7 @@
     <ClCompile Include="src\Portrait.cpp" />
     <ClCompile Include="src\Render.cpp" />
     <ClCompile Include="src\Scene.cpp" />
+    <ClCompile Include="src\Text.cpp" />
     <ClCompile Include="src\Textures.cpp" />
     <ClCompile Include="src\Timer.cpp" />
     <ClCompile Include="src\Title.cpp" />
@@ -209,6 +210,7 @@
     <ClInclude Include="src\Portrait.h" />
     <ClInclude Include="src\Render.h" />
     <ClInclude Include="src\Scene.h" />
+    <ClInclude Include="src\Text.h" />
     <ClInclude Include="src\Textures.h" />
     <ClInclude Include="src\Timer.h" />
     <ClInclude Include="src\Title.h" />

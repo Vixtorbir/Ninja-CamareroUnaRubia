@@ -8,11 +8,11 @@ Parallax::Parallax() {
     layers.resize(5);
 }
 
-bool Parallax::ChangeTextures() {
+bool Parallax::ChangeTextures(int levelIndex) {
     std::vector<float> speeds = { 0.09f, 0.3f, 0.6f, 0.5f, 0.7f }; 
 
     for (size_t i = 0; i < layers.size(); ++i) {
-        std::string texturePath = "Assets/Backgrounds/Map" + std::to_string(i) + ".png";
+        std::string texturePath = "Assets/Backgrounds/Map" + std::to_string(i) + std::to_string(levelIndex) + ".png";
         layers[i].texture = Engine::GetInstance().textures->Load(texturePath.c_str());
         layers[i].speed = speeds[i];
     }
@@ -20,7 +20,7 @@ bool Parallax::ChangeTextures() {
 }
 
 bool Parallax::Start() {
-    return ChangeTextures();
+    return ChangeTextures(0);
 }
 
 bool Parallax::Update(float dt) {

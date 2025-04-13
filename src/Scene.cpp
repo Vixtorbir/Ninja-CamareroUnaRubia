@@ -97,7 +97,10 @@ bool Scene::Start()
 	logo = Engine::GetInstance().textures->Load("Assets/UI/logo.png");
 	logoFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/ExtraFx/logoFx.ogg");
 	MenuBackgroundImage = Engine::GetInstance().textures.get()->Load("Assets/UI/Menu.png");
-
+	mapBackgroundUI = Engine::GetInstance().textures.get()->Load("Assets/UI/MapBackgroundUI.png");
+	SDL_Rect btPos00 = { 0, 0, 0,0 };
+	mapBackgroundUIImage = (GuiImage*)Engine::GetInstance().guiManager->CreateGuiImage(GuiControlType::IMAGE, 1, "MyButton", btPos00, this, mapBackgroundUI);
+	mapBackgroundUIImage->visible = false;
 	// Inicializar el estado de la pantalla de presentaci�n
 
 	SetState(GameState::LOGO);
@@ -163,7 +166,7 @@ bool Scene::Update(float dt)
 {
 	//L03 TODO 3: Make the camera movement independent of framerate
 	float camSpeed = 1;
-
+	Engine::GetInstance().render->RenderMinimap(); // No parameters needed now
 	/*if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
 		Engine::GetInstance().render.get()->camera.y -= ceil(camSpeed * dt);
 
@@ -221,11 +224,9 @@ bool Scene::Update(float dt)
 	switch (currentState)
 	{
 	case GameState::MAIN_MENU:
-		
 		UpdateMainMenu(dt);
 		break;
 	case GameState::PLAYING:
-		
 		UpdatePlaying(dt);
 		break;
 	case GameState::PAUSED:
@@ -254,11 +255,18 @@ bool Scene::PostUpdate()
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN)
 		ret = false;
 
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F2) == KEY_DOWN)
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F2) == KEY_DOWN) {
 		SafeLoadMap("MapTemplate1.tmx", Vector2D(17280, 4224)); // Posición específica Mapa 1
+		levelIndex = 0;
+		parallax->ChangeTextures(levelIndex);
+
+	}
 		//Engine::GetInstance().scene.get()->player->currentLevel = 1;
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F3) == KEY_DOWN)
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F3) == KEY_DOWN) {
 		SafeLoadMap("MapTemplate2.tmx", Vector2D(193, 3845)); // Posición específica Mapa 2
+		levelIndex = 1;
+		parallax->ChangeTextures(levelIndex);
+	}
 		//Engine::GetInstance().scene.get()->player->currentLevel = 2;
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F6) == KEY_DOWN)
 		LoadState();
@@ -539,9 +547,24 @@ void Scene::UpdateMainMenu(float dt) {
 }
 
 void Scene::UpdatePlaying(float dt) {
-	// Handle gameplay logic
-	// Example: Update player, enemies, and other game entities
 	player->inGame = true;
+
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_TAB) == KEY_DOWN)
+	{
+		if (canToggleMap)
+		{
+			showingMap = !showingMap;
+			canToggleMap = false;
+		}
+	}
+	else
+	{
+		// Reset the toggle when the key is no longer pressed
+		canToggleMap = true;
+	}
+
+	// Control visibility based on showingMap
+	mapBackgroundUIImage->visible = showingMap;
 
 	player->Update(dt);
 	for (auto& enemy : enemyList) {

@@ -24,7 +24,8 @@ enum class GuiControlType
 	OPTIONA,
 	OPTIONB,
 	HPSLIDER,
-	IMAGE
+	IMAGE,
+	TEXT
 };
 
 enum class GuiControlState
