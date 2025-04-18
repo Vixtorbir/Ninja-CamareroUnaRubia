@@ -513,6 +513,17 @@ void Scene::UpdateMainMenu(float dt) {
 	// Render the main menu text
 	Engine::GetInstance().render.get()->DrawText("MAIN MENU", 600, 40, 750, 255);
 
+	if (startButton->isClicked == true)
+	{
+		SetState(GameState::PLAYING);
+		Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/gameplaySongPlaceholder.wav");
+		Engine::GetInstance().audio.get()->musicVolume(50);
+		startButton->CleanUp();
+		optionsButton->CleanUp();
+		exitButton->CleanUp();
+		menuBackgroundImage->CleanUp();
+	}
+
 
 }
 void Scene::HandleInput()
