@@ -122,6 +122,7 @@ public:
 	GuiControlButton* optionsButton = nullptr;
 	GuiControlButton* exitButton = nullptr;
 	GuiControlButton* returnButton = nullptr;
+	GuiControlButton* returntomenuButton = nullptr;
 
 	GuiImage* menuBackgroundImage = nullptr;
 

@@ -130,10 +130,6 @@ bool Scene::Start()
 	SDL_Rect startButtonPos = { 800, 300, 200, 50 };
 	SDL_Rect optionsButtonPos = { 800, 550, 200, 50 };
 	SDL_Rect exitButtonPos = { 800, 800, 200, 50 };
-	
-
-
-	// Create buttons if they don't already exist
 
 	startButton = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(
 		GuiControlType::BUTTON, 1, "Start Game", startButtonPos, this);
@@ -145,11 +141,10 @@ bool Scene::Start()
 
 	exitButton = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(
 		GuiControlType::BUTTON, 3, "Exit", exitButtonPos, this);
+	
 
 
-	startButton->Start();
-	optionsButton->Start();
-	exitButton->Start();
+
 	
 
 	return true;
@@ -485,9 +480,44 @@ void Scene::SafeLoadMap(const char* mapName, Vector2D playerPos) {
 	LOG("Mapa cambiado a %s", mapName);
 }
 
+void Scene::UpdateMainMenu(float dt) {
+	
 
+	SDL_Rect startButtonPos = { 800, 300, 200, 50 };
+	SDL_Rect optionsButtonPos = { 800, 550, 200, 50 };
+	SDL_Rect exitButtonPos = { 800, 800, 200, 50 };
+
+	startButton = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(
+		GuiControlType::BUTTON, 1, "Start Game", startButtonPos, this);
+
+
+	optionsButton = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(
+		GuiControlType::BUTTON, 2, "Options", optionsButtonPos, this);
+
+
+	exitButton = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(
+		GuiControlType::BUTTON, 3, "Exit", exitButtonPos, this);
+
+	startButton->Start();
+	optionsButton->Start();
+	exitButton->Start();
+
+	menuBackgroundImage->Update(dt);
+	startButton->Update(dt);
+	optionsButton->Update(dt);
+	exitButton->Update(dt);
+
+	player->inGame = false;
+
+
+	// Render the main menu text
+	Engine::GetInstance().render.get()->DrawText("MAIN MENU", 600, 40, 750, 255);
+
+
+}
 void Scene::HandleInput()
 {
+
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_RETURN) == KEY_DOWN || startButton->isClicked == true)
 	{
 		if (currentState == GameState::MAIN_MENU)
@@ -502,26 +532,46 @@ void Scene::HandleInput()
 			menuBackgroundImage->CleanUp();
 
 		}
-		else if (currentState == GameState::GAME_OVER)
+		/*else if (currentState == GameState::GAME_OVER)
 		{
 			SetState(GameState::MAIN_MENU);
-		}
+		}*/
 	}
-	if (returnButton!=nullptr) {
+	if (returnButton != nullptr) {
 
-		if(returnButton->isClicked == true)
-		SetState(GameState::PLAYING);
+		if (currentState == GameState::PAUSED) {
+			
+			if (returnButton->isClicked == true) {
+				SetState(GameState::PLAYING);
+			}
+		}
+		if (currentState == GameState::GAME_OVER) {
+
+			if (returnButton->isClicked == true) {
+				SetState(GameState::PLAYING);
+				LoadState();
+			}
+		}
 		returnButton->CleanUp();
+	
 
 
-
+	}
+	if (returntomenuButton != nullptr) {
+		if (currentState == GameState::GAME_OVER) {
+			if (returntomenuButton->isClicked == true) {
+				SetState(GameState::MAIN_MENU);
+				
+			}
+		}
+		returntomenuButton->CleanUp();
 	}
 
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_P) == KEY_DOWN)
 	{
 		if (currentState == GameState::PLAYING)
 		{
-			SetState(GameState::PAUSED);
+			SetState(GameState::GAME_OVER);
 		}
 		else if (currentState == GameState::PAUSED)
 		{
@@ -531,20 +581,7 @@ void Scene::HandleInput()
 
 }
 
-void Scene::UpdateMainMenu(float dt) {
-	menuBackgroundImage->Update(dt);
-	startButton->Update(dt);
-	optionsButton->Update(dt);	
-	exitButton->Update(dt);
 
-	player->inGame = false;
-	
-
-	// Render the main menu text
-	Engine::GetInstance().render.get()->DrawText("MAIN MENU", 600, 40, 750, 255);
-
-
-}
 
 void Scene::UpdatePlaying(float dt) {
 	player->inGame = true;
@@ -584,7 +621,12 @@ void Scene::UpdatePaused(float dt) {
 }
 
 void Scene::UpdateGameOver(float dt) {
-	Engine::GetInstance().render.get()->DrawText("GAME OVER:Press enter to start", 600, 400, 750, 255);
+	Engine::GetInstance().render.get()->DrawText("GAME OVER", 600, 200, 750, 255);
+	SDL_Rect returntomenuButtonPos = { 800, 550, 200, 50 };
+	returntomenuButton = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(
+		GuiControlType::BUTTON, 5, "Return To Menu", returntomenuButtonPos, this);
+	returntomenuButton->Start();
+	returntomenuButton->Update(dt);
 }
 void Scene::UpdateLogo(float dt) {
 	// Manejar el fade in
