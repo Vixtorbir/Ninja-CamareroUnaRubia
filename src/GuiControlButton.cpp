@@ -133,12 +133,11 @@ bool GuiControlButton::Update(float dt)
 }
 void GuiControlButton::CleanUp()
 {
-	if (texture != nullptr)
-	{
+
 		SDL_DestroyTexture(texture);
         SDL_DestroyTexture(textureSelected);
 		texture = nullptr;
-	}
+	
 
 	// Limpiar el texto
 	text = "";

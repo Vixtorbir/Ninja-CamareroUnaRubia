@@ -482,21 +482,25 @@ void Scene::SafeLoadMap(const char* mapName, Vector2D playerPos) {
 
 void Scene::UpdateMainMenu(float dt) {
 	
+	if (!startButton) {
+		SDL_Rect startButtonPos = { 800, 300, 200, 50 };
+		startButton = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(
+			GuiControlType::BUTTON, 1, "Start Game", startButtonPos, this);
+	}
 
-	SDL_Rect startButtonPos = { 800, 300, 200, 50 };
-	SDL_Rect optionsButtonPos = { 800, 550, 200, 50 };
-	SDL_Rect exitButtonPos = { 800, 800, 200, 50 };
+	if (!optionsButton) {
+		SDL_Rect optionsButtonPos = { 800, 550, 200, 50 };
+		optionsButton = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(
+			GuiControlType::BUTTON, 2, "Options", optionsButtonPos, this);
+	}
 
-	startButton = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(
-		GuiControlType::BUTTON, 1, "Start Game", startButtonPos, this);
+	if (!exitButton) {
+		SDL_Rect exitButtonPos = { 800, 800, 200, 50 };
+		exitButton = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(
+			GuiControlType::BUTTON, 3, "Exit", exitButtonPos, this);
+	}
+	
 
-
-	optionsButton = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(
-		GuiControlType::BUTTON, 2, "Options", optionsButtonPos, this);
-
-
-	exitButton = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(
-		GuiControlType::BUTTON, 3, "Exit", exitButtonPos, this);
 
 	startButton->Start();
 	optionsButton->Start();
@@ -513,40 +517,47 @@ void Scene::UpdateMainMenu(float dt) {
 	// Render the main menu text
 	Engine::GetInstance().render.get()->DrawText("MAIN MENU", 600, 40, 750, 255);
 
-	if (startButton->isClicked == true)
+	/*if (startButton->isClicked == true)
 	{
 		SetState(GameState::PLAYING);
 		Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/gameplaySongPlaceholder.wav");
 		Engine::GetInstance().audio.get()->musicVolume(50);
 		startButton->CleanUp();
+		startButton = nullptr;
 		optionsButton->CleanUp();
+		optionsButton = nullptr;
 		exitButton->CleanUp();
+		exitButton = nullptr;
 		menuBackgroundImage->CleanUp();
-	}
+	}*/
 
 
 }
 void Scene::HandleInput()
 {
-
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_RETURN) == KEY_DOWN || startButton->isClicked == true)
-	{
-		if (currentState == GameState::MAIN_MENU)
+	if (startButton != nullptr) {
+		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_RETURN) == KEY_DOWN || startButton->isClicked == true)
 		{
+			if (currentState == GameState::MAIN_MENU)
+			{
 
-			SetState(GameState::PLAYING);
-			Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/gameplaySongPlaceholder.wav");
-			Engine::GetInstance().audio.get()->musicVolume(50);
-			startButton->CleanUp();
-			optionsButton->CleanUp();
-			exitButton->CleanUp();
-			menuBackgroundImage->CleanUp();
+				SetState(GameState::PLAYING);
+				Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/gameplaySongPlaceholder.wav");
+				Engine::GetInstance().audio.get()->musicVolume(50);
+				startButton->CleanUp();
+				optionsButton->CleanUp();
+				exitButton->CleanUp();
+				menuBackgroundImage->CleanUp();
+				startButton = nullptr;
+				optionsButton = nullptr;
+				exitButton = nullptr;
 
+			}
+			/*else if (currentState == GameState::GAME_OVER)
+			{
+				SetState(GameState::MAIN_MENU);
+			}*/
 		}
-		/*else if (currentState == GameState::GAME_OVER)
-		{
-			SetState(GameState::MAIN_MENU);
-		}*/
 	}
 	if (returnButton != nullptr) {
 
