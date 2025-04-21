@@ -7,9 +7,11 @@
 #include "Portrait.h"
 #include "GuiPopup.h"
 #include "GuiSlider.h"
+#include "GuiCheckbox.h"
 #include "Audio.h"
 #include "GuiImage.h"
 #include "Textures.h"
+#include "Text.h"
 GuiManager::GuiManager() :Module()
 {
 	name = "guiManager";
@@ -33,6 +35,9 @@ GuiControl* GuiManager::CreateGuiControl(GuiControlType type, int id, const char
 	case GuiControlType::BUTTON:
 		guiControl = new GuiControlButton(id, bounds, text);
 		break;
+	case GuiControlType::CHECKBOX:
+		guiControl = new GuiCheckbox(id, bounds, text);
+		break;
 	case GuiControlType::DIALOGUE:
 		guiControl = new Dialogue(id, bounds, text);
 		break;
@@ -50,6 +55,9 @@ GuiControl* GuiManager::CreateGuiControl(GuiControlType type, int id, const char
 		break;
 	case GuiControlType::HPSLIDER:
 		guiControl = new GuiSlider(id, bounds, text, 0, 100, 100);
+		break;
+	case GuiControlType::TEXT:
+		guiControl = new Text(id, bounds, text);
 		break;
 	}
 

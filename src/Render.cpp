@@ -2,8 +2,9 @@
 #include "Window.h"
 #include "Render.h"
 #include "Log.h"
+#include "Player.h"
 //#include "tracy/Tracy.hpp"
-
+#include "Scene.h"
 #define VSYNC true
 
 Render::Render() : Module()
@@ -55,6 +56,7 @@ bool Render::Awake()
 
 	//load a font into memory
 	font = TTF_OpenFont("Assets/Fonts/shinkansen/shinkansen.regular.ttf", 50);
+	fontNumbers = TTF_OpenFont("Assets/Fonts/arial/arial.ttf", 50);
 
 	return ret;
 }
@@ -62,13 +64,113 @@ bool Render::Awake()
 // Called before the first frame
 bool Render::Start()
 {
+	minimapTexture = SDL_CreateTexture(
+		renderer,
+		SDL_PIXELFORMAT_RGBA8888,
+		SDL_TEXTUREACCESS_TARGET,
+		256, 256  // Minimap resolution (adjust as needed)
+	);
+	minimapRect = { 1920 - 266, 10, 256, 256 };  // Top-right corner
+	minimapZoom = 0.05f;  // Show 5x more area than the main camera
+	minimapEnabled = true;
+
+
 	LOG("render start");
 	// back background
 	SDL_RenderGetViewport(renderer, &viewport);
 	return true;
 }
+void Render::RenderMinimap() {
+	if (!minimapEnabled) return;
 
-// Called each loop iteration
+	// Get data
+	Scene* scene = Engine::GetInstance().scene.get();
+	Vector2D playerPos = scene->GetPlayerPosition();
+	Map* map = Engine::GetInstance().map.get();
+
+	// Set render target
+	SDL_SetRenderTarget(renderer, minimapTexture);
+	SDL_RenderClear(renderer);
+
+	// Calculate view area
+	SDL_Rect minimapView = {
+		(int)(playerPos.getX() - (minimapRect.w / (2 * minimapZoom))),
+		(int)(playerPos.getY() - (minimapRect.h / (2 * minimapZoom))),
+		(int)(minimapRect.w / minimapZoom),
+		(int)(minimapRect.h / minimapZoom)
+	};
+
+	int mapWidth, mapHeight;
+	map->GetMapDimensions(mapWidth, mapHeight);
+	MapLayer* navLayer = map->GetNavigationLayer();
+
+	if (navLayer) {  // Only proceed if we found the layer
+		for (int y = 0; y < mapHeight; y++) {
+			for (int x = 0; x < mapWidth; x++) {
+				int tileIndex = y * mapWidth + x;
+				if (navLayer->tiles[tileIndex] != 0) {  // Access tiles through the layer
+					SDL_Rect tileRect = {
+						(int)((x * map->mapData.tileWidth - minimapView.x) * minimapZoom),
+						(int)((y * map->mapData.tileHeight - minimapView.y) * minimapZoom),
+						(int)(map->mapData.tileWidth * minimapZoom),
+						(int)(map->mapData.tileHeight * minimapZoom)
+					};
+					DrawRectangle(tileRect, 0, 0, 0, 255, true, false);
+				}
+			}
+		}
+	}
+	// Draw colliders (from previous implementation)
+	for (size_t i = 0; i < map->collisionBodies.size(); i++) {
+		PhysBody* body = map->collisionBodies[i];
+		int x, y;
+		body->GetPosition(x, y);
+		SDL_Rect rect = {
+			(int)((x - minimapView.x) * minimapZoom),
+			(int)((y - minimapView.y) * minimapZoom),
+			(int)(body->width * minimapZoom * 2 + 2),
+			(int)(body->height * minimapZoom *2 + 2)
+		};
+		// Draw colliders in dark gray
+		DrawRectangle(rect, 255, 255, 255, 255, true, false);
+	}
+	MapLayer* tileLayer = nullptr;
+	const char* layerNames[] = { "Floor", "Walkable", "Navigation", "Tile Layer 1" };
+	for (const char* name : layerNames) {
+		tileLayer = map->GetLayer(name);
+		if (tileLayer) break;
+	}
+
+	if (tileLayer) {
+		for (int y = 0; y < tileLayer->height; y++) {
+			for (int x = 0; x < tileLayer->width; x++) {
+				int gid = tileLayer->Get(x, y);
+				if (gid > 0) {
+					SDL_Rect dest = {
+						(int)((x * 128 - minimapView.x) * minimapZoom),
+						(int)((y * 128 - minimapView.y) * minimapZoom),
+						(int)(128 * minimapZoom),
+						(int)(128 * minimapZoom)
+					};
+
+					// Draw walkable tiles as light gray
+					SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+					SDL_RenderFillRect(renderer, &dest);
+				}
+			}
+		}
+	}
+	// Draw player (red dot)
+	SDL_Rect playerRect = {
+		minimapRect.w / 2 - 2,
+		minimapRect.h / 2 - 2,
+		4, 4
+	};
+	DrawRectangle(playerRect, 255, 0, 0, 255, true, false);
+
+	// Reset render target
+	SDL_SetRenderTarget(renderer, nullptr);
+}// Called each loop iteration
 bool Render::PreUpdate()
 {
 	//ZoneScoped;
@@ -88,9 +190,18 @@ bool Render::PostUpdate()
 {
 	//ZoneScoped;
 	// Code you want to profile
+	if (minimapEnabled) {
+		// Draw the minimap texture
+		SDL_RenderCopy(renderer, minimapTexture, nullptr, &minimapRect);
 
+		// Optional: Add a border
+		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+		SDL_RenderDrawRect(renderer, &minimapRect);
+	}
 	SDL_SetRenderDrawColor(renderer, background.r, background.g, background.g, background.a);
 	SDL_RenderPresent(renderer);
+	
+
 	return true;
 }
 
@@ -319,6 +430,26 @@ bool Render::DrawText(const char* text, int posx, int posy, int w, int h) const
 
 	SDL_Color color = { 0, 0, 0 };
 	SDL_Surface* surface = TTF_RenderText_Solid(font, text, color);
+	SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
+
+	int texW = 0;
+	int texH = 0;
+	SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
+	SDL_Rect dstrect = { posx, posy, w, h };
+
+	SDL_RenderCopy(renderer, texture, NULL, &dstrect);
+
+	SDL_DestroyTexture(texture);
+	SDL_FreeSurface(surface);
+
+	return true;
+}
+
+bool Render::DrawNumbers(const char* text, int posx, int posy, int w, int h) const
+{
+
+	SDL_Color color = { 0, 0, 0 };
+	SDL_Surface* surface = TTF_RenderText_Solid(fontNumbers, text, color);
 	SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
 
 	int texW = 0;

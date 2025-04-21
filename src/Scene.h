@@ -6,6 +6,8 @@
 #include "Enemy.h"
 #include <vector>
 #include "GuiControlButton.h"
+#include "GuiCheckbox.h"
+#include "GuiSlider.h"
 #include "Dialogue.h"
 #include "DialogueManager.h"
 #include "Parallax.h"
@@ -18,6 +20,7 @@ struct SDL_Texture;
 
 enum class GameState {
 	MAIN_MENU,
+	OPTIONS,
 	PLAYING,
 	PAUSED,
 	GAME_OVER,
@@ -67,9 +70,7 @@ public:
 	bool OnGuiMouseClickEvent(GuiControl* control);
 
 	void FadeTransition(SDL_Renderer* renderer, SDL_Texture* texture, float duration);
-
 	
-
 	void LoadTextures();
 
 	void SetState(GameState newState);
@@ -81,6 +82,7 @@ public:
 	void UpdatePaused(float dt);
 	void UpdateGameOver(float dt);
 	void UpdateLogo(float dt);
+	void UpdateOptions(float dt);
 
 
 public:
@@ -124,6 +126,12 @@ public:
 	GuiControlButton* optionsButton = nullptr;
 	GuiControlButton* exitButton = nullptr;
 	GuiControlButton* returnButton = nullptr;
+	GuiControlButton* returntomenuButton = nullptr;
+	GuiCheckbox* fullscreenCheckbox = nullptr;
+	GuiCheckbox* vsyncCheckbox = nullptr;
+	GuiSlider* fxSlider = nullptr;
+	GuiSlider* musicSlider = nullptr;
+
 
 	GuiImage* menuBackgroundImage = nullptr;
 
@@ -133,11 +141,15 @@ public:
 	SDL_Texture* logo = nullptr;
 	int logoFxId;
 
-	
-
+	int levelIndex = 0;
+	bool showingMap = false;
+	bool canToggleMap = true;
 private:		
 	
 	int curPopupMusic;
+
+	SDL_Texture* mapBackgroundUI = nullptr;
+	GuiImage* mapBackgroundUIImage = nullptr;
 
 	Parallax* parallax = nullptr;
 	//music

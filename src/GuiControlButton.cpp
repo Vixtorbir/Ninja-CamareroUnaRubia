@@ -108,6 +108,7 @@ bool GuiControlButton::Update(float dt)
         case GuiControlState::PRESSED:
             Engine::GetInstance().render->DrawTexturedRectangle(textureSelected, bounds.x - 200, bounds.y - 100, 600, 400, false);
             isClicked = true;
+            
           
             break;
         }
@@ -133,12 +134,11 @@ bool GuiControlButton::Update(float dt)
 }
 void GuiControlButton::CleanUp()
 {
-	if (texture != nullptr)
-	{
+
 		SDL_DestroyTexture(texture);
         SDL_DestroyTexture(textureSelected);
 		texture = nullptr;
-	}
+	
 
 	// Limpiar el texto
 	text = "";

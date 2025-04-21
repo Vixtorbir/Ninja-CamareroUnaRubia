@@ -9,366 +9,344 @@
 #include "Physics.h"
 #include "EntityManager.h"
 #include "GuiManager.h"
-//#include "tracy/Tracy.hpp"
 
 Player::Player() : Entity(EntityType::PLAYER)
 {
-	name = "Player";
-	crouched = false;
-	godMode = false;
+    name = "Player";
+    crouched = false;
+    godMode = false;
+    currentState = PlayerState::IDLE;
 }
 
-Player::~Player() {
-
-}
+Player::~Player() {}
 
 bool Player::Awake() {
-
-	return true;
+    return true;
 }
 
 bool Player::Start() {
-	
-	//L03: TODO 2: Initialize Player parameters
-	texture = Engine::GetInstance().textures.get()->Load(parameters.attribute("texture").as_string());
+    // Initialize parameters
+    texture = Engine::GetInstance().textures.get()->Load(parameters.attribute("texture").as_string());
 
-	BackgroundSliderHP = Engine::GetInstance().textures.get()->Load("Assets/UI/lifeBarBack.png");
-	ForeGroundSliderHP = Engine::GetInstance().textures.get()->Load("Assets/UI/lifeBarFront.png");
+    // Load UI textures
+    BackgroundSliderHP = Engine::GetInstance().textures.get()->Load("Assets/UI/lifeBarBack.png");
+    ForeGroundSliderHP = Engine::GetInstance().textures.get()->Load("Assets/UI/lifeBarFront.png");
+    orbUiTexture = Engine::GetInstance().textures.get()->Load("Assets/UI/OrbUi.png");
 
-	position.setX(parameters.attribute("x").as_int());
-	position.setY(parameters.attribute("y").as_int());
-	texW = parameters.attribute("w").as_int();
-	texH = parameters.attribute("h").as_int();
+    position.setX(parameters.attribute("x").as_int());
+    position.setY(parameters.attribute("y").as_int());
+    texW = parameters.attribute("w").as_int();
+    texH = parameters.attribute("h").as_int();
 
-	//Load animations
-	idle.LoadAnimations(parameters.child("animations").child("idle"));
-	walk.LoadAnimations(parameters.child("animations").child("walk"));
-	jump.LoadAnimations(parameters.child("animations").child("jump"));
-	dash.LoadAnimations(parameters.child("animations").child("dash"));
-	crouch.LoadAnimations(parameters.child("animations").child("crouch"));
+    // Load animations
+    idle.LoadAnimations(parameters.child("animations").child("idle"));
+    walk.LoadAnimations(parameters.child("animations").child("walk"));
+    jump.LoadAnimations(parameters.child("animations").child("jump"));
+    dash.LoadAnimations(parameters.child("animations").child("dash"));
+    crouch.LoadAnimations(parameters.child("animations").child("crouch"));
 
-	currentAnimation = &idle;
+    currentAnimation = &idle;
 
-	// L08 TODO 5: Add physics to the player - initialize physics body
-	pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX(),  (int)position.getY(), texW, texH, bodyType::DYNAMIC);
+    // Physics setup
+    pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX(), (int)position.getY(), texW, texH, bodyType::DYNAMIC);
+    pbody->listener = this;
+    pbody->ctype = ColliderType::PLAYER;
+    pbody->body->SetFixedRotation(true);
+    pbody->body->SetGravityScale(5);
 
-	// L08 TODO 6: Assign player class (using "this") to the listener of the pbody. This makes the Physics module to call the OnCollision method
-	pbody->listener = this;
+    // UI elements
+    popup = (GuiPopup*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::POPUP, 1, "Press E", btPos, sceneModule);
+    orbCount = (Text*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::TEXT, 1, "0", OrbCountPos, sceneModule);
+    backgroundSliderImage = (GuiImage*)Engine::GetInstance().guiManager->CreateGuiImage(GuiControlType::IMAGE, 1, " ", btPos, sceneModule, BackgroundSliderHP);
+    foregroundSliderImage = (GuiImage*)Engine::GetInstance().guiManager->CreateGuiImage(GuiControlType::IMAGE, 1, " ", btPos, sceneModule, ForeGroundSliderHP);
+    orbUi = (GuiImage*)Engine::GetInstance().guiManager->CreateGuiImage(GuiControlType::IMAGE, 1, " ", btPos, sceneModule, orbUiTexture);
+    HP_Slider = (GuiSlider*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::HPSLIDER, 1, " ", hpPos, sceneModule);
 
-	// L08 TODO 7: Assign collider type
-	pbody->ctype = ColliderType::PLAYER;
+    HP_Slider->SetSliderBarSize(200, 15);
+    HP_Slider->SetSliderBarInnerSize(100, 10);
 
-	pbody->body->SetFixedRotation(true);
+    backgroundSliderImage->visible = false;
+    foregroundSliderImage->visible = false;
+    HP_Slider->visible = false;
 
-	popup = (GuiPopup*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::POPUP, 1, "Press E", btPos, sceneModule);
-	
-	backgroundSliderImage = (GuiImage*)Engine::GetInstance().guiManager->CreateGuiImage(GuiControlType::IMAGE, 1, " ", btPos, sceneModule, BackgroundSliderHP);
-	foregroundSliderImage = (GuiImage*)Engine::GetInstance().guiManager->CreateGuiImage(GuiControlType::IMAGE, 1, " ", btPos, sceneModule, ForeGroundSliderHP);
+    // Initialize other variables
+    timeSinceLastDamage = damageCooldown;
+    canTakeDamage = true;
+    hpIconTexture = Engine::GetInstance().textures.get()->Load("Assets/Textures/hp_icon.png");
 
-	HP_Slider = (GuiSlider*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::HPSLIDER, 1, " ", hpPos, sceneModule);
-	HP_Slider->SetSliderBarSize(200, 15);
-	HP_Slider->SetSliderBarInnerSize(100, 10);
-
-	backgroundSliderImage->visible = false;
-	foregroundSliderImage->visible = false;
-	HP_Slider->visible = false;
-	
-	// Set the gravity of the body
-	if (!parameters.attribute("gravity").as_bool()) pbody->body->SetGravityScale(0);
-
-	//initialize audio effect
-	LoadPlayerFx();
-	
-
-	timeSinceLastDamage = damageCooldown;
-	canTakeDamage = true;
-
-	hpIconTexture = Engine::GetInstance().textures.get()->Load("Assets/Textures/hp_icon.png");
-
-	return true;
+    LoadPlayerFx();
+    return true;
 }
 
-bool Player::Update(float dt)
-{
-	
-	backgroundSliderImage->visible = inGame;
-	foregroundSliderImage->visible = inGame;
-	HP_Slider->visible = inGame;
-	
-	if (Engine::GetInstance().scene.get()->currentState == GameState::PAUSED)
-	{
-		pbody->body->SetLinearVelocity(b2Vec2(0, 0));
-		b2Transform pbodyPos = pbody->body->GetTransform();
-		position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 2);
-		position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
+bool Player::Update(float dt) {
+    // Update UI elements
+    orbCount->SetText(std::to_string(Orbs));
+    backgroundSliderImage->visible = inGame;
+    foregroundSliderImage->visible = inGame;
+    HP_Slider->visible = inGame;
 
-	
-		Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
-		currentAnimation->Update();
-		return true;
-	}
+    if (Engine::GetInstance().scene.get()->currentState == GameState::PAUSED) {
+        pbody->body->SetLinearVelocity(b2Vec2(0, 0));
+        b2Transform pbodyPos = pbody->body->GetTransform();
+        position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 2);
+        position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
 
-	if (Engine::GetInstance().scene.get()->currentState != GameState::PLAYING)
-	{
-		return true;
-	}
+        Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
+        currentAnimation->Update();
+        return true;
+    }
 
-	//HP
-	HP_Slider->SetSliderBarInnerSize(HP*4, 50);
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_H) == KEY_DOWN) HP += 20;
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_J) == KEY_DOWN) HP -= 20;
-	if (HP >= MAXHP) HP = MAXHP; else if (HP <= 0) HP = 0;
+    if (Engine::GetInstance().scene.get()->currentState != GameState::PLAYING) {
+        return true;
+    }
 
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F10) == KEY_DOWN) {
-		godMode = true;
-	}
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F11) == KEY_DOWN) {
-		godMode = false;
-	}
+    // Handle HP
+    HP_Slider->SetSliderBarInnerSize(HP * 4, 50);
+    if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_H) == KEY_DOWN) HP += 20;
+    if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_J) == KEY_DOWN) HP -= 20;
+    if (HP >= MAXHP) HP = MAXHP; else if (HP <= 0) HP = 0;
 
-	if (!canDash) {
-		dashTimer += dt / 1000;
-		if (dashTimer >= dashCooldown) {
-			canDash = true; // Dash is ready again
-			dashTimer = 0.0f;
-		}
-	}
-	//ZoneScoped;
-	// Code you want to profile
+    // God mode toggle
+    if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F10) == KEY_DOWN) godMode = true;
+    if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F11) == KEY_DOWN) godMode = false;
 
-	
-	// L08 TODO 5: Add physics to the player - updated player position using physics
-	b2Vec2 velocity = b2Vec2(0, pbody->body->GetLinearVelocity().y);
+    // Dash cooldown
+    if (!canDash) {
+        dashTimer += dt / 1000;
+        if (dashTimer >= dashCooldown) {
+            canDash = true;
+            dashTimer = 0.0f;
+        }
+    }
 
-	if (!parameters.attribute("gravity").as_bool()) {
-		velocity = b2Vec2(0, 0);
-	}
-	
-	// Move left/right
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT) {
-		velocity.x = -0.2 * 16;
-		playerDirection = EntityDirections::LEFT;
-	
-	}
+    // Physics movement
+    b2Vec2 velocity = b2Vec2(0, pbody->body->GetLinearVelocity().y);
+    if (!parameters.attribute("gravity").as_bool()) velocity = b2Vec2(0, 0);
 
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT) {
-		velocity.x = 0.2 * 16;
-		playerDirection = EntityDirections::RIGHT;
+    // State management
+    bool movingLeft = Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT;
+    bool movingRight = Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT;
+    bool moving = movingLeft || movingRight;
+    bool grounded = !isJumping && !isDashing && !touchingWall;
+    isWalking = false;
+    if (movingLeft) {
+        velocity.x = -speed * 16;
+        playerDirection = EntityDirections::LEFT;
+    }
+    if (movingRight) {
+        velocity.x = speed * 16;
+        playerDirection = EntityDirections::RIGHT;
+    }
 
-	}
-	bool moving = Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT ||
-		Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT;
+   
+    bool wantsToCrouch = Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT ||
+        Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_DOWN) == KEY_DOWN;
 
-	bool grounded = !isJumping && !isDashing && !touchingWall;
+    if (wantsToCrouch && grounded) {  // Only allow crouching when grounded
+        crouched = true;
+        currentState = PlayerState::CROUCHING;
+        if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_DOWN) == KEY_DOWN) {
+            ChangeHitboxSize(texW, texH / 2);
+            Engine::GetInstance().audio.get()->PlayFx(crouchFxId);
+        }
+    }
+    else if (crouched && Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_DOWN) == KEY_UP) {
+        crouched = false;
+        ChangeHitboxSize(texW, texH);
+        // Don't force IDLE state here - let the state priority system handle it
+    }
 
-	if (moving && grounded)
-	{
-		currentAnimation = &walk;
-		isWalking = true;
+    // Handle jumping
+    if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN && hasAlreadyJumpedOnce == 0 && !inBubble) {
+        isHoldingJump = true;
+        jumpHoldTimer = 0.0f;
+    }
 
-		footstepTimer += dt / 1000.0f;
+    if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_REPEAT && isHoldingJump && !inBubble) {
+        jumpHoldTimer += dt;
+        if (jumpHoldTimer >= maxHoldTime) {
+            float jumpStrength = jumpForce * maxJumpMultiplier;
+            pbody->body->ApplyLinearImpulseToCenter(b2Vec2(0, -jumpStrength), true);
+            hasAlreadyJumpedOnce++;
+            isHoldingJump = false;
+            isJumping = true;
+            currentState = PlayerState::JUMPING;
+            int jumpId = Engine::GetInstance().audio.get()->randomFx(jump1FxId, jump3FxId);
+            Engine::GetInstance().audio.get()->PlayFx(jumpId);
+        }
+    }
 
-		if (footstepTimer >= footstepDelay)
-		{
-			int stepSounds[] = { step1, step2, step3, step4, step5 };
-			int randomIndex = rand() % 5;
-			Engine::GetInstance().audio.get()->PlayFx(stepSounds[randomIndex]);
-			footstepTimer = 0.0f;
-		}
-	}
-	else
-	{
-		currentAnimation = &idle;
-		isWalking = false;
-		footstepTimer = footstepDelay;
-	}
-	
+    if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_UP && isHoldingJump && !inBubble) {
+        float holdPercentage = jumpHoldTimer / maxHoldTime;
+        float jumpMultiplier = minJumpMultiplier + (holdPercentage * (maxJumpMultiplier - minJumpMultiplier));
+        float jumpStrength = jumpForce * jumpMultiplier;
+        pbody->body->ApplyLinearImpulseToCenter(b2Vec2(0, -jumpStrength), true);
+        hasAlreadyJumpedOnce++;
+        isHoldingJump = false;
+        isJumping = true;
+        currentState = PlayerState::JUMPING;
+    }
 
-	// Move Up
-	/*if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_W) == KEY_REPEAT) {
-		velocity.y = -0.2 * 16;
-	}
-	*/
-	// Move down
+    // Double jump
+    if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN && hasAlreadyJumpedOnce == 1 && !inBubble) {
+        pbody->body->SetLinearVelocity(b2Vec2(pbody->body->GetLinearVelocity().x, 0));
+        pbody->body->ApplyLinearImpulseToCenter(b2Vec2(0, -jumpForce), true);
+        hasAlreadyJumpedOnce++;
+        isJumping = true;
+        currentState = PlayerState::JUMPING;
+        int doubleJumpId = Engine::GetInstance().audio.get()->randomFx(doubleJump1FxId, doubleJump2FxId);
+        Engine::GetInstance().audio.get()->PlayFx(doubleJumpId);
+    }
 
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_DOWN) == KEY_DOWN)
-	{
-		currentAnimation = &crouch; // Cambiar a animación de agachado después
-		ChangeHitboxSize(texW, texH / 2); // Reduce el hitbox
-		Engine::GetInstance().audio.get()->PlayFx(crouchFxId);
+    // Wall jump
+    if (touchingWall && Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_L) == KEY_DOWN) {
+        float jumpDirection = (playerDirection == EntityDirections::LEFT) ? 1.0f : -1.0f;
+        pbody->body->SetLinearVelocity(b2Vec2(0, 0));
+        pbody->body->ApplyLinearImpulseToCenter(b2Vec2(jumpDirection * wallJumpPush, -wallJumpForce), true);
+        isHoldingJump = false;
+        jumpHoldTimer = 0.0f;
+        playerDirection = (playerDirection == EntityDirections::LEFT) ? EntityDirections::RIGHT : EntityDirections::LEFT;
+        int doubleJumpId = Engine::GetInstance().audio.get()->randomFx(doubleJump1FxId, doubleJump2FxId);
+        Engine::GetInstance().audio.get()->PlayFx(doubleJumpId);
+        currentState = PlayerState::JUMPING;
+    }
 
-	}
+    // Wall slide
+    if (touchingWall && Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_REPEAT) {
+        pbody->body->SetLinearVelocity(b2Vec2(0, wallClimbSpeed));
+        currentState = PlayerState::WALL_SLIDING;
+    }
 
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_DOWN) == KEY_UP)
-	{
-		currentAnimation = &idle;
-		ChangeHitboxSize(texW, texH); // Restaura el hitbox
-		
-	}
+    // Dash
+    if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_LSHIFT) == KEY_DOWN && canDash) {
+        if (playerDirection == EntityDirections::RIGHT) {
+            targetDashVelocity = dashSpeed * dt;
+        }
+        else if (playerDirection == EntityDirections::LEFT) {
+            targetDashVelocity = -dashSpeed * dt;
+        }
+        canDash = false;
+        dashTimer = 0.0f;
+        isDashing = true;
+        dashElapsedTime = 0.0f;
+        currentState = PlayerState::DASHING;
+        currentAnimation->Reset();
+        int dashId = Engine::GetInstance().audio.get()->randomFx(dash1FxId, dash3FxId);
+        Engine::GetInstance().audio.get()->PlayFx(dashId);
+    }
 
-	//Jump
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN && hasAlreadyJumpedOnce == 0 && !inBubble)
-	{
-		isHoldingJump = true;
-		jumpHoldTimer = 0.0f;
-		
-		
-	}
+    if (isDashing) {
+        float lerpFactor = .4f;
+        //velocity.x = Lerp(velocity.x, targetDashVelocity, lerpFactor);
+        dashElapsedTime += dt;
 
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_REPEAT && isHoldingJump && !inBubble)
-	{
-		jumpHoldTimer += dt;
+        if (dashElapsedTime >= dashDuration) {
+            isDashing = false;
+            targetDashVelocity = 0.0f;
+            currentState = grounded ? PlayerState::IDLE : PlayerState::JUMPING;
+        }
+    }
 
-		if (jumpHoldTimer >= maxHoldTime) {
-			float jumpStrength = jumpForce * maxJumpMultiplier;
-			pbody->body->ApplyLinearImpulseToCenter(b2Vec2(0, -jumpStrength), true);
-			hasAlreadyJumpedOnce++;
-			isHoldingJump = false;
-			isJumping = true;
-			
-		}
-		currentAnimation = &jump;
-		int jumpId = Engine::GetInstance().audio.get()->randomFx(jump1FxId, jump3FxId);
-		Engine::GetInstance().audio.get()->PlayFx(jumpId);
-	
-	}
+    // Damage cooldown
+    if (!canTakeDamage) {
+        timeSinceLastDamage += dt / 1000;
+        if (timeSinceLastDamage >= damageCooldown) {
+            canTakeDamage = true;
+            timeSinceLastDamage = 0.0f;
+        }
+    }
 
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_UP && isHoldingJump && !inBubble)
-	{
-		float holdPercentage = jumpHoldTimer / maxHoldTime;
-		float jumpMultiplier = minJumpMultiplier + (holdPercentage * (maxJumpMultiplier - minJumpMultiplier));
-		float jumpStrength = jumpForce * jumpMultiplier;
+    // State priority system (highest priority first)
+    if (isDashing) {
+        currentState = PlayerState::DASHING;
+    }
+    else if (isJumping) {
+        currentState = PlayerState::JUMPING;
+    }
+    else if (crouched) {
+        currentState = PlayerState::CROUCHING;
+    }
+    else if (touchingWall && !grounded) {
+        currentState = PlayerState::WALL_SLIDING;
+    }
+    else if (moving && grounded) {
+        currentState = PlayerState::WALKING;
+        isWalking = true;
+    }
+    else {
+        currentState = PlayerState::IDLE;
+    }
 
-		pbody->body->ApplyLinearImpulseToCenter(b2Vec2(0, -jumpStrength), true);
-		hasAlreadyJumpedOnce++;
-		isHoldingJump = false;
-		isJumping = true;
-	}
+    // Animation selection
+    switch (currentState) {
+    case PlayerState::DASHING:
+        currentAnimation = &dash;
+        break;
+    case PlayerState::JUMPING:
+        currentAnimation = &jump;
+        break;
+    case PlayerState::CROUCHING:
+        currentAnimation = &crouch;
+        break;
+    case PlayerState::WALL_SLIDING:
+        currentAnimation = &idle; // Replace with wall slide animation if available
+        break;
+    case PlayerState::WALKING:
+        currentAnimation = &walk;
+        // Footstep sounds
+        footstepTimer += dt;
+        if (footstepTimer >= footstepDelay) {
+            int stepSounds[] = { step1, step2, step3, step4, step5 };
+            int randomIndex = rand() % 5;
+            Engine::GetInstance().audio.get()->PlayFx(stepSounds[randomIndex]);
+            footstepTimer = 0.0f;
+        }
+        break;
+    case PlayerState::IDLE:
+    default:
+        currentAnimation = &idle;
+        break;
+    }
+    // Apply velocity
+    if (isJumping) velocity.y = pbody->body->GetLinearVelocity().y;
+    pbody->body->SetLinearVelocity(velocity);
 
-	
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN && hasAlreadyJumpedOnce == 1 && !inBubble) {
-		pbody->body->SetLinearVelocity(b2Vec2(pbody->body->GetLinearVelocity().x, 0)); 
-		pbody->body->ApplyLinearImpulseToCenter(b2Vec2(0, -jumpForce), true);
-		hasAlreadyJumpedOnce++;
-		isJumping = true;
-		int doubleJumpId = Engine::GetInstance().audio.get()->randomFx(doubleJump1FxId, doubleJump2FxId);
-		Engine::GetInstance().audio.get()->PlayFx(doubleJumpId);
-		currentAnimation = &jump;
-	
-	}
+    // Update position
+    b2Transform pbodyPos = pbody->body->GetTransform();
+    position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texW - 20);
+    position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
 
-	// Wall Jump
-	if (touchingWall && Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_L) == KEY_DOWN) {
-		float jumpDirection = (playerDirection == EntityDirections::LEFT) ? 1.0f : -1.0f;
+    // Render
+    Engine::GetInstance().render.get()->DrawEntity(texture, (int)position.getX(), (int)position.getY(),
+        &currentAnimation->GetCurrentFrame(), 1, 0, 0, 0, (int)playerDirection);
+    currentAnimation->Update();
 
-		pbody->body->SetLinearVelocity(b2Vec2(0, 0)); 
-		pbody->body->ApplyLinearImpulseToCenter(b2Vec2(jumpDirection * wallJumpPush, -wallJumpForce), true);
+    // Camera follow
+    if (!Engine::GetInstance().scene.get()->watchtitle) {
+        camX = -(float)position.getX() + (Engine::GetInstance().render.get()->camera.w / 2);
+        camY = -(float)position.getY() + (Engine::GetInstance().render.get()->camera.h / 2);
+    }
+    else {
+        camX = 1920 + (Engine::GetInstance().render.get()->camera.w / 2);
+        camY = -(float)position.getY() + (Engine::GetInstance().render.get()->camera.h / 2);
+    }
 
-		isHoldingJump = false;
-		jumpHoldTimer = 0.0f;
+    Engine::GetInstance().render.get()->camera.x += (camX - Engine::GetInstance().render.get()->camera.x) * smoothFactor;
+    Engine::GetInstance().render.get()->camera.y += (camY - Engine::GetInstance().render.get()->camera.y) * smoothFactor;
 
-		playerDirection = (playerDirection == EntityDirections::LEFT) ? EntityDirections::RIGHT : EntityDirections::LEFT;
-		int doubleJumpId = Engine::GetInstance().audio.get()->randomFx(doubleJump1FxId, doubleJump2FxId);
-		Engine::GetInstance().audio.get()->PlayFx(doubleJumpId);
-	}
+    // Draw HP icons
+  /*  for (int i = 0; i < hp; ++i) {
+        Engine::GetInstance().render.get()->DrawTexture(hpIconTexture, 10 + i * 40, 10);
+    }*/
 
-	if (touchingWall && Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_REPEAT) {
-		pbody->body->SetLinearVelocity(b2Vec2(0, wallClimbSpeed));
-		currentAnimation = &idle; //climb cuando este
-	}
+    // Level transitions
+    if (GetPosition().getX() >= 20480 && GetPosition().getY() >= 4320 && currentLevel == 1) {
+        if (loadLevel2 == false) {
+            loadLevel2 = true;
+        }
+    }
 
-
-	//Dash
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_LSHIFT) == KEY_DOWN && canDash) {
-		if (playerDirection == EntityDirections::RIGHT) {
-			targetDashVelocity = dashSpeed * dt;
-		}
-		else if (playerDirection == EntityDirections::LEFT) {
-			targetDashVelocity = -dashSpeed * dt;
-		}
-		canDash = false;
-		dashTimer = 0.0f;
-		isDashing = true;
-		dashElapsedTime = 0.0f;
-		int dashId = Engine::GetInstance().audio.get()->randomFx(dash1FxId,dash3FxId);
-		Engine::GetInstance().audio.get()->PlayFx(dashId);
-		currentAnimation = &dash;
-	}
-
-	if (isDashing) {
-		float lerpFactor = .4f;
-		velocity.x = Lerp(velocity.x, targetDashVelocity, lerpFactor);
-
-		dashElapsedTime += dt;
-
-		if (dashElapsedTime >= dashDuration) 
-		{
-			isDashing = false;
-			targetDashVelocity = 0.0f;
-			currentAnimation = &idle;
-		}
-	}
-
-	if (!canTakeDamage) {
-		timeSinceLastDamage += dt / 1000;
-		if (timeSinceLastDamage >= damageCooldown) {
-			canTakeDamage = true;
-			timeSinceLastDamage = 0.0f;
-		}
-	}
-
-
-	if (isJumping == true )
-	{
-		velocity.y = pbody->body->GetLinearVelocity().y;
-	}
-
-	// Apply the velocity to the player
-	pbody->body->SetLinearVelocity(velocity);
-
-	b2Transform pbodyPos = pbody->body->GetTransform();
-	position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texW-20);
-	position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
-
-	Engine::GetInstance().render.get()->DrawEntity(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame(), 1, 0, 0, 0, (int)playerDirection);
-	currentAnimation->Update();
-
-	if (!Engine::GetInstance().scene.get()->watchtitle)
-	{
-		camX = -(float)position.getX() + (Engine::GetInstance().render.get()->camera.w / 2);
-		camY = -(float)position.getY() + (Engine::GetInstance().render.get()->camera.h / 2);
-
-		Engine::GetInstance().render.get()->camera.x += (camX - Engine::GetInstance().render.get()->camera.x) * smoothFactor;
-		Engine::GetInstance().render.get()->camera.y += (camY - Engine::GetInstance().render.get()->camera.y) * smoothFactor;
-	}
-	else {
-		camX = 1920 + (Engine::GetInstance().render.get()->camera.w / 2);
-		camY = -(float)position.getY() + (Engine::GetInstance().render.get()->camera.h / 2);
-
-		Engine::GetInstance().render.get()->camera.x += (camX - Engine::GetInstance().render.get()->camera.x) * smoothFactor;
-		Engine::GetInstance().render.get()->camera.y += (camY - Engine::GetInstance().render.get()->camera.y) * smoothFactor;
-	}
-
-	Engine::GetInstance().render.get()->camera.x += (camX - Engine::GetInstance().render.get()->camera.x) * smoothFactor;
-	Engine::GetInstance().render.get()->camera.y += (camY - Engine::GetInstance().render.get()->camera.y) * smoothFactor;
-
-	for (int i = 0; i < hp; ++i) {
-		Engine::GetInstance().render.get()->DrawTexture(hpIconTexture, 10 + i * 40, 10);
-	}
-
-	/*if (GetPosition().getX() >= 4208 && GetPosition().getY() >= 3600 && currentLevel == 2) {
-		if (loadLevel1 == false) {
-			loadLevel1 = true;
-		}
-	}*/
-
-	if (GetPosition().getX() >= 20480 && GetPosition().getY() >= 4320 && currentLevel == 1) {
-		if (loadLevel2 == false) {
-			loadLevel2 = true;
-		}
-	}
-
-	return true;
+    return true;
 }
 float Player::Lerp(float start, float end, float factor) {
 	return start + factor * (end - start);
@@ -407,7 +385,9 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 		break;
 	case ColliderType::ITEM:
 		Engine::GetInstance().audio.get()->PlayFx(pickUpItemFxId);
-		Engine::GetInstance().physics.get()->DeletePhysBody(physB); // Deletes the body of the item from the physics world
+		Orbs++;
+		Engine::GetInstance().physics.get()->DeletePhysBody(physB);
+
 		break;
 	case ColliderType::UNKNOWN:
 		break;
@@ -487,10 +467,10 @@ void Player::LoadPlayerFx()
 
 void Player::TakeDamage(int damage) {
 	if (canTakeDamage) {
-		hp -= damage;
+		/*hp -= damage;
 		if (hp <= 0) {
 			Die();
-		}
+		}*///FIX
 		canTakeDamage = false;
 		timeSinceLastDamage = 0.0f;
 	}
