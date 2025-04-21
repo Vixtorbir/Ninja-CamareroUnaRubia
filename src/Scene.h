@@ -18,6 +18,7 @@ struct SDL_Texture;
 
 enum class GameState {
 	MAIN_MENU,
+	OPTIONS,
 	PLAYING,
 	PAUSED,
 	GAME_OVER,
@@ -79,6 +80,7 @@ public:
 	void UpdatePaused(float dt);
 	void UpdateGameOver(float dt);
 	void UpdateLogo(float dt);
+	void UpdateOptions(float dt);
 
 
 public:

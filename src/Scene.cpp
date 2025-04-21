@@ -499,6 +499,10 @@ void Scene::UpdateMainMenu(float dt) {
 		exitButton = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(
 			GuiControlType::BUTTON, 3, "Exit", exitButtonPos, this);
 	}
+	if (!menuBackgroundImage) {
+
+		MenuBackgroundImage = Engine::GetInstance().textures.get()->Load("Assets/UI/Menu.png");
+	}
 	
 
 
@@ -580,7 +584,7 @@ void Scene::HandleInput()
 
 	}
 	if (returntomenuButton != nullptr) {
-		if (currentState == GameState::GAME_OVER) {
+		if (currentState == GameState::GAME_OVER||currentState==GameState::OPTIONS) {
 			if (returntomenuButton->isClicked == true) {
 				SetState(GameState::MAIN_MENU);
 				
@@ -600,7 +604,23 @@ void Scene::HandleInput()
 			SetState(GameState::PLAYING);
 		}
 	}
+	if (optionsButton != nullptr) {
 
+		if (optionsButton->isClicked == true) {
+			SetState(GameState::OPTIONS);
+			startButton->CleanUp();
+			optionsButton->CleanUp();
+			exitButton->CleanUp();
+			menuBackgroundImage->CleanUp();
+			startButton = nullptr;
+			optionsButton = nullptr;
+			exitButton = nullptr;
+
+
+		}
+
+
+	}
 }
 
 
@@ -643,12 +663,25 @@ void Scene::UpdatePaused(float dt) {
 }
 
 void Scene::UpdateGameOver(float dt) {
+	
 	Engine::GetInstance().render.get()->DrawText("GAME OVER", 600, 200, 750, 255);
-	SDL_Rect returntomenuButtonPos = { 800, 550, 200, 50 };
-	returntomenuButton = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(
-		GuiControlType::BUTTON, 5, "Return To Menu", returntomenuButtonPos, this);
+	if (!returntomenuButton) {
+		
+		SDL_Rect returntomenuButtonPos = { 800, 550, 200, 50 };
+		returntomenuButton = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(
+			GuiControlType::BUTTON, 5, "Return To Menu", returntomenuButtonPos, this);
+	}
+	if (!menuBackgroundImage) {
+
+		MenuBackgroundImage = Engine::GetInstance().textures.get()->Load("Assets/UI/Menu.png");
+	}
 	returntomenuButton->Start();
 	returntomenuButton->Update(dt);
+	menuBackgroundImage->Update(dt);
+
+	Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/gameplaySongPlaceholder.wav");
+	Engine::GetInstance().audio.get()->musicVolume(50);
+
 }
 void Scene::UpdateLogo(float dt) {
 	// Manejar el fade in
@@ -662,6 +695,28 @@ void Scene::UpdateLogo(float dt) {
 	Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/titleSongPlaceholder.wav");
 	Engine::GetInstance().audio.get()->musicVolume(50);
 	
+
+}
+void Scene::UpdateOptions(float dt)
+{
+	Engine::GetInstance().render.get()->DrawText("OPTIONS", 600, 200, 750, 255);
+	if (!returntomenuButton) {
+		SDL_Rect returntomenuButtonPos = { 800, 550, 200, 50 };
+		returntomenuButton = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(
+			GuiControlType::BUTTON, 5, "Return To Menu", returntomenuButtonPos, this);
+	}
+	if (!menuBackgroundImage) {
+
+		MenuBackgroundImage = Engine::GetInstance().textures.get()->Load("Assets/UI/Menu.png");
+	}
+	returntomenuButton->Start();
+	returntomenuButton->Update(dt);
+	menuBackgroundImage->Update(dt);
+
+	Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/gameplaySongPlaceholder.wav");
+	Engine::GetInstance().audio.get()->musicVolume(50);
+
+
 
 }
 bool Scene::OnGuiMouseClickEvent(GuiControl* control)
