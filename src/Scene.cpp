@@ -621,6 +621,28 @@ void Scene::HandleInput()
 
 
 	}
+
+	if (fullscreenCheckbox != nullptr) {
+		if (fullscreenCheckbox->isClicked == true) {
+
+			SDL_Window* window = Engine::GetInstance().window.get()->GetSDLWindow();
+			Uint32 flags = SDL_GetWindowFlags(window);
+
+			// Alternar entre pantalla completa y modo ventana
+			if (flags & SDL_WINDOW_FULLSCREEN)
+			{
+				SDL_SetWindowFullscreen(window, 0); // Salir de pantalla completa
+			}
+			else
+			{
+				SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN); // Activar pantalla completa
+			}
+		}
+
+
+
+			
+	}
 }
 
 
@@ -709,9 +731,27 @@ void Scene::UpdateOptions(float dt)
 
 		MenuBackgroundImage = Engine::GetInstance().textures.get()->Load("Assets/UI/Menu.png");
 	}
+	if (!fullscreenCheckbox) {
+		SDL_Rect fullscreenCheckboxPos = { 800, 550, 200, 50 };
+		fullscreenCheckbox = (GuiCheckbox*)Engine::GetInstance().guiManager->CreateGuiControl(
+			GuiControlType::CHECKBOX, 1, "", fullscreenCheckboxPos, this);
+	}
+	if (!vsyncCheckbox) {
+		SDL_Rect vsyncCheckboxPos = { 800, 550, 200, 50 };
+		vsyncCheckbox = (GuiCheckbox*)Engine::GetInstance().guiManager->CreateGuiControl(
+			GuiControlType::CHECKBOX, 2, "", vsyncCheckboxPos, this);
+	}
+
+
+
 	returntomenuButton->Start();
 	returntomenuButton->Update(dt);
 	menuBackgroundImage->Update(dt);
+	fullscreenCheckbox->Start();
+	fullscreenCheckbox->Update(dt);
+	vsyncCheckbox->Start();
+	vsyncCheckbox->Update(dt);
+
 
 	Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/gameplaySongPlaceholder.wav");
 	Engine::GetInstance().audio.get()->musicVolume(50);

@@ -30,6 +30,8 @@ public:
 
 	int GetCameraZoom() const;
 
+	SDL_Window* GetSDLWindow() const { return sdlWindow; }
+
 public:
 	// The window we'll be rendering to
 	SDL_Window* window;
@@ -40,5 +42,6 @@ public:
 	int scale = 3;
 
 	float zoom;
+	SDL_Window* sdlWindow; // Puntero a la ventana SDL
 
 };

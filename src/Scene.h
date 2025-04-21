@@ -6,6 +6,7 @@
 #include "Enemy.h"
 #include <vector>
 #include "GuiControlButton.h"
+#include "GUiCheckbox.h"
 #include "Dialogue.h"
 #include "DialogueManager.h"
 #include "Parallax.h"
@@ -125,6 +126,8 @@ public:
 	GuiControlButton* exitButton = nullptr;
 	GuiControlButton* returnButton = nullptr;
 	GuiControlButton* returntomenuButton = nullptr;
+	GuiCheckbox* fullscreenCheckbox = nullptr;
+	GuiCheckbox* vsyncCheckbox = nullptr;
 
 	GuiImage* menuBackgroundImage = nullptr;
 
