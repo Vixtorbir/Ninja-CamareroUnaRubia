@@ -22,6 +22,11 @@ public:
 	SDL_Texture* CheckedTexture;
 	bool isClicked = false;
 
+	int buttonSelectedFxId;
+	int buttonPressedFxId;
+
+	bool fxPlayed = false;
+
 private:
 	bool canClick = true;
 	bool drawBasic = false;

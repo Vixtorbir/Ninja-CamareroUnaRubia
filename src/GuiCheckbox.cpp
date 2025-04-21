@@ -23,6 +23,9 @@ bool GuiCheckbox::Start()
 	CheckboxTexture = Engine::GetInstance().textures.get()->Load("Assets/UI/individualUIsprites/textName.png");
 	CheckedTexture = Engine::GetInstance().textures.get()->Load("Assets/UI/individualUIsprites/selectedButton.png");
 
+	buttonSelectedFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/ExtraFx/selectButton.ogg");
+	buttonPressedFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/ExtraFx/clickButton.ogg");
+
 	return false;
 }
 bool GuiCheckbox::Update(float dt)
@@ -41,9 +44,15 @@ bool GuiCheckbox::Update(float dt)
 			if (mousePos.getX() > bounds.x && mousePos.getX() < bounds.x + bounds.w && mousePos.getY() > bounds.y && mousePos.getY() < bounds.y + bounds.h) {
 
 				state = GuiControlState::FOCUSED;
+				if (!fxPlayed)
+				{
+					Engine::GetInstance().audio.get()->PlayFx(buttonSelectedFxId);
+					fxPlayed = true;
+				}
 
 				if (Engine::GetInstance().input->GetMouseButtonDown(SDL_BUTTON_LEFT) == KEY_REPEAT) {
 					state = GuiControlState::PRESSED;
+					Engine::GetInstance().audio.get()->PlayFx(buttonPressedFxId);
 				}
 
 				if (Engine::GetInstance().input->GetMouseButtonDown(SDL_BUTTON_LEFT) == KEY_UP) {

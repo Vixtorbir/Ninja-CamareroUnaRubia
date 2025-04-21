@@ -566,7 +566,7 @@ void Scene::HandleInput()
 	if (returnButton != nullptr) {
 
 		if (currentState == GameState::PAUSED) {
-			
+
 			if (returnButton->isClicked == true) {
 				SetState(GameState::PLAYING);
 			}
@@ -579,15 +579,15 @@ void Scene::HandleInput()
 			}
 		}
 		returnButton->CleanUp();
-	
+
 
 
 	}
 	if (returntomenuButton != nullptr) {
-		if (currentState == GameState::GAME_OVER||currentState==GameState::OPTIONS) {
+		if (currentState == GameState::GAME_OVER || currentState == GameState::OPTIONS) {
 			if (returntomenuButton->isClicked == true) {
 				SetState(GameState::MAIN_MENU);
-				
+
 			}
 		}
 		returntomenuButton->CleanUp();
@@ -641,8 +641,24 @@ void Scene::HandleInput()
 
 
 
-			
+
 	}
+
+	if (vsyncCheckbox != nullptr) {
+		if (vsyncCheckbox->isClicked == true) {
+
+
+			if (SDL_SetHint(SDL_HINT_RENDER_VSYNC, "1"))
+			{
+				LOG("VSync activado correctamente.");
+			}
+			else
+			{
+				LOG("Error al activar VSync.");
+			}
+		}
+	}
+
 }
 
 
