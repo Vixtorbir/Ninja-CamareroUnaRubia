@@ -738,6 +738,8 @@ void Scene::UpdateLogo(float dt) {
 void Scene::UpdateOptions(float dt)
 {
 	Engine::GetInstance().render.get()->DrawText("OPTIONS", 600, 200, 750, 255);
+	Engine::GetInstance().render.get()->DrawText("FullScreen", 700, 500, 750, 255);
+	Engine::GetInstance().render.get()->DrawText("VSYNC", 700, 400, 750, 255);
 	if (!returntomenuButton) {
 		SDL_Rect returntomenuButtonPos = { 800, 550, 200, 50 };
 		returntomenuButton = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(
@@ -748,16 +750,29 @@ void Scene::UpdateOptions(float dt)
 		MenuBackgroundImage = Engine::GetInstance().textures.get()->Load("Assets/UI/Menu.png");
 	}
 	if (!fullscreenCheckbox) {
-		SDL_Rect fullscreenCheckboxPos = { 800, 550, 200, 50 };
+		SDL_Rect fullscreenCheckboxPos = { 900, 500, 200, 50 };
 		fullscreenCheckbox = (GuiCheckbox*)Engine::GetInstance().guiManager->CreateGuiControl(
 			GuiControlType::CHECKBOX, 1, "", fullscreenCheckboxPos, this);
 	}
 	if (!vsyncCheckbox) {
-		SDL_Rect vsyncCheckboxPos = { 800, 550, 200, 50 };
+		SDL_Rect vsyncCheckboxPos = { 900, 400, 200, 50 };
 		vsyncCheckbox = (GuiCheckbox*)Engine::GetInstance().guiManager->CreateGuiControl(
 			GuiControlType::CHECKBOX, 2, "", vsyncCheckboxPos, this);
 	}
+	if (!fxSlider) {
+		SDL_Rect fxSliderPos = { 800, 550, 200, 50 };
+		fxSlider = (GuiSlider*)Engine::GetInstance().guiManager->CreateGuiControl(
+			GuiControlType::SLIDER, 4, "", fxSliderPos, this);
 
+
+	}
+	if (!musicSlider) {
+		SDL_Rect musicSliderPos = { 800, 550, 200, 50 };
+		musicSlider = (GuiSlider*)Engine::GetInstance().guiManager->CreateGuiControl(
+			GuiControlType::SLIDER, 5, "", musicSliderPos, this);
+
+
+	}
 
 
 	returntomenuButton->Start();
@@ -767,6 +782,10 @@ void Scene::UpdateOptions(float dt)
 	fullscreenCheckbox->Update(dt);
 	vsyncCheckbox->Start();
 	vsyncCheckbox->Update(dt);
+	
+	fxSlider->Update(dt);
+	musicSlider->Update(dt);
+
 
 
 	Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/gameplaySongPlaceholder.wav");
