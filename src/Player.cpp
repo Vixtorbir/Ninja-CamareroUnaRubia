@@ -157,7 +157,7 @@ bool Player::Update(float dt) {
     }
 
     // Handle jumping
-    if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN && hasAlreadyJumpedOnce == 0 && !inBubble) {
+    if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN && hasAlreadyJumpedOnce == 0 && !inBubble && !crouched) {
         isHoldingJump = true;
         jumpHoldTimer = 0.0f;
     }
@@ -503,5 +503,6 @@ void Player::ChangeHitboxSize(float width, float height) {
 	pbody->listener = this;
 	pbody->ctype = ColliderType::PLAYER;
 	pbody->body->SetFixedRotation(true);
+    pbody->body->SetGravityScale(5);
 }
 
