@@ -237,6 +237,9 @@ bool Scene::Update(float dt)
 	case GameState::LOGO:
 		UpdateLogo(dt);
 		break;
+	case GameState::OPTIONS:
+		UpdateOptions(dt);
+		break;
 	default:
 		break;
 	}
@@ -520,6 +523,64 @@ void Scene::HandleInput()
 			SetState(GameState::PLAYING);
 		}
 	}
+<<<<<<< Updated upstream
+=======
+	if (optionsButton != nullptr) {
+
+		if (optionsButton->isClicked == true) {
+			SetState(GameState::OPTIONS);
+			startButton->CleanUp();
+			optionsButton->CleanUp();
+			exitButton->CleanUp();
+			menuBackgroundImage->CleanUp();
+			startButton = nullptr;
+			optionsButton = nullptr;
+			exitButton = nullptr;
+			
+
+
+		}
+
+
+	}
+
+	if (fullscreenCheckbox != nullptr) {
+		if (fullscreenCheckbox->isClicked == true) {
+
+			SDL_Window* window = Engine::GetInstance().window.get()->GetSDLWindow();
+			Uint32 flags = SDL_GetWindowFlags(window);
+
+			// Alternar entre pantalla completa y modo ventana
+			if (flags & SDL_WINDOW_FULLSCREEN)
+			{
+				SDL_SetWindowFullscreen(window, 0); // Salir de pantalla completa
+			}
+			else
+			{
+				SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN); // Activar pantalla completa
+			}
+		}
+
+
+
+
+	}
+
+	if (vsyncCheckbox != nullptr) {
+		if (vsyncCheckbox->isClicked == true) {
+
+
+			if (SDL_SetHint(SDL_HINT_RENDER_VSYNC, "1"))
+			{
+				LOG("VSync activado correctamente.");
+			}
+			else
+			{
+				LOG("Error al activar VSync.");
+			}
+		}
+	}
+>>>>>>> Stashed changes
 
 }
 
@@ -577,6 +638,75 @@ void Scene::UpdateLogo(float dt) {
 	
 
 }
+<<<<<<< Updated upstream
+=======
+void Scene::UpdateOptions(float dt)
+{
+	Engine::GetInstance().render.get()->DrawText("OPTIONS", 600, 200, 750, 255);
+	Engine::GetInstance().render.get()->DrawText("FullScreen", 700, 500, 750, 255);
+	Engine::GetInstance().render.get()->DrawText("VSYNC", 700, 400, 750, 255);
+	
+	if (!MenuBackgroundImage) {
+		MenuBackgroundImage = Engine::GetInstance().textures.get()->Load("Assets/UI/Menu.png");
+		
+
+	}
+
+	if (!returntomenuButton) {
+		SDL_Rect returntomenuButtonPos = { 1000, 550, 200, 50 };
+		returntomenuButton = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(
+			GuiControlType::BUTTON, 5, "Return To Menu", returntomenuButtonPos, this);
+		
+
+	}
+	
+	if (!fullscreenCheckbox) {
+		SDL_Rect fullscreenCheckboxPos = { 900, 500, 200, 50 };
+		fullscreenCheckbox = (GuiCheckbox*)Engine::GetInstance().guiManager->CreateGuiControl(
+			GuiControlType::CHECKBOX, 1, "", fullscreenCheckboxPos, this);
+		fullscreenCheckbox->Start();
+	}
+	if (!vsyncCheckbox) {
+		SDL_Rect vsyncCheckboxPos = { 900, 400, 200, 50 };
+		vsyncCheckbox = (GuiCheckbox*)Engine::GetInstance().guiManager->CreateGuiControl(
+			GuiControlType::CHECKBOX, 2, "", vsyncCheckboxPos, this);
+		vsyncCheckbox->Start();
+	}
+	if (!fxSlider) {
+		SDL_Rect fxSliderPos = { 800, 550, 200, 50 };
+		fxSlider = (GuiSlider*)Engine::GetInstance().guiManager->CreateGuiControl(
+			GuiControlType::HPSLIDER, 4, "", fxSliderPos, this);
+
+
+	}
+	if (!musicSlider) {
+		SDL_Rect musicSliderPos = { 800, 550, 200, 50 };
+		musicSlider = (GuiSlider*)Engine::GetInstance().guiManager->CreateGuiControl(
+			GuiControlType::HPSLIDER, 5, "", musicSliderPos, this);
+
+
+	}
+
+
+	returntomenuButton->Start();
+	returntomenuButton->Update(dt);
+
+	menuBackgroundImage->Update(dt);
+	
+	fullscreenCheckbox->Update(dt);
+	
+	vsyncCheckbox->Update(dt);
+	
+	
+
+
+
+	
+
+
+
+}
+>>>>>>> Stashed changes
 bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 {
 	// L15: DONE 5: Implement the OnGuiMouseClickEvent method
