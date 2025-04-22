@@ -19,6 +19,8 @@ public:
 
 	bool Update(float dt);
 
+	void SetPosition(Vector2D pos);
+
 	bool CleanUp();
 
 	void SetParameters(pugi::xml_node parameters) {

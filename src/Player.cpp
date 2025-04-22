@@ -386,6 +386,7 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 	case ColliderType::ITEM:
 		Engine::GetInstance().audio.get()->PlayFx(pickUpItemFxId);
 		Orbs++;
+        Engine::GetInstance().map.get()->DeleteCollisionBodies();
 		Engine::GetInstance().physics.get()->DeletePhysBody(physB);
 
 		break;

@@ -84,6 +84,8 @@ public:
 	void UpdateLogo(float dt);
 	void UpdateOptions(float dt);
 
+	void CreateItemLvl2(const char* mapName);
+
 
 public:
 	// Get tilePosDebug value
