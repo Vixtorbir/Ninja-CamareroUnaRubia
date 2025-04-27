@@ -499,6 +499,21 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
             Engine::GetInstance().physics.get()->DeletePhysBody(physA);
         }
         break;
+	case ColliderType::TURRET:
+		if (physA->ctype == ColliderType::PLAYER_ATTACK) {
+			Turret* turret = static_cast<Turret*>(physB->listener);
+			if (turret != nullptr) {
+				turret->dead = true;
+				Engine::GetInstance().audio.get()->PlayFx(weakKatana1FxId);
+			}
+			activeShurikens.erase(
+				std::remove_if(activeShurikens.begin(), activeShurikens.end(),
+					[physA](const Shuriken& shuriken) { return shuriken.body == physA; }),
+				activeShurikens.end()
+			);
+			Engine::GetInstance().physics.get()->DeletePhysBody(physA);
+		}
+		break;
 	}
 }
 
