@@ -32,6 +32,7 @@ bool Player::Start() {
     BackgroundSliderHP = Engine::GetInstance().textures.get()->Load("Assets/UI/lifeBarBack.png");
     ForeGroundSliderHP = Engine::GetInstance().textures.get()->Load("Assets/UI/lifeBarFront.png");
     orbUiTexture = Engine::GetInstance().textures.get()->Load("Assets/UI/OrbUi.png");
+    shurikenTexture = Engine::GetInstance().textures.get()->Load("Assets/Textures/goldCoin.png");
 
     position.setX(parameters.attribute("x").as_int());
     position.setY(parameters.attribute("y").as_int());
@@ -375,11 +376,26 @@ bool Player::Update(float dt) {
         LOG("Attack ended, cooldown started.");
     }
 
+    if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_O) == KEY_DOWN) {
+        ThrowShuriken();
+    }
+
+    for (const auto& shuriken : activeShurikens) {
+        int x, y;
+        shuriken->GetPosition(x, y);
+        Engine::GetInstance().render.get()->DrawTexture(shurikenTexture, x+25, y+25);
+    }
+
+
     return true;
 }
+
+
 float Player::Lerp(float start, float end, float factor) {
 	return start + factor * (end - start);
 }
+
+
 bool Player::CleanUp()
 {
 	LOG("Cleanup player");
@@ -404,6 +420,11 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 	case ColliderType::PLATFORM:
 		isJumping = false;
 		hasAlreadyJumpedOnce = 0;
+       /* if (physA->ctype == ColliderType::PLAYER_ATTACK) {
+            
+            activeShurikens.erase(std::remove(activeShurikens.begin(), activeShurikens.end(), physA), activeShurikens.end());
+            Engine::GetInstance().physics.get()->DeletePhysBody(physA);
+        }*/
 		break;
 	case ColliderType::NPC:
 		inBubble = true;
@@ -411,6 +432,11 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 		break;
 	case ColliderType::WALL:
 		touchingWall = true;
+        /* if (physA->ctype == ColliderType::PLAYER_ATTACK) {
+
+             activeShurikens.erase(std::remove(activeShurikens.begin(), activeShurikens.end(), physA), activeShurikens.end());
+             Engine::GetInstance().physics.get()->DeletePhysBody(physA);
+         }*/
 		break;
 	case ColliderType::ITEM:
 		Engine::GetInstance().audio.get()->PlayFx(pickUpItemFxId);
@@ -422,13 +448,21 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 	case ColliderType::UNKNOWN:
 		break;
 
-	/*case ColliderType::ENEMY:
-		if (!godMode) {
-			int damageId = Engine::GetInstance().audio.get()->randomFx(hit1FxId, hit2FxId);
-			Engine::GetInstance().audio.get()->PlayFx(damageId);
-			TakeDamage(1);
-		}// El jugador recibe 1 punto de da�o*/
-		break;
+    case ColliderType::ENEMY:
+        if (physA->ctype == ColliderType::PLAYER_ATTACK) {
+            
+            Enemy* enemy = static_cast<Enemy*>(physB->listener);
+            if (enemy != nullptr) {
+				enemy->dead = true;
+				Engine::GetInstance().audio.get()->PlayFx(weakKatana1FxId);
+				
+            }
+
+            // Destruir el shuriken
+            activeShurikens.erase(std::remove(activeShurikens.begin(), activeShurikens.end(), physA), activeShurikens.end());
+            Engine::GetInstance().physics.get()->DeletePhysBody(physA);
+        }
+        break;
 	}
 }
 
@@ -530,9 +564,40 @@ void Player::PerformAttack()
         );
     }
 
-    katanaAttack->ctype = ColliderType::PLAYER_ATTACK; // Asignar tipo de colisión
-    katanaAttack->listener = this; // Asignar el listener al jugador
+    katanaAttack->ctype = ColliderType::PLAYER_ATTACK; 
+    katanaAttack->listener = this; 
 }
+
+void Player::ThrowShuriken() {
+    // Crear el shuriken como un sensor físico
+    PhysBody* shuriken = Engine::GetInstance().physics.get()->CreateRectangleSensor(
+        (int)position.getX() + (playerDirection == EntityDirections::RIGHT ? 220 : -5), 
+        (int)position.getY() + 100, 
+        40, 40, 
+        bodyType::DYNAMIC 
+    );
+
+    // Configurar propiedades del shuriken
+    shuriken->ctype = ColliderType::PLAYER_ATTACK; 
+    shuriken->listener = this; 
+	shuriken->body->SetBullet(true); 
+	shuriken->body->SetFixedRotation(true);
+    shuriken->body->SetGravityScale(0.0f);
+
+    // Aplicar impulso horizontal en la dirección del jugador
+    float shurikenSpeed = 5.0f; 
+    b2Vec2 impulse = b2Vec2((playerDirection == EntityDirections::RIGHT ? shurikenSpeed : -shurikenSpeed), 0);
+    shuriken->body->ApplyLinearImpulseToCenter(impulse, true);
+
+    
+    activeShurikens.push_back(shuriken);
+
+    // Reproducir efecto de sonido
+    int shurikenFxId = Engine::GetInstance().audio.get()->randomFx(throwShuriken1FxId, throwShuriken3FxId);
+    Engine::GetInstance().audio.get()->PlayFx(shurikenFxId);
+}
+
+
 
 
 void Player::ChangeHitboxSize(float width, float height) {

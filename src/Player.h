@@ -9,6 +9,7 @@
 #include "GuiPopup.h"
 #include "Text.h"
 #include "SDL2/SDL.h"
+#include <vector>
 
 
 enum class PlayerState {
@@ -61,6 +62,8 @@ public:
 
     void PerformAttack();
 
+    void ThrowShuriken();
+
 public:
     // Physics and movement
     PhysBody* pbody;
@@ -75,6 +78,11 @@ public:
     float wallJumpForce = 90.5f;
     float wallJumpPush = 102.0f;
     float wallClimbSpeed = -2.0f;
+
+
+    std::vector<PhysBody*> activeShurikens;
+    SDL_Texture* shurikenTexture = nullptr;
+
 
     // States
     PlayerState currentState;

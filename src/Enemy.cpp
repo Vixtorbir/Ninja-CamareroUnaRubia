@@ -294,6 +294,7 @@ void Enemy::OnCollision(PhysBody* physA, PhysBody* physB) {
 			LOG("Enemy hit by player attack! Enemy will be destroyed.");
 			this->dead = true;
 		}
+
 		break;
 	case ColliderType::PLAYER:
 		// Verificar si la hitbox del ataque está activa
