@@ -9,6 +9,7 @@
 #include "GuiPopup.h"
 #include "Text.h"
 #include "SDL2/SDL.h"
+#include <vector>
 
 
 enum class PlayerState {
@@ -59,14 +60,32 @@ public:
         this->parameters = parameters;
     }
 
+    void PerformAttack();
+
+    void ThrowShuriken();
+
 public:
     // Physics and movement
     PhysBody* pbody;
+	PhysBody* katanaAttack = nullptr;
+    Timer attackTimer;          
+    bool isAttacking = false;   
+    bool isCooldown = false;    
+    const float attackDuration = 0.5f; 
+    const float attackCooldown = 1.0f;
+    SDL_Texture* meleeAttackTexture = nullptr; 
+
+
     float speed = 0.55f;
     float jumpForce = 125;
     float wallJumpForce = 90.5f;
     float wallJumpPush = 102.0f;
     float wallClimbSpeed = -2.0f;
+
+
+    std::vector<PhysBody*> activeShurikens;
+    SDL_Texture* shurikenTexture = nullptr;
+
 
     // States
     PlayerState currentState;

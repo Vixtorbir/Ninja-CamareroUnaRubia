@@ -132,6 +132,7 @@ bool EntityManager::Update(float dt)
 	// Code you want to profile
 	bool ret = true;
 	for(const auto entity : entities)
+
 	{
 		if (entity->active == false) continue;
 		ret = entity->Update(dt);

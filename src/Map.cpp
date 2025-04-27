@@ -274,6 +274,10 @@ bool Map::Load(std::string path, std::string fileName)
                     platform->ctype = ColliderType::WALL;
 					collisionBodies.push_back(platform);
                 }
+                else if (objectGroup->name == "Aux") {
+                    platform->ctype = ColliderType::PLATFORM;
+                    collisionBodies2.push_back(platform);
+                }
             }
 
             mapData.objectGroups.push_back(objectGroup);
@@ -315,6 +319,21 @@ bool Map::Load(std::string path, std::string fileName)
     mapLoaded = ret;
     return ret;
 }
+
+void Map::DeleteCollisionBodies() {
+    if (collisionBodies2.empty()) {
+        LOG("collisionBodies2 ya ha sido eliminado previamente.");
+        return;
+    }
+
+    for (auto body : collisionBodies2) {
+        Engine::GetInstance().physics.get()->DeletePhysBody(body);
+    }
+    collisionBodies2.clear();
+    collisionBodies2Deleted = true; // Marcar como eliminado
+    LOG("collisionBodies2 eliminado correctamente.");
+}
+
 
 void Map::UpdateAnimatedTiles(float dt) {
     static int elapsedTime = 0;

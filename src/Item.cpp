@@ -37,6 +37,7 @@ bool Item::Start() {
 
 	// L08 TODO 7: Assign collider type
 	pbody->ctype = ColliderType::ITEM;
+	pbody->listener = this;
 
 	// Set the gravity of the body
 	if (!parameters.attribute("gravity").as_bool()) pbody->body->SetGravityScale(0);
@@ -61,7 +62,15 @@ bool Item::Update(float dt)
 	return true;
 }
 
+void Item::SetPosition(Vector2D pos)
+{
+	position = pos;
+}
+
 bool Item::CleanUp()
 {
+	LOG("Cleanup item");
+	Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
+	Engine::GetInstance().scene.get()->items.clear();
 	return true;
 }

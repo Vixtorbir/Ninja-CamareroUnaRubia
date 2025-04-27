@@ -147,6 +147,7 @@ public:
 
     // Load new map
     bool Load(std::string path, std::string mapFileName);
+    void DeleteCollisionBodies();
     const std::vector<ObjectGroup*>& GetObjectGroups() const { return mapData.objectGroups; }
     // L07: TODO 8: Create a method that translates x,y coordinates from map positions to world positions
     Vector2D MapToWorld(int x, int y) const;
@@ -199,11 +200,16 @@ public:
         }
         return nullptr;
     }
+
+	
+
 public: 
     std::string mapFileName;
     std::string mapPath;
     std::vector<PhysBody*> collisionBodies;
+	std::vector<PhysBody*> collisionBodies2;
     MapData mapData;
+    bool collisionBodies2Deleted = false;
 
 private:
     bool mapLoaded;
