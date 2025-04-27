@@ -33,6 +33,7 @@ bool Player::Start() {
     ForeGroundSliderHP = Engine::GetInstance().textures.get()->Load("Assets/UI/lifeBarFront.png");
     orbUiTexture = Engine::GetInstance().textures.get()->Load("Assets/UI/OrbUi.png");
     shurikenTexture = Engine::GetInstance().textures.get()->Load("Assets/Textures/goldCoin.png");
+    meleeAttackTexture = Engine::GetInstance().textures.get()->Load("Assets/Textures/meleeAttack.png");
 
     position.setX(parameters.attribute("x").as_int());
     position.setY(parameters.attribute("y").as_int());
@@ -376,6 +377,20 @@ bool Player::Update(float dt) {
         LOG("Attack ended, cooldown started.");
     }
 
+    if (isAttacking && katanaAttack != nullptr) {
+        int x, y;
+        katanaAttack->GetPosition(x, y);
+
+        //Esto ya se pondra bien cuando haya una textura
+
+        int textureWidth = 80;  
+        int textureHeight = 250; 
+        int renderX = x - textureWidth / 2;
+        int renderY = y - textureHeight / 2;
+
+        Engine::GetInstance().render.get()->DrawTexture(meleeAttackTexture, renderX, renderY);
+    }
+
     if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_O) == KEY_DOWN) {
         ThrowShuriken();
     }
@@ -396,12 +411,13 @@ float Player::Lerp(float start, float end, float factor) {
 }
 
 
-bool Player::CleanUp()
-{
-	LOG("Cleanup player");
-	Engine::GetInstance().textures.get()->UnLoad(texture);
-	return true;
+bool Player::CleanUp() {
+    LOG("Cleanup player");
+    Engine::GetInstance().textures.get()->UnLoad(texture);
+    Engine::GetInstance().textures.get()->UnLoad(meleeAttackTexture); 
+    return true;
 }
+
 
 void Player::GuiPOPup(GuiPopups guiPopup)
 {
@@ -458,7 +474,7 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 				
             }
 
-            // Destruir el shuriken
+            
             activeShurikens.erase(std::remove(activeShurikens.begin(), activeShurikens.end(), physA), activeShurikens.end());
             Engine::GetInstance().physics.get()->DeletePhysBody(physA);
         }
@@ -533,9 +549,9 @@ void Player::TakeDamage(int damage) {
     if (canTakeDamage) {
         HP -= damage;
         if (HP <= 0) {
-            Die(); // Lógica para manejar la muerte del jugador
+            Die(); 
         }
-        canTakeDamage = false; // Activar cooldown de daño si es necesario
+        canTakeDamage = false; 
         LOG("Player took damage! Remaining HP: %d", HP);
     }
 }
@@ -585,7 +601,7 @@ void Player::ThrowShuriken() {
     shuriken->body->SetGravityScale(0.0f);
 
     // Aplicar impulso horizontal en la dirección del jugador
-    float shurikenSpeed = 5.0f; 
+    float shurikenSpeed = 10.0f; 
     b2Vec2 impulse = b2Vec2((playerDirection == EntityDirections::RIGHT ? shurikenSpeed : -shurikenSpeed), 0);
     shuriken->body->ApplyLinearImpulseToCenter(impulse, true);
 

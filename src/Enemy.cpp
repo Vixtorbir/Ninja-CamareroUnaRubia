@@ -31,6 +31,9 @@ bool Enemy::Start() {
 	attackTexture = Engine::GetInstance().textures.get()->Load(parameters.attribute("attack_texture").as_string());
 	trailTexture = Engine::GetInstance().textures.get()->Load(parameters.attribute("trail_texture").as_string());
 
+	attackTexture = Engine::GetInstance().textures.get()->Load("Assets/Textures/enemyAttack.png"); 
+
+
 	position.setX(parameters.attribute("x").as_int());
 	position.setY(parameters.attribute("y").as_int());
 	texW = parameters.attribute("w").as_int();
@@ -236,6 +239,18 @@ bool Enemy::Update(float dt)
 		LOG("Enemy cooldown ended, can attack again.");
 	}
 
+	if (isAttacking && attackBody != nullptr) {
+		int x, y;
+		attackBody->GetPosition(x, y);
+
+		int textureWidth = 104; 
+		int textureHeight = 128; 
+		int renderX = x - textureWidth / 2;
+		int renderY = y - textureHeight / 2;
+
+		Engine::GetInstance().render.get()->DrawTexture(attackTexture, renderX, renderY);
+	}
+
 	// Dibuja la línea de visión del enemigo
 	DrawLineOfSight();
 
@@ -259,12 +274,14 @@ bool Enemy::Update(float dt)
 
 
 
-bool Enemy::CleanUp()
-{
+bool Enemy::CleanUp() {
+	Engine::GetInstance().textures.get()->UnLoad(texture);
+	Engine::GetInstance().textures.get()->UnLoad(attackTexture); 
 	Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
 	Engine::GetInstance().entityManager.get()->entities.remove(this);
 	return true;
 }
+
 
 void Enemy::SetPosition(Vector2D pos) {
 	pos.setX(pos.getX() + texW / 2);

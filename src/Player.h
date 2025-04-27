@@ -71,8 +71,11 @@ public:
     Timer attackTimer;          
     bool isAttacking = false;   
     bool isCooldown = false;    
-    const float attackDuration = 1.0f; 
-    const float attackCooldown = 3.0f;
+    const float attackDuration = 0.5f; 
+    const float attackCooldown = 1.0f;
+    SDL_Texture* meleeAttackTexture = nullptr; 
+
+
     float speed = 0.55f;
     float jumpForce = 125;
     float wallJumpForce = 90.5f;
