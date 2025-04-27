@@ -395,12 +395,27 @@ bool Player::Update(float dt) {
         ThrowShuriken();
     }
 
-    for (const auto& shuriken : activeShurikens) {
-        int x, y;
-        shuriken->GetPosition(x, y);
-        Engine::GetInstance().render.get()->DrawTexture(shurikenTexture, x+25, y+25);
+    for (auto it = activeShurikens.begin(); it != activeShurikens.end(); ) {
+        if (it->timer.ReadSec() >= 3.5f) { // Si han pasado 5 segundos
+            Engine::GetInstance().physics.get()->DeletePhysBody(it->body); // Eliminar el cuerpo físico
+            it = activeShurikens.erase(it); // Eliminar de la lista
+        }
+        else {
+            ++it; // Continuar con el siguiente shuriken
+        }
     }
 
+    // Renderizar los shurikens
+    for (const auto& shuriken : activeShurikens) {
+        int x, y;
+        shuriken.body->GetPosition(x, y);
+        Engine::GetInstance().render.get()->DrawTexture(shurikenTexture, x + 25, y + 25);
+    }
+
+    if (!canShootShuriken && shurikenCooldownTimer.ReadSec() >= 1.0f) {
+        canShootShuriken = true;
+        LOG("Shuriken cooldown ended. Player can shoot again.");
+    }
 
     return true;
 }
@@ -475,7 +490,12 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
             }
 
             
-            activeShurikens.erase(std::remove(activeShurikens.begin(), activeShurikens.end(), physA), activeShurikens.end());
+            activeShurikens.erase(
+                std::remove_if(activeShurikens.begin(), activeShurikens.end(),
+                    [physA](const Shuriken& shuriken) { return shuriken.body == physA; }),
+                activeShurikens.end()
+            );
+
             Engine::GetInstance().physics.get()->DeletePhysBody(physA);
         }
         break;
@@ -585,34 +605,52 @@ void Player::PerformAttack()
 }
 
 void Player::ThrowShuriken() {
+
+    // Verificar si ya hay 3 shurikens activos
+    if (activeShurikens.size() >= 3) {
+        LOG("Cannot throw more shurikens. Maximum limit reached.");
+        return; 
+    }
+
+    // Verificar si el cooldown ha terminado
+    if (!canShootShuriken) {
+        LOG("Cannot throw shuriken. Cooldown active.");
+        return; 
+    }
+
     // Crear el shuriken como un sensor físico
     PhysBody* shuriken = Engine::GetInstance().physics.get()->CreateRectangleSensor(
-        (int)position.getX() + (playerDirection == EntityDirections::RIGHT ? 220 : -5), 
-        (int)position.getY() + 100, 
-        40, 40, 
-        bodyType::DYNAMIC 
+        (int)position.getX() + (playerDirection == EntityDirections::RIGHT ? 220 : -5),
+        (int)position.getY() + 100,
+        40, 40,
+        bodyType::DYNAMIC
     );
 
     // Configurar propiedades del shuriken
-    shuriken->ctype = ColliderType::PLAYER_ATTACK; 
-    shuriken->listener = this; 
-	shuriken->body->SetBullet(true); 
-	shuriken->body->SetFixedRotation(true);
+    shuriken->ctype = ColliderType::PLAYER_ATTACK;
+    shuriken->listener = this;
+    shuriken->body->SetBullet(true);
+    shuriken->body->SetFixedRotation(true);
     shuriken->body->SetGravityScale(0.0f);
 
     // Aplicar impulso horizontal en la dirección del jugador
-    float shurikenSpeed = 10.0f; 
+    float shurikenSpeed = 10.0f;
     b2Vec2 impulse = b2Vec2((playerDirection == EntityDirections::RIGHT ? shurikenSpeed : -shurikenSpeed), 0);
     shuriken->body->ApplyLinearImpulseToCenter(impulse, true);
 
-    
-    activeShurikens.push_back(shuriken);
+    // Agregar el shuriken a la lista con un temporizador
+    Shuriken newShuriken = { shuriken, Timer() };
+    newShuriken.timer.Start();
+    activeShurikens.push_back(newShuriken);
+
+    // Iniciar el cooldown
+    canShootShuriken = false;
+    shurikenCooldownTimer.Start();
 
     // Reproducir efecto de sonido
     int shurikenFxId = Engine::GetInstance().audio.get()->randomFx(throwShuriken1FxId, throwShuriken3FxId);
     Engine::GetInstance().audio.get()->PlayFx(shurikenFxId);
 }
-
 
 
 
