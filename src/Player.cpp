@@ -422,12 +422,12 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 	case ColliderType::UNKNOWN:
 		break;
 
-	case ColliderType::ENEMY:
+	/*case ColliderType::ENEMY:
 		if (!godMode) {
 			int damageId = Engine::GetInstance().audio.get()->randomFx(hit1FxId, hit2FxId);
 			Engine::GetInstance().audio.get()->PlayFx(damageId);
 			TakeDamage(1);
-		}// El jugador recibe 1 punto de da�o
+		}// El jugador recibe 1 punto de da�o*/
 		break;
 	}
 }
@@ -496,15 +496,16 @@ void Player::LoadPlayerFx()
 }
 
 void Player::TakeDamage(int damage) {
-	if (canTakeDamage) {
-		/*hp -= damage;
-		if (hp <= 0) {
-			Die();
-		}*///FIX
-		canTakeDamage = false;
-		timeSinceLastDamage = 0.0f;
-	}
+    if (canTakeDamage) {
+        HP -= damage;
+        if (HP <= 0) {
+            Die(); // Lógica para manejar la muerte del jugador
+        }
+        canTakeDamage = false; // Activar cooldown de daño si es necesario
+        LOG("Player took damage! Remaining HP: %d", HP);
+    }
 }
+
 
 
 void Player::Die() {
@@ -516,17 +517,23 @@ void Player::Die() {
 
 void Player::PerformAttack()
 {
+    if (playerDirection == EntityDirections::RIGHT)
+    {
+        katanaAttack = Engine::GetInstance().physics.get()->CreateRectangleSensor(
+            (int)position.getX() + 220, (int)position.getY() + 100, 80, 250, bodyType::STATIC
+        );
+    }
+    else
+    {
+        katanaAttack = Engine::GetInstance().physics.get()->CreateRectangleSensor(
+            (int)position.getX() - 5, (int)position.getY() + 100, 80, 250, bodyType::STATIC
+        );
+    }
 
-	if (playerDirection == EntityDirections::RIGHT)
-    {
-		katanaAttack = Engine::GetInstance().physics.get()->CreateRectangleSensor((int)position.getX() + 220, (int)position.getY()+100, 80, 250, bodyType::STATIC);
-	 
-    }
-    else 
-    {
-        katanaAttack = Engine::GetInstance().physics.get()->CreateRectangleSensor((int)position.getX() - 5, (int)position.getY()+100, 80, 250, bodyType::STATIC);
-    }
+    katanaAttack->ctype = ColliderType::PLAYER_ATTACK; // Asignar tipo de colisión
+    katanaAttack->listener = this; // Asignar el listener al jugador
 }
+
 
 void Player::ChangeHitboxSize(float width, float height) {
 	// Destroy the current fixture

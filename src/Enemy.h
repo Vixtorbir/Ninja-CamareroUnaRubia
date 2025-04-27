@@ -98,5 +98,7 @@ private:
     const float attackDuration = 1.0f; 
     const float attackCooldown = 3.0f; 
     PhysBody* attackBody = nullptr;
+
+	bool dead = false;
 };
 

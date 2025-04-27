@@ -64,6 +64,33 @@ bool Enemy::Start() {
 
 bool Enemy::Update(float dt)
 {
+
+	if (dead)
+	{
+		// Si el enemigo está muerto, eliminarlo de la escena y la física
+		if (attackBody != nullptr) {
+			Engine::GetInstance().physics.get()->DeletePhysBody(attackBody);
+			attackBody = nullptr;
+			LOG("Attack hitbox removed.");
+		}
+
+		if (pbody != nullptr)
+		{
+			pbody->body->DestroyFixture(pbody->body->GetFixtureList());
+			pbody = nullptr;
+		}
+
+		LOG("Enemy is dead, removing from scene.");
+		
+		active = false;
+		
+		return true;
+	}
+
+	if (!dead)
+
+	{
+
 	if (Engine::GetInstance().scene.get()->currentState == GameState::PAUSED)
 	{
 		pbody->body->SetLinearVelocity(b2Vec2(0, 0));
@@ -226,11 +253,9 @@ bool Enemy::Update(float dt)
 	{
 		pathfinding->DrawPath();
 	}
-
+}
 	return true;
 }
-
-
 
 
 
@@ -263,11 +288,24 @@ void Enemy::ResetPath() {
 void Enemy::OnCollision(PhysBody* physA, PhysBody* physB) {
 	switch (physB->ctype)
 	{
-	case ColliderType::PLAYER:
+	case ColliderType::PLAYER_ATTACK: 
 		
+		if (physB == Engine::GetInstance().scene.get()->player->katanaAttack) {
+			LOG("Enemy hit by player attack! Enemy will be destroyed.");
+			this->dead = true;
+		}
+		break;
+	case ColliderType::PLAYER:
+		// Verificar si la hitbox del ataque está activa
+		if (attackBody != nullptr && physA == attackBody) {
+			// Llamar a la función TakeDamage del jugador
+			Engine::GetInstance().scene.get()->player->TakeDamage(1);
+			LOG("Player hit by enemy attack! Damage applied.");
+		}
 		break;
 	}
 }
+
 
 void Enemy::OnCollisionEnd(PhysBody* physA, PhysBody* physB)
 {
@@ -337,8 +375,8 @@ void Enemy::PerformAttack() {
 			104, 128, // Tamaño de la hitbox
 			bodyType::STATIC
 		);
-		attackBody->ctype = ColliderType::ENEMY; 
-		attackBody->listener = this;             
+		attackBody->ctype = ColliderType::ENEMY;
+		attackBody->listener = this;
 	}
 
 	// Dibujar la animación de ataque
@@ -347,6 +385,7 @@ void Enemy::PerformAttack() {
 
 	LOG("Enemy is attacking!");
 }
+
 
 
 
