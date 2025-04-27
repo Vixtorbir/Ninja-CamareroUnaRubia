@@ -59,9 +59,17 @@ public:
         this->parameters = parameters;
     }
 
+    void PerformAttack();
+
 public:
     // Physics and movement
     PhysBody* pbody;
+	PhysBody* katanaAttack = nullptr;
+    Timer attackTimer;          
+    bool isAttacking = false;   
+    bool isCooldown = false;    
+    const float attackDuration = 1.0f; 
+    const float attackCooldown = 3.0f;
     float speed = 0.55f;
     float jumpForce = 125;
     float wallJumpForce = 90.5f;

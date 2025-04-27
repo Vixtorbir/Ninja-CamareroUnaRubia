@@ -345,6 +345,35 @@ bool Player::Update(float dt) {
             loadLevel2 = true;
         }
     }
+    
+    if (isCooldown) {
+        if (attackTimer.ReadSec() >= attackCooldown) {
+            isCooldown = false; 
+            LOG("Cooldown ended, player can attack again.");
+        }
+    }
+
+    
+    if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_K) == KEY_DOWN && !isAttacking && !isCooldown) {
+        PerformAttack();         
+        isAttacking = true;      
+        attackTimer.Start();     
+        LOG("Attack started.");
+    }
+
+    if (isAttacking && attackTimer.ReadSec() >= attackDuration) {
+        isAttacking = false; 
+        isCooldown = true;   
+        attackTimer.Start(); 
+
+        
+        if (katanaAttack != nullptr) {
+            Engine::GetInstance().physics.get()->DeletePhysBody(katanaAttack);
+            katanaAttack = nullptr;
+        }
+
+        LOG("Attack ended, cooldown started.");
+    }
 
     return true;
 }
@@ -483,6 +512,20 @@ void Player::Die() {
 	LOG("Player has died");
 	Engine::GetInstance().audio.get()->PlayFx(dieFxId);
 	Engine::GetInstance().scene->SetState(GameState::GAME_OVER);
+}
+
+void Player::PerformAttack()
+{
+
+	if (playerDirection == EntityDirections::RIGHT)
+    {
+		katanaAttack = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX() + 120, (int)position.getY(), 50, 50, bodyType::DYNAMIC);
+	 
+    }
+    else 
+    {
+        katanaAttack = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX() - 50, (int)position.getY(), 50, 50, bodyType::DYNAMIC);
+    }
 }
 
 void Player::ChangeHitboxSize(float width, float height) {
