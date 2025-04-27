@@ -519,12 +519,12 @@ void Player::PerformAttack()
 
 	if (playerDirection == EntityDirections::RIGHT)
     {
-		katanaAttack = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX() + 120, (int)position.getY(), 50, 50, bodyType::DYNAMIC);
+		katanaAttack = Engine::GetInstance().physics.get()->CreateRectangleSensor((int)position.getX() + 220, (int)position.getY()+100, 80, 250, bodyType::STATIC);
 	 
     }
     else 
     {
-        katanaAttack = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX() - 50, (int)position.getY(), 50, 50, bodyType::DYNAMIC);
+        katanaAttack = Engine::GetInstance().physics.get()->CreateRectangleSensor((int)position.getX() - 5, (int)position.getY()+100, 80, 250, bodyType::STATIC);
     }
 }
 

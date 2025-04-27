@@ -64,125 +64,170 @@ bool Enemy::Start() {
 
 bool Enemy::Update(float dt)
 {
-
-	//ZoneScoped;
-	// 
 	if (Engine::GetInstance().scene.get()->currentState == GameState::PAUSED)
 	{
-		pbody->body->SetLinearVelocity(b2Vec2(0,0));
+		pbody->body->SetLinearVelocity(b2Vec2(0, 0));
 		b2Transform pbodyPos = pbody->body->GetTransform();
 		position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 6);
 		position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 6);
-
 
 		Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
 		currentAnimation->Update();
 		return true;
 	}
+
 	if (Engine::GetInstance().scene.get()->currentState != GameState::PLAYING)
 	{
 		return true;
 	}
-	
+
 	Vector2D playerPos = Engine::GetInstance().scene.get()->player->GetPosition();
 	Vector2D enemyPos = GetPosition();
 	Vector2D enemyTilePos = Engine::GetInstance().map.get()->WorldToMap(enemyPos.getX(), enemyPos.getY());
 	Vector2D playerTilePos = Engine::GetInstance().map.get()->WorldToMap(playerPos.getX(), playerPos.getY());
 
-    if (abs(playerTilePos.getX() - enemyTilePos.getX()) > 55) {
-        pbody->body->SetLinearVelocity(b2Vec2(0, 0));
+	// Si el jugador está fuera del rango máximo, el enemigo no hace nada
+	if (abs(playerTilePos.getX() - enemyTilePos.getX()) > 75)
+	{
+		pbody->body->SetLinearVelocity(b2Vec2(0, 0));
 		b2Transform pbodyPos = pbody->body->GetTransform();
 		position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 6);
 		position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 6);
 
-
 		Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
 		currentAnimation->Update();
+		return true;
+	}
 
-        return true;
-    }
+	// Determinar el estado del enemigo
+	if (state != EnemyState::WAIT && state != EnemyState::ATTACK) // No cambiar el estado si está en espera o atacando
+	{
+		if (IsPlayerInRange())
+		{
+			if (IsPlayerInAttackRange())
+			{
+				state = EnemyState::ATTACK;
+			}
+			else
+			{
+				state = EnemyState::AGGRESSIVE;
+			}
+		}
+		else
+		{
+			state = EnemyState::PATROL;
+		}
+	}
 
+	// Manejar los estados del enemigo
+	switch (state)
+	{
+	case EnemyState::PATROL:
+		// Movimiento de patrulla
+		if (!IsNextTileCollidable() || tilesMovedInSameDirection >= 350)
+		{
+			direction = (direction == 0) ? 1 : 0;
+			tilesMovedInSameDirection = 0;
+		}
 
-    if (IsPlayerInRange()) {
-        if (IsPlayerInAttackRange()) {
-            state = EnemyState::ATTACK;
-        }
-        else {
-            state = EnemyState::AGGRESSIVE;
-        }
-    }
-    else {
-        state = EnemyState::PATROL;
-    }
+		if (direction == 0)
+		{
+			pbody->body->SetLinearVelocity(b2Vec2(-2, 0));
+		}
+		else
+		{
+			pbody->body->SetLinearVelocity(b2Vec2(2, 0));
+		}
+		tilesMovedInSameDirection++;
+		break;
 
-    switch (state) {
-    case EnemyState::PATROL:
-        // Movimiento de patrulla
-        if (!IsNextTileCollidable() || tilesMovedInSameDirection >= 350) {
-            direction = (direction == 0) ? 1 : 0;
-            tilesMovedInSameDirection = 0;
-        }
+	case EnemyState::AGGRESSIVE:
+		// Movimiento agresivo hacia el jugador
+		if (playerTilePos.getX() < enemyTilePos.getX() && IsNextTileCollidable())
+		{
+			pbody->body->SetLinearVelocity(b2Vec2(-2, 0));
+			direction = 0;
+		}
+		else if (playerTilePos.getX() > enemyTilePos.getX() && IsNextTileCollidable())
+		{
+			pbody->body->SetLinearVelocity(b2Vec2(2, 0));
+			direction = 1;
+		}
+		else
+		{
+			pbody->body->SetLinearVelocity(b2Vec2(0, 0));
+		}
+		break;
 
-        if (direction == 0) {
-            pbody->body->SetLinearVelocity(b2Vec2(-2, 0));
-        }
-        else {
-            pbody->body->SetLinearVelocity(b2Vec2(2, 0));
-        }
-        tilesMovedInSameDirection++;
-        break;
+	case EnemyState::ATTACK:
+		// El enemigo permanece quieto mientras ataca
+		pbody->body->SetLinearVelocity(b2Vec2(0, 0));
 
-    case EnemyState::AGGRESSIVE:
-        // Movimiento agresivo
-        if (playerTilePos.getX() < enemyTilePos.getX() && IsNextTileCollidable()) {
-            pbody->body->SetLinearVelocity(b2Vec2(-2, 0));
-            direction = 0;
-        }
-        else if (playerTilePos.getX() > enemyTilePos.getX() && IsNextTileCollidable()) {
-            pbody->body->SetLinearVelocity(b2Vec2(2, 0));
-            direction = 1;
-        }
-        else {
-            pbody->body->SetLinearVelocity(b2Vec2(0, 0));
-        }
-        break;
+		if (!isAttacking && !isCooldown)
+		{
+			PerformAttack();
+			isAttacking = true;
+			attackTimer.Start(); // Inicia el temporizador para el ataque
+		}
+		break;
 
-    case EnemyState::ATTACK:
-        // Lógica de ataque
-        PerformAttack();
+	case EnemyState::WAIT:
+		// El enemigo se queda quieto durante 2 segundos
+		pbody->body->SetLinearVelocity(b2Vec2(0, 0));
+		if (attackTimer.ReadSec() >= 2.0f) // Espera 2 segundos
+		{
+			state = EnemyState::PATROL; // Cambia al estado de patrulla después de esperar
+			LOG("Enemy finished waiting.");
+		}
+		break;
+	}
 
-        Engine::GetInstance().physics.get()->DeletePhysBody(attackHitbox);
-        attackHitbox = nullptr;
-        attackCooldownTimer.Start();
-        state = EnemyState::AGGRESSIVE;
-        break;
-    }
+	// Lógica de temporizadores (fuera del switch)
+	if (isAttacking && attackTimer.ReadSec() >= attackDuration)
+	{
+		// Termina el ataque
+		isAttacking = false;
+		isCooldown = true;
+		attackTimer.Start(); // Inicia el temporizador para el cooldown
 
-    // Dibuja la línea de visión del enemigo
-    DrawLineOfSight();
+		// Eliminar la hitbox del ataque
+		if (attackBody != nullptr)
+		{
+			Engine::GetInstance().physics.get()->DeletePhysBody(attackBody);
+			attackBody = nullptr;
+			LOG("Attack hitbox removed.");
+		}
 
-    // Propagate the pathfinding algorithm using A* with the selected heuristic
-    ResetPath();
-    while (pathfinding->pathTiles.empty())
-    {
-        pathfinding->PropagateAStar(SQUARED);
-    }
+		LOG("Enemy attack ended, entering WAIT state.");
+		state = EnemyState::WAIT; // Cambia al estado de espera
+	}
 
-    // L08 TODO 4: Add a physics to an item - update the position of the object from the physics.  
-  
-    b2Transform pbodyPos = pbody->body->GetTransform();
-    position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texW / 6);
-    position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 6);
+	if (isCooldown && attackTimer.ReadSec() >= attackCooldown)
+	{
+		// Termina el cooldown
+		isCooldown = false;
+		LOG("Enemy cooldown ended, can attack again.");
+	}
 
-    Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
-    currentAnimation->Update();
+	// Dibuja la línea de visión del enemigo
+	DrawLineOfSight();
 
-    // Draw pathfinding 
+	// Actualizar posición del enemigo desde la física
+	b2Transform pbodyPos = pbody->body->GetTransform();
+	position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texW / 6);
+	position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 6);
 
-    if (Engine::GetInstance().physics.get()->debug) pathfinding->DrawPath();
+	// Dibujar textura y animación
+	Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
+	currentAnimation->Update();
 
-    return true;
+	// Dibujar el pathfinding si está en modo debug
+	if (Engine::GetInstance().physics.get()->debug)
+	{
+		pathfinding->DrawPath();
+	}
 
+	return true;
 }
 
 
@@ -267,7 +312,7 @@ bool Enemy::IsPlayerInRange() {
 	Vector2D playerTilePos = Engine::GetInstance().map.get()->WorldToMap(playerPos.getX(), playerPos.getY());
 
 	int distance = abs(playerTilePos.getX() - enemyTilePos.getX());
-	bool isInRange = distance <= 12;
+	bool isInRange = distance <= 16;
 
 	// Verificar si el enemigo está mirando en la dirección del jugador
 	bool isFacingPlayer = (direction == 0 && playerTilePos.getX() < enemyTilePos.getX()) ||
@@ -281,48 +326,32 @@ void Enemy::PerformAttack() {
 	// Detiene al enemigo
 	pbody->body->SetLinearVelocity(b2Vec2(0, 0));
 
-	if (attackHitbox == nullptr) {
+	if (attackBody == nullptr) {
 		// Determina la dirección del ataque
-		Vector2D playerPos = Engine::GetInstance().scene.get()->player->GetPosition();
-		Vector2D enemyPos = GetPosition();
-		int attackOffsetX = 0;
-
-		if (playerPos.getX() < enemyPos.getX()) {
-			// El jugador está a la izquierda del enemigo
-			attackOffsetX = -80; // Ajusta este valor según sea necesario
-		}
-		else {
-			// El jugador está a la derecha del enemigo
-			attackOffsetX = 110; // Ajusta este valor según sea necesario
-		}
+		int attackOffsetX = (direction == 0) ? -80 : 110; // Ajusta según la dirección del enemigo
 
 		// Crea la hitbox del ataque
-		attackHitbox = Engine::GetInstance().physics.get()->CreateRectangleSensor((int)position.getX() + attackOffsetX, (int)position.getY() + 10, 104, 128, bodyType::STATIC);
-		attackHitbox->ctype = ColliderType::ENEMY;
-		attackHitbox->listener = this;
+		attackBody = Engine::GetInstance().physics.get()->CreateRectangleSensor(
+			(int)position.getX() + attackOffsetX,
+			(int)position.getY() + 10,
+			104, 128, // Tamaño de la hitbox
+			bodyType::STATIC
+		);
+		attackBody->ctype = ColliderType::ENEMY; 
+		attackBody->listener = this;             
 	}
 
+	// Dibujar la animación de ataque
 	Engine::GetInstance().render.get()->DrawTexture(attackTexture, (int)position.getX(), (int)position.getY(), &attackAnimation.GetCurrentFrame());
 	attackAnimation.Update();
 
-	// Agrega la posición actual al trazo de la espada
-	swordTrail.push_back(position);
-	if (swordTrail.size() > maxTrailLength) {
-		swordTrail.pop_front();
-	}
-
-	for (const auto& trailPos : swordTrail) {
-		Engine::GetInstance().render.get()->DrawTexture(trailTexture, (int)trailPos.getX(), (int)trailPos.getY());
-	}
-
-	// Verifica colisiones con el jugador
-	CheckAttackCollision();
+	LOG("Enemy is attacking!");
 }
 
 
 
 void Enemy::CheckAttackCollision() {
-	if (attackHitbox != nullptr) {
+	if (attackBody != nullptr) {
 		Vector2D playerPos = Engine::GetInstance().scene.get()->player->GetPosition();
 		SDL_Rect playerHitbox = {
 			(int)playerPos.getX(),
@@ -341,6 +370,7 @@ void Enemy::CheckAttackCollision() {
 		if (SDL_HasIntersection(&attackRect, &playerHitbox)) {
 			// Reduce la HP del jugador
 			Engine::GetInstance().scene.get()->player->TakeDamage(1);
+			LOG("Player hit by enemy attack!");
 		}
 	}
 }
@@ -353,7 +383,7 @@ bool Enemy::IsPlayerInAttackRange() {
 	Vector2D playerTilePos = Engine::GetInstance().map.get()->WorldToMap(playerPos.getX(), playerPos.getY());
 
 	int distance = abs(playerTilePos.getX() - enemyTilePos.getX());
-	return distance <= 6;
+	return distance <= 10;
 }
 
 void Enemy::LoadEnemyFx()
