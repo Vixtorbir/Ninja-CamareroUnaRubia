@@ -15,6 +15,7 @@
 #include "Item.h"
 
 #include "Npc.h"
+#include "Turret.h"
 
 struct SDL_Texture;
 
@@ -105,6 +106,7 @@ public:
 	//L03: TODO 3b: Declare a Player attribute
 	Player* player;
 	std::vector<Enemy*> enemyList;
+	std::vector<Turret*> turretList;
 
 	NPC* npcMentor;
 	NPC* npcIsamu;

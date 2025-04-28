@@ -10,6 +10,16 @@
 #include "Text.h"
 #include "SDL2/SDL.h"
 #include <vector>
+#include "Timer.h"
+
+struct Shuriken {
+    PhysBody* body;
+    Timer timer;
+
+    bool operator==(const Shuriken& other) const {
+        return body == other.body; 
+    }
+};
 
 
 enum class PlayerState {
@@ -83,8 +93,10 @@ public:
     float wallClimbSpeed = -2.0f;
 
 
-    std::vector<PhysBody*> activeShurikens;
+    std::vector<Shuriken> activeShurikens; 
     SDL_Texture* shurikenTexture = nullptr;
+    Timer shurikenCooldownTimer; 
+    bool canShootShuriken = true;
 
 
     // States

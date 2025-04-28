@@ -18,6 +18,7 @@
 #include "GuiManager.h"
 #include "DialogueManager.h"
 #include "NPC.h"
+#include "Turret.h"
 
 Scene::Scene() : Module()
 {
@@ -72,6 +73,13 @@ bool Scene::Awake()
 		enemyList.push_back(enemy);
 	}
 
+	//Crea un enemigo tipo torreta en la posicion 1000, 1000
+	for (pugi::xml_node turretNode = configParameters.child("entities").child("enemies").child("turret"); turretNode; turretNode = turretNode.next_sibling("turret"))
+	{
+		Turret* turret = (Turret*)Engine::GetInstance().entityManager->CreateEntity(EntityType::TURRET);
+		turret->SetParameters(turretNode);
+		turretList.push_back(turret);
+	}
 	
 	// L16: TODO 2: Instantiate a new GuiControlButton in the Scene
 	SDL_Rect btPos = { -10000, 350, 120,20 };
@@ -692,6 +700,10 @@ void Scene::UpdatePlaying(float dt) {
 	player->Update(dt);
 	for (auto& enemy : enemyList) {
 		enemy->Update(dt);
+	}
+
+	for (auto& turret : turretList) {
+		turret->Update(dt);
 	}
 }
 
