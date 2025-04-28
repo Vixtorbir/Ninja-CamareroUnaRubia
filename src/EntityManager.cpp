@@ -7,6 +7,7 @@
 #include "Item.h"
 #include "Enemy.h"
 #include "NPC.h"
+#include "Turret.h"
 //#include "tracy/Tracy.hpp"
 
 EntityManager::EntityManager() : Module()
@@ -82,6 +83,9 @@ Entity* EntityManager::CreateEntity(EntityType type)
 	case EntityType::ENEMY:
 		entity = new Enemy();
 		break;
+	case EntityType::TURRET:
+		entity = new Turret();
+		break;
 	default:
 		break;
 	}
@@ -132,6 +136,7 @@ bool EntityManager::Update(float dt)
 	// Code you want to profile
 	bool ret = true;
 	for(const auto entity : entities)
+
 	{
 		if (entity->active == false) continue;
 		ret = entity->Update(dt);

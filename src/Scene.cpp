@@ -18,6 +18,7 @@
 #include "GuiManager.h"
 #include "DialogueManager.h"
 #include "NPC.h"
+#include "Turret.h"
 
 Scene::Scene() : Module()
 {
@@ -72,6 +73,13 @@ bool Scene::Awake()
 		enemyList.push_back(enemy);
 	}
 
+	//Crea un enemigo tipo torreta en la posicion 1000, 1000
+	for (pugi::xml_node turretNode = configParameters.child("entities").child("enemies").child("turret"); turretNode; turretNode = turretNode.next_sibling("turret"))
+	{
+		Turret* turret = (Turret*)Engine::GetInstance().entityManager->CreateEntity(EntityType::TURRET);
+		turret->SetParameters(turretNode);
+		turretList.push_back(turret);
+	}
 	
 	// L16: TODO 2: Instantiate a new GuiControlButton in the Scene
 	SDL_Rect btPos = { -10000, 350, 120,20 };
@@ -460,25 +468,31 @@ void Scene::SafeLoadMap(const char* mapName, Vector2D playerPos) {
 
 	npcs.clear();
 
-	/*for (const auto item : items) {
+	for (const auto item : items) {
 		item->CleanUp();
 	}
 
-	items.clear();*/
+	items.clear();
 
 	std::string path = configParameters.child("map").attribute("path").as_string();
 	if (!Engine::GetInstance().map->Load(path.c_str(), mapName)) {
 		LOG("Error cargando %s", mapName);
 		return; // Si falla, conservamos el mapa anterior
 	}
-	// 3. Reposicionar jugador y c�mara
+
+	// Reposicionar jugador y cámara
 	player->SetPosition(playerPos);
 	Engine::GetInstance().render->camera.x = 0;
 	Engine::GetInstance().render->camera.y = 0;
 
-	// 4. Debug (opcional)
+	// Crear ítem solo si es el nivel 2
+	if (std::string(mapName) == "MapTemplate2.tmx") {
+		CreateItemLvl2(mapName);
+	}
+
 	LOG("Mapa cambiado a %s", mapName);
 }
+
 
 void Scene::UpdateMainMenu(float dt) {
 	
@@ -687,6 +701,10 @@ void Scene::UpdatePlaying(float dt) {
 	for (auto& enemy : enemyList) {
 		enemy->Update(dt);
 	}
+
+	for (auto& turret : turretList) {
+		turret->Update(dt);
+	}
 }
 
 void Scene::UpdatePaused(float dt) {
@@ -794,6 +812,26 @@ void Scene::UpdateOptions(float dt)
 
 
 }
+void Scene::CreateItemLvl2(const char* mapName)
+{
+	if (std::string(mapName) == "MapTemplate2.tmx") {
+		// Verificar si ya existe un ítem en el nivel 2
+		if (!items.empty()) {
+			LOG("El ítem ya existe en el nivel 2. No se creará otro.");
+			return;
+		}
+
+		for (pugi::xml_node itemNode = configParameters.child("entities").child("items").child("item"); itemNode; itemNode = itemNode.next_sibling("item"))
+		{
+			Item* item = (Item*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ITEM);
+			item->SetParameters(itemNode);
+			items.push_back(item);
+			// L08 TODO 4: Add a physics to an item - initialize the physics body
+			item->Start();
+		}
+	}
+}
+
 bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 {
 	// L15: DONE 5: Implement the OnGuiMouseClickEvent method
