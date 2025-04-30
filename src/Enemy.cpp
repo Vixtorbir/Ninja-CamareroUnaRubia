@@ -273,12 +273,11 @@ bool Enemy::Update(float dt)
 }
 
 
-
 bool Enemy::CleanUp() {
 	Engine::GetInstance().textures.get()->UnLoad(texture);
 	Engine::GetInstance().textures.get()->UnLoad(attackTexture); 
 	Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
-	Engine::GetInstance().entityManager.get()->entities.remove(this);
+	active = false;
 	return true;
 }
 

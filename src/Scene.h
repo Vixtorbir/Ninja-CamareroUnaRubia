@@ -24,6 +24,7 @@ enum class GameState {
 	OPTIONS,
 	PLAYING,
 	PAUSED,
+	INVENTORY,
 	GAME_OVER,
 	LOGO
 };
@@ -84,6 +85,7 @@ public:
 	void UpdateGameOver(float dt);
 	void UpdateLogo(float dt);
 	void UpdateOptions(float dt);
+	void UpdateInventory(float dt);
 
 	void CreateItemLvl2(const char* mapName);
 
@@ -160,4 +162,6 @@ private:
 	int mainMenuMusicId;
 	int gameplayMusicId;
 	
+	int selectedItemIndex = 0;
+
 };
