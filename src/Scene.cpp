@@ -862,6 +862,9 @@ void Scene::UpdateInventory(float dt) {
 		int iconX = x + (squareSize - iconSize) / 2;
 		int iconY = y + (squareSize - iconSize) / 2;
 
+
+		// Dibujar el ícono del objeto
+		Engine::GetInstance().render.get()->DrawTexturedRectangle(item.icon, iconX, iconY, iconSize, iconSize, false);
 	}
 
 	// Mostrar el nombre y la descripción del objeto seleccionado al presionar Enter
