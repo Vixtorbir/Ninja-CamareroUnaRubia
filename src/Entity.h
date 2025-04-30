@@ -15,6 +15,7 @@ enum class EntityType
 	ENEMY,
 	TURRET,
 	UNKNOWN,
+	BOSS,
 	SHURIKENS,
 	NPC
 };

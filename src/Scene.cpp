@@ -19,6 +19,7 @@
 #include "DialogueManager.h"
 #include "NPC.h"
 #include "Turret.h"
+#include "Boss.h"
 
 Scene::Scene() : Module()
 {
@@ -86,6 +87,13 @@ bool Scene::Awake()
 		Turret* turret = (Turret*)Engine::GetInstance().entityManager->CreateEntity(EntityType::TURRET);
 		turret->SetParameters(turretNode);
 		turretList.push_back(turret);
+	}
+
+	for (pugi::xml_node bossNode = configParameters.child("entities").child("enemies").child("boss"); bossNode; bossNode = bossNode.next_sibling("boss"))
+	{
+		Boss* boss = (Boss*)Engine::GetInstance().entityManager->CreateEntity(EntityType::BOSS);
+		boss->SetParameters(bossNode);
+		bossList.push_back(boss);
 	}
 	
 	// L16: TODO 2: Instantiate a new GuiControlButton in the Scene

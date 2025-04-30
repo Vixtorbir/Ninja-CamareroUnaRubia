@@ -30,6 +30,7 @@ enum class ColliderType {
 	PLAYER_ATTACK,
 	TURRET,
 	ENEMY,
+	BOSS,
 	SHURIKEN,
 	UNKNOWN,
 	WALL,

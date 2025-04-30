@@ -525,6 +525,27 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 			Engine::GetInstance().physics.get()->DeletePhysBody(physA);
 		}
 		break;
+	case ColliderType::BOSS:
+        if (physA->ctype == ColliderType::PLAYER_ATTACK) {
+            Boss* boss = static_cast<Boss*>(physB->listener);
+            if (boss != nullptr && boss->canTakeDamage) { 
+                boss->TakeDamage(1);
+                Engine::GetInstance().audio.get()->PlayFx(weakKatana1FxId);
+
+                activeShurikens.erase(
+                    std::remove_if(activeShurikens.begin(), activeShurikens.end(),
+                        [physA](const Shuriken& shuriken) { return shuriken.body == physA; }),
+                    activeShurikens.end()
+                );
+
+                Engine::GetInstance().physics.get()->DeletePhysBody(physA);
+            }
+            else {
+                LOG("Boss is in damage cooldown, shuriken has no effect.");
+            }
+        }
+        break;
+
 	}
 }
 

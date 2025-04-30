@@ -8,6 +8,7 @@
 #include "Enemy.h"
 #include "NPC.h"
 #include "Turret.h"
+#include "Boss.h"
 //#include "tracy/Tracy.hpp"
 
 EntityManager::EntityManager() : Module()
@@ -85,6 +86,9 @@ Entity* EntityManager::CreateEntity(EntityType type)
 		break;
 	case EntityType::TURRET:
 		entity = new Turret();
+		break;
+	case EntityType::BOSS:
+		entity = new Boss();
 		break;
 	default:
 		break;
