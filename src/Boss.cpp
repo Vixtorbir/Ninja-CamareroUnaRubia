@@ -272,7 +272,7 @@ bool Boss::Update(float dt)
 		}
 
 		if (shootTimer.ReadSec() >= 6.0f) {
-			//ShootShuriken();
+			ShootShuriken();
 			shootTimer.Start(); // Reiniciar el temporizador
 		}
 
@@ -306,27 +306,32 @@ bool Boss::Update(float dt)
 void Boss::ShootShuriken() {
 	// Crear el shuriken como un sensor físico
 	PhysBody* shuriken = Engine::GetInstance().physics.get()->CreateRectangleSensor(
-		(int)position.getX() + texW / 2, (int)position.getY() + texH / 2, 40, 40, bodyType::DYNAMIC
+		(int)position.getX() + (direction == 0 ? -texW / 2 : texW / 2), 
+		(int)position.getY() + texH / 4, 
+		40, 40, 
+		bodyType::DYNAMIC
 	);
 
 	// Configurar propiedades del shuriken
-	shuriken->ctype = ColliderType::ENEMY; // El shuriken es un ataque enemigo
+	shuriken->ctype = ColliderType::ENEMY; 
 	shuriken->listener = this;
 	shuriken->body->SetBullet(true);
 	shuriken->body->SetFixedRotation(true);
 	shuriken->body->SetGravityScale(0.0f);
 
-	// Aplicar impulso horizontal hacia la derecha
+	// Determinar la dirección del disparo
 	float shurikenSpeed = 5.0f;
-	b2Vec2 impulse = b2Vec2(shurikenSpeed, 0);
+	b2Vec2 impulse = (direction == 0) ? b2Vec2(-shurikenSpeed, 0) : b2Vec2(shurikenSpeed, 0); 
 	shuriken->body->ApplyLinearImpulseToCenter(impulse, true);
 
+	// Agregar el shuriken a la lista de shurikens activos
 	Shuriken3 newShuriken = { shuriken, Timer() };
 	newShuriken.timer.Start();
 	activeShurikens.push_back(newShuriken);
 
-	LOG("Boss shot a shuriken!");
+	LOG("Boss shot a shuriken in direction: %s", (direction == 0 ? "LEFT" : "RIGHT"));
 }
+
 
 void Boss::TakeDamage(int damage) {
 	if (canTakeDamage) {

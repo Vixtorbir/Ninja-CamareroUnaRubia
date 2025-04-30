@@ -525,7 +525,7 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 			Engine::GetInstance().physics.get()->DeletePhysBody(physA);
 		}
 		break;
-	case ColliderType::BOSS:
+        case ColliderType::BOSS:
         if (physA->ctype == ColliderType::PLAYER_ATTACK) {
             Boss* boss = static_cast<Boss*>(physB->listener);
             if (boss != nullptr && boss->canTakeDamage) { 
