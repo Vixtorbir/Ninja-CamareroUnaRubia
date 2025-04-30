@@ -91,7 +91,7 @@
 				<testItem
 					 name="Health Potion"
 					 description="Restores a small amount of health."
-					 iconPath="Assets/Textures/healthPotionIcon.png"
+					 icon="Assets/Textures/goldCoin.png"
 					 x="1300"
 					 y="1050"
 					 w="32"
