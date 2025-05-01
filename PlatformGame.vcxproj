@@ -148,6 +148,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Audio.cpp" />
+    <ClCompile Include="src\Boss.cpp" />
     <ClCompile Include="src\Dialogue.cpp" />
     <ClCompile Include="src\DialogueManager.cpp" />
     <ClCompile Include="src\Enemy.cpp" />
@@ -177,12 +178,14 @@
     <ClCompile Include="src\Textures.cpp" />
     <ClCompile Include="src\Timer.cpp" />
     <ClCompile Include="src\Title.cpp" />
+    <ClCompile Include="src\Turret.cpp" />
     <ClCompile Include="src\Vector2D.cpp" />
     <ClCompile Include="src\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Animation.h" />
     <ClInclude Include="src\Audio.h" />
+    <ClInclude Include="src\Boss.h" />
     <ClInclude Include="src\Dialogue.h" />
     <ClInclude Include="src\DialogueManager.h" />
     <ClInclude Include="src\DynArray.h" />
@@ -216,6 +219,7 @@
     <ClInclude Include="src\Textures.h" />
     <ClInclude Include="src\Timer.h" />
     <ClInclude Include="src\Title.h" />
+    <ClInclude Include="src\Turret.h" />
     <ClInclude Include="src\Vector2D.h" />
     <ClInclude Include="src\Window.h" />
   </ItemGroup>

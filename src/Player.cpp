@@ -32,6 +32,8 @@ bool Player::Start() {
     BackgroundSliderHP = Engine::GetInstance().textures.get()->Load("Assets/UI/lifeBarBack.png");
     ForeGroundSliderHP = Engine::GetInstance().textures.get()->Load("Assets/UI/lifeBarFront.png");
     orbUiTexture = Engine::GetInstance().textures.get()->Load("Assets/UI/OrbUi.png");
+    shurikenTexture = Engine::GetInstance().textures.get()->Load("Assets/Textures/goldCoin.png");
+    meleeAttackTexture = Engine::GetInstance().textures.get()->Load("Assets/Textures/meleeAttack.png");
 
     position.setX(parameters.attribute("x").as_int());
     position.setY(parameters.attribute("y").as_int());
@@ -157,7 +159,7 @@ bool Player::Update(float dt) {
     }
 
     // Handle jumping
-    if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN && hasAlreadyJumpedOnce == 0 && !inBubble) {
+    if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN && hasAlreadyJumpedOnce == 0 && !inBubble && !crouched) {
         isHoldingJump = true;
         jumpHoldTimer = 0.0f;
     }
@@ -345,18 +347,92 @@ bool Player::Update(float dt) {
             loadLevel2 = true;
         }
     }
+    
+    if (isCooldown) {
+        if (attackTimer.ReadSec() >= attackCooldown) {
+            isCooldown = false; 
+            LOG("Cooldown ended, player can attack again.");
+        }
+    }
+
+    
+    if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_K) == KEY_DOWN && !isAttacking && !isCooldown) {
+        PerformAttack();         
+        isAttacking = true;      
+        attackTimer.Start();     
+        LOG("Attack started.");
+    }
+
+    if (isAttacking && attackTimer.ReadSec() >= attackDuration) {
+        isAttacking = false; 
+        isCooldown = true;   
+        attackTimer.Start(); 
+
+        
+        if (katanaAttack != nullptr) {
+            Engine::GetInstance().physics.get()->DeletePhysBody(katanaAttack);
+            katanaAttack = nullptr;
+        }
+
+        LOG("Attack ended, cooldown started.");
+    }
+
+    if (isAttacking && katanaAttack != nullptr) {
+        int x, y;
+        katanaAttack->GetPosition(x, y);
+
+        //Esto ya se pondra bien cuando haya una textura
+
+        int textureWidth = 80;  
+        int textureHeight = 250; 
+        int renderX = x - textureWidth / 2;
+        int renderY = y - textureHeight / 2;
+
+        Engine::GetInstance().render.get()->DrawTexture(meleeAttackTexture, renderX, renderY);
+    }
+
+    if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_O) == KEY_DOWN) {
+        ThrowShuriken();
+    }
+
+    for (auto it = activeShurikens.begin(); it != activeShurikens.end(); ) {
+        if (it->timer.ReadSec() >= 3.5f) { // Si han pasado 5 segundos
+            Engine::GetInstance().physics.get()->DeletePhysBody(it->body); // Eliminar el cuerpo físico
+            it = activeShurikens.erase(it); // Eliminar de la lista
+        }
+        else {
+            ++it; // Continuar con el siguiente shuriken
+        }
+    }
+
+    // Renderizar los shurikens
+    for (const auto& shuriken : activeShurikens) {
+        int x, y;
+        shuriken.body->GetPosition(x, y);
+        Engine::GetInstance().render.get()->DrawTexture(shurikenTexture, x + 25, y + 25);
+    }
+
+    if (!canShootShuriken && shurikenCooldownTimer.ReadSec() >= 1.0f) {
+        canShootShuriken = true;
+        LOG("Shuriken cooldown ended. Player can shoot again.");
+    }
 
     return true;
 }
+
+
 float Player::Lerp(float start, float end, float factor) {
 	return start + factor * (end - start);
 }
-bool Player::CleanUp()
-{
-	LOG("Cleanup player");
-	Engine::GetInstance().textures.get()->UnLoad(texture);
-	return true;
+
+
+bool Player::CleanUp() {
+    LOG("Cleanup player");
+    Engine::GetInstance().textures.get()->UnLoad(texture);
+    Engine::GetInstance().textures.get()->UnLoad(meleeAttackTexture); 
+    return true;
 }
+
 
 void Player::GuiPOPup(GuiPopups guiPopup)
 {
@@ -375,6 +451,11 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 	case ColliderType::PLATFORM:
 		isJumping = false;
 		hasAlreadyJumpedOnce = 0;
+       /* if (physA->ctype == ColliderType::PLAYER_ATTACK) {
+            
+            activeShurikens.erase(std::remove(activeShurikens.begin(), activeShurikens.end(), physA), activeShurikens.end());
+            Engine::GetInstance().physics.get()->DeletePhysBody(physA);
+        }*/
 		break;
 	case ColliderType::NPC:
 		inBubble = true;
@@ -382,23 +463,89 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 		break;
 	case ColliderType::WALL:
 		touchingWall = true;
-		break;
-	case ColliderType::ITEM:
-		Engine::GetInstance().audio.get()->PlayFx(pickUpItemFxId);
-		Orbs++;
-		Engine::GetInstance().physics.get()->DeletePhysBody(physB);
+        /* if (physA->ctype == ColliderType::PLAYER_ATTACK) {
 
+             activeShurikens.erase(std::remove(activeShurikens.begin(), activeShurikens.end(), physA), activeShurikens.end());
+             Engine::GetInstance().physics.get()->DeletePhysBody(physA);
+         }*/
 		break;
+    case ColliderType::ITEM: {
+        Item* item = static_cast<Item*>(physB->listener);
+        if (item != nullptr) {
+            // Añadir el objeto al inventario
+            AddItem(InventoryItem(item->name, item->quantity, item->description, item->icon));
+
+            // Reproducir efecto de sonido de recogida
+            Engine::GetInstance().audio.get()->PlayFx(pickUpItemFxId);
+            Orbs++;
+
+            // Desactivar el objeto en el mundo
+			Engine::GetInstance().render.get()->DrawText(("Picked up: " + item->name).c_str(), 600, 200, 750, 255); // Mensaje en pantalla
+			Engine::GetInstance().physics.get()->DeletePhysBody(physB); 
+            item->active = false;
+        }
+        break;
+    }
+
 	case ColliderType::UNKNOWN:
 		break;
 
-	case ColliderType::ENEMY:
-		if (!godMode) {
-			int damageId = Engine::GetInstance().audio.get()->randomFx(hit1FxId, hit2FxId);
-			Engine::GetInstance().audio.get()->PlayFx(damageId);
-			TakeDamage(1);
-		}// El jugador recibe 1 punto de da�o
+    case ColliderType::ENEMY:
+        if (physA->ctype == ColliderType::PLAYER_ATTACK) {
+            
+            Enemy* enemy = static_cast<Enemy*>(physB->listener);
+            if (enemy != nullptr) {
+				enemy->dead = true;
+				Engine::GetInstance().audio.get()->PlayFx(weakKatana1FxId);
+				
+            }
+
+            
+            activeShurikens.erase(
+                std::remove_if(activeShurikens.begin(), activeShurikens.end(),
+                    [physA](const Shuriken& shuriken) { return shuriken.body == physA; }),
+                activeShurikens.end()
+            );
+
+            Engine::GetInstance().physics.get()->DeletePhysBody(physA);
+        }
+        break;
+	case ColliderType::TURRET:
+		if (physA->ctype == ColliderType::PLAYER_ATTACK) {
+			Turret* turret = static_cast<Turret*>(physB->listener);
+			if (turret != nullptr) {
+				turret->dead = true;
+				Engine::GetInstance().audio.get()->PlayFx(weakKatana1FxId);
+			}
+			activeShurikens.erase(
+				std::remove_if(activeShurikens.begin(), activeShurikens.end(),
+					[physA](const Shuriken& shuriken) { return shuriken.body == physA; }),
+				activeShurikens.end()
+			);
+			Engine::GetInstance().physics.get()->DeletePhysBody(physA);
+		}
 		break;
+        case ColliderType::BOSS:
+        if (physA->ctype == ColliderType::PLAYER_ATTACK) {
+            Boss* boss = static_cast<Boss*>(physB->listener);
+            if (boss != nullptr && boss->canTakeDamage) { 
+                boss->TakeDamage(1);
+                Engine::GetInstance().audio.get()->PlayFx(weakKatana1FxId);
+
+                activeShurikens.erase(
+                    std::remove_if(activeShurikens.begin(), activeShurikens.end(),
+                        [physA](const Shuriken& shuriken) { return shuriken.body == physA; }),
+                    activeShurikens.end()
+                );
+
+                Engine::GetInstance().physics.get()->DeletePhysBody(physA);
+            }
+            else {
+                LOG("Boss is in damage cooldown, shuriken has no effect.");
+            }
+        }
+        break;
+
 	}
 }
 
@@ -466,15 +613,16 @@ void Player::LoadPlayerFx()
 }
 
 void Player::TakeDamage(int damage) {
-	if (canTakeDamage) {
-		/*hp -= damage;
-		if (hp <= 0) {
-			Die();
-		}*///FIX
-		canTakeDamage = false;
-		timeSinceLastDamage = 0.0f;
-	}
+    if (canTakeDamage) {
+        HP -= damage;
+        if (HP <= 0) {
+            Die(); 
+        }
+        canTakeDamage = false; 
+        LOG("Player took damage! Remaining HP: %d", HP);
+    }
 }
+
 
 
 void Player::Die() {
@@ -483,6 +631,75 @@ void Player::Die() {
 	Engine::GetInstance().audio.get()->PlayFx(dieFxId);
 	Engine::GetInstance().scene->SetState(GameState::GAME_OVER);
 }
+
+void Player::PerformAttack()
+{
+    if (playerDirection == EntityDirections::RIGHT)
+    {
+        katanaAttack = Engine::GetInstance().physics.get()->CreateRectangleSensor(
+            (int)position.getX() + 220, (int)position.getY() + 100, 80, 250, bodyType::STATIC
+        );
+    }
+    else
+    {
+        katanaAttack = Engine::GetInstance().physics.get()->CreateRectangleSensor(
+            (int)position.getX() - 5, (int)position.getY() + 100, 80, 250, bodyType::STATIC
+        );
+    }
+
+    katanaAttack->ctype = ColliderType::PLAYER_ATTACK; 
+    katanaAttack->listener = this; 
+}
+
+void Player::ThrowShuriken() {
+
+    // Verificar si ya hay 3 shurikens activos
+    if (activeShurikens.size() >= 3) {
+        LOG("Cannot throw more shurikens. Maximum limit reached.");
+        return; 
+    }
+
+    // Verificar si el cooldown ha terminado
+    if (!canShootShuriken) {
+        LOG("Cannot throw shuriken. Cooldown active.");
+        return; 
+    }
+
+    // Crear el shuriken como un sensor físico
+    PhysBody* shuriken = Engine::GetInstance().physics.get()->CreateRectangleSensor(
+        (int)position.getX() + (playerDirection == EntityDirections::RIGHT ? 220 : -5),
+        (int)position.getY() + 100,
+        40, 40,
+        bodyType::DYNAMIC
+    );
+
+    // Configurar propiedades del shuriken
+    shuriken->ctype = ColliderType::PLAYER_ATTACK;
+    shuriken->listener = this;
+    shuriken->body->SetBullet(true);
+    shuriken->body->SetFixedRotation(true);
+    shuriken->body->SetGravityScale(0.0f);
+
+    // Aplicar impulso horizontal en la dirección del jugador
+    float shurikenSpeed = 10.0f;
+    b2Vec2 impulse = b2Vec2((playerDirection == EntityDirections::RIGHT ? shurikenSpeed : -shurikenSpeed), 0);
+    shuriken->body->ApplyLinearImpulseToCenter(impulse, true);
+
+    // Agregar el shuriken a la lista con un temporizador
+    Shuriken newShuriken = { shuriken, Timer() };
+    newShuriken.timer.Start();
+    activeShurikens.push_back(newShuriken);
+
+    // Iniciar el cooldown
+    canShootShuriken = false;
+    shurikenCooldownTimer.Start();
+
+    // Reproducir efecto de sonido
+    int shurikenFxId = Engine::GetInstance().audio.get()->randomFx(throwShuriken1FxId, throwShuriken3FxId);
+    Engine::GetInstance().audio.get()->PlayFx(shurikenFxId);
+}
+
+
 
 void Player::ChangeHitboxSize(float width, float height) {
 	// Destroy the current fixture
@@ -503,5 +720,56 @@ void Player::ChangeHitboxSize(float width, float height) {
 	pbody->listener = this;
 	pbody->ctype = ColliderType::PLAYER;
 	pbody->body->SetFixedRotation(true);
+    pbody->body->SetGravityScale(5);
+}
+
+void Player::AddItem(const InventoryItem& item) {
+    // Busca si el objeto ya existe en el inventario
+    for (auto& invItem : inventory) {
+        if (invItem.name == item.name) {
+            invItem.quantity += item.quantity; // Incrementa la cantidad
+            return;
+        }
+    }
+    // Si no existe, añade un nuevo objeto
+    inventory.push_back(item);
+}
+
+void Player::RemoveItem(const std::string& itemName, int quantity) {
+    for (auto it = inventory.begin(); it != inventory.end(); ++it) {
+        if (it->name == itemName) {
+            it->quantity -= quantity; // Reduce la cantidad
+            if (it->quantity <= 0) {
+                inventory.erase(it); // Elimina el objeto si la cantidad es 0
+            }
+            return;
+        }
+    }
+}
+
+InventoryItem* Player::GetItem(const std::string& itemName) {
+    for (auto& invItem : inventory) {
+        if (invItem.name == itemName) {
+            return &invItem; // Devuelve un puntero al objeto
+        }
+    }
+    return nullptr; // No encontrado
+}
+
+void Player::SaveInventory(pugi::xml_node& node) {
+    for (const auto& item : inventory) {
+        pugi::xml_node itemNode = node.append_child("item");
+        itemNode.append_attribute("name") = item.name.c_str();
+        itemNode.append_attribute("quantity") = item.quantity;
+    }
+}
+
+void Player::LoadInventory(pugi::xml_node& node) {
+    inventory.clear();
+    for (pugi::xml_node itemNode = node.child("item"); itemNode; itemNode = itemNode.next_sibling("item")) {
+        std::string name = itemNode.attribute("name").as_string();
+        int quantity = itemNode.attribute("quantity").as_int();
+        inventory.emplace_back(name, quantity);
+    }
 }
 

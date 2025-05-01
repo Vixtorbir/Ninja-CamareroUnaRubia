@@ -1,43 +1,53 @@
-#pragma once
+#pragma once  
 
-#include "Entity.h"
-#include "SDL2/SDL.h"
-#include "Animation.h"
+#include "Entity.h"  
+#include "SDL2/SDL.h"  
+#include "Animation.h"  
+#include "Physics.h"  
+#include "Player.h"  
 
-struct SDL_Texture;
+struct SDL_Texture;  
 
-class Item : public Entity
-{
-public:
+class Item : public Entity  
+{  
+public:  
 
-	Item();
-	virtual ~Item();
+   Item();  
+   virtual ~Item();  
 
-	bool Awake();
+   bool Awake();  
 
-	bool Start();
+   bool Start();  
 
-	bool Update(float dt);
+   bool Update(float dt);  
 
-	bool CleanUp();
+   void SetPosition(Vector2D pos);  
 
-	void SetParameters(pugi::xml_node parameters) {
-		this->parameters = parameters;
-	}
+   bool CleanUp();  
 
-public:
+   void OnPickup(Player* player);  
 
-	bool isPicked = false;
+   void SetParameters(pugi::xml_node parameters) {  
+       this->parameters = parameters;  
+   }  
 
-private:
+public:  
 
-	SDL_Texture* texture;
-	const char* texturePath;
-	int texW, texH;
-	pugi::xml_node parameters;
-	Animation* currentAnimation = nullptr;
-	Animation idle;
+   bool isPicked = false;  
 
-	//L08 TODO 4: Add a physics to an item
-	PhysBody* pbody;
+   std::string name;  
+   int quantity;  
+   std::string description;  
+   SDL_Texture* icon = nullptr;    
+
+   SDL_Texture* texture;  
+   const char* texturePath;  
+   int texW, texH;  
+   pugi::xml_node parameters;  
+   Animation* currentAnimation = nullptr;  
+   Animation idle;  
+
+   //L08 TODO 4: Add a physics to an item  
+   PhysBody* pbody;  
+
 };

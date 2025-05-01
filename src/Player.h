@@ -9,7 +9,28 @@
 #include "GuiPopup.h"
 #include "Text.h"
 #include "SDL2/SDL.h"
+#include <vector>
+#include "Timer.h"
 
+struct Shuriken {
+    PhysBody* body;
+    Timer timer;
+
+    bool operator==(const Shuriken& other) const {
+        return body == other.body; 
+    }
+};
+
+struct InventoryItem {
+    std::string name;
+    int quantity;
+    std::string description;
+    SDL_Texture* icon;
+
+    InventoryItem(const std::string& name, int quantity, const std::string& description = "", SDL_Texture* icon = nullptr)
+        : name(name), quantity(quantity), description(description), icon(icon) {
+    }
+};
 
 enum class PlayerState {
     IDLE,
@@ -59,14 +80,45 @@ public:
         this->parameters = parameters;
     }
 
+    void PerformAttack();
+
+    void ThrowShuriken();
+
+    std::vector<InventoryItem> inventory;
+
+    // Métodos para gestionar el inventario
+    void AddItem(const InventoryItem& item);
+    void RemoveItem(const std::string& itemName, int quantity = 1);
+	InventoryItem* GetItem(const std::string& itemName);
+
+    void SaveInventory(pugi::xml_node& node);
+
+    void LoadInventory(pugi::xml_node& node);
+
 public:
     // Physics and movement
     PhysBody* pbody;
+	PhysBody* katanaAttack = nullptr;
+    Timer attackTimer;          
+    bool isAttacking = false;   
+    bool isCooldown = false;    
+    const float attackDuration = 0.5f; 
+    const float attackCooldown = 1.0f;
+    SDL_Texture* meleeAttackTexture = nullptr; 
+
+
     float speed = 0.55f;
     float jumpForce = 125;
     float wallJumpForce = 90.5f;
     float wallJumpPush = 102.0f;
     float wallClimbSpeed = -2.0f;
+
+
+    std::vector<Shuriken> activeShurikens; 
+    SDL_Texture* shurikenTexture = nullptr;
+    Timer shurikenCooldownTimer; 
+    bool canShootShuriken = true;
+
 
     // States
     PlayerState currentState;

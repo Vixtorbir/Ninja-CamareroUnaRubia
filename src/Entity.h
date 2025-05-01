@@ -13,7 +13,9 @@ enum class EntityType
 	PLAYER,
 	ITEM,
 	ENEMY,
+	TURRET,
 	UNKNOWN,
+	BOSS,
 	SHURIKENS,
 	NPC
 };

@@ -3,6 +3,10 @@
 #include "Module.h"
 #include "Entity.h"
 #include "NPC.h"
+#include "Enemy.h"
+#include "Player.h"
+#include "Turret.h"
+#include "Boss.h"
 #include <list>
 
 class EntityManager : public Module
