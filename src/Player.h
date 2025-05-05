@@ -21,6 +21,16 @@ struct Shuriken {
     }
 };
 
+struct InventoryItem {
+    std::string name;
+    int quantity;
+    std::string description;
+    SDL_Texture* icon;
+
+    InventoryItem(const std::string& name, int quantity, const std::string& description = "", SDL_Texture* icon = nullptr)
+        : name(name), quantity(quantity), description(description), icon(icon) {
+    }
+};
 
 enum class PlayerState {
     IDLE,
@@ -73,6 +83,17 @@ public:
     void PerformAttack();
 
     void ThrowShuriken();
+
+    std::vector<InventoryItem> inventory;
+
+    // Métodos para gestionar el inventario
+    void AddItem(const InventoryItem& item);
+    void RemoveItem(const std::string& itemName, int quantity = 1);
+	InventoryItem* GetItem(const std::string& itemName);
+
+    void SaveInventory(pugi::xml_node& node);
+
+    void LoadInventory(pugi::xml_node& node);
 
 public:
     // Physics and movement

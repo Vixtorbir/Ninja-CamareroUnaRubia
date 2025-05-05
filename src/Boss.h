@@ -8,18 +8,28 @@
 
 struct SDL_Texture;
 
-enum class EnemyState {
+struct Shuriken3 {
+
+    PhysBody* body;
+    Timer timer;
+
+    bool operator==(const Shuriken3& other) const {
+        return body == other.body;
+    }
+};
+
+enum class BossState {
     PATROL,
     AGGRESSIVE,
     WAIT,
     ATTACK
 };
 
-class Enemy : public Entity
+class Boss : public Entity
 {
 public:
-    Enemy();
-    virtual ~Enemy();
+    Boss();
+    virtual ~Boss();
 
     bool Awake();
     bool Start();
@@ -34,24 +44,27 @@ public:
     void OnCollision(PhysBody* physA, PhysBody* physB);
     void OnCollisionEnd(PhysBody* physA, PhysBody* physB);
 
+    void ShootShuriken();
+    void TakeDamage(int damage);
+
 public:
 
     bool IsNextTileCollidable();
     bool IsPlayerInRange();
     void LoadEnemyFx();
 
-	//fx
+    //fx
     //centinel
-	int ninjaWalk1FxId;
-	int ninjaMeleAttack1FxId;
-	int ninjaMeleAttack2FxId;
-	int ninjaRangeAttack1FxId;
-	int ninjaRangeAttack2FxId;
-	int ninjaJump1FxId;
-	int ninjaJump2FxId;
-	int ninjaDieFxId;
-	int ninjaHit1FxId;
-	int ninjaHit2FxId;
+    int ninjaWalk1FxId;
+    int ninjaMeleAttack1FxId;
+    int ninjaMeleAttack2FxId;
+    int ninjaRangeAttack1FxId;
+    int ninjaRangeAttack2FxId;
+    int ninjaJump1FxId;
+    int ninjaJump2FxId;
+    int ninjaDieFxId;
+    int ninjaHit1FxId;
+    int ninjaHit2FxId;
     //skull
     int skullFlyFxId;
     int skullAttack1FxId;
@@ -66,7 +79,7 @@ public:
     int batHit1FxId;
     int batHit2FxId;
     int batdieFxId;
-   
+
     void PerformAttack();
 
     bool IsPlayerInAttackRange();
@@ -88,16 +101,27 @@ public:
     Timer timer;
     int direction = 0;
     int tilesMovedInSameDirection = 0;
-    EnemyState state = EnemyState::PATROL; // Estado inicial
+    BossState state = BossState::PATROL; 
     
 
-    Timer attackTimer;          
-    bool isAttacking = false;   
-    bool isCooldown = false;    
-    const float attackDuration = 1.0f; 
-    const float attackCooldown = 3.0f; 
+    Timer attackTimer;
+    bool isAttacking = false;
+    bool isCooldown = false;
+    const float attackDuration = 1.0f;
+    const float attackCooldown = 3.0f;
     PhysBody* attackBody = nullptr;
 
-	bool dead = false;
+    SDL_Texture* shurikenTexture;
+
+    std::vector<Shuriken3> activeShurikens;
+
+    Timer shootTimer;
+
+    int health = 9;
+    bool canTakeDamage = true; 
+    Timer damageCooldownTimer; 
+    const float damageCooldown = 1.0f;
+
+    bool dead = false;
 };
 

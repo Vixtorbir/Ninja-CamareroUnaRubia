@@ -16,6 +16,7 @@
 
 #include "Npc.h"
 #include "Turret.h"
+#include "Boss.h"
 
 struct SDL_Texture;
 
@@ -24,6 +25,7 @@ enum class GameState {
 	OPTIONS,
 	PLAYING,
 	PAUSED,
+	INVENTORY,
 	GAME_OVER,
 	LOGO
 };
@@ -84,6 +86,7 @@ public:
 	void UpdateGameOver(float dt);
 	void UpdateLogo(float dt);
 	void UpdateOptions(float dt);
+	void UpdateInventory(float dt);
 
 	void CreateItemLvl2(const char* mapName);
 
@@ -107,6 +110,7 @@ public:
 	Player* player;
 	std::vector<Enemy*> enemyList;
 	std::vector<Turret*> turretList;
+	std::vector<Boss*> bossList;
 
 	NPC* npcMentor;
 	NPC* npcIsamu;
@@ -160,4 +164,6 @@ private:
 	int mainMenuMusicId;
 	int gameplayMusicId;
 	
+	int selectedItemIndex = 0;
+
 };

@@ -469,13 +469,24 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
              Engine::GetInstance().physics.get()->DeletePhysBody(physA);
          }*/
 		break;
-	case ColliderType::ITEM:
-		Engine::GetInstance().audio.get()->PlayFx(pickUpItemFxId);
-		Orbs++;
-        Engine::GetInstance().map.get()->DeleteCollisionBodies();
-		Engine::GetInstance().physics.get()->DeletePhysBody(physB);
+    case ColliderType::ITEM: {
+        Item* item = static_cast<Item*>(physB->listener);
+        if (item != nullptr) {
+            // Añadir el objeto al inventario
+            AddItem(InventoryItem(item->name, item->quantity, item->description, item->icon));
 
-		break;
+            // Reproducir efecto de sonido de recogida
+            Engine::GetInstance().audio.get()->PlayFx(pickUpItemFxId);
+            Orbs++;
+
+            // Desactivar el objeto en el mundo
+			Engine::GetInstance().render.get()->DrawText(("Picked up: " + item->name).c_str(), 600, 200, 750, 255); // Mensaje en pantalla
+			Engine::GetInstance().physics.get()->DeletePhysBody(physB); 
+            item->active = false;
+        }
+        break;
+    }
+
 	case ColliderType::UNKNOWN:
 		break;
 
@@ -514,6 +525,27 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 			Engine::GetInstance().physics.get()->DeletePhysBody(physA);
 		}
 		break;
+        case ColliderType::BOSS:
+        if (physA->ctype == ColliderType::PLAYER_ATTACK) {
+            Boss* boss = static_cast<Boss*>(physB->listener);
+            if (boss != nullptr && boss->canTakeDamage) { 
+                boss->TakeDamage(1);
+                Engine::GetInstance().audio.get()->PlayFx(weakKatana1FxId);
+
+                activeShurikens.erase(
+                    std::remove_if(activeShurikens.begin(), activeShurikens.end(),
+                        [physA](const Shuriken& shuriken) { return shuriken.body == physA; }),
+                    activeShurikens.end()
+                );
+
+                Engine::GetInstance().physics.get()->DeletePhysBody(physA);
+            }
+            else {
+                LOG("Boss is in damage cooldown, shuriken has no effect.");
+            }
+        }
+        break;
+
 	}
 }
 
@@ -689,5 +721,55 @@ void Player::ChangeHitboxSize(float width, float height) {
 	pbody->ctype = ColliderType::PLAYER;
 	pbody->body->SetFixedRotation(true);
     pbody->body->SetGravityScale(5);
+}
+
+void Player::AddItem(const InventoryItem& item) {
+    // Busca si el objeto ya existe en el inventario
+    for (auto& invItem : inventory) {
+        if (invItem.name == item.name) {
+            invItem.quantity += item.quantity; // Incrementa la cantidad
+            return;
+        }
+    }
+    // Si no existe, añade un nuevo objeto
+    inventory.push_back(item);
+}
+
+void Player::RemoveItem(const std::string& itemName, int quantity) {
+    for (auto it = inventory.begin(); it != inventory.end(); ++it) {
+        if (it->name == itemName) {
+            it->quantity -= quantity; // Reduce la cantidad
+            if (it->quantity <= 0) {
+                inventory.erase(it); // Elimina el objeto si la cantidad es 0
+            }
+            return;
+        }
+    }
+}
+
+InventoryItem* Player::GetItem(const std::string& itemName) {
+    for (auto& invItem : inventory) {
+        if (invItem.name == itemName) {
+            return &invItem; // Devuelve un puntero al objeto
+        }
+    }
+    return nullptr; // No encontrado
+}
+
+void Player::SaveInventory(pugi::xml_node& node) {
+    for (const auto& item : inventory) {
+        pugi::xml_node itemNode = node.append_child("item");
+        itemNode.append_attribute("name") = item.name.c_str();
+        itemNode.append_attribute("quantity") = item.quantity;
+    }
+}
+
+void Player::LoadInventory(pugi::xml_node& node) {
+    inventory.clear();
+    for (pugi::xml_node itemNode = node.child("item"); itemNode; itemNode = itemNode.next_sibling("item")) {
+        std::string name = itemNode.attribute("name").as_string();
+        int quantity = itemNode.attribute("quantity").as_int();
+        inventory.emplace_back(name, quantity);
+    }
 }
 

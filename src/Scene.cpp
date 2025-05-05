@@ -19,6 +19,7 @@
 #include "DialogueManager.h"
 #include "NPC.h"
 #include "Turret.h"
+#include "Boss.h"
 
 Scene::Scene() : Module()
 {
@@ -65,6 +66,13 @@ bool Scene::Awake()
 		items.push_back(item);
 	}
 
+	for (pugi::xml_node itemNode = configParameters.child("entities").child("items").child("testItem"); itemNode; itemNode = itemNode.next_sibling("testItem"))
+	{
+		Item* item = (Item*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ITEM);
+		item->SetParameters(itemNode);
+		items.push_back(item);
+	}
+
 	// Create a enemy using the entity manager 
 	for (pugi::xml_node enemyNode = configParameters.child("entities").child("enemies").child("enemy"); enemyNode; enemyNode = enemyNode.next_sibling("enemy"))
 	{
@@ -79,6 +87,13 @@ bool Scene::Awake()
 		Turret* turret = (Turret*)Engine::GetInstance().entityManager->CreateEntity(EntityType::TURRET);
 		turret->SetParameters(turretNode);
 		turretList.push_back(turret);
+	}
+
+	for (pugi::xml_node bossNode = configParameters.child("entities").child("enemies").child("boss"); bossNode; bossNode = bossNode.next_sibling("boss"))
+	{
+		Boss* boss = (Boss*)Engine::GetInstance().entityManager->CreateEntity(EntityType::BOSS);
+		boss->SetParameters(bossNode);
+		bossList.push_back(boss);
 	}
 	
 	// L16: TODO 2: Instantiate a new GuiControlButton in the Scene
@@ -149,9 +164,6 @@ bool Scene::Start()
 
 	exitButton = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(
 		GuiControlType::BUTTON, 3, "Exit", exitButtonPos, this);
-	
-
-
 
 	
 
@@ -241,10 +253,12 @@ bool Scene::Update(float dt)
 	case GameState::LOGO:
 		UpdateLogo(dt);
 		break;
+	case GameState::INVENTORY: 
+		UpdateInventory(dt);
+		break;
 	default:
 		break;
 	}
-
 
 	return true;
 }
@@ -673,6 +687,12 @@ void Scene::HandleInput()
 		}
 	}
 
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_I) == KEY_DOWN) {
+		if (currentState == GameState::PLAYING) {
+			SetState(GameState::INVENTORY);
+		}
+	}
+
 }
 
 
@@ -698,13 +718,8 @@ void Scene::UpdatePlaying(float dt) {
 	mapBackgroundUIImage->visible = showingMap;
 
 	player->Update(dt);
-	for (auto& enemy : enemyList) {
-		enemy->Update(dt);
-	}
+	
 
-	for (auto& turret : turretList) {
-		turret->Update(dt);
-	}
 }
 
 void Scene::UpdatePaused(float dt) {
@@ -812,6 +827,89 @@ void Scene::UpdateOptions(float dt)
 
 
 }
+
+void Scene::UpdateInventory(float dt) {
+	Engine::GetInstance().render.get()->DrawText("INVENTORY", 600, 50, 750, 255);
+
+	int xOffset = 600;
+	int yOffset = 300;
+	int iconSize = 64; // Tamaño del ícono
+	int squareSize = 74; // Tamaño del cuadrado amarillo (iconSize + 10)
+	int spacing = 20;
+
+	static bool showItemInfo = false; // Variable para controlar si se muestra la información del objeto
+	static std::string itemName = "";
+	static std::string itemDescription = "";
+
+	// Navegación del inventario
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_RIGHT) == KEY_DOWN) {
+		selectedItemIndex = (selectedItemIndex + 1) % player->inventory.size();
+		showItemInfo = false; // Ocultar información al cambiar de selección
+	}
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_LEFT) == KEY_DOWN) {
+		selectedItemIndex = (selectedItemIndex - 1 + player->inventory.size()) % player->inventory.size();
+		showItemInfo = false; // Ocultar información al cambiar de selección
+	}
+
+	// Dibujar los íconos del inventario
+	for (size_t i = 0; i < player->inventory.size(); ++i) {
+		const InventoryItem& item = player->inventory[i];
+
+		// Calcular la posición del cuadrado amarillo
+		int x = xOffset + i * (squareSize + spacing);
+		int y = yOffset;
+
+		// Dibujar un cuadrado amarillo alrededor del objeto seleccionado
+		if (i == selectedItemIndex) {
+			SDL_Rect selectionRect = { x, y, squareSize, squareSize };
+			SDL_SetRenderDrawColor(Engine::GetInstance().render.get()->renderer, 255, 255, 0, 255);
+			SDL_RenderDrawRect(Engine::GetInstance().render.get()->renderer, &selectionRect);
+		}
+
+		// Calcular la posición del ícono para centrarlo dentro del cuadrado amarillo
+		int iconX = x + (squareSize - iconSize) / 2;
+		int iconY = y + (squareSize - iconSize) / 2;
+
+
+		// Dibujar el ícono del objeto
+		Engine::GetInstance().render.get()->DrawTexturedRectangle(item.icon, iconX, iconY, iconSize, iconSize, false);
+	}
+
+	// Mostrar el nombre y la descripción del objeto seleccionado al presionar Enter
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_RETURN) == KEY_DOWN) {
+		if (!player->inventory.empty()) {
+			const InventoryItem& selectedItem = player->inventory[selectedItemIndex];
+			itemName = "" + selectedItem.name;
+			itemDescription = "" + selectedItem.description;
+			showItemInfo = true; 
+		}
+	}
+
+	// Dibujar la información del objeto si está activa
+	if (showItemInfo) {
+		int textSize = 500; 
+		int nameY = 250;    
+		int descriptionY = nameY + 250; 
+
+		// Definir el color rojo
+		SDL_Color redColor = { 255, 0, 0, 255 };
+
+		// Dibujar el nombre y la descripción con el color rojo
+		Engine::GetInstance().render.get()->DrawTextColor(itemName.c_str(), 700, nameY, textSize, 105, redColor);
+		Engine::GetInstance().render.get()->DrawTextColor(itemDescription.c_str(), 700, descriptionY, textSize, 105, redColor);
+	}
+
+	// Regresar al estado de juego
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_U) == KEY_DOWN) {
+		SetState(GameState::PLAYING);
+		showItemInfo = false; // Ocultar información al salir del inventario
+	}
+}
+
+
+
+
+
 void Scene::CreateItemLvl2(const char* mapName)
 {
 	if (std::string(mapName) == "MapTemplate2.tmx") {

@@ -29,7 +29,7 @@ bool Enemy::Start() {
 	// Inicializar texturas
 	texture = Engine::GetInstance().textures.get()->Load(parameters.attribute("texture").as_string());
 	attackTexture = Engine::GetInstance().textures.get()->Load(parameters.attribute("attack_texture").as_string());
-	trailTexture = Engine::GetInstance().textures.get()->Load(parameters.attribute("trail_texture").as_string());
+	
 
 	attackTexture = Engine::GetInstance().textures.get()->Load("Assets/Textures/enemyAttack.png"); 
 
@@ -273,12 +273,11 @@ bool Enemy::Update(float dt)
 }
 
 
-
 bool Enemy::CleanUp() {
 	Engine::GetInstance().textures.get()->UnLoad(texture);
 	Engine::GetInstance().textures.get()->UnLoad(attackTexture); 
 	Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
-	Engine::GetInstance().entityManager.get()->entities.remove(this);
+	active = false;
 	return true;
 }
 
@@ -303,22 +302,18 @@ void Enemy::ResetPath() {
 }
 
 void Enemy::OnCollision(PhysBody* physA, PhysBody* physB) {
-	switch (physB->ctype)
-	{
-	case ColliderType::PLAYER_ATTACK: 
-		
-		if (physB == Engine::GetInstance().scene.get()->player->katanaAttack) {
-			LOG("Enemy hit by player attack! Enemy will be destroyed.");
-			this->dead = true;
-		}
-
+	switch (physB->ctype) {
+	case ColliderType::PLAYER_ATTACK:
+		// Si el jugador golpea la torreta, marcarla como muerta
+		LOG("Turret hit by player attack!");
+		dead = true;
 		break;
+
 	case ColliderType::PLAYER:
-		// Verificar si la hitbox del ataque está activa
-		if (attackBody != nullptr && physA == attackBody) {
-			// Llamar a la función TakeDamage del jugador
+		// Si el jugador colisiona con un shuriken, aplicar daño
+		if (physA->ctype == ColliderType::ENEMY) {
 			Engine::GetInstance().scene.get()->player->TakeDamage(1);
-			LOG("Player hit by enemy attack! Damage applied.");
+			LOG("Player hit by turret shuriken!");
 		}
 		break;
 	}

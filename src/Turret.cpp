@@ -102,7 +102,7 @@ bool Turret::Update(float dt) {
         Vector2D playerTilePos = Engine::GetInstance().map.get()->WorldToMap(playerPos.getX(), playerPos.getY());
 
         // Si el jugador está fuera del rango máximo, el enemigo no hace nada
-        if (abs(playerTilePos.getX() - enemyTilePos.getX()) > 75)
+        if (abs(playerTilePos.getX() - enemyTilePos.getX()) > 105)
         {
             pbody->body->SetLinearVelocity(b2Vec2(0, 0));
             b2Transform pbodyPos = pbody->body->GetTransform();
@@ -130,7 +130,7 @@ bool Turret::Update(float dt) {
     currentAnimation->Update();
 
     for (auto it = activeShurikens.begin(); it != activeShurikens.end(); ) {
-        if (it->timer.ReadSec() >= 3.5f) { 
+        if (it->timer.ReadSec() >= 2.0f) { 
             Engine::GetInstance().physics.get()->DeletePhysBody(it->body); 
             it = activeShurikens.erase(it); 
         }
@@ -258,6 +258,6 @@ bool Turret::CleanUp() {
     Engine::GetInstance().textures.get()->UnLoad(texture);
     Engine::GetInstance().textures.get()->UnLoad(shurikenTexture);
     Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
-    Engine::GetInstance().entityManager.get()->entities.remove(this);
+    active = false;
     return true;
 }
