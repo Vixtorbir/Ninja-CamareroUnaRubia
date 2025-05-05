@@ -46,7 +46,9 @@ bool Player::Start() {
     jump.LoadAnimations(parameters.child("animations").child("jump"));
     dash.LoadAnimations(parameters.child("animations").child("dash"));
     crouch.LoadAnimations(parameters.child("animations").child("crouch"));
-
+    attack1.LoadAnimations(parameters.child("animations").child("attack1"));
+    attack2.LoadAnimations(parameters.child("animations").child("attack2"));
+    attack3.LoadAnimations(parameters.child("animations").child("attack3"));
     currentAnimation = &idle;
 
     // Physics setup
