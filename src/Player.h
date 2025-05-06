@@ -217,6 +217,7 @@ public:
     SDL_Texture* ForeGroundSliderHP = nullptr;
     SDL_Texture* orbUiTexture = nullptr;
 
+
     // Game items
     int Orbs = 0;    
     pugi::xml_node parameters;
