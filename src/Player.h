@@ -38,6 +38,8 @@ enum class PlayerState {
     JUMPING,
     DASHING,
     CROUCHING,
+    ATTACKINGS,
+    ATTACKINGH,
     WALL_SLIDING
 };
 
@@ -165,7 +167,10 @@ public:
     Animation jump;
     Animation dash;
     Animation crouch;
-
+    Animation attack1;
+    Animation attack2;
+    Animation attack3;
+   
     // Camera control
     int camX, camY;
     float smoothFactor = 0.1f;
