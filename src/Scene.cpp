@@ -196,6 +196,7 @@ bool Scene::Update(float dt)
 */
 
 	//Get mouse position and obtain the map coordinate
+	
 	int scale = Engine::GetInstance().window.get()->GetScale();
 	Vector2D mousePos = Engine::GetInstance().input.get()->GetMousePosition();
 	Vector2D mouseTile = Engine::GetInstance().map.get()->WorldToMap(mousePos.getX() - Engine::GetInstance().render.get()->camera.x / scale,
@@ -230,6 +231,16 @@ bool Scene::Update(float dt)
 		{
 		dialogueManager->CastDialogue(npc->dialogueName);
 			npc->showcaseDialogue = false;
+		}
+	}
+
+	//apply item effects
+	for (InventoryItem item : player->inventory)
+	{
+		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_H) == KEY_DOWN && item.name == "Health Potion") {
+			player->HP += 20;
+		} else if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_J) == KEY_DOWN && item.name == "Mana Potion") {
+			player->speed += 20;
 		}
 	}
 

@@ -18,7 +18,7 @@
 	<scene>
 		<map path="Assets/Maps/" name="MapTemplate1.tmx" />
 		<entities>
-			<player x="1000" y="1047" w="512" h="256" texture="Assets/Animations/PlayerAnims/renSpritesheet.png" gravity="true">
+			<player x="1000" y="1047" w="128" h="256" texture="Assets/Animations/PlayerAnims/renSpritesheet.png" gravity="true">
 				<animations>
 					<idle loop="true" speed="0.085">
 						<frame x="0" y="0" w="512" h="256" />
@@ -131,7 +131,8 @@
 				</item>
 				<testItem
 					 name="Health Potion"
-					 description="Restores a small amount of health."
+					 effect="1"
+					 description="Consume with H"
 					 icon="Assets/Textures/goldCoin.png"
 					 x="1300"
 					 y="1050"
@@ -147,7 +148,8 @@
 				</testItem>
 				<testItem
 					 name="Mana Potion"
-					 description="Restores a small amount of mana."
+					 effect="2"
+					 description="Consume with J"
 					 icon="Assets/Textures/goldCoin.png"
 					 x="1400"
 					 y="1050"
