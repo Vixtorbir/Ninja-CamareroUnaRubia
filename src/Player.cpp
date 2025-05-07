@@ -46,7 +46,9 @@ bool Player::Start() {
     jump.LoadAnimations(parameters.child("animations").child("jump"));
     dash.LoadAnimations(parameters.child("animations").child("dash"));
     crouch.LoadAnimations(parameters.child("animations").child("crouch"));
-
+    attack1.LoadAnimations(parameters.child("animations").child("attack1"));
+    attack2.LoadAnimations(parameters.child("animations").child("attack2"));
+    attack3.LoadAnimations(parameters.child("animations").child("attack3"));
     currentAnimation = &idle;
 
     // Physics setup
@@ -87,6 +89,7 @@ bool Player::Update(float dt) {
     foregroundSliderImage->visible = inGame;
     HP_Slider->visible = inGame;
 
+
     if (Engine::GetInstance().scene.get()->currentState == GameState::PAUSED) {
         pbody->body->SetLinearVelocity(b2Vec2(0, 0));
         b2Transform pbodyPos = pbody->body->GetTransform();
@@ -103,10 +106,10 @@ bool Player::Update(float dt) {
     }
 
     // Handle HP
-    HP_Slider->SetSliderBarInnerSize(HP * 4, 50);
+    /*HP_Slider->SetSliderBarInnerSize(HP * 4, 50);
     if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_H) == KEY_DOWN) HP += 20;
     if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_J) == KEY_DOWN) HP -= 20;
-    if (HP >= MAXHP) HP = MAXHP; else if (HP <= 0) HP = 0;
+    if (HP >= MAXHP) HP = MAXHP; else if (HP <= 0) HP = 0;*/
 
     // God mode toggle
     if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F10) == KEY_DOWN) godMode = true;

@@ -23,7 +23,9 @@ public:
 
    void SetPosition(Vector2D pos);  
 
-   bool CleanUp();  
+   void ApplyEffect();
+
+   bool CleanUp();
 
    void OnPickup(Player* player);  
 
@@ -46,7 +48,8 @@ public:
    pugi::xml_node parameters;  
    Animation* currentAnimation = nullptr;  
    Animation idle;  
-
+   
+   int effect;
    //L08 TODO 4: Add a physics to an item  
    PhysBody* pbody;  
 

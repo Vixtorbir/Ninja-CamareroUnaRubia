@@ -33,7 +33,7 @@ bool Item::Start() {
 	texturePath = parameters.attribute("texture").as_string("");
 	quantity = parameters.attribute("quantity").as_int(1);
 	icon = Engine::GetInstance().textures.get()->Load(parameters.attribute("icon").as_string());
-
+	effect = parameters.attribute("effect").as_int();
 	//Load animations
 	idle.LoadAnimations(parameters.child("animations").child("idle"));
 	currentAnimation = &idle;
@@ -73,6 +73,22 @@ void Item::SetPosition(Vector2D pos)
 	position = pos;
 }
 
+void Item::ApplyEffect()
+{
+	switch (effect)
+	{
+	case 1:
+		Engine::GetInstance().scene.get()->player->HP += 20;
+
+		break;
+
+	case 2:
+		Engine::GetInstance().scene.get()->player->speed += 20;
+
+		break;
+	}
+
+}
 bool Item::CleanUp()
 {
 	LOG("Cleanup item");
