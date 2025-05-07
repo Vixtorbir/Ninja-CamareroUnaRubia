@@ -8,18 +8,18 @@
     ],
     "fileStates": {
         "MapTemplate2_64x64.tmx": {
-            "scale": 0.03125,
-            "selectedLayer": 0,
+            "scale": 0.5,
+            "selectedLayer": 10,
             "viewCenter": {
-                "x": 10096,
-                "y": 2656
+                "x": 9771,
+                "y": 4070
             }
         },
         "MapTemplate2_64x64.tmx#level0Tileset 64x64": {
-            "scaleInDock": 1
+            "scaleInDock": 0.33
         },
         "MapTemplate2_64x64.tmx#level1Tileset 64x64": {
-            "scaleInDock": 0.125
+            "scaleInDock": 0.5
         },
         "MapTemplate2_64x64.tmx#level2CaveTileset 64x64": {
             "scaleInDock": 1
