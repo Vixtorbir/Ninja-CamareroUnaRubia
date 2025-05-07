@@ -1,0 +1,39 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "MapTemplate2_64x64.tmx",
+    "expandedProjectPaths": [
+    ],
+    "fileStates": {
+        "MapTemplate2_64x64.tmx": {
+            "scale": 0.03125,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 10096,
+                "y": 2656
+            }
+        },
+        "MapTemplate2_64x64.tmx#level0Tileset 64x64": {
+            "scaleInDock": 1
+        },
+        "MapTemplate2_64x64.tmx#level1Tileset 64x64": {
+            "scaleInDock": 0.125
+        },
+        "MapTemplate2_64x64.tmx#level2CaveTileset 64x64": {
+            "scaleInDock": 1
+        }
+    },
+    "map.height": 150,
+    "map.tileHeight": 64,
+    "map.tileWidth": 64,
+    "map.width": 200,
+    "openFiles": [
+        "MapTemplate2_64x64.tmx"
+    ],
+    "project": "ForestTilemap.tiled-project",
+    "recentFiles": [
+        "MapTemplate2_64x64.tmx"
+    ]
+}
