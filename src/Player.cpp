@@ -318,12 +318,24 @@ bool Player::Update(float dt) {
 
     // Update position
     b2Transform pbodyPos = pbody->body->GetTransform();
-    position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texW - 20);
+    position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texW - 135);
+
     position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
 
-    // Render
-    Engine::GetInstance().render.get()->DrawEntity(texture, (int)position.getX(), (int)position.getY(),
-        &currentAnimation->GetCurrentFrame(), 1, 0, 0, 0, (int)playerDirection);
+    int renderOffsetY = 0;
+    if (crouched) {
+        renderOffsetY = -65; 
+    }
+
+    // Renderizar la textura del jugador
+    Engine::GetInstance().render.get()->DrawEntity(
+        texture,
+        (int)position.getX(),
+        (int)position.getY() + renderOffsetY, 
+        &currentAnimation->GetCurrentFrame(),
+        1, 0, 0, 0, (int)playerDirection
+    );
+
     currentAnimation->Update();
 
     // Camera follow
@@ -635,24 +647,60 @@ void Player::Die() {
 	Engine::GetInstance().scene->SetState(GameState::GAME_OVER);
 }
 
-void Player::PerformAttack()
-{
-    if (playerDirection == EntityDirections::RIGHT)
-    {
+void Player::PerformAttack() {
+    // Seleccionar la animación de ataque actual
+    switch (currentAttackIndex) {
+    case 0:
+        currentAnimation = &attack1;
+        break;
+    case 1:
+        currentAnimation = &attack2;
+        break;
+    case 2:
+        currentAnimation = &attack3;
+        break;
+    default:
+        currentAnimation = &attack1;
+        break;
+    }
+
+    // Configurar el área de ataque según la dirección del jugador
+    if (playerDirection == EntityDirections::RIGHT) {
         katanaAttack = Engine::GetInstance().physics.get()->CreateRectangleSensor(
             (int)position.getX() + 220, (int)position.getY() + 100, 80, 250, bodyType::STATIC
         );
     }
-    else
-    {
+    else {
         katanaAttack = Engine::GetInstance().physics.get()->CreateRectangleSensor(
             (int)position.getX() - 5, (int)position.getY() + 100, 80, 250, bodyType::STATIC
         );
     }
 
-    katanaAttack->ctype = ColliderType::PLAYER_ATTACK; 
-    katanaAttack->listener = this; 
+    katanaAttack->ctype = ColliderType::PLAYER_ATTACK;
+    katanaAttack->listener = this;
+
+    // Avanzar al siguiente ataque (cíclico)
+    currentAttackIndex = (currentAttackIndex + 1) % 3;
+
+    // Reproducir el efecto de sonido correspondiente
+    int attackFxId;
+    switch (currentAttackIndex) {
+    case 0:
+        attackFxId = weakKatana1FxId;
+        break;
+    case 1:
+        attackFxId = weakKatana2FxId;
+        break;
+    case 2:
+        attackFxId = weakKatana3FxId;
+        break;
+    default:
+        attackFxId = weakKatana1FxId;
+        break;
+    }
+    Engine::GetInstance().audio.get()->PlayFx(attackFxId);
 }
+
 
 void Player::ThrowShuriken() {
 
@@ -705,26 +753,42 @@ void Player::ThrowShuriken() {
 
 
 void Player::ChangeHitboxSize(float width, float height) {
-	// Destroy the current fixture
-	b2Fixture* fixture = pbody->body->GetFixtureList();
-	while (fixture != nullptr) {
-		b2Fixture* next = fixture->GetNext();
-		pbody->body->DestroyFixture(fixture);
-		fixture = next;
-	}
+    // Obtener la posición actual del cuerpo físico
+    b2Vec2 currentPosition = pbody->body->GetPosition();
 
-	// Create a new fixture with the new size
-	if (height == texH / 2) {
-	pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX()+120, (int)position.getY()+170, width, height, bodyType::DYNAMIC);
-	}
-	else {
-		pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX()+120, (int)position.getY()+100, width, height, bodyType::DYNAMIC);
-	}
-	pbody->listener = this;
-	pbody->ctype = ColliderType::PLAYER;
-	pbody->body->SetFixedRotation(true);
+    // Destruir el fixture actual
+    b2Fixture* fixture = pbody->body->GetFixtureList();
+    while (fixture != nullptr) {
+        b2Fixture* next = fixture->GetNext();
+        pbody->body->DestroyFixture(fixture);
+        fixture = next;
+    }
+
+    // Crear un nuevo fixture con el nuevo tamaño
+    if (height == texH / 2) {
+        // Si se está agachando, ajustar la posición hacia abajo
+        currentPosition.y += PIXEL_TO_METERS(texH / 4); // Ajustar la posición para que el hitbox quede alineado
+    }
+    else {
+        // Si se está levantando, ajustar la posición hacia arriba
+        currentPosition.y -= PIXEL_TO_METERS(texH / 4); // Ajustar la posición para que el hitbox quede alineado
+    }
+
+    // Crear el nuevo cuerpo físico con el tamaño ajustado
+    pbody = Engine::GetInstance().physics.get()->CreateRectangle(
+        METERS_TO_PIXELS(currentPosition.x), METERS_TO_PIXELS(currentPosition.y), width, height, bodyType::DYNAMIC
+    );
+
+    // Configurar las propiedades del nuevo cuerpo físico
+    pbody->listener = this;
+    pbody->ctype = ColliderType::PLAYER;
+    pbody->body->SetFixedRotation(true);
     pbody->body->SetGravityScale(5);
+
+    // Actualizar la posición del cuerpo físico
+    pbody->body->SetTransform(currentPosition, 0);
 }
+
 
 void Player::AddItem(const InventoryItem& item) {
     // Busca si el objeto ya existe en el inventario
