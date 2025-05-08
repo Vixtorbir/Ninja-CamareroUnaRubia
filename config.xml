@@ -8,7 +8,7 @@
 		<vsync value="false" />
 	</render>
 	<window>
-		<resolution width="1920" height="1080" scale="1" />
+		<resolution width="1680" height="1080" scale="1" />
 		<camera zoom="1" />
 		<fullscreen value="false" />
 		<borderless value="false" />
@@ -57,8 +57,8 @@
 						<frame x="0" y="768" w="512" h="256" />
 						<frame x="512" y="768" w="512" h="256" />
 						<frame x="1024" y="768" w="512" h="256" />
-						<frame x="2048" y="768" w="512" h="256" />
 						<frame x="1536" y="768" w="512" h="256" />
+						<frame x="2048" y="768" w="512" h="256" />
 					</crouch>
 					<attack1 loop="false" speed="0.5">
 						<frame x="0" y="1536" w="512" h="256" />
