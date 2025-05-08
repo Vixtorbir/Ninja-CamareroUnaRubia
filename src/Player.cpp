@@ -667,12 +667,12 @@ void Player::PerformAttack() {
     // Configurar el área de ataque según la dirección del jugador
     if (playerDirection == EntityDirections::RIGHT) {
         katanaAttack = Engine::GetInstance().physics.get()->CreateRectangleSensor(
-            (int)position.getX() + 220, (int)position.getY() + 100, 80, 250, bodyType::STATIC
+            (int)position.getX() + 390, (int)position.getY() + 100, 80, 250, bodyType::STATIC
         );
     }
     else {
         katanaAttack = Engine::GetInstance().physics.get()->CreateRectangleSensor(
-            (int)position.getX() - 5, (int)position.getY() + 100, 80, 250, bodyType::STATIC
+            (int)position.getX() +135, (int)position.getY() + 100, 80, 250, bodyType::STATIC
         );
     }
 
