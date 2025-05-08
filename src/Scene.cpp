@@ -291,7 +291,7 @@ bool Scene::PostUpdate()
 	}
 		//Engine::GetInstance().scene.get()->player->currentLevel = 1;
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F3) == KEY_DOWN) {
-		SafeLoadMap("MapTemplate2.tmx", Vector2D(193, 3845)); // Posición específica Mapa 2
+		SafeLoadMap("MapTemplate2_64x64.tmx", Vector2D(1408, 3845)); // Posición específica Mapa 2
 		levelIndex = 1;
 		parallax->ChangeTextures(levelIndex);
 	}
