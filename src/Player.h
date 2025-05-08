@@ -111,8 +111,8 @@ public:
     int currentAttackIndex = 0;
 
 
-    float speed = 0.55f;
-    float jumpForce = 155;
+    float speed = 1;
+    float jumpForce = 300;
     float wallJumpForce = 90.5f;
     float wallJumpPush = 102.0f;
     float wallClimbSpeed = -2.0f;
