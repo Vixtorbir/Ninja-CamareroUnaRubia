@@ -108,9 +108,11 @@ public:
     const float attackCooldown = 1.0f;
     SDL_Texture* meleeAttackTexture = nullptr; 
 
+    int currentAttackIndex = 0;
+
 
     float speed = 0.55f;
-    float jumpForce = 125;
+    float jumpForce = 155;
     float wallJumpForce = 90.5f;
     float wallJumpPush = 102.0f;
     float wallClimbSpeed = -2.0f;
