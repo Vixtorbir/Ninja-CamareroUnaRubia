@@ -22,6 +22,9 @@ public:
 	bool isClicked = false;
 	bool isOptionA = false;
 	bool isOptionB = false;
+
+	bool visible = true;
+
 private:
 	bool canClick = true;
 	bool drawBasic = false;

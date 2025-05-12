@@ -153,6 +153,9 @@ bool Scene::Start()
 	SDL_Rect startButtonPos = { 800, 300, 200, 50 };
 	SDL_Rect optionsButtonPos = { 800, 550, 200, 50 };
 	SDL_Rect exitButtonPos = { 800, 800, 200, 50 };
+	SDL_Rect vsyncCheckboxPos = { 800, 250, 200, 50 };
+	SDL_Rect fullscreenCheckboxPos = { 800, 500, 200, 50 };
+	SDL_Rect returntomenuButtonPos = { 800, 700, 200, 50 };
 
 	startButton = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(
 		GuiControlType::BUTTON, 1, "Start Game", startButtonPos, this);
@@ -164,6 +167,25 @@ bool Scene::Start()
 
 	exitButton = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(
 		GuiControlType::BUTTON, 3, "Exit", exitButtonPos, this);
+
+
+	vsyncCheckbox = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(
+		GuiControlType::BUTTON, 2, "Vsync enabled", vsyncCheckboxPos, this);
+	vsyncCheckbox->Start();
+	vsyncCheckbox->visible = false;
+	
+
+	fullscreenCheckbox = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(
+		GuiControlType::BUTTON, 1, "FullScreen", fullscreenCheckboxPos, this);
+	fullscreenCheckbox->Start();
+	fullscreenCheckbox->visible = false;
+
+
+
+   returntomenuButton = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(
+		GuiControlType::BUTTON, 5, "Return To Menu", returntomenuButtonPos, this);
+   returntomenuButton->Start();
+   returntomenuButton->visible = false;
 
 	
 
@@ -266,6 +288,9 @@ bool Scene::Update(float dt)
 		break;
 	case GameState::INVENTORY: 
 		UpdateInventory(dt);
+		break;
+	case GameState::OPTIONS:
+		UpdateOptions(dt);
 		break;
 	default:
 		break;
@@ -781,59 +806,61 @@ void Scene::UpdateLogo(float dt) {
 }
 void Scene::UpdateOptions(float dt)
 {
-	Engine::GetInstance().render.get()->DrawText("OPTIONS", 600, 200, 750, 255);
-	Engine::GetInstance().render.get()->DrawText("FullScreen", 700, 500, 750, 255);
-	Engine::GetInstance().render.get()->DrawText("VSYNC", 700, 400, 750, 255);
+	Engine::GetInstance().render.get()->DrawWhiteText("OPTIONS", 600, 200, 750, 255);
+
 	if (!returntomenuButton) {
-		SDL_Rect returntomenuButtonPos = { 800, 550, 200, 50 };
+		SDL_Rect returntomenuButtonPos = { 800, 750, 200, 50 };
 		returntomenuButton = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(
 			GuiControlType::BUTTON, 5, "Return To Menu", returntomenuButtonPos, this);
+		 
 	}
 	if (!menuBackgroundImage) {
 
 		MenuBackgroundImage = Engine::GetInstance().textures.get()->Load("Assets/UI/Menu.png");
 	}
 	if (!fullscreenCheckbox) {
-		SDL_Rect fullscreenCheckboxPos = { 900, 500, 200, 50 };
-		fullscreenCheckbox = (GuiCheckbox*)Engine::GetInstance().guiManager->CreateGuiControl(
-			GuiControlType::CHECKBOX, 1, "", fullscreenCheckboxPos, this);
+		SDL_Rect fullscreenCheckboxPos = { 800, 500, 200, 50 };
+		fullscreenCheckbox = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(
+			GuiControlType::BUTTON, 1, "FullScreen", fullscreenCheckboxPos, this);
+		
 	}
 	if (!vsyncCheckbox) {
-		SDL_Rect vsyncCheckboxPos = { 900, 400, 200, 50 };
-		vsyncCheckbox = (GuiCheckbox*)Engine::GetInstance().guiManager->CreateGuiControl(
-			GuiControlType::CHECKBOX, 2, "", vsyncCheckboxPos, this);
+		SDL_Rect vsyncCheckboxPos = { 800, 250, 200, 50 };
+		vsyncCheckbox = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(
+			GuiControlType::BUTTON, 2, "Vsync enabled", vsyncCheckboxPos, this);
+		
 	}
 	if (!fxSlider) {
 		SDL_Rect fxSliderPos = { 800, 550, 200, 50 };
-		fxSlider = (GuiSlider*)Engine::GetInstance().guiManager->CreateGuiControl(
-			GuiControlType::SLIDER, 4, "", fxSliderPos, this);
+		//fxSlider = (GuiSlider*)Engine::GetInstance().guiManager->CreateGuiControl(
+		//	GuiControlType::SLIDER, 4, "", fxSliderPos, this);
 
 
 	}
 	if (!musicSlider) {
 		SDL_Rect musicSliderPos = { 800, 550, 200, 50 };
-		musicSlider = (GuiSlider*)Engine::GetInstance().guiManager->CreateGuiControl(
-			GuiControlType::SLIDER, 5, "", musicSliderPos, this);
+		//musicSlider = (GuiSlider*)Engine::GetInstance().guiManager->CreateGuiControl(
+		//	GuiControlType::SLIDER, 5, "", musicSliderPos, this);
 
 
 	}
 
 
-	returntomenuButton->Start();
+	returntomenuButton->visible = true;
+	fullscreenCheckbox->visible = true;
+	vsyncCheckbox->visible = true;
 	returntomenuButton->Update(dt);
 	menuBackgroundImage->Update(dt);
-	fullscreenCheckbox->Start();
 	fullscreenCheckbox->Update(dt);
-	vsyncCheckbox->Start();
 	vsyncCheckbox->Update(dt);
 	
-	fxSlider->Update(dt);
-	musicSlider->Update(dt);
+	//fxSlider->Update(dt);
+	//musicSlider->Update(dt);
 
 
 
-	Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/gameplaySongPlaceholder.wav");
-	Engine::GetInstance().audio.get()->musicVolume(50);
+	//Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/gameplaySongPlaceholder.wav");
+	//Engine::GetInstance().audio.get()->musicVolume(50);
 
 
 
