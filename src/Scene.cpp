@@ -155,7 +155,8 @@ bool Scene::Start()
 	SDL_Rect exitButtonPos = { 800, 800, 200, 50 };
 	SDL_Rect vsyncCheckboxPos = { 800, 250, 200, 50 };
 	SDL_Rect fullscreenCheckboxPos = { 800, 500, 200, 50 };
-	SDL_Rect returntomenuButtonPos = { 800, 700, 200, 50 };
+	SDL_Rect returntomenuButtonPos = { 800, 750, 200, 50 };
+	SDL_Rect returnButtonPos = { 800, 550, 200, 50 };
 
 	startButton = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(
 		GuiControlType::BUTTON, 1, "Start Game", startButtonPos, this);
@@ -179,7 +180,7 @@ bool Scene::Start()
 	vsyncCheckbox->visible = false;
 
 	returntomenuButton = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(
-		GuiControlType::BUTTON, 1, "Return", returntomenuButtonPos, this);
+		GuiControlType::BUTTON, 7, "Return", returntomenuButtonPos, this);
 	returntomenuButton->Start();
 	returntomenuButton->visible = false;
 
@@ -189,6 +190,11 @@ bool Scene::Start()
 	fullscreenCheckbox->Start();
 	fullscreenCheckbox->visible = false;
 
+
+	returnButton = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(
+		GuiControlType::BUTTON, 4, "Return", returnButtonPos, this);
+	returnButton->Start();
+	returnButton->visible = false;
 
 
  
@@ -591,19 +597,7 @@ void Scene::UpdateMainMenu(float dt) {
 	// Render the main menu text
 	Engine::GetInstance().render.get()->DrawText("MAIN MENU", 600, 40, 750, 255);
 
-	/*if (startButton->isClicked == true)
-	{
-		SetState(GameState::PLAYING);
-		Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/gameplaySongPlaceholder.wav");
-		Engine::GetInstance().audio.get()->musicVolume(50);
-		startButton->CleanUp();
-		startButton = nullptr;
-		optionsButton->CleanUp();
-		optionsButton = nullptr;
-		exitButton->CleanUp();
-		exitButton = nullptr;
-		menuBackgroundImage->CleanUp();
-	}*/
+	
 
 
 }
@@ -620,11 +614,11 @@ void Scene::HandleInput()
 				Engine::GetInstance().audio.get()->musicVolume(50);
 				startButton->CleanUp();
 				optionsButton->CleanUp();
-				exitButton->CleanUp();
+				exitButton->visible = false;
 				menuBackgroundImage->CleanUp();
 				startButton = nullptr;
 				optionsButton = nullptr;
-				exitButton = nullptr;
+				
 
 			}
 			/*else if (currentState == GameState::GAME_OVER)
@@ -657,17 +651,20 @@ void Scene::HandleInput()
 		if (currentState == GameState::GAME_OVER || currentState == GameState::OPTIONS) {
 			if (returntomenuButton->isClicked == true) {
 				SetState(GameState::MAIN_MENU);
+				returntomenuButton->visible = false;
+				fullscreenCheckbox->visible = false;
+				vsyncCheckbox->visible = false;
 
 			}
 		}
-		returntomenuButton->CleanUp();
+		//returntomenuButton->CleanUp();
 	}
 
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_P) == KEY_DOWN)
 	{
 		if (currentState == GameState::PLAYING)
 		{
-			SetState(GameState::GAME_OVER);
+			SetState(GameState::PAUSED);
 		}
 		else if (currentState == GameState::PAUSED)
 		{
@@ -680,7 +677,7 @@ void Scene::HandleInput()
 			SetState(GameState::OPTIONS);
 			startButton->CleanUp();
 			optionsButton->CleanUp();
-			exitButton->CleanUp();
+			exitButton->visible = false;
 			menuBackgroundImage->CleanUp();
 			startButton = nullptr;
 			optionsButton = nullptr;
@@ -765,10 +762,9 @@ void Scene::UpdatePlaying(float dt) {
 }
 
 void Scene::UpdatePaused(float dt) {
-	SDL_Rect returnButtonPos = { 800, 550, 200, 50 };
-	returnButton = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(
-		GuiControlType::BUTTON, 4, "Return", returnButtonPos, this);
-	returnButton->Start();
+	
+	returnButton->visible = true;
+	exitButton->visible = true;
 	returnButton->Update(dt);
 	exitButton->Update(dt);
 
@@ -778,18 +774,18 @@ void Scene::UpdatePaused(float dt) {
 void Scene::UpdateGameOver(float dt) {
 	
 	Engine::GetInstance().render.get()->DrawText("GAME OVER", 600, 200, 750, 255);
-	if (!returntomenuButton) {
+	/*if (!returntomenuButton) {
 		
 		SDL_Rect returntomenuButtonPos = { 800, 550, 200, 50 };
 		returntomenuButton = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(
 			GuiControlType::BUTTON, 5, "Return To Menu", returntomenuButtonPos, this);
-	}
+	}*/
 	if (!menuBackgroundImage) {
 
 		MenuBackgroundImage = Engine::GetInstance().textures.get()->Load("Assets/UI/Menu.png");
 	}
-	returntomenuButton->Start();
-	returntomenuButton->Update(dt);
+	//returntomenuButton->Start();
+	//returntomenuButton->Update(dt);
 	menuBackgroundImage->Update(dt);
 
 	Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/gameplaySongPlaceholder.wav");
