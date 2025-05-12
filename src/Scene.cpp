@@ -144,6 +144,8 @@ bool Scene::Start()
 		GuiControlType::BUTTON, 3, "Exit", exitButtonPos, this);
 
 
+
+
 	startButton->Start();
 	optionsButton->Start();
 	exitButton->Start();
@@ -523,8 +525,7 @@ void Scene::HandleInput()
 			SetState(GameState::PLAYING);
 		}
 	}
-<<<<<<< Updated upstream
-=======
+
 	if (optionsButton != nullptr) {
 
 		if (optionsButton->isClicked == true) {
@@ -580,7 +581,7 @@ void Scene::HandleInput()
 			}
 		}
 	}
->>>>>>> Stashed changes
+
 
 }
 
@@ -638,8 +639,7 @@ void Scene::UpdateLogo(float dt) {
 	
 
 }
-<<<<<<< Updated upstream
-=======
+
 void Scene::UpdateOptions(float dt)
 {
 	Engine::GetInstance().render.get()->DrawText("OPTIONS", 600, 200, 750, 255);
@@ -662,13 +662,13 @@ void Scene::UpdateOptions(float dt)
 	
 	if (!fullscreenCheckbox) {
 		SDL_Rect fullscreenCheckboxPos = { 900, 500, 200, 50 };
-		fullscreenCheckbox = (GuiCheckbox*)Engine::GetInstance().guiManager->CreateGuiControl(
+		fullscreenCheckbox = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(
 			GuiControlType::CHECKBOX, 1, "", fullscreenCheckboxPos, this);
 		fullscreenCheckbox->Start();
 	}
 	if (!vsyncCheckbox) {
 		SDL_Rect vsyncCheckboxPos = { 900, 400, 200, 50 };
-		vsyncCheckbox = (GuiCheckbox*)Engine::GetInstance().guiManager->CreateGuiControl(
+		vsyncCheckbox = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(
 			GuiControlType::CHECKBOX, 2, "", vsyncCheckboxPos, this);
 		vsyncCheckbox->Start();
 	}
@@ -679,13 +679,7 @@ void Scene::UpdateOptions(float dt)
 
 
 	}
-	if (!musicSlider) {
-		SDL_Rect musicSliderPos = { 800, 550, 200, 50 };
-		musicSlider = (GuiSlider*)Engine::GetInstance().guiManager->CreateGuiControl(
-			GuiControlType::HPSLIDER, 5, "", musicSliderPos, this);
-
-
-	}
+	
 
 
 	returntomenuButton->Start();
@@ -706,7 +700,7 @@ void Scene::UpdateOptions(float dt)
 
 
 }
->>>>>>> Stashed changes
+
 bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 {
 	// L15: DONE 5: Implement the OnGuiMouseClickEvent method

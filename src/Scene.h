@@ -21,6 +21,7 @@ enum class GameState {
 	PLAYING,
 	PAUSED,
 	GAME_OVER,
+	OPTIONS,
 	LOGO
 };
 
@@ -81,6 +82,7 @@ public:
 	void UpdatePaused(float dt);
 	void UpdateGameOver(float dt);
 	void UpdateLogo(float dt);
+	void UpdateOptions(float dt);
 
 
 public:
@@ -124,6 +126,10 @@ public:
 	GuiControlButton* optionsButton = nullptr;
 	GuiControlButton* exitButton = nullptr;
 	GuiControlButton* returnButton = nullptr;
+	GuiControlButton* returntomenuButton = nullptr;
+	GuiControlButton* vsyncCheckbox = nullptr;
+	GuiControlButton* fxSlider = nullptr;
+	GuiControlButton* fullscreenCheckbox = nullptr;
 
 	GuiImage* menuBackgroundImage = nullptr;
 
