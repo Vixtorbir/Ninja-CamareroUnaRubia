@@ -168,12 +168,21 @@ bool Scene::Start()
 	exitButton = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(
 		GuiControlType::BUTTON, 3, "Exit", exitButtonPos, this);
 
+	//returntomenuButton = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(
+	//	GuiControlType::BUTTON, 1, "Return To Menu", returntomenuButtonPos, this);
+	//returntomenuButton->Start();
+	//returntomenuButton->visible = false;
 
 	vsyncCheckbox = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(
-		GuiControlType::BUTTON, 2, "Vsync enabled", vsyncCheckboxPos, this);
+		GuiControlType::BUTTON, 1, "Vsync enabled", vsyncCheckboxPos, this);
 	vsyncCheckbox->Start();
 	vsyncCheckbox->visible = false;
-	
+
+	returntomenuButton = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(
+		GuiControlType::BUTTON, 1, "Return", returntomenuButtonPos, this);
+	returntomenuButton->Start();
+	returntomenuButton->visible = false;
+
 
 	fullscreenCheckbox = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(
 		GuiControlType::BUTTON, 1, "FullScreen", fullscreenCheckboxPos, this);
@@ -182,12 +191,9 @@ bool Scene::Start()
 
 
 
-   returntomenuButton = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(
-		GuiControlType::BUTTON, 5, "Return To Menu", returntomenuButtonPos, this);
-   returntomenuButton->Start();
-   returntomenuButton->visible = false;
+ 
 
-	
+
 
 	return true;
 }
@@ -808,12 +814,7 @@ void Scene::UpdateOptions(float dt)
 {
 	Engine::GetInstance().render.get()->DrawWhiteText("OPTIONS", 600, 200, 750, 255);
 
-	if (!returntomenuButton) {
-		SDL_Rect returntomenuButtonPos = { 800, 750, 200, 50 };
-		returntomenuButton = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(
-			GuiControlType::BUTTON, 5, "Return To Menu", returntomenuButtonPos, this);
-		 
-	}
+	
 	if (!menuBackgroundImage) {
 
 		MenuBackgroundImage = Engine::GetInstance().textures.get()->Load("Assets/UI/Menu.png");
