@@ -165,7 +165,6 @@ bool Scene::Start()
 	exitButton = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(
 		GuiControlType::BUTTON, 3, "Exit", exitButtonPos, this);
 
-	
 
 	return true;
 }
@@ -293,6 +292,7 @@ bool Scene::PostUpdate()
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F3) == KEY_DOWN) {
 		SafeLoadMap("MapTemplate2_64x64.tmx", Vector2D(1408, 3845)); // Posición específica Mapa 2
 		levelIndex = 1;
+		LoadEntities(1);
 		parallax->ChangeTextures(levelIndex);
 	}
 		//Engine::GetInstance().scene.get()->player->currentLevel = 2;
@@ -362,6 +362,10 @@ void Scene::FadeTransition(SDL_Renderer* renderer, bool fadeIn, float duration)
 	SDL_RenderPresent(renderer);
 }
 
+void Scene::LoadEntities(int sceneIndex)
+{
+
+}
 
 // Called before quitting
 bool Scene::CleanUp()
@@ -646,6 +650,7 @@ void Scene::HandleInput()
 	if (optionsButton != nullptr) {
 
 		if (optionsButton->isClicked == true) {
+
 			SetState(GameState::OPTIONS);
 			startButton->CleanUp();
 			optionsButton->CleanUp();

@@ -344,7 +344,7 @@ bool Player::Update(float dt) {
         camY = -(float)position.getY() + (Engine::GetInstance().render.get()->camera.h / 2);
     }
     else {
-        camX = 1920 + (Engine::GetInstance().render.get()->camera.w / 2);
+        camX = 3000 + (Engine::GetInstance().render.get()->camera.w / 2);
         camY = -(float)position.getY() + (Engine::GetInstance().render.get()->camera.h / 2);
     }
 
