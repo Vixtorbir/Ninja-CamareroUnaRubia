@@ -47,90 +47,94 @@ bool GuiControlButton::Start()
 }
 bool GuiControlButton::Update(float dt)
 {
-    if (state != GuiControlState::DISABLED)
+    if (visible)
     {
-        // L16: TODO 3: Update the state of the GuiButton according to the mouse position
-        Vector2D mousePos = Engine::GetInstance().input->GetMousePosition();
-
-        // If the position of the mouse is inside the bounds of the button 
-        if (mousePos.getX() > bounds.x && mousePos.getX() < bounds.x + bounds.w && mousePos.getY() > bounds.y && mousePos.getY() < bounds.y + bounds.h) 
+        if (state != GuiControlState::DISABLED)
         {
-            state = GuiControlState::FOCUSED;
+            // L16: TODO 3: Update the state of the GuiButton according to the mouse position
+            Vector2D mousePos = Engine::GetInstance().input->GetMousePosition();
 
-            if (!fxPlayed)
+            // If the position of the mouse is inside the bounds of the button 
+            if (mousePos.getX() > bounds.x && mousePos.getX() < bounds.x + bounds.w && mousePos.getY() > bounds.y && mousePos.getY() < bounds.y + bounds.h)
             {
-                Engine::GetInstance().audio.get()->PlayFx(buttonSelectedFxId);
-                fxPlayed = true;
-            }
+                state = GuiControlState::FOCUSED;
 
-            if (Engine::GetInstance().input->GetMouseButtonDown(SDL_BUTTON_LEFT) == KEY_REPEAT) {
-                state = GuiControlState::PRESSED;
-                if (!pressed)
+                if (!fxPlayed)
                 {
-                    Engine::GetInstance().audio.get()->PlayFx(buttonPressedFxId);
-                    pressed = true;
+                    Engine::GetInstance().audio.get()->PlayFx(buttonSelectedFxId);
+                    fxPlayed = true;
                 }
-               
+
+                if (Engine::GetInstance().input->GetMouseButtonDown(SDL_BUTTON_LEFT) == KEY_REPEAT) {
+                    state = GuiControlState::PRESSED;
+                    if (!pressed)
+                    {
+                        Engine::GetInstance().audio.get()->PlayFx(buttonPressedFxId);
+                        pressed = true;
+                    }
+
+                }
+
+                if (Engine::GetInstance().input->GetMouseButtonDown(SDL_BUTTON_LEFT) == KEY_UP) {
+                    NotifyObserver();
+                }
+            }
+            else
+            {
+                fxPlayed = false;
+
+                state = GuiControlState::NORMAL;
             }
 
-            if (Engine::GetInstance().input->GetMouseButtonDown(SDL_BUTTON_LEFT) == KEY_UP) {
-                NotifyObserver();
-            }
-        }
-        else 
-        {
-            fxPlayed = false;
-
-            state = GuiControlState::NORMAL;
-        }
-
-        // L16: TODO 4: Draw the button according to the GuiControl State
-        switch (state)
-        {
-       
-        case GuiControlState::NORMAL:
-            Engine::GetInstance().render->DrawTexturedRectangle(texture, bounds.x - 200, bounds.y - 100, 600, 400, false);
-
-            if (isOptionA || isOptionB)
+            // L16: TODO 4: Draw the button according to the GuiControl State
+            switch (state)
             {
 
-                Engine::GetInstance().render->DrawTextWhite(text.c_str(), bounds.x, bounds.y, 150, 100);
+            case GuiControlState::NORMAL:
+                Engine::GetInstance().render->DrawTexturedRectangle(texture, bounds.x - 200, bounds.y - 100, 600, 400, false);
 
+                if (isOptionA || isOptionB)
+                {
+
+                    Engine::GetInstance().render->DrawTextWhite(text.c_str(), bounds.x, bounds.y, 150, 100);
+
+                }
+                break;
+
+            case GuiControlState::FOCUSED:
+                Engine::GetInstance().render->DrawTexturedRectangle(textureSelected, bounds.x - 200, bounds.y - 100, 600, 400, false);
+
+                break;
+
+
+            case GuiControlState::PRESSED:
+                Engine::GetInstance().render->DrawTexturedRectangle(textureSelected, bounds.x - 200, bounds.y - 100, 600, 400, false);
+                isClicked = true;
+
+
+                break;
             }
-            break;
 
-        case GuiControlState::FOCUSED:
-            Engine::GetInstance().render->DrawTexturedRectangle(textureSelected, bounds.x - 200, bounds.y - 100, 600, 400, false);
-           
-            break;
-           
+            // Calculate the text size
+            int textW = 0, textH = 0;
+            TTF_SizeText(Engine::GetInstance().render->font, text.c_str(), &textW, &textH);
 
-        case GuiControlState::PRESSED:
-            Engine::GetInstance().render->DrawTexturedRectangle(textureSelected, bounds.x - 200, bounds.y - 100, 600, 400, false);
-            isClicked = true;
-            
-          
-            break;
+            // Ensure the text width doesn't exceed button width
+            if (textW > bounds.w) {
+                textW = bounds.w;
+            }
+
+            // Calculate position to center text within the button
+            int textX = bounds.x + (bounds.w - textW) / 2;
+            int textY = (bounds.y + 80) + (bounds.h - textH) / 2;
+
+            // Render the text
+            if (!isOptionA && !isOptionB) Engine::GetInstance().render->DrawText(text.c_str(), textX, textY, textW, textH);
         }
 
-        // Calculate the text size
-        int textW = 0, textH = 0;
-        TTF_SizeText(Engine::GetInstance().render->font, text.c_str(), &textW, &textH);
-
-        // Ensure the text width doesn't exceed button width
-        if (textW > bounds.w) {
-            textW = bounds.w;
-        }
-
-        // Calculate position to center text within the button
-        int textX = bounds.x + (bounds.w - textW) / 2;
-        int textY = (bounds.y+80) + (bounds.h - textH) / 2;
-
-        // Render the text
-        if(!isOptionA && !isOptionB ) Engine::GetInstance().render->DrawText(text.c_str(), textX, textY, textW, textH);
+        return false;
     }
-
-    return false;
+   
 }
 void GuiControlButton::CleanUp()
 {

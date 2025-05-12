@@ -135,8 +135,8 @@ public:
 	GuiControlButton* exitButton = nullptr;
 	GuiControlButton* returnButton = nullptr;
 	GuiControlButton* returntomenuButton = nullptr;
-	GuiCheckbox* fullscreenCheckbox = nullptr;
-	GuiCheckbox* vsyncCheckbox = nullptr;
+	GuiControlButton* fullscreenCheckbox = nullptr;
+	GuiControlButton* vsyncCheckbox = nullptr;
 	GuiSlider* fxSlider = nullptr;
 	GuiSlider* musicSlider = nullptr;
 
