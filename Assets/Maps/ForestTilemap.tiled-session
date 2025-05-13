@@ -8,7 +8,8 @@
     ],
     "fileStates": {
         "": {
-            "scaleInDock": 1
+            "scaleInDock": 1,
+            "scaleInEditor": 0.75
         },
         "BossArena.tmx": {
             "scale": 0.30337797619047613,
@@ -31,11 +32,11 @@
             "scaleInDock": 1
         },
         "Cave.tmx": {
-            "scale": 0.33,
-            "selectedLayer": 2,
+            "scale": 0.25,
+            "selectedLayer": 1,
             "viewCenter": {
-                "x": 5389.393939393939,
-                "y": 5066.666666666666
+                "x": 5910,
+                "y": 4304
             }
         },
         "Cave.tmx#MapMetadata": {
@@ -45,7 +46,8 @@
             "scaleInDock": 1
         },
         "Cave.tmx#level2CaveTileset 64 x 64": {
-            "scaleInDock": 0.5
+            "scaleInDock": 0.5,
+            "scaleInEditor": 1
         },
         "Cave.tmx#tmw_desert_spacing": {
             "scaleInDock": 1
