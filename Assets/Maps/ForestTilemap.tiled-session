@@ -32,11 +32,11 @@
             "scaleInDock": 1
         },
         "Cave.tmx": {
-            "scale": 0.25,
-            "selectedLayer": 1,
+            "scale": 0.0625,
+            "selectedLayer": 8,
             "viewCenter": {
-                "x": 5910,
-                "y": 4304
+                "x": 7088,
+                "y": 3600
             }
         },
         "Cave.tmx#MapMetadata": {
