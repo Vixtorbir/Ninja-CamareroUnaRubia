@@ -57,6 +57,8 @@ public:
 
 	void FadeTransition(SDL_Renderer* renderer, bool fadeIn, float duration);
 
+	void LoadEntities(int sceneIndex);
+
 	// Called before quitting
 	bool CleanUp();
 
