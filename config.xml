@@ -8,7 +8,7 @@
 		<vsync value="false" />
 	</render>
 	<window>
-		<resolution width="1680" height="1080" scale="1" />
+		<resolution width="1920" height="1080" scale="1" />
 		<camera zoom="1" />
 		<fullscreen value="false" />
 		<borderless value="false" />
@@ -165,34 +165,34 @@
 				</testItem>
 			</items>
 			<enemies>
-				<enemy name="badguy" x="99" y="1047" w="111" h="271" texture="Assets/Textures/enemy/Idle.png" gravity="true">
+				<enemy name="ninja" x="99" y="1047" w="256" h="512" texture="Assets/Animations/EnemyAnims/NormalNinjaSpritesheet.png" gravity="true">
 					<animations>
-						<idle loop="true" speed="0.5">
-							<frame x="0" y="0" w="32" h="32" />
-							<frame x="32" y="0" w="32" h="32" />
-							<frame x="64" y="0" w="32" h="32" />
-							<frame x="96" y="0" w="32" h="32" />
-							<frame x="128" y="0" w="32" h="32" />
-							<frame x="160" y="0" w="32" h="32" />
-							<frame x="192" y="0" w="32" h="32" />
-							<frame x="224" y="0" w="32" h="32" />
-							<frame x="256" y="0" w="32" h="32" />
+						<idle loop="true" speed="0.085">
+							<frame x="0" y="0" w="512" h="256" />
+							<frame x="512" y="0" w="512" h="256" />
+							<frame x="1024" y="0" w="512" h="256" />
+							<frame x="1536" y="0" w="512" h="256" />
+							<frame x="2048" y="0" w="512" h="256" />
+							<frame x="2560" y="0" w="512" h="256" />
 						</idle>
-					</animations>
-				</enemy>
-				<enemy name="badguy" x="99" y="1047" w="111" h="271" texture="Assets/Textures/enemy/Idle.png" gravity="true">
-					<animations>
-						<idle loop="true" speed="0.5">
-							<frame x="0" y="0" w="32" h="32" />
-							<frame x="32" y="0" w="32" h="32" />
-							<frame x="64" y="0" w="32" h="32" />
-							<frame x="96" y="0" w="32" h="32" />
-							<frame x="128" y="0" w="32" h="32" />
-							<frame x="160" y="0" w="32" h="32" />
-							<frame x="192" y="0" w="32" h="32" />
-							<frame x="224" y="0" w="32" h="32" />
-							<frame x="256" y="0" w="32" h="32" />
-						</idle>
+						<walk loop="true" speed="0.15">
+							<frame x="0" y="256" w="512" h="256" />
+							<frame x="512" y="256" w="512" h="256" />
+							<frame x="1024" y="256" w="512" h="256" />
+							<frame x="1536" y="256" w="512" h="256" />
+							<frame x="2048" y="256" w="512" h="256" />
+							<frame x="2560" y="256" w="512" h="256" />
+							<frame x="3072" y="256" w="512" h="256" />
+						</walk>
+						<attack loop="true" speed="0.1">
+							<frame x="0" y="512" w="512" h="256" />
+							<frame x="512" y="512" w="512" h="256" />
+							<frame x="1024" y="512" w="512" h="256" />
+							<frame x="1536" y="512" w="512" h="256" />
+							<frame x="2048" y="512" w="512" h="256" />
+							<frame x="2560" y="512" w="512" h="256" />
+							<frame x="3072" y="512" w="512" h="256" />
+						</attack>
 					</animations>
 				</enemy>
 				<turret name="turret" x="500" y="1047" w="111" h="271" texture="Assets/Textures/enemy/Idle.png" gravity="true">

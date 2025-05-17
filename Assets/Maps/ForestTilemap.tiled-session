@@ -3,37 +3,97 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "MapTemplate2_64x64.tmx",
+    "activeFile": "Cave.tmx",
     "expandedProjectPaths": [
     ],
     "fileStates": {
-        "MapTemplate2_64x64.tmx": {
-            "scale": 0.5,
-            "selectedLayer": 10,
+        "": {
+            "scaleInDock": 1,
+            "scaleInEditor": 0.75
+        },
+        "BossArena.tmx": {
+            "scale": 0.30337797619047613,
+            "selectedLayer": 0,
             "viewCenter": {
-                "x": 9771,
-                "y": 4070
+                "x": 1679.4231618188064,
+                "y": 800.9810173149557
+            }
+        },
+        "BossArena.tmx#MapMetadata": {
+            "scaleInDock": 1
+        },
+        "BossArena.tmx#Zone1": {
+            "scaleInDock": 1
+        },
+        "BossArena.tmx#tmw_desert_spacing": {
+            "scaleInDock": 1
+        },
+        "BossArena.tmx#unidad mesura": {
+            "scaleInDock": 1
+        },
+        "Cave.tmx": {
+            "scale": 0.0625,
+            "selectedLayer": 8,
+            "viewCenter": {
+                "x": 7088,
+                "y": 3600
+            }
+        },
+        "Cave.tmx#MapMetadata": {
+            "scaleInDock": 1
+        },
+        "Cave.tmx#level1Tileset 128 x 128": {
+            "scaleInDock": 1
+        },
+        "Cave.tmx#level2CaveTileset 64 x 64": {
+            "scaleInDock": 0.5,
+            "scaleInEditor": 1
+        },
+        "Cave.tmx#tmw_desert_spacing": {
+            "scaleInDock": 1
+        },
+        "Cave.tmx#unidad mesura": {
+            "scaleInDock": 1
+        },
+        "Cave.tmx#wtf": {
+            "scaleInDock": 1
+        },
+        "MapTemplate2_64x64.tmx": {
+            "scale": 0.125,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 11204,
+                "y": 3192
             }
         },
         "MapTemplate2_64x64.tmx#level0Tileset 64x64": {
-            "scaleInDock": 0.33
+            "scaleInDock": 0.5
         },
         "MapTemplate2_64x64.tmx#level1Tileset 64x64": {
             "scaleInDock": 0.5
         },
         "MapTemplate2_64x64.tmx#level2CaveTileset 64x64": {
-            "scaleInDock": 1
+            "scaleInDock": 0.5
         }
     },
+    "last.imagePath": "C:/Users/paulall/Documents/GitHub/Ninja-CamareroUnaRubia/Assets/Backgrounds",
     "map.height": 150,
     "map.tileHeight": 64,
     "map.tileWidth": 64,
     "map.width": 200,
     "openFiles": [
-        "MapTemplate2_64x64.tmx"
+        "Cave.tmx"
     ],
     "project": "ForestTilemap.tiled-project",
+    "property.type": "bool",
     "recentFiles": [
-        "MapTemplate2_64x64.tmx"
-    ]
+        "Cave.tmx",
+        "MapTemplate2_64x64.tmx",
+        "BossArena.tmx"
+    ],
+    "tileset.embedInMap": true,
+    "tileset.tileSize": {
+        "height": 64,
+        "width": 64
+    }
 }
