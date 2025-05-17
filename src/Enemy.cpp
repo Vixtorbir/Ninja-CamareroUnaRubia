@@ -42,6 +42,8 @@ bool Enemy::Start() {
 	// Cargar animaciones
 	idle.LoadAnimations(parameters.child("animations").child("idle"));
 	attackAnimation.LoadAnimations(parameters.child("animations").child("attack"));
+	walkAnimation.LoadAnimations(parameters.child("animations").child("walk"));
+
 	currentAnimation = &idle;
 
 	// Agregar física al enemigo
@@ -153,6 +155,8 @@ bool Enemy::Update(float dt)
 	switch (state)
 	{
 	case EnemyState::PATROL:
+		currentAnimation = &walkAnimation;
+
 		// Movimiento de patrulla
 		if (!IsNextTileCollidable() || tilesMovedInSameDirection >= 350)
 		{
@@ -172,6 +176,8 @@ bool Enemy::Update(float dt)
 		break;
 
 	case EnemyState::AGGRESSIVE:
+		currentAnimation = &walkAnimation;
+
 		// Movimiento agresivo hacia el jugador
 		if (playerTilePos.getX() < enemyTilePos.getX() && IsNextTileCollidable())
 		{
@@ -192,6 +198,7 @@ bool Enemy::Update(float dt)
 	case EnemyState::ATTACK:
 		// El enemigo permanece quieto mientras ataca
 		pbody->body->SetLinearVelocity(b2Vec2(0, 0));
+		currentAnimation = &attackAnimation;
 
 		if (!isAttacking && !isCooldown)
 		{
