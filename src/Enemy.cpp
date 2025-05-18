@@ -47,7 +47,7 @@ bool Enemy::Start() {
 	currentAnimation = &idle;
 
 	// Agregar física al enemigo
-	pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX(), (int)position.getY(), texW, texH, bodyType::DYNAMIC);
+	pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX(), (int)position.getY(), texW-50, texH-200, bodyType::DYNAMIC);
 
 	// Asignar tipo de colisionador
 	pbody->ctype = ColliderType::ENEMY;
@@ -103,7 +103,7 @@ bool Enemy::Update(float dt)
 		position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 6);
 		position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 6);
 
-		Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
+		Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX() - 220, (int)position.getY(), &currentAnimation->GetCurrentFrame());
 		currentAnimation->Update();
 		return true;
 	}
@@ -126,7 +126,7 @@ bool Enemy::Update(float dt)
 		position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 6);
 		position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 6);
 
-		Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
+		Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX() - 220, (int)position.getY(), &currentAnimation->GetCurrentFrame());
 		currentAnimation->Update();
 		return true;
 	}
@@ -267,7 +267,7 @@ bool Enemy::Update(float dt)
 	position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 6);
 
 	// Dibujar textura y animación
-	Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
+	Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX()-220, (int)position.getY(), &currentAnimation->GetCurrentFrame());
 	currentAnimation->Update();
 
 	// Dibujar el pathfinding si está en modo debug
@@ -370,7 +370,7 @@ bool Enemy::IsPlayerInRange() {
 	Vector2D playerTilePos = Engine::GetInstance().map.get()->WorldToMap(playerPos.getX(), playerPos.getY());
 
 	int distance = abs(playerTilePos.getX() - enemyTilePos.getX());
-	bool isInRange = distance <= 16;
+	bool isInRange = distance <= 20;
 
 	// Verificar si el enemigo está mirando en la dirección del jugador
 	bool isFacingPlayer = (direction == 0 && playerTilePos.getX() < enemyTilePos.getX()) ||
@@ -386,12 +386,12 @@ void Enemy::PerformAttack() {
 
 	if (attackBody == nullptr) {
 		// Determina la dirección del ataque
-		int attackOffsetX = (direction == 0) ? -80 : 110; // Ajusta según la dirección del enemigo
+		int attackOffsetX = (direction == 0) ? -100 : 210; // Ajusta según la dirección del enemigo
 
 		// Crea la hitbox del ataque
 		attackBody = Engine::GetInstance().physics.get()->CreateRectangleSensor(
 			(int)position.getX() + attackOffsetX,
-			(int)position.getY() + 10,
+			(int)position.getY() + 90,
 			104, 128, // Tamaño de la hitbox
 			bodyType::STATIC
 		);
@@ -442,7 +442,7 @@ bool Enemy::IsPlayerInAttackRange() {
 	Vector2D playerTilePos = Engine::GetInstance().map.get()->WorldToMap(playerPos.getX(), playerPos.getY());
 
 	int distance = abs(playerTilePos.getX() - enemyTilePos.getX());
-	return distance <= 10;
+	return distance <= 14;
 }
 
 void Enemy::LoadEnemyFx()
