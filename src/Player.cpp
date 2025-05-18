@@ -271,6 +271,9 @@ bool Player::Update(float dt) {
     else if (crouched) {
         currentState = PlayerState::CROUCHING;
     }
+    else if (isAttacking) { 
+        currentState = PlayerState::ATTACKING;
+    }
     else if (touchingWall && !grounded) {
         currentState = PlayerState::WALL_SLIDING;
     }
@@ -306,6 +309,8 @@ bool Player::Update(float dt) {
             Engine::GetInstance().audio.get()->PlayFx(stepSounds[randomIndex]);
             footstepTimer = 0.0f;
         }
+        break;
+    case PlayerState::ATTACKING: 
         break;
     case PlayerState::IDLE:
     default:
@@ -522,7 +527,7 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
                 activeShurikens.end()
             );
 
-            Engine::GetInstance().physics.get()->DeletePhysBody(physA);
+        //    Engine::GetInstance().physics.get()->DeletePhysBody(physA);
         }
         break;
 	case ColliderType::TURRET:
@@ -537,7 +542,7 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 					[physA](const Shuriken& shuriken) { return shuriken.body == physA; }),
 				activeShurikens.end()
 			);
-			Engine::GetInstance().physics.get()->DeletePhysBody(physA);
+		Engine::GetInstance().physics.get()->DeletePhysBody(physA);
 		}
 		break;
         case ColliderType::BOSS:
@@ -579,6 +584,7 @@ void Player::OnCollisionEnd(PhysBody* physA, PhysBody* physB)
 	case ColliderType::WALL:
 		touchingWall = false;
 		break;
+
 	}
 }
 
@@ -649,20 +655,11 @@ void Player::Die() {
 
 void Player::PerformAttack() {
     // Seleccionar la animación de ataque actual
-    switch (currentAttackIndex) {
-    case 0:
-        currentAnimation = &attack1;
-        break;
-    case 1:
-        currentAnimation = &attack2;
-        break;
-    case 2:
-        currentAnimation = &attack3;
-        break;
-    default:
-        currentAnimation = &attack1;
-        break;
-    }
+
+    currentState = PlayerState::ATTACKING;
+    
+    currentAnimation = &attack1;
+     
 
     // Configurar el área de ataque según la dirección del jugador
     if (playerDirection == EntityDirections::RIGHT) {

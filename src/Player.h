@@ -38,7 +38,7 @@ enum class PlayerState {
     JUMPING,
     DASHING,
     CROUCHING,
-    ATTACKINGS,
+    ATTACKING,
     ATTACKINGH,
     WALL_SLIDING
 };
