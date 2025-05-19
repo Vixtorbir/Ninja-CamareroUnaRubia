@@ -162,25 +162,35 @@ bool Player::Update(float dt) {
     }
 
     // Handle jumping
-    if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN && hasAlreadyJumpedOnce == 0 && !inBubble && !crouched) {
-        pbody->body->ApplyLinearImpulseToCenter(b2Vec2(0, -jumpForce), true);
+    bool jumpPressed = Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN;
+    bool jumpReleased = Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_UP;
+
+    if (jumpPressed && !jumpKeyHeld && hasAlreadyJumpedOnce < 2 && !inBubble && !crouched) {
+        float appliedForce = (hasAlreadyJumpedOnce == 0) ? jumpForce : doubleJumpForce;
+
+        b2Vec2 vel = pbody->body->GetLinearVelocity();
+        vel.y = 0;
+        pbody->body->SetLinearVelocity(vel);
+
+        pbody->body->ApplyLinearImpulseToCenter(b2Vec2(0, -appliedForce), true);
+
+        int fxId = (hasAlreadyJumpedOnce == 0)
+            ? Engine::GetInstance().audio.get()->randomFx(jump1FxId, jump3FxId)
+            : Engine::GetInstance().audio.get()->randomFx(doubleJump1FxId, doubleJump2FxId);
+        Engine::GetInstance().audio.get()->PlayFx(fxId);
+
         hasAlreadyJumpedOnce++;
         isJumping = true;
         currentState = PlayerState::JUMPING;
-        int jumpId = Engine::GetInstance().audio.get()->randomFx(jump1FxId, jump3FxId);
-        Engine::GetInstance().audio.get()->PlayFx(jumpId);
+        jumpKeyHeld = true;
+
+        LOG("Jump count: %d", hasAlreadyJumpedOnce);
     }
 
-    // --- DOBLE SALTO ---
-    if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN && hasAlreadyJumpedOnce == 1 && !inBubble) {
-        pbody->body->SetLinearVelocity(b2Vec2(pbody->body->GetLinearVelocity().x, 0));
-        pbody->body->ApplyLinearImpulseToCenter(b2Vec2(0, -jumpForce), true);
-        hasAlreadyJumpedOnce++;
-        isJumping = true;
-        currentState = PlayerState::JUMPING;
-        int doubleJumpId = Engine::GetInstance().audio.get()->randomFx(doubleJump1FxId, doubleJump2FxId);
-        Engine::GetInstance().audio.get()->PlayFx(doubleJumpId);
+    if (jumpReleased) {
+        jumpKeyHeld = false;
     }
+
 
     // Wall jump
     if (touchingWall && Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_L) == KEY_DOWN) {
@@ -448,14 +458,10 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 	switch (physB->ctype)
 	{
 	case ColliderType::PLATFORM:
-		isJumping = false;
-		hasAlreadyJumpedOnce = 0;
-       /* if (physA->ctype == ColliderType::PLAYER_ATTACK) {
-            
-            activeShurikens.erase(std::remove(activeShurikens.begin(), activeShurikens.end(), physA), activeShurikens.end());
-            Engine::GetInstance().physics.get()->DeletePhysBody(physA);
-        }*/
-		break;
+		LOG("Grounded - reset jump count");
+    isJumping = false;
+    hasAlreadyJumpedOnce = 0;
+    break;
 	case ColliderType::NPC:
 		inBubble = true;
 		GuiPOPup(GuiPopups::E_Interact);
