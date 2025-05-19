@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "Cave.tmx",
+    "activeFile": "MapTemplate2_64x64.tmx",
     "expandedProjectPaths": [
     ],
     "fileStates": {
@@ -32,11 +32,15 @@
             "scaleInDock": 1
         },
         "Cave.tmx": {
-            "scale": 0.125,
-            "selectedLayer": 11,
+            "expandedObjectLayers": [
+                9,
+                8
+            ],
+            "scale": 0.25,
+            "selectedLayer": 6,
             "viewCenter": {
-                "x": 4616,
-                "y": 2232
+                "x": 8076,
+                "y": 2160
             }
         },
         "Cave.tmx#MapMetadata": {
@@ -46,7 +50,7 @@
             "scaleInDock": 1
         },
         "Cave.tmx#level2CaveTileset 64 x 64": {
-            "scaleInDock": 0.5,
+            "scaleInDock": 0.25,
             "scaleInEditor": 1
         },
         "Cave.tmx#tmw_desert_spacing": {
@@ -59,11 +63,15 @@
             "scaleInDock": 1
         },
         "MapTemplate2_64x64.tmx": {
-            "scale": 0.125,
-            "selectedLayer": 0,
+            "expandedObjectLayers": [
+                9,
+                8
+            ],
+            "scale": 0.5,
+            "selectedLayer": 10,
             "viewCenter": {
-                "x": 11204,
-                "y": 3192
+                "x": 9902,
+                "y": 3926
             }
         },
         "MapTemplate2_64x64.tmx#level0Tileset 64x64": {
@@ -82,7 +90,8 @@
     "map.tileWidth": 64,
     "map.width": 200,
     "openFiles": [
-        "Cave.tmx"
+        "Cave.tmx",
+        "MapTemplate2_64x64.tmx"
     ],
     "project": "ForestTilemap.tiled-project",
     "property.type": "bool",
