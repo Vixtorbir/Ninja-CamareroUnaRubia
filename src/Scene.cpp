@@ -408,8 +408,20 @@ void Scene::FadeTransition(SDL_Renderer* renderer, bool fadeIn, float duration)
 }
 
 void Scene::LoadEntities(int sceneIndex)
-{
-
+{/*
+	switch (sceneIndex)
+	{
+	case 1:
+		for (pugi::xml_node enemyNode = configParameters.child("entitiesbamboo").child("enemies").child("enemy"); enemyNode; enemyNode = enemyNode.next_sibling("enemy"))
+		{
+			Enemy* enemy = (Enemy*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ENEMY);
+			enemy->SetParameters(enemyNode);
+			enemyList.push_back(enemy);
+		}
+		break;
+	
+	}*/
+	
 }
 
 // Called before quitting
