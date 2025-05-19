@@ -163,36 +163,15 @@ bool Player::Update(float dt) {
 
     // Handle jumping
     if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN && hasAlreadyJumpedOnce == 0 && !inBubble && !crouched) {
-        isHoldingJump = true;
-        jumpHoldTimer = 0.0f;
-    }
-
-    if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_REPEAT && isHoldingJump && !inBubble) {
-        jumpHoldTimer += dt;
-        if (jumpHoldTimer >= maxHoldTime) {
-            float jumpStrength = jumpForce * maxJumpMultiplier;
-            pbody->body->ApplyLinearImpulseToCenter(b2Vec2(0, -jumpStrength), true);
-            hasAlreadyJumpedOnce++;
-            isHoldingJump = false;
-            isJumping = true;
-            currentState = PlayerState::JUMPING;
-            int jumpId = Engine::GetInstance().audio.get()->randomFx(jump1FxId, jump3FxId);
-            Engine::GetInstance().audio.get()->PlayFx(jumpId);
-        }
-    }
-
-    if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_UP && isHoldingJump && !inBubble) {
-        float holdPercentage = jumpHoldTimer / maxHoldTime;
-        float jumpMultiplier = minJumpMultiplier + (holdPercentage * (maxJumpMultiplier - minJumpMultiplier));
-        float jumpStrength = jumpForce * jumpMultiplier;
-        pbody->body->ApplyLinearImpulseToCenter(b2Vec2(0, -jumpStrength), true);
+        pbody->body->ApplyLinearImpulseToCenter(b2Vec2(0, -jumpForce), true);
         hasAlreadyJumpedOnce++;
-        isHoldingJump = false;
         isJumping = true;
         currentState = PlayerState::JUMPING;
+        int jumpId = Engine::GetInstance().audio.get()->randomFx(jump1FxId, jump3FxId);
+        Engine::GetInstance().audio.get()->PlayFx(jumpId);
     }
 
-    // Double jump
+    // --- DOBLE SALTO ---
     if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN && hasAlreadyJumpedOnce == 1 && !inBubble) {
         pbody->body->SetLinearVelocity(b2Vec2(pbody->body->GetLinearVelocity().x, 0));
         pbody->body->ApplyLinearImpulseToCenter(b2Vec2(0, -jumpForce), true);

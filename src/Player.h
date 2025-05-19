@@ -112,7 +112,7 @@ public:
 
 
     float speed = 1;
-    float jumpForce = 225;
+    float jumpForce = 325;
     float wallJumpForce = 90.5f;
     float wallJumpPush = 102.0f;
     float wallClimbSpeed = -2.0f;
