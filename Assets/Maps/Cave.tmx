@@ -25036,6 +25036,9 @@
   </data>
  </layer>
  <layer id="22" name="Decorations2" width="250" height="100">
+  <properties>
+   <property name="Draw" type="bool" value="true"/>
+  </properties>
   <data>
    <tile/>
    <tile/>
@@ -50040,6 +50043,9 @@
   </data>
  </layer>
  <layer id="19" name="vegetation" width="250" height="100">
+  <properties>
+   <property name="Draw" type="bool" value="true"/>
+  </properties>
   <data>
    <tile/>
    <tile/>
@@ -75044,6 +75050,9 @@
   </data>
  </layer>
  <layer id="17" name="BackFloor2" width="250" height="100">
+  <properties>
+   <property name="Draw" type="bool" value="true"/>
+  </properties>
   <data>
    <tile/>
    <tile/>
@@ -100048,6 +100057,9 @@
   </data>
  </layer>
  <layer id="16" name="FrontFloor2" width="250" height="100">
+  <properties>
+   <property name="Draw" type="bool" value="true"/>
+  </properties>
   <data>
    <tile/>
    <tile/>
@@ -175066,6 +175078,9 @@
   </data>
  </layer>
  <layer id="20" name="Rocks" width="250" height="100">
+  <properties>
+   <property name="Draw" type="bool" value="true"/>
+  </properties>
   <data>
    <tile/>
    <tile/>
@@ -200070,6 +200085,9 @@
   </data>
  </layer>
  <layer id="21" name="Decorations1" width="250" height="100">
+  <properties>
+   <property name="Draw" type="bool" value="true"/>
+  </properties>
   <data>
    <tile/>
    <tile/>
@@ -250248,7 +250266,7 @@
  </objectgroup>
  <layer id="7" name="Navigation" width="250" height="100">
   <properties>
-   <property name="Draw" type="bool" value="false"/>
+   <property name="Draw" type="bool" value="true"/>
    <property name="Navigation" type="bool" value="true"/>
   </properties>
   <data>

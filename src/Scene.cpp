@@ -333,6 +333,13 @@ bool Scene::PostUpdate()
 		LoadEntities(1);
 		parallax->ChangeTextures(levelIndex);
 	}
+
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F4) == KEY_DOWN) {
+		SafeLoadMap("Cave.tmx", Vector2D(1536, 3200)); // Posición específica Mapa 2
+		levelIndex = 2;
+		LoadEntities(2);
+		parallax->ChangeTextures(levelIndex);
+	}
 		//Engine::GetInstance().scene.get()->player->currentLevel = 2;
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F6) == KEY_DOWN)
 		LoadState();
