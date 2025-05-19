@@ -18,7 +18,7 @@
 	<scene>
 		<map path="Assets/Maps/" name="MapTemplate1.tmx" />
 		<entities>
-			<player x="1000" y="1047" w="128" h="256" texture="Assets/Animations/PlayerAnims/renSpritesheet.png" gravity="true">
+			<player x="1600" y="3335" w="128" h="256" texture="Assets/Animations/PlayerAnims/renSpritesheet.png" gravity="true">
 				<animations>
 					<idle loop="true" speed="0.085">
 						<frame x="0" y="0" w="512" h="256" />
@@ -129,34 +129,14 @@
 						</idle>
 					</animations>
 				</item>
-				<testItem
-					 name="Health Potion"
-					 effect="1"
-					 description="Consume with H"
-					 icon="Assets/Textures/goldCoin.png"
-					 x="1300"
-					 y="1050"
-					 w="32"
-					 h="32"
-					 texture="Assets/Textures/goldCoin.png"
-					 gravity="true">
+				<testItem name="Health Potion" effect="1" description="Consume with H" icon="Assets/Textures/goldCoin.png" x="1300" y="1050" w="32" h="32" texture="Assets/Textures/goldCoin.png" gravity="true">
 					<animations>
 						<idle loop="true" speed="0.5">
 							<frame x="0" y="0" w="32" h="32" />
 						</idle>
 					</animations>
 				</testItem>
-				<testItem
-					 name="Mana Potion"
-					 effect="2"
-					 description="Consume with J"
-					 icon="Assets/Textures/goldCoin.png"
-					 x="1400"
-					 y="1050"
-					 w="32"
-					 h="32"
-					 texture="Assets/Textures/goldCoin.png"
-					 gravity="true">
+				<testItem name="Mana Potion" effect="2" description="Consume with J" icon="Assets/Textures/goldCoin.png" x="1400" y="1050" w="32" h="32" texture="Assets/Textures/goldCoin.png" gravity="true">
 					<animations>
 						<idle loop="true" speed="0.5">
 							<frame x="0" y="0" w="32" h="32" />
@@ -165,7 +145,7 @@
 				</testItem>
 			</items>
 			<enemies>
-				<enemy name="ninja" x="99" y="1047" w="256" h="512" texture="Assets/Animations/EnemyAnims/NormalNinjaSpritesheet.png" gravity="true">
+				<enemy name="ninja" x="151" y="1027" w="256" h="512" texture="Assets/Animations/EnemyAnims/NormalNinjaSpritesheet.png" gravity="true">
 					<animations>
 						<idle loop="true" speed="0.085">
 							<frame x="0" y="0" w="512" h="256" />
