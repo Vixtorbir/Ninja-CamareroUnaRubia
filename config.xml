@@ -60,7 +60,7 @@
 						<frame x="1536" y="768" w="512" h="256" />
 						<frame x="2048" y="768" w="512" h="256" />
 					</crouch>
-					<attack1 loop="true" speed="0.05">
+					<attack1 loop="false" speed="0.25">
 						<frame x="0" y="1536" w="512" h="256" />
 						<frame x="512" y="1536" w="512" h="256" />
 						<frame x="1024" y="1536" w="512" h="256" />
