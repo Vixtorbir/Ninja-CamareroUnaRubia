@@ -277,7 +277,7 @@ bool Enemy::Update(float dt)
 	// Dibujar textura y animación
 	Engine::GetInstance().render.get()->DrawEntity(
 		texture,
-		(int)position.getX(),
+		(int)position.getX()-230,
 		(int)position.getY(),
 		&currentAnimation->GetCurrentFrame(),
 		1, 0, 0, 0, -(int)direction
