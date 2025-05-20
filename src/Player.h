@@ -113,7 +113,7 @@ public:
 
 
     float speed = 1;
-    float jumpForce = 300;
+    float jumpForce = 100;
     float wallJumpForce = 90.5f;
     float wallJumpPush = 102.0f;
     float wallClimbSpeed = -2.0f;
@@ -140,7 +140,7 @@ public:
     // Jump mechanics
     int hasAlreadyJumpedOnce = 0;
 	int maxJumps = 2;
-    float doubleJumpForce = 250.0f;
+    float doubleJumpForce = 100.0f;
     bool jumpKeyHeld = false;
     const float maxHoldTime = 1500.0f;
     const float minJumpMultiplier = 1.2f;

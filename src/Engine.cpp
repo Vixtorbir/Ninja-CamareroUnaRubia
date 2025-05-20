@@ -156,7 +156,7 @@ bool Engine::Update() {
         ret = DoUpdate();
 
     if (ret == true)
-        ret = PostUpdate();
+         ret = PostUpdate();
 
     FinishUpdate();
 
