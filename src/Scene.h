@@ -57,6 +57,8 @@ public:
 
 	void FadeTransition(SDL_Renderer* renderer, bool fadeIn, float duration);
 
+	void LoadEntities(int sceneIndex);
+
 	// Called before quitting
 	bool CleanUp();
 
@@ -135,8 +137,8 @@ public:
 	GuiControlButton* exitButton = nullptr;
 	GuiControlButton* returnButton = nullptr;
 	GuiControlButton* returntomenuButton = nullptr;
-	GuiCheckbox* fullscreenCheckbox = nullptr;
-	GuiCheckbox* vsyncCheckbox = nullptr;
+	GuiControlButton* fullscreenCheckbox = nullptr;
+	GuiControlButton* vsyncCheckbox = nullptr;
 	GuiSlider* fxSlider = nullptr;
 	GuiSlider* musicSlider = nullptr;
 

@@ -42,10 +42,13 @@ bool Enemy::Start() {
 	// Cargar animaciones
 	idle.LoadAnimations(parameters.child("animations").child("idle"));
 	attackAnimation.LoadAnimations(parameters.child("animations").child("attack"));
+	walkAnimation.LoadAnimations(parameters.child("animations").child("walk"));
+	deathAnimation.LoadAnimations(parameters.child("animations").child("die"));
+
 	currentAnimation = &idle;
 
 	// Agregar física al enemigo
-	pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX(), (int)position.getY(), texW, texH, bodyType::DYNAMIC);
+	pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX()+256, (int)position.getY(), texW, texH-200, bodyType::DYNAMIC);
 
 	// Asignar tipo de colisionador
 	pbody->ctype = ColliderType::ENEMY;
@@ -68,29 +71,31 @@ bool Enemy::Start() {
 bool Enemy::Update(float dt)
 {
 
-	if (dead)
+	if (isDying)
 	{
-		// Si el enemigo está muerto, eliminarlo de la escena y la física
-		if (attackBody != nullptr) {
-			Engine::GetInstance().physics.get()->DeletePhysBody(attackBody);
-			attackBody = nullptr;
-			LOG("Attack hitbox removed.");
-		}
-
-		if (pbody != nullptr)
+		currentAnimation = &deathAnimation;
+		// When timer is done, destroy enemy
+		if (deathTimer.ReadSec() >= deathDuration)
 		{
-			pbody->body->DestroyFixture(pbody->body->GetFixtureList());
-			pbody = nullptr;
+			if (attackBody != nullptr) {
+				Engine::GetInstance().physics.get()->DeletePhysBody(attackBody);
+				attackBody = nullptr;
+			}
+
+			if (pbody != nullptr) {
+				pbody->body->DestroyFixture(pbody->body->GetFixtureList());
+				pbody = nullptr;
+			}
+
+			LOG("Enemy death animation finished. Removing from scene.");
+			active = false;
 		}
 
-		LOG("Enemy is dead, removing from scene.");
-		
-		active = false;
-		
-		return true;
+		return true; // Skip further update while dying
 	}
 
-	if (!dead)
+
+	if (!startDying)
 
 	{
 
@@ -101,7 +106,13 @@ bool Enemy::Update(float dt)
 		position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 6);
 		position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 6);
 
-		Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
+		Engine::GetInstance().render.get()->DrawEntity(
+			texture,
+			(int)position.getX(),
+			(int)position.getY(),
+			&currentAnimation->GetCurrentFrame(),
+			1, 0, 0, 0, -(int)direction
+		);
 		currentAnimation->Update();
 		return true;
 	}
@@ -124,7 +135,6 @@ bool Enemy::Update(float dt)
 		position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 6);
 		position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 6);
 
-		Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
 		currentAnimation->Update();
 		return true;
 	}
@@ -153,6 +163,8 @@ bool Enemy::Update(float dt)
 	switch (state)
 	{
 	case EnemyState::PATROL:
+		currentAnimation = &walkAnimation;
+
 		// Movimiento de patrulla
 		if (!IsNextTileCollidable() || tilesMovedInSameDirection >= 350)
 		{
@@ -160,7 +172,7 @@ bool Enemy::Update(float dt)
 			tilesMovedInSameDirection = 0;
 		}
 
-		if (direction == 0)
+		if (direction == 1)
 		{
 			pbody->body->SetLinearVelocity(b2Vec2(-2, 0));
 		}
@@ -172,6 +184,8 @@ bool Enemy::Update(float dt)
 		break;
 
 	case EnemyState::AGGRESSIVE:
+		currentAnimation = &walkAnimation;
+
 		// Movimiento agresivo hacia el jugador
 		if (playerTilePos.getX() < enemyTilePos.getX() && IsNextTileCollidable())
 		{
@@ -192,6 +206,7 @@ bool Enemy::Update(float dt)
 	case EnemyState::ATTACK:
 		// El enemigo permanece quieto mientras ataca
 		pbody->body->SetLinearVelocity(b2Vec2(0, 0));
+		currentAnimation = &attackAnimation;
 
 		if (!isAttacking && !isCooldown)
 		{
@@ -260,8 +275,13 @@ bool Enemy::Update(float dt)
 	position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 6);
 
 	// Dibujar textura y animación
-	Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
-	currentAnimation->Update();
+	Engine::GetInstance().render.get()->DrawEntity(
+		texture,
+		(int)position.getX()-230,
+		(int)position.getY(),
+		&currentAnimation->GetCurrentFrame(),
+		1, 0, 0, 0, -(int)direction
+	);	currentAnimation->Update();
 
 	// Dibujar el pathfinding si está en modo debug
 	if (Engine::GetInstance().physics.get()->debug)
@@ -276,7 +296,10 @@ bool Enemy::Update(float dt)
 bool Enemy::CleanUp() {
 	Engine::GetInstance().textures.get()->UnLoad(texture);
 	Engine::GetInstance().textures.get()->UnLoad(attackTexture); 
-	Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
+
+	if (pbody != nullptr) {
+		Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
+	}
 	active = false;
 	return true;
 }
@@ -304,16 +327,23 @@ void Enemy::ResetPath() {
 void Enemy::OnCollision(PhysBody* physA, PhysBody* physB) {
 	switch (physB->ctype) {
 	case ColliderType::PLAYER_ATTACK:
-		// Si el jugador golpea la torreta, marcarla como muerta
-		LOG("Turret hit by player attack!");
-		dead = true;
+		if (!isDying) {
+			LOG("Enemy hit by player attack!");
+			isDying = true;
+			deathTimer.Start();
+			currentAnimation = &deathAnimation;
+			pbody->body->SetLinearVelocity(b2Vec2(0, 0));
+		}
 		break;
 
 	case ColliderType::PLAYER:
 		// Si el jugador colisiona con un shuriken, aplicar daño
 		if (physA->ctype == ColliderType::ENEMY) {
-			Engine::GetInstance().scene.get()->player->TakeDamage(1);
-			LOG("Player hit by turret shuriken!");
+			if (!isDying) {
+				Engine::GetInstance().scene.get()->player->TakeDamage(1);
+				LOG("Player hit by enemy attack!");
+			}
+		
 		}
 		break;
 	}
@@ -363,7 +393,7 @@ bool Enemy::IsPlayerInRange() {
 	Vector2D playerTilePos = Engine::GetInstance().map.get()->WorldToMap(playerPos.getX(), playerPos.getY());
 
 	int distance = abs(playerTilePos.getX() - enemyTilePos.getX());
-	bool isInRange = distance <= 16;
+	bool isInRange = distance <= 20;
 
 	// Verificar si el enemigo está mirando en la dirección del jugador
 	bool isFacingPlayer = (direction == 0 && playerTilePos.getX() < enemyTilePos.getX()) ||
@@ -376,15 +406,16 @@ bool Enemy::IsPlayerInRange() {
 void Enemy::PerformAttack() {
 	// Detiene al enemigo
 	pbody->body->SetLinearVelocity(b2Vec2(0, 0));
+	currentAnimation = &attackAnimation;
 
 	if (attackBody == nullptr) {
 		// Determina la dirección del ataque
-		int attackOffsetX = (direction == 0) ? -80 : 110; // Ajusta según la dirección del enemigo
+		int attackOffsetX = (direction == 0) ? -100 : 210; // Ajusta según la dirección del enemigo
 
 		// Crea la hitbox del ataque
 		attackBody = Engine::GetInstance().physics.get()->CreateRectangleSensor(
 			(int)position.getX() + attackOffsetX,
-			(int)position.getY() + 10,
+			(int)position.getY() + 90,
 			104, 128, // Tamaño de la hitbox
 			bodyType::STATIC
 		);
@@ -435,7 +466,7 @@ bool Enemy::IsPlayerInAttackRange() {
 	Vector2D playerTilePos = Engine::GetInstance().map.get()->WorldToMap(playerPos.getX(), playerPos.getY());
 
 	int distance = abs(playerTilePos.getX() - enemyTilePos.getX());
-	return distance <= 10;
+	return distance <= 14;
 }
 
 void Enemy::LoadEnemyFx()
