@@ -91,7 +91,7 @@ bool GuiControlButton::Update(float dt)
             {
 
             case GuiControlState::NORMAL:
-                Engine::GetInstance().render->DrawTexturedRectangle(texture, bounds.x-200, bounds.y-100, 600, 400, false);
+                Engine::GetInstance().render->DrawTexturedRectangle(texture, bounds.x, bounds.y, 600, 400, false);
 
                 if (isOptionA || isOptionB)
                 {
@@ -102,13 +102,13 @@ bool GuiControlButton::Update(float dt)
                 break;
 
             case GuiControlState::FOCUSED:
-                Engine::GetInstance().render->DrawTexturedRectangle(textureSelected, bounds.x - 200, bounds.y - 100, 600, 400, false);
+                Engine::GetInstance().render->DrawTexturedRectangle(textureSelected, bounds.x, bounds.y, 600, 400, false);
 
                 break;
 
 
             case GuiControlState::PRESSED:
-                Engine::GetInstance().render->DrawTexturedRectangle(textureSelected, bounds.x - 200, bounds.y - 100, 600, 400, false);
+                Engine::GetInstance().render->DrawTexturedRectangle(textureSelected, bounds.x, bounds.y , 600, 400, false);
                 isClicked = true;
 
 

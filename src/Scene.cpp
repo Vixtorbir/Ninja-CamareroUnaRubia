@@ -150,13 +150,13 @@ bool Scene::Start()
 
 
 
-	SDL_Rect startButtonPos = { 800, 300, 200, 50 };
-	SDL_Rect optionsButtonPos = { 800, 550, 200, 50 };
-	SDL_Rect exitButtonPos = { 800, 800, 200, 50 };
-	SDL_Rect vsyncCheckboxPos = { 800, 250, 200, 50 };
-	SDL_Rect fullscreenCheckboxPos = { 800, 500, 200, 50 };
-	SDL_Rect returntomenuButtonPos = { 800, 750, 200, 50 };
-	SDL_Rect returnButtonPos = { 800, 550, 200, 50 };
+	SDL_Rect startButtonPos = { 1100, 200, 400, 300 };
+	SDL_Rect optionsButtonPos = { 1100, 450, 400, 300 };
+	SDL_Rect exitButtonPos = { 1100, 700, 400, 300 };
+	SDL_Rect vsyncCheckboxPos = { 700, 150, 400, 300 };
+	SDL_Rect fullscreenCheckboxPos = { 700, 400, 400, 300 };
+	SDL_Rect returntomenuButtonPos = { 700, 650, 400, 300 };
+	SDL_Rect returnButtonPos = { 700, 450, 400, 300 };
 
 	startButton = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(
 		GuiControlType::BUTTON, 1, "Start Game", startButtonPos, this);
