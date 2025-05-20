@@ -52,11 +52,16 @@ bool Player::Start() {
     currentAnimation = &idle;
 
     // Physics setup
-    pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX(), (int)position.getY(), texW, texH, bodyType::DYNAMIC);
+    pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX(), (int)position.getY(), texW/2, texH-50, bodyType::DYNAMIC);
     pbody->listener = this;
     pbody->ctype = ColliderType::PLAYER;
     pbody->body->SetFixedRotation(true);
     pbody->body->SetGravityScale(5);
+	//quitale la friccion al player
+	pbody->body->SetLinearDamping(0.0f);
+	pbody->body->SetAngularDamping(0.0f);
+	
+
 
     // UI elements
     popup = (GuiPopup*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::POPUP, 1, "Press E", btPos, sceneModule);
@@ -191,7 +196,7 @@ bool Player::Update(float dt) {
         jumpKeyHeld = false;
     }
 
-
+    /*
     // Wall jump
     if (touchingWall && Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_L) == KEY_DOWN) {
         float jumpDirection = (playerDirection == EntityDirections::LEFT) ? 1.0f : -1.0f;
@@ -209,7 +214,7 @@ bool Player::Update(float dt) {
     if (touchingWall && Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_REPEAT) {
         pbody->body->SetLinearVelocity(b2Vec2(0, wallClimbSpeed));
         currentState = PlayerState::WALL_SLIDING;
-    }
+    }*/
 
     // Dash
     if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_LSHIFT) == KEY_DOWN && canDash) {
@@ -315,7 +320,7 @@ bool Player::Update(float dt) {
     b2Transform pbodyPos = pbody->body->GetTransform();
     position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texW - 135);
 
-    position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
+    position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - (texH / 2)-27);
 
     int renderOffsetY = 0;
     if (crouched) {
@@ -462,12 +467,7 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 		GuiPOPup(GuiPopups::E_Interact);
 		break;
 	case ColliderType::WALL:
-		touchingWall = true;
-        /* if (physA->ctype == ColliderType::PLAYER_ATTACK) {
-
-             activeShurikens.erase(std::remove(activeShurikens.begin(), activeShurikens.end(), physA), activeShurikens.end());
-             Engine::GetInstance().physics.get()->DeletePhysBody(physA);
-         }*/
+		
 		break;
     case ColliderType::ITEM: {
         Item* item = static_cast<Item*>(physB->listener);
@@ -785,6 +785,8 @@ void Player::ChangeHitboxSize(float width, float height) {
     pbody->ctype = ColliderType::PLAYER;
     pbody->body->SetFixedRotation(true);
     pbody->body->SetGravityScale(5);
+	pbody->body->SetLinearDamping(0.0f);
+	pbody->body->SetAngularDamping(0.0f);
 
     // Actualizar la posición del cuerpo físico
     pbody->body->SetTransform(currentPosition, 0);
