@@ -48,7 +48,7 @@ bool Enemy::Start() {
 	currentAnimation = &idle;
 
 	// Agregar física al enemigo
-	pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX(), (int)position.getY(), texW-50, texH-200, bodyType::DYNAMIC);
+	pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX()+256, (int)position.getY(), texW, texH-200, bodyType::DYNAMIC);
 
 	// Asignar tipo de colisionador
 	pbody->ctype = ColliderType::ENEMY;
@@ -111,7 +111,7 @@ bool Enemy::Update(float dt)
 			(int)position.getX(),
 			(int)position.getY(),
 			&currentAnimation->GetCurrentFrame(),
-			1, 0, 0, 0, (int)direction
+			1, 0, 0, 0, -(int)direction
 		);
 		currentAnimation->Update();
 		return true;
@@ -135,7 +135,6 @@ bool Enemy::Update(float dt)
 		position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 6);
 		position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 6);
 
-		Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX() - 220, (int)position.getY(), &currentAnimation->GetCurrentFrame());
 		currentAnimation->Update();
 		return true;
 	}
@@ -173,7 +172,7 @@ bool Enemy::Update(float dt)
 			tilesMovedInSameDirection = 0;
 		}
 
-		if (direction == 0)
+		if (direction == 1)
 		{
 			pbody->body->SetLinearVelocity(b2Vec2(-2, 0));
 		}
@@ -276,8 +275,13 @@ bool Enemy::Update(float dt)
 	position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 6);
 
 	// Dibujar textura y animación
-	Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX()-220, (int)position.getY(), &currentAnimation->GetCurrentFrame());
-	currentAnimation->Update();
+	Engine::GetInstance().render.get()->DrawEntity(
+		texture,
+		(int)position.getX(),
+		(int)position.getY(),
+		&currentAnimation->GetCurrentFrame(),
+		1, 0, 0, 0, -(int)direction
+	);	currentAnimation->Update();
 
 	// Dibujar el pathfinding si está en modo debug
 	if (Engine::GetInstance().physics.get()->debug)
@@ -402,6 +406,7 @@ bool Enemy::IsPlayerInRange() {
 void Enemy::PerformAttack() {
 	// Detiene al enemigo
 	pbody->body->SetLinearVelocity(b2Vec2(0, 0));
+	currentAnimation = &attackAnimation;
 
 	if (attackBody == nullptr) {
 		// Determina la dirección del ataque

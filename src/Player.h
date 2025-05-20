@@ -159,7 +159,7 @@ public:
 
     // Health system
     int HP = MAXHP;
-    const int MAXHP = 100;
+    const int MAXHP = 1000;
     float damageCooldown = 3.0f;
     float timeSinceLastDamage = 0.0f;
     bool canTakeDamage = true;
@@ -173,13 +173,14 @@ public:
     Animation jump;
     Animation dash;
     Animation crouch;
+    Animation climb;
     Animation attack1;
     Animation attack2;
     Animation attack3;
    
     // Camera control
     int camX, camY;
-    float smoothFactor = 1;
+    int smoothFactor = 1;
 
     // Level management
     int currentLevel = 1;
@@ -190,6 +191,10 @@ public:
     GuiPopup* popup = nullptr;
     GuiImage* backgroundSliderImage = nullptr;
     GuiImage* foregroundSliderImage = nullptr;
+
+    GuiImage* hidden = nullptr;
+    GuiImage* detected = nullptr;
+
     GuiSlider* HP_Slider = nullptr;
     GuiImage* orbUi = nullptr;
     Text* orbCount = nullptr;
@@ -223,6 +228,9 @@ public:
     SDL_Texture* ForeGroundSliderHP = nullptr;
     SDL_Texture* orbUiTexture = nullptr;
     bool still = false;
+
+    SDL_Texture* Hidden = nullptr;
+    SDL_Texture* Detected = nullptr;
 
     // Game items
     int Orbs = 0;    
