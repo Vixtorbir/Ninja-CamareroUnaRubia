@@ -8,7 +8,7 @@
 		<vsync value="false" />
 	</render>
 	<window>
-		<resolution width="1920" height="1080" scale="1" />
+		<resolution width="1680" height="1050" scale="1" />
 		<camera zoom="1" />
 		<fullscreen value="false" />
 		<borderless value="false" />
@@ -18,7 +18,7 @@
 	<scene>
 		<map path="Assets/Maps/" name="MapTemplate1.tmx" />
 		<entities>
-			<player x="1600" y="3335" w="128" h="256" texture="Assets/Animations/PlayerAnims/renSpritesheet.png" gravity="true">
+			<player x="1447" y="3551" w="128" h="256" texture="Assets/Animations/PlayerAnims/renSpritesheet.png" gravity="true">
 				<animations>
 					<idle loop="true" speed="0.085">
 						<frame x="0" y="0" w="512" h="256" />
@@ -63,22 +63,17 @@
 					<attack1 loop="true" speed="0.15">
 						<frame x="0" y="1536" w="512" h="256" />
 						<frame x="512" y="1536" w="512" h="256" />
-
 						<frame x="1024" y="1536" w="512" h="256" />
-
 						<frame x="1536" y="1536" w="512" h="256" />
 						<frame x="1536" y="1536" w="512" h="256" />
 						<frame x="1536" y="1536" w="512" h="256" />
 						<frame x="1536" y="1536" w="512" h="256" />
 						<frame x="1536" y="1536" w="512" h="256" />
 						<frame x="1536" y="1536" w="512" h="256" />
-
 						<frame x="2048" y="1536" w="512" h="256" />
-
 						<frame x="2048" y="1536" w="512" h="256" />
 						<frame x="2048" y="1536" w="512" h="256" />
 						<frame x="2560" y="1536" w="512" h="256" />
-
 						<frame x="2560" y="1536" w="512" h="256" />
 					</attack1>
 					<attack2 loop="true" speed="0.5">
@@ -97,6 +92,14 @@
 						<frame x="2048" y="2560" w="512" h="256" />
 						<frame x="2560" y="2560" w="512" h="256" />
 					</attack3>
+					<climb loop="false" speed="0.5">
+						<frame x="0" y="2816" w="512" h="256" />
+						<frame x="512" y="2816" w="512" h="256" />
+						<frame x="1024" y="2816" w="512" h="256" />
+						<frame x="1536" y="2816" w="512" h="256" />
+						<frame x="2048" y="2816" w="512" h="256" />
+						<frame x="2560" y="2816" w="512" h="256" />
+					</climb>
 				</animations>
 			</player>
 			<npcMENTORSHIP x="1000" y="1100" w="111" h="271" texture="Assets/Textures/npcMENTORSHIP.png" gravity="true">
@@ -158,7 +161,7 @@
 				</testItem>
 			</items>
 			<enemies>
-				<enemy name="ninja" x="2000" y="3335" w="256" h="512" texture="Assets/Animations/EnemyAnims/NormalNinjaSpritesheet.png" gravity="true">
+				<enemy name="ninja" x="1900" y="3551" w="128" h="512" texture="Assets/Animations/EnemyAnims/NormalNinjaSpritesheet.png" gravity="true">
 					<animations>
 						<idle loop="true" speed="0.085">
 							<frame x="0" y="0" w="512" h="256" />
@@ -193,7 +196,7 @@
 						</die>
 					</animations>
 				</enemy>
-				<enemy name="ninja" x="99" y="1047" w="256" h="512" texture="Assets/Animations/EnemyAnims/NormalNinjaSpritesheet.png" gravity="true">
+				<enemy name="ninja" x="151" y="1027" w="256" h="512" texture="Assets/Animations/EnemyAnims/NormalNinjaSpritesheet.png" gravity="true">
 					<animations>
 						<idle loop="true" speed="0.085">
 							<frame x="0" y="0" w="512" h="256" />
