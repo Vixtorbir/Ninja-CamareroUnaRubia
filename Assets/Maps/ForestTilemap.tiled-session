@@ -33,8 +33,8 @@
         },
         "Cave.tmx": {
             "expandedObjectLayers": [
-                9,
-                8
+                8,
+                9
             ],
             "scale": 0.0625,
             "selectedLayer": 6,
@@ -47,6 +47,9 @@
             "scaleInDock": 1
         },
         "Cave.tmx#level1Tileset 128 x 128": {
+            "scaleInDock": 1
+        },
+        "Cave.tmx#level1Tileset 64x64": {
             "scaleInDock": 1
         },
         "Cave.tmx#level2CaveTileset 64 x 64": {
@@ -64,14 +67,14 @@
         },
         "MapTemplate2_64x64.tmx": {
             "expandedObjectLayers": [
-                9,
-                8
+                8,
+                9
             ],
-            "scale": 0.75,
-            "selectedLayer": 16,
+            "scale": 0.33,
+            "selectedLayer": 11,
             "viewCenter": {
-                "x": 9238.666666666666,
-                "y": 4162.666666666666
+                "x": 12239.39393939394,
+                "y": 2572.727272727273
             }
         },
         "MapTemplate2_64x64.tmx#level0Tileset 64x64": {
