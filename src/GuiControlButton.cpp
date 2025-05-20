@@ -91,7 +91,7 @@ bool GuiControlButton::Update(float dt)
             {
 
             case GuiControlState::NORMAL:
-                Engine::GetInstance().render->DrawTexturedRectangle(texture, bounds.x - 200, bounds.y - 100, 600, 400, false);
+                Engine::GetInstance().render->DrawTexturedRectangle(texture, bounds.x-200, bounds.y-100, 600, 400, false);
 
                 if (isOptionA || isOptionB)
                 {
