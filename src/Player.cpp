@@ -519,8 +519,16 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
                 activeShurikens.end()
             );
 
-        //    Engine::GetInstance().physics.get()->DeletePhysBody(physA);
+            Engine::GetInstance().physics.get()->DeletePhysBody(physA);
         }
+
+		else if (physA->ctype == ColliderType::PLAYER_KATANA) {
+			Enemy* enemy = static_cast<Enemy*>(physB->listener);
+			if (enemy != nullptr) {
+				enemy->startDying = true;
+				Engine::GetInstance().audio.get()->PlayFx(weakKatana1FxId);
+			}
+		}
         break;
 	case ColliderType::TURRET:
 		if (physA->ctype == ColliderType::PLAYER_ATTACK) {
@@ -536,6 +544,14 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 			);
 		Engine::GetInstance().physics.get()->DeletePhysBody(physA);
 		}
+
+        else if (physA->ctype == ColliderType::PLAYER_KATANA) {
+            Turret* turret = static_cast<Turret*>(physB->listener);
+            if (turret != nullptr) {
+                turret->dead = true;
+                Engine::GetInstance().audio.get()->PlayFx(weakKatana1FxId);
+            }
+        }
 		break;
         case ColliderType::BOSS:
         if (physA->ctype == ColliderType::PLAYER_ATTACK) {
@@ -554,6 +570,13 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
             }
             else {
                 LOG("Boss is in damage cooldown, shuriken has no effect.");
+            }
+        }
+        else if (physA->ctype == ColliderType::PLAYER_KATANA) {
+            Boss* boss = static_cast<Boss*>(physB->listener);
+            if (boss != nullptr) {
+                boss->TakeDamage(1);
+                Engine::GetInstance().audio.get()->PlayFx(weakKatana1FxId);
             }
         }
         break;
@@ -656,17 +679,18 @@ void Player::PerformAttack() {
     // Configurar el área de ataque según la dirección del jugador
     if (playerDirection == EntityDirections::RIGHT) {
         katanaAttack = Engine::GetInstance().physics.get()->CreateRectangleSensor(
-            (int)position.getX() + 390, (int)position.getY() + 100, 80, 250, bodyType::STATIC
+            (int)position.getX() + 390, (int)position.getY() + 100, 80, 250, bodyType::KINEMATIC
         );
     }
     else {
         katanaAttack = Engine::GetInstance().physics.get()->CreateRectangleSensor(
-            (int)position.getX() +135, (int)position.getY() + 100, 80, 250, bodyType::STATIC
+            (int)position.getX() +135, (int)position.getY() + 100, 80, 250, bodyType::KINEMATIC
         );
     }
 
-    katanaAttack->ctype = ColliderType::PLAYER_ATTACK;
+    katanaAttack->ctype = ColliderType::PLAYER_KATANA;
     katanaAttack->listener = this;
+    katanaAttack->body->SetGravityScale(0.0f);
 
     // Avanzar al siguiente ataque (cíclico)
     currentAttackIndex = (currentAttackIndex + 1) % 3;
