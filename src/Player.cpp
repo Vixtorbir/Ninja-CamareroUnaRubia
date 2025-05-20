@@ -35,6 +35,9 @@ bool Player::Start() {
     shurikenTexture = Engine::GetInstance().textures.get()->Load("Assets/Textures/goldCoin.png");
     meleeAttackTexture = Engine::GetInstance().textures.get()->Load("Assets/Textures/meleeAttack.png");
 
+    Hidden = Engine::GetInstance().textures.get()->Load("Assets/UI/Hidden.png");
+    Detected = Engine::GetInstance().textures.get()->Load("Assets/UI/Detected.png");
+
     position.setX(parameters.attribute("x").as_int());
     position.setY(parameters.attribute("y").as_int());
     texW = parameters.attribute("w").as_int();
@@ -49,20 +52,31 @@ bool Player::Start() {
     attack1.LoadAnimations(parameters.child("animations").child("attack1"));
     attack2.LoadAnimations(parameters.child("animations").child("attack2"));
     attack3.LoadAnimations(parameters.child("animations").child("attack3"));
+    climb.LoadAnimations(parameters.child("animations").child("climb"));
+
     currentAnimation = &idle;
 
     // Physics setup
-    pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX(), (int)position.getY(), texW, texH, bodyType::DYNAMIC);
+    pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX(), (int)position.getY(), texW/2, texH-50, bodyType::DYNAMIC);
     pbody->listener = this;
     pbody->ctype = ColliderType::PLAYER;
     pbody->body->SetFixedRotation(true);
     pbody->body->SetGravityScale(5);
+	//quitale la friccion al player
+	pbody->body->SetLinearDamping(0.0f);
+	pbody->body->SetAngularDamping(0.0f);
+	
+
 
     // UI elements
     popup = (GuiPopup*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::POPUP, 1, "Press E", btPos, sceneModule);
     orbCount = (Text*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::TEXT, 1, "0", OrbCountPos, sceneModule);
     backgroundSliderImage = (GuiImage*)Engine::GetInstance().guiManager->CreateGuiImage(GuiControlType::IMAGE, 1, " ", btPos, sceneModule, BackgroundSliderHP);
     foregroundSliderImage = (GuiImage*)Engine::GetInstance().guiManager->CreateGuiImage(GuiControlType::IMAGE, 1, " ", btPos, sceneModule, ForeGroundSliderHP);
+    
+    detected = (GuiImage*)Engine::GetInstance().guiManager->CreateGuiImage(GuiControlType::IMAGE, 1, " ", btPos, sceneModule, Detected);
+    hidden = (GuiImage*)Engine::GetInstance().guiManager->CreateGuiImage(GuiControlType::IMAGE, 1, " ", btPos, sceneModule, Hidden);
+
     orbUi = (GuiImage*)Engine::GetInstance().guiManager->CreateGuiImage(GuiControlType::IMAGE, 1, " ", btPos, sceneModule, orbUiTexture);
     HP_Slider = (GuiSlider*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::HPSLIDER, 1, " ", hpPos, sceneModule);
 
@@ -191,7 +205,7 @@ bool Player::Update(float dt) {
         jumpKeyHeld = false;
     }
 
-
+    /*
     // Wall jump
     if (touchingWall && Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_L) == KEY_DOWN) {
         float jumpDirection = (playerDirection == EntityDirections::LEFT) ? 1.0f : -1.0f;
@@ -202,14 +216,17 @@ bool Player::Update(float dt) {
         playerDirection = (playerDirection == EntityDirections::LEFT) ? EntityDirections::RIGHT : EntityDirections::LEFT;
         int doubleJumpId = Engine::GetInstance().audio.get()->randomFx(doubleJump1FxId, doubleJump2FxId);
         Engine::GetInstance().audio.get()->PlayFx(doubleJumpId);
-        currentState = PlayerState::JUMPING;
+        currentAnimation == &climb;
+
+        //currentState = PlayerState::JUMPING;
     }
 
     // Wall slide
     if (touchingWall && Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_REPEAT) {
+        currentAnimation == &climb;
         pbody->body->SetLinearVelocity(b2Vec2(0, wallClimbSpeed));
         currentState = PlayerState::WALL_SLIDING;
-    }
+    }*/
 
     // Dash
     if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_LSHIFT) == KEY_DOWN && canDash) {
@@ -315,7 +332,7 @@ bool Player::Update(float dt) {
     b2Transform pbodyPos = pbody->body->GetTransform();
     position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texW - 135);
 
-    position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
+    position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - (texH / 2)-27);
 
     int renderOffsetY = 0;
     if (crouched) {
@@ -343,8 +360,8 @@ bool Player::Update(float dt) {
         camY = -(float)position.getY() + (Engine::GetInstance().render.get()->camera.h / 2);
     }
 
-    Engine::GetInstance().render.get()->camera.x += (camX - Engine::GetInstance().render.get()->camera.x) * smoothFactor;
-    Engine::GetInstance().render.get()->camera.y += (camY - Engine::GetInstance().render.get()->camera.y) * smoothFactor;
+    Engine::GetInstance().render.get()->camera.x += ((int)camX - Engine::GetInstance().render.get()->camera.x) * smoothFactor;
+    Engine::GetInstance().render.get()->camera.y += ((int)camY - Engine::GetInstance().render.get()->camera.y) * smoothFactor;
 
     // Draw HP icons
   /*  for (int i = 0; i < hp; ++i) {
@@ -462,12 +479,7 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 		GuiPOPup(GuiPopups::E_Interact);
 		break;
 	case ColliderType::WALL:
-		touchingWall = true;
-        /* if (physA->ctype == ColliderType::PLAYER_ATTACK) {
-
-             activeShurikens.erase(std::remove(activeShurikens.begin(), activeShurikens.end(), physA), activeShurikens.end());
-             Engine::GetInstance().physics.get()->DeletePhysBody(physA);
-         }*/
+		
 		break;
     case ColliderType::ITEM: {
         Item* item = static_cast<Item*>(physB->listener);
@@ -640,7 +652,7 @@ void Player::TakeDamage(int damage) {
     if (canTakeDamage) {
         HP -= damage;
         if (HP <= 0) {
-            Die(); 
+            //Die(); 
         }
         canTakeDamage = false; 
         LOG("Player took damage! Remaining HP: %d", HP);
@@ -785,6 +797,8 @@ void Player::ChangeHitboxSize(float width, float height) {
     pbody->ctype = ColliderType::PLAYER;
     pbody->body->SetFixedRotation(true);
     pbody->body->SetGravityScale(5);
+	pbody->body->SetLinearDamping(0.0f);
+	pbody->body->SetAngularDamping(0.0f);
 
     // Actualizar la posición del cuerpo físico
     pbody->body->SetTransform(currentPosition, 0);
