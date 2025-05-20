@@ -101,11 +101,12 @@ public:
     // Physics and movement
     PhysBody* pbody;
 	PhysBody* katanaAttack = nullptr;
-    Timer attackTimer;          
+    Timer attackTimer;
+    Timer attackCooldownTimer;
     bool isAttacking = false;   
     bool isCooldown = false;    
-    const float attackDuration = 0.5f; 
-    const float attackCooldown = 1.0f;
+    const float attackDuration = .1f; 
+    const float attackCooldown = .3;
     SDL_Texture* meleeAttackTexture = nullptr; 
 
     int currentAttackIndex = 0;
@@ -178,7 +179,7 @@ public:
    
     // Camera control
     int camX, camY;
-    float smoothFactor = 0.1f;
+    float smoothFactor = 1;
 
     // Level management
     int currentLevel = 1;
@@ -221,7 +222,7 @@ public:
     SDL_Texture* BackgroundSliderHP = nullptr;
     SDL_Texture* ForeGroundSliderHP = nullptr;
     SDL_Texture* orbUiTexture = nullptr;
-
+    bool still = false;
 
     // Game items
     int Orbs = 0;    

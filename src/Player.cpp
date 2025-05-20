@@ -134,11 +134,11 @@ bool Player::Update(float dt) {
     bool moving = movingLeft || movingRight;
     bool grounded = !isJumping && !isDashing && !touchingWall;
     isWalking = false;
-    if (movingLeft) {
+    if (movingLeft && !still) {
         velocity.x = -speed * 16;
         playerDirection = EntityDirections::LEFT;
     }
-    if (movingRight) {
+    if (movingRight && !still) {
         velocity.x = speed * 16;
         playerDirection = EntityDirections::RIGHT;
     }
@@ -300,6 +300,7 @@ bool Player::Update(float dt) {
         }
         break;
     case PlayerState::ATTACKING: 
+        still = true;
         break;
     case PlayerState::IDLE:
     default:
@@ -325,7 +326,7 @@ bool Player::Update(float dt) {
     Engine::GetInstance().render.get()->DrawEntity(
         texture,
         (int)position.getX(),
-        (int)position.getY() + renderOffsetY, 
+        (int)position.getY() , 
         &currentAnimation->GetCurrentFrame(),
         1, 0, 0, 0, (int)playerDirection
     );
@@ -334,11 +335,11 @@ bool Player::Update(float dt) {
 
     // Camera follow
     if (!Engine::GetInstance().scene.get()->watchtitle) {
-        camX = -(float)position.getX() + (Engine::GetInstance().render.get()->camera.w / 2);
+        camX = -(float)position.getX() - 256 + (Engine::GetInstance().render.get()->camera.w / 2);
         camY = -(float)position.getY() + (Engine::GetInstance().render.get()->camera.h / 2);
     }
     else {
-        camX = 3000 + (Engine::GetInstance().render.get()->camera.w / 2);
+        camX = 2000 + (Engine::GetInstance().render.get()->camera.w / 2);
         camY = -(float)position.getY() + (Engine::GetInstance().render.get()->camera.h / 2);
     }
 
@@ -357,35 +358,29 @@ bool Player::Update(float dt) {
         }
     }
     
-    if (isCooldown) {
-        if (attackTimer.ReadSec() >= attackCooldown) {
-            isCooldown = false; 
-            LOG("Cooldown ended, player can attack again.");
-        }
-    }
 
     
     if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_K) == KEY_DOWN && !isAttacking && !isCooldown) {
-        PerformAttack();         
-        isAttacking = true;      
-        attackTimer.Start();     
-        LOG("Attack started.");
+        PerformAttack();
+        isAttacking = true;
+        attackTimer.Start(); 
     }
 
     if (isAttacking && attackTimer.ReadSec() >= attackDuration) {
-        isAttacking = false; 
-        isCooldown = true;   
-        attackTimer.Start(); 
-
-        
+        isAttacking = false;
+        isCooldown = true;
+        attackCooldownTimer.Start(); 
         if (katanaAttack != nullptr) {
             Engine::GetInstance().physics.get()->DeletePhysBody(katanaAttack);
             katanaAttack = nullptr;
         }
+        still = false;
 
         LOG("Attack ended, cooldown started.");
     }
-
+    if (isCooldown && attackCooldownTimer.ReadSec() >= attackCooldown) {
+        isCooldown = false;
+    }
     if (isAttacking && katanaAttack != nullptr) {
         int x, y;
         katanaAttack->GetPosition(x, y);
