@@ -324,14 +324,14 @@ bool Player::Update(float dt) {
 
     int renderOffsetY = 0;
     if (crouched) {
-        renderOffsetY = -65; 
+        renderOffsetY = -45; 
     }
 
     // Renderizar la textura del jugador
     Engine::GetInstance().render.get()->DrawEntity(
         texture,
         (int)position.getX(),
-        (int)position.getY() , 
+        (int)position.getY() + renderOffsetY , 
         &currentAnimation->GetCurrentFrame(),
         1, 0, 0, 0, (int)playerDirection
     );
@@ -765,14 +765,18 @@ void Player::ChangeHitboxSize(float width, float height) {
         fixture = next;
     }
 
-    // Crear un nuevo fixture con el nuevo tamaño
-    if (height == texH / 2) {
-        // Si se está agachando, ajustar la posición hacia abajo
-        currentPosition.y += PIXEL_TO_METERS(texH / 4); // Ajustar la posición para que el hitbox quede alineado
+    // Si se está agachando, la hitbox es la mitad de alta y se sube para que los pies queden igual
+    if (crouched) {
+        width = texW / 2;
+        height = (texH - 50) / 2;
+        // Subir la posición la mitad de la diferencia de altura
+        currentPosition.y -= PIXEL_TO_METERS(((texH - 50) / 4)-2);
     }
     else {
-        // Si se está levantando, ajustar la posición hacia arriba
-        currentPosition.y -= PIXEL_TO_METERS(texH / 4); // Ajustar la posición para que el hitbox quede alineado
+        width = texW / 2;
+        height = texH - 50;
+        // Al levantarse, bajar la posición la mitad de la diferencia de altura
+        currentPosition.y += PIXEL_TO_METERS((texH - 50) / 4);
     }
 
     // Crear el nuevo cuerpo físico con el tamaño ajustado
@@ -785,12 +789,14 @@ void Player::ChangeHitboxSize(float width, float height) {
     pbody->ctype = ColliderType::PLAYER;
     pbody->body->SetFixedRotation(true);
     pbody->body->SetGravityScale(5);
-	pbody->body->SetLinearDamping(0.0f);
-	pbody->body->SetAngularDamping(0.0f);
+    pbody->body->SetLinearDamping(0.0f);
+    pbody->body->SetAngularDamping(0.0f);
 
     // Actualizar la posición del cuerpo físico
     pbody->body->SetTransform(currentPosition, 0);
 }
+
+
 
 
 void Player::AddItem(const InventoryItem& item) {

@@ -292,7 +292,10 @@ bool Enemy::Update(float dt)
 bool Enemy::CleanUp() {
 	Engine::GetInstance().textures.get()->UnLoad(texture);
 	Engine::GetInstance().textures.get()->UnLoad(attackTexture); 
-	Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
+
+	if (pbody != nullptr) {
+		Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
+	}
 	active = false;
 	return true;
 }
@@ -332,8 +335,11 @@ void Enemy::OnCollision(PhysBody* physA, PhysBody* physB) {
 	case ColliderType::PLAYER:
 		// Si el jugador colisiona con un shuriken, aplicar daño
 		if (physA->ctype == ColliderType::ENEMY) {
-			Engine::GetInstance().scene.get()->player->TakeDamage(1);
-			LOG("Player hit by turret shuriken!");
+			if (!isDying) {
+				Engine::GetInstance().scene.get()->player->TakeDamage(1);
+				LOG("Player hit by enemy attack!");
+			}
+		
 		}
 		break;
 	}

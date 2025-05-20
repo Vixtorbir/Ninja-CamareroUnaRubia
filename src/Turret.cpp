@@ -256,8 +256,12 @@ void Turret::LoadEnemyFx()
 
 bool Turret::CleanUp() {
     Engine::GetInstance().textures.get()->UnLoad(texture);
-    Engine::GetInstance().textures.get()->UnLoad(shurikenTexture);
-    Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
+	Engine::GetInstance().textures.get()->UnLoad(shurikenTexture);
+
+    if (pbody != nullptr) {
+        Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
+    }
     active = false;
+  
     return true;
 }

@@ -540,6 +540,7 @@ void Scene::LoadState() {
 	}
 }
 void Scene::SafeLoadMap(const char* mapName, Vector2D playerPos) {
+
 	Engine::GetInstance().map->CleanUp(); // Esto solo limpia recursos antiguos
 
 	for (const auto enemy : enemyList) {
@@ -559,6 +560,19 @@ void Scene::SafeLoadMap(const char* mapName, Vector2D playerPos) {
 	}
 
 	items.clear();
+
+	for (const auto turret : turretList) {
+		turret->CleanUp();
+	}
+
+	turretList.clear();
+
+	for (const auto boss : bossList) {
+		boss->CleanUp();
+	}
+
+	bossList.clear();
+
 
 	std::string path = configParameters.child("map").attribute("path").as_string();
 	if (!Engine::GetInstance().map->Load(path.c_str(), mapName)) {
