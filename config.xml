@@ -158,7 +158,7 @@
 				</testItem>
 			</items>
 			<enemies>
-				<enemy name="ninja" x="151" y="1027" w="256" h="512" texture="Assets/Animations/EnemyAnims/NormalNinjaSpritesheet.png" gravity="true">
+				<enemy name="ninja" x="2000" y="3335" w="256" h="512" texture="Assets/Animations/EnemyAnims/NormalNinjaSpritesheet.png" gravity="true">
 					<animations>
 						<idle loop="true" speed="0.085">
 							<frame x="0" y="0" w="512" h="256" />
@@ -186,6 +186,11 @@
 							<frame x="2560" y="512" w="512" h="256" />
 							<frame x="3072" y="512" w="512" h="256" />
 						</attack>
+						<die loop="false" speed="0.1">
+							<frame x="0" y="768" w="512" h="256" />
+							<frame x="512" y="768" w="512" h="256" />
+							<frame x="1024" y="768" w="512" h="256" />
+						</die>
 					</animations>
 				</enemy>
 				<enemy name="ninja" x="99" y="1047" w="256" h="512" texture="Assets/Animations/EnemyAnims/NormalNinjaSpritesheet.png" gravity="true">

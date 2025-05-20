@@ -495,7 +495,7 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
             
             Enemy* enemy = static_cast<Enemy*>(physB->listener);
             if (enemy != nullptr) {
-				enemy->dead = true;
+				enemy->startDying = true;
 				Engine::GetInstance().audio.get()->PlayFx(weakKatana1FxId);
 				
             }

@@ -68,7 +68,9 @@ public:
     int batdieFxId;
    
     void PerformAttack();
-
+    Timer deathTimer;
+    bool isDying = false; // Controls if the death animation is playing
+    float deathDuration = 1.5f; // You can tweak this
     bool IsPlayerInAttackRange();
     void CheckAttackCollision();
     bool IsPlayerInLineOfSight();
@@ -84,6 +86,7 @@ public:
     Animation idle;
     Animation walkAnimation;
     Animation attackAnimation;
+    Animation deathAnimation;
     PhysBody* pbody;
     Pathfinding* pathfinding;
     Timer timer;
@@ -99,6 +102,6 @@ public:
     const float attackCooldown = 3.0f; 
     PhysBody* attackBody = nullptr;
 
-	bool dead = false;
+	bool startDying = false;
 };
 
