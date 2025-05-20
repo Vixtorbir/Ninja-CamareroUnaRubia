@@ -813,8 +813,8 @@ void Scene::UpdateGameOver(float dt) {
 	//returntomenuButton->Update(dt);
 	menuBackgroundImage->Update(dt);
 
-	Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/gameplaySongPlaceholder.wav");
-	Engine::GetInstance().audio.get()->musicVolume(50);
+	//Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/gameplaySongPlaceholder.wav");
+	//Engine::GetInstance().audio.get()->musicVolume(50);
 
 }
 void Scene::UpdateLogo(float dt) {

@@ -134,11 +134,11 @@ bool Player::Update(float dt) {
     bool moving = movingLeft || movingRight;
     bool grounded = !isJumping && !isDashing && !touchingWall;
     isWalking = false;
-    if (movingLeft) {
+    if (movingLeft && !still) {
         velocity.x = -speed * 16;
         playerDirection = EntityDirections::LEFT;
     }
-    if (movingRight) {
+    if (movingRight && !still) {
         velocity.x = speed * 16;
         playerDirection = EntityDirections::RIGHT;
     }
@@ -162,46 +162,35 @@ bool Player::Update(float dt) {
     }
 
     // Handle jumping
-    if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN && hasAlreadyJumpedOnce == 0 && !inBubble && !crouched) {
-        isHoldingJump = true;
-        jumpHoldTimer = 0.0f;
-    }
+    bool jumpPressed = Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN;
+    bool jumpReleased = Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_UP;
 
-    if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_REPEAT && isHoldingJump && !inBubble) {
-        jumpHoldTimer += dt;
-        if (jumpHoldTimer >= maxHoldTime) {
-            float jumpStrength = jumpForce * maxJumpMultiplier;
-            pbody->body->ApplyLinearImpulseToCenter(b2Vec2(0, -jumpStrength), true);
-            hasAlreadyJumpedOnce++;
-            isHoldingJump = false;
-            isJumping = true;
-            currentState = PlayerState::JUMPING;
-            int jumpId = Engine::GetInstance().audio.get()->randomFx(jump1FxId, jump3FxId);
-            Engine::GetInstance().audio.get()->PlayFx(jumpId);
-        }
-    }
+    if (jumpPressed && !jumpKeyHeld && hasAlreadyJumpedOnce < 2 && !inBubble && !crouched) {
+        float appliedForce = (hasAlreadyJumpedOnce == 0) ? jumpForce : doubleJumpForce;
 
-    if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_UP && isHoldingJump && !inBubble) {
-        float holdPercentage = jumpHoldTimer / maxHoldTime;
-        float jumpMultiplier = minJumpMultiplier + (holdPercentage * (maxJumpMultiplier - minJumpMultiplier));
-        float jumpStrength = jumpForce * jumpMultiplier;
-        pbody->body->ApplyLinearImpulseToCenter(b2Vec2(0, -jumpStrength), true);
-        hasAlreadyJumpedOnce++;
-        isHoldingJump = false;
-        isJumping = true;
-        currentState = PlayerState::JUMPING;
-    }
+        b2Vec2 vel = pbody->body->GetLinearVelocity();
+        vel.y = 0;
+        pbody->body->SetLinearVelocity(vel);
 
-    // Double jump
-    if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN && hasAlreadyJumpedOnce == 1 && !inBubble) {
-        pbody->body->SetLinearVelocity(b2Vec2(pbody->body->GetLinearVelocity().x, 0));
-        pbody->body->ApplyLinearImpulseToCenter(b2Vec2(0, -jumpForce), true);
+        pbody->body->ApplyLinearImpulseToCenter(b2Vec2(0, -appliedForce), true);
+
+        int fxId = (hasAlreadyJumpedOnce == 0)
+            ? Engine::GetInstance().audio.get()->randomFx(jump1FxId, jump3FxId)
+            : Engine::GetInstance().audio.get()->randomFx(doubleJump1FxId, doubleJump2FxId);
+        Engine::GetInstance().audio.get()->PlayFx(fxId);
+
         hasAlreadyJumpedOnce++;
         isJumping = true;
         currentState = PlayerState::JUMPING;
-        int doubleJumpId = Engine::GetInstance().audio.get()->randomFx(doubleJump1FxId, doubleJump2FxId);
-        Engine::GetInstance().audio.get()->PlayFx(doubleJumpId);
+        jumpKeyHeld = true;
+
+        LOG("Jump count: %d", hasAlreadyJumpedOnce);
     }
+
+    if (jumpReleased) {
+        jumpKeyHeld = false;
+    }
+
 
     // Wall jump
     if (touchingWall && Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_L) == KEY_DOWN) {
@@ -311,6 +300,7 @@ bool Player::Update(float dt) {
         }
         break;
     case PlayerState::ATTACKING: 
+        still = true;
         break;
     case PlayerState::IDLE:
     default:
@@ -336,7 +326,7 @@ bool Player::Update(float dt) {
     Engine::GetInstance().render.get()->DrawEntity(
         texture,
         (int)position.getX(),
-        (int)position.getY() + renderOffsetY, 
+        (int)position.getY() , 
         &currentAnimation->GetCurrentFrame(),
         1, 0, 0, 0, (int)playerDirection
     );
@@ -345,11 +335,11 @@ bool Player::Update(float dt) {
 
     // Camera follow
     if (!Engine::GetInstance().scene.get()->watchtitle) {
-        camX = -(float)position.getX() + (Engine::GetInstance().render.get()->camera.w / 2);
+        camX = -(float)position.getX() - 256 + (Engine::GetInstance().render.get()->camera.w / 2);
         camY = -(float)position.getY() + (Engine::GetInstance().render.get()->camera.h / 2);
     }
     else {
-        camX = 3000 + (Engine::GetInstance().render.get()->camera.w / 2);
+        camX = 2000 + (Engine::GetInstance().render.get()->camera.w / 2);
         camY = -(float)position.getY() + (Engine::GetInstance().render.get()->camera.h / 2);
     }
 
@@ -368,35 +358,29 @@ bool Player::Update(float dt) {
         }
     }
     
-    if (isCooldown) {
-        if (attackTimer.ReadSec() >= attackCooldown) {
-            isCooldown = false; 
-            LOG("Cooldown ended, player can attack again.");
-        }
-    }
 
     
     if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_K) == KEY_DOWN && !isAttacking && !isCooldown) {
-        PerformAttack();         
-        isAttacking = true;      
-        attackTimer.Start();     
-        LOG("Attack started.");
+        PerformAttack();
+        isAttacking = true;
+        attackTimer.Start(); 
     }
 
     if (isAttacking && attackTimer.ReadSec() >= attackDuration) {
-        isAttacking = false; 
-        isCooldown = true;   
-        attackTimer.Start(); 
-
-        
+        isAttacking = false;
+        isCooldown = true;
+        attackCooldownTimer.Start(); 
         if (katanaAttack != nullptr) {
             Engine::GetInstance().physics.get()->DeletePhysBody(katanaAttack);
             katanaAttack = nullptr;
         }
+        still = false;
 
         LOG("Attack ended, cooldown started.");
     }
-
+    if (isCooldown && attackCooldownTimer.ReadSec() >= attackCooldown) {
+        isCooldown = false;
+    }
     if (isAttacking && katanaAttack != nullptr) {
         int x, y;
         katanaAttack->GetPosition(x, y);
@@ -469,14 +453,10 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 	switch (physB->ctype)
 	{
 	case ColliderType::PLATFORM:
-		isJumping = false;
-		hasAlreadyJumpedOnce = 0;
-       /* if (physA->ctype == ColliderType::PLAYER_ATTACK) {
-            
-            activeShurikens.erase(std::remove(activeShurikens.begin(), activeShurikens.end(), physA), activeShurikens.end());
-            Engine::GetInstance().physics.get()->DeletePhysBody(physA);
-        }*/
-		break;
+		LOG("Grounded - reset jump count");
+    isJumping = false;
+    hasAlreadyJumpedOnce = 0;
+    break;
 	case ColliderType::NPC:
 		inBubble = true;
 		GuiPOPup(GuiPopups::E_Interact);
@@ -515,7 +495,7 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
             
             Enemy* enemy = static_cast<Enemy*>(physB->listener);
             if (enemy != nullptr) {
-				enemy->dead = true;
+				enemy->startDying = true;
 				Engine::GetInstance().audio.get()->PlayFx(weakKatana1FxId);
 				
             }

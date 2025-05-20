@@ -43,6 +43,7 @@ bool Enemy::Start() {
 	idle.LoadAnimations(parameters.child("animations").child("idle"));
 	attackAnimation.LoadAnimations(parameters.child("animations").child("attack"));
 	walkAnimation.LoadAnimations(parameters.child("animations").child("walk"));
+	deathAnimation.LoadAnimations(parameters.child("animations").child("die"));
 
 	currentAnimation = &idle;
 
@@ -70,29 +71,31 @@ bool Enemy::Start() {
 bool Enemy::Update(float dt)
 {
 
-	if (dead)
+	if (isDying)
 	{
-		// Si el enemigo está muerto, eliminarlo de la escena y la física
-		if (attackBody != nullptr) {
-			Engine::GetInstance().physics.get()->DeletePhysBody(attackBody);
-			attackBody = nullptr;
-			LOG("Attack hitbox removed.");
-		}
-
-		if (pbody != nullptr)
+		currentAnimation = &deathAnimation;
+		// When timer is done, destroy enemy
+		if (deathTimer.ReadSec() >= deathDuration)
 		{
-			pbody->body->DestroyFixture(pbody->body->GetFixtureList());
-			pbody = nullptr;
+			if (attackBody != nullptr) {
+				Engine::GetInstance().physics.get()->DeletePhysBody(attackBody);
+				attackBody = nullptr;
+			}
+
+			if (pbody != nullptr) {
+				pbody->body->DestroyFixture(pbody->body->GetFixtureList());
+				pbody = nullptr;
+			}
+
+			LOG("Enemy death animation finished. Removing from scene.");
+			active = false;
 		}
 
-		LOG("Enemy is dead, removing from scene.");
-		
-		active = false;
-		
-		return true;
+		return true; // Skip further update while dying
 	}
 
-	if (!dead)
+
+	if (!startDying)
 
 	{
 
@@ -103,7 +106,13 @@ bool Enemy::Update(float dt)
 		position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 6);
 		position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 6);
 
-		Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX() - 220, (int)position.getY(), &currentAnimation->GetCurrentFrame());
+		Engine::GetInstance().render.get()->DrawEntity(
+			texture,
+			(int)position.getX(),
+			(int)position.getY(),
+			&currentAnimation->GetCurrentFrame(),
+			1, 0, 0, 0, (int)direction
+		);
 		currentAnimation->Update();
 		return true;
 	}
@@ -311,9 +320,13 @@ void Enemy::ResetPath() {
 void Enemy::OnCollision(PhysBody* physA, PhysBody* physB) {
 	switch (physB->ctype) {
 	case ColliderType::PLAYER_ATTACK:
-		// Si el jugador golpea la torreta, marcarla como muerta
-		LOG("Turret hit by player attack!");
-		dead = true;
+		if (!isDying) {
+			LOG("Enemy hit by player attack!");
+			isDying = true;
+			deathTimer.Start();
+			currentAnimation = &deathAnimation;
+			pbody->body->SetLinearVelocity(b2Vec2(0, 0));
+		}
 		break;
 
 	case ColliderType::PLAYER:
