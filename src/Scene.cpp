@@ -334,7 +334,7 @@ bool Scene::PostUpdate()
 		ret = false;
 
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F2) == KEY_DOWN) {
-		SafeLoadMap("MapTemplate1.tmx", Vector2D(17280, 4224)); // Posición específica Mapa 1
+		SafeLoadMap("MapTemplate1_64x64.tmx", Vector2D(6400, 3968)); // Posición específica Mapa 1
 		levelIndex = 0;
 		parallax->ChangeTextures(levelIndex);
 
@@ -365,7 +365,7 @@ bool Scene::PostUpdate()
 		FadeTransition(Engine::GetInstance().render.get()->renderer, false, 1.0f);
 		Engine::GetInstance().map->CleanUp(); // Esto solo limpia recursos antiguos
 
-		SafeLoadMap("MapTemplate1.tmx", Vector2D(22480, 4304));
+		SafeLoadMap("MapTemplate1_64x64.tmx", Vector2D(6400, 3968));
 
 		Engine::GetInstance().scene.get()->player->loadLevel1 = false;
 		Engine::GetInstance().scene.get()->player->currentLevel = 1;
@@ -377,7 +377,7 @@ bool Scene::PostUpdate()
 		FadeTransition(Engine::GetInstance().render.get()->renderer, false, 1.0f);
 		Engine::GetInstance().map->CleanUp(); // Esto solo limpia recursos antiguos
 
-		SafeLoadMap("MapTemplate2.tmx", Vector2D(1504, 3888));
+		SafeLoadMap("MapTemplate2_64x64.tmx", Vector2D(1408, 3845));
 
 		Engine::GetInstance().scene.get()->player->loadLevel2 = false;
 		Engine::GetInstance().scene.get()->player->currentLevel = 2;
