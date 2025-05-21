@@ -56,6 +56,7 @@ bool Enemy::Start() {
 
 	// Asignar gravedad al enemigo
 	pbody->body->SetFixedRotation(true);
+	pbody->body->SetGravityScale(25.0f);
 
 	// Establecer la gravedad del cuerpo
 	if (!parameters.attribute("gravity").as_bool()) pbody->body->SetGravityScale(0);
@@ -128,7 +129,7 @@ bool Enemy::Update(float dt)
 	Vector2D playerTilePos = Engine::GetInstance().map.get()->WorldToMap(playerPos.getX(), playerPos.getY());
 
 	// Si el jugador está fuera del rango máximo, el enemigo no hace nada
-	if (abs(playerTilePos.getX() - enemyTilePos.getX()) > 75)
+	if (abs(playerTilePos.getX() - enemyTilePos.getX()) > 30)
 	{
 		pbody->body->SetLinearVelocity(b2Vec2(0, 0));
 		b2Transform pbodyPos = pbody->body->GetTransform();
@@ -164,7 +165,7 @@ bool Enemy::Update(float dt)
 	{
 	case EnemyState::PATROL:
 		currentAnimation = &walkAnimation;
-
+		aggressive = false;
 		// Movimiento de patrulla
 		if (!IsNextTileCollidable() || tilesMovedInSameDirection >= 350)
 		{
@@ -185,7 +186,7 @@ bool Enemy::Update(float dt)
 
 	case EnemyState::AGGRESSIVE:
 		currentAnimation = &walkAnimation;
-
+		aggressive = true;
 		// Movimiento agresivo hacia el jugador
 		if (playerTilePos.getX() < enemyTilePos.getX() && IsNextTileCollidable())
 		{
@@ -292,6 +293,10 @@ bool Enemy::Update(float dt)
 	return true;
 }
 
+void Enemy::SetPlayer(Player* player)
+{
+	this->player = player;
+}
 
 bool Enemy::CleanUp() {
 	Engine::GetInstance().textures.get()->UnLoad(texture);
@@ -335,7 +340,15 @@ void Enemy::OnCollision(PhysBody* physA, PhysBody* physB) {
 			pbody->body->SetLinearVelocity(b2Vec2(0, 0));
 		}
 		break;
-
+	case ColliderType::PLAYER_KATANA:
+		if (!isDying) {
+			LOG("Enemy hit by player katana!");
+			isDying = true;
+			deathTimer.Start();
+			currentAnimation = &deathAnimation;
+			pbody->body->SetLinearVelocity(b2Vec2(0, 0));
+		}
+		break;
 	case ColliderType::PLAYER:
 		// Si el jugador colisiona con un shuriken, aplicar daño
 		if (physA->ctype == ColliderType::ENEMY) {
@@ -393,7 +406,7 @@ bool Enemy::IsPlayerInRange() {
 	Vector2D playerTilePos = Engine::GetInstance().map.get()->WorldToMap(playerPos.getX(), playerPos.getY());
 
 	int distance = abs(playerTilePos.getX() - enemyTilePos.getX());
-	bool isInRange = distance <= 20;
+	bool isInRange = distance <= 8;
 
 	// Verificar si el enemigo está mirando en la dirección del jugador
 	bool isFacingPlayer = (direction == 0 && playerTilePos.getX() < enemyTilePos.getX()) ||
@@ -466,7 +479,7 @@ bool Enemy::IsPlayerInAttackRange() {
 	Vector2D playerTilePos = Engine::GetInstance().map.get()->WorldToMap(playerPos.getX(), playerPos.getY());
 
 	int distance = abs(playerTilePos.getX() - enemyTilePos.getX());
-	return distance <= 14;
+	return distance <= 3;
 }
 
 void Enemy::LoadEnemyFx()

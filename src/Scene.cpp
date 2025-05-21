@@ -198,6 +198,10 @@ bool Scene::Start()
 
 
  
+	for (Enemy* enemy : enemyList)
+	{
+		enemy->SetPlayer(player);
+	}
 
 
 
@@ -213,6 +217,15 @@ bool Scene::PreUpdate()
 // Called each loop iteration
 bool Scene::Update(float dt)
 {
+	for (Enemy* enemy : enemyList)
+	{
+		if (enemy->aggressive)
+		{
+			anyAggressiveNow = true;
+		}
+	}
+	if (anyAggressiveNow) player->detectedbool = true; else player->detectedbool = false;
+
 	//L03 TODO 3: Make the camera movement independent of framerate
 	float camSpeed = 1;
 	Engine::GetInstance().render->RenderMinimap(); // No parameters needed now
@@ -321,7 +334,7 @@ bool Scene::PostUpdate()
 		ret = false;
 
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F2) == KEY_DOWN) {
-		SafeLoadMap("MapTemplate1.tmx", Vector2D(17280, 4224)); // Posición específica Mapa 1
+		SafeLoadMap("MapTemplate1_64x64.tmx", Vector2D(6400, 3968)); // Posición específica Mapa 1
 		levelIndex = 0;
 		parallax->ChangeTextures(levelIndex);
 
@@ -352,7 +365,7 @@ bool Scene::PostUpdate()
 		FadeTransition(Engine::GetInstance().render.get()->renderer, false, 1.0f);
 		Engine::GetInstance().map->CleanUp(); // Esto solo limpia recursos antiguos
 
-		SafeLoadMap("MapTemplate1.tmx", Vector2D(22480, 4304));
+		SafeLoadMap("MapTemplate1_64x64.tmx", Vector2D(6400, 3968));
 
 		Engine::GetInstance().scene.get()->player->loadLevel1 = false;
 		Engine::GetInstance().scene.get()->player->currentLevel = 1;
@@ -364,7 +377,7 @@ bool Scene::PostUpdate()
 		FadeTransition(Engine::GetInstance().render.get()->renderer, false, 1.0f);
 		Engine::GetInstance().map->CleanUp(); // Esto solo limpia recursos antiguos
 
-		SafeLoadMap("MapTemplate2.tmx", Vector2D(1504, 3888));
+		SafeLoadMap("MapTemplate2_64x64.tmx", Vector2D(1408, 3845));
 
 		Engine::GetInstance().scene.get()->player->loadLevel2 = false;
 		Engine::GetInstance().scene.get()->player->currentLevel = 2;
@@ -448,6 +461,12 @@ void Scene::LoadEntities(int sceneIndex)
 			bossList.push_back(boss);
 		}
 	}
+
+	for (Enemy* enemy : enemyList)
+	{
+		enemy->SetPlayer(player);
+	}
+
 }
 
 
@@ -613,7 +632,7 @@ void Scene::SafeLoadMap(const char* mapName, Vector2D playerPos) {
 	Engine::GetInstance().render->camera.y = 0;
 
 	// Crear ítem solo si es el nivel 2
-	if (std::string(mapName) == "MapTemplate2.tmx") {
+	if (std::string(mapName) == "MapTemplate2_64x64.tmx") {
 		CreateItemLvl2(mapName);
 	}
 
@@ -1013,7 +1032,7 @@ void Scene::UpdateInventory(float dt) {
 
 void Scene::CreateItemLvl2(const char* mapName)
 {
-	if (std::string(mapName) == "MapTemplate2.tmx") {
+	if (std::string(mapName) == "MapTemplate2_64x64.tmx") {
 		// Verificar si ya existe un ítem en el nivel 2
 		if (!items.empty()) {
 			LOG("El ítem ya existe en el nivel 2. No se creará otro.");
@@ -1027,6 +1046,7 @@ void Scene::CreateItemLvl2(const char* mapName)
 			items.push_back(item);
 			// L08 TODO 4: Add a physics to an item - initialize the physics body
 			item->Start();
+			item->Puzzle();
 		}
 	}
 }

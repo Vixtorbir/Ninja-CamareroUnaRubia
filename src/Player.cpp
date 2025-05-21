@@ -97,6 +97,9 @@ bool Player::Start() {
 }
 
 bool Player::Update(float dt) {
+
+    StealthManagement();
+
     // Update UI elements
     orbCount->SetText(std::to_string(Orbs));
     backgroundSliderImage->visible = inGame;
@@ -352,7 +355,7 @@ bool Player::Update(float dt) {
 
     // Camera follow
     if (!Engine::GetInstance().scene.get()->watchtitle) {
-        camX = -(float)position.getX() - 256 + (Engine::GetInstance().render.get()->camera.w / 2);
+        camX = -(float)position.getX() - 400  + (Engine::GetInstance().render.get()->camera.w / 2);
         camY = -(float)position.getY() + (Engine::GetInstance().render.get()->camera.h / 2);
     }
     else {
@@ -360,8 +363,8 @@ bool Player::Update(float dt) {
         camY = -(float)position.getY() + (Engine::GetInstance().render.get()->camera.h / 2);
     }
 
-    Engine::GetInstance().render.get()->camera.x += ((int)camX - Engine::GetInstance().render.get()->camera.x) * smoothFactor;
-    Engine::GetInstance().render.get()->camera.y += ((int)camY - Engine::GetInstance().render.get()->camera.y) * smoothFactor;
+    Engine::GetInstance().render.get()->camera.x += ((float)camX - Engine::GetInstance().render.get()->camera.x) * smoothFactor;
+    Engine::GetInstance().render.get()->camera.y += ((float)camY - Engine::GetInstance().render.get()->camera.y) * smoothFactor;
 
     // Draw HP icons
   /*  for (int i = 0; i < hp; ++i) {
@@ -446,6 +449,17 @@ float Player::Lerp(float start, float end, float factor) {
 	return start + factor * (end - start);
 }
 
+void Player::StealthManagement()
+{
+    if (detectedbool) {
+        detected->visible = true;
+        hidden->visible = false;
+    }
+    else {
+        detected->visible = false;
+        hidden->visible = true;
+    }
+}
 
 bool Player::CleanUp() {
     LOG("Cleanup player");
@@ -502,34 +516,7 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 	case ColliderType::UNKNOWN:
 		break;
 
-    case ColliderType::ENEMY:
-        if (physA->ctype == ColliderType::PLAYER_ATTACK) {
-            
-            Enemy* enemy = static_cast<Enemy*>(physB->listener);
-            if (enemy != nullptr) {
-				enemy->startDying = true;
-				Engine::GetInstance().audio.get()->PlayFx(weakKatana1FxId);
-				
-            }
-
-            
-            activeShurikens.erase(
-                std::remove_if(activeShurikens.begin(), activeShurikens.end(),
-                    [physA](const Shuriken& shuriken) { return shuriken.body == physA; }),
-                activeShurikens.end()
-            );
-
-            Engine::GetInstance().physics.get()->DeletePhysBody(physA);
-        }
-
-		else if (physA->ctype == ColliderType::PLAYER_KATANA) {
-			Enemy* enemy = static_cast<Enemy*>(physB->listener);
-			if (enemy != nullptr) {
-				enemy->startDying = true;
-				Engine::GetInstance().audio.get()->PlayFx(weakKatana1FxId);
-			}
-		}
-        break;
+    
 	case ColliderType::TURRET:
 		if (physA->ctype == ColliderType::PLAYER_ATTACK) {
 			Turret* turret = static_cast<Turret*>(physB->listener);
@@ -580,7 +567,11 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
             }
         }
         break;
-
+        case ColliderType::PUZZLE:
+			Engine::GetInstance().audio.get()->PlayFx(pickUpItemFxId);
+			Engine::GetInstance().map.get()->DeleteCollisionBodies();
+			Engine::GetInstance().physics.get()->DeletePhysBody(physB);
+			break;
 	}
 }
 
@@ -600,6 +591,34 @@ void Player::OnCollisionEnd(PhysBody* physA, PhysBody* physB)
 		touchingWall = false;
 		break;
 
+    case ColliderType::ENEMY:
+        if (physA->ctype == ColliderType::PLAYER_ATTACK) {
+
+            Enemy* enemy = static_cast<Enemy*>(physB->listener);
+            if (enemy != nullptr) {
+                enemy->startDying = true;
+                Engine::GetInstance().audio.get()->PlayFx(weakKatana1FxId);
+
+            }
+
+
+            activeShurikens.erase(
+                std::remove_if(activeShurikens.begin(), activeShurikens.end(),
+                    [physA](const Shuriken& shuriken) { return shuriken.body == physA; }),
+                activeShurikens.end()
+            );
+
+            Engine::GetInstance().physics.get()->DeletePhysBody(physA);
+        }
+
+        else if (physA->ctype == ColliderType::PLAYER_KATANA) {
+            Enemy* enemy = static_cast<Enemy*>(physB->listener);
+            if (enemy != nullptr) {
+                enemy->startDying = true;
+                Engine::GetInstance().audio.get()->PlayFx(weakKatana1FxId);
+            }
+        }
+        break;
 	}
 }
 

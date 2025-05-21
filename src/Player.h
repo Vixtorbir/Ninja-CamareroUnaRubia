@@ -57,6 +57,7 @@ public:
     bool Start() override;
     bool Update(float dt) override;
     float Lerp(float start, float end, float factor);
+    void StealthManagement();
     bool CleanUp() override;
 
     void OnCollision(PhysBody* physA, PhysBody* physB) override;
@@ -113,7 +114,7 @@ public:
 
 
     float speed = 1;
-    float jumpForce = 115;
+    float jumpForce = 105;
     float wallJumpForce = 90.5f;
     float wallJumpPush = 102.0f;
     float wallClimbSpeed = -2.0f;
@@ -140,7 +141,7 @@ public:
     // Jump mechanics
     int hasAlreadyJumpedOnce = 0;
 	int maxJumps = 2;
-    float doubleJumpForce = 115.0f;
+    float doubleJumpForce = 90;
     bool jumpKeyHeld = false;
     const float maxHoldTime = 1500.0f;
     const float minJumpMultiplier = 1.2f;
@@ -180,7 +181,7 @@ public:
    
     // Camera control
     int camX, camY;
-    int smoothFactor = 1;
+    float smoothFactor = 0.03f;
 
     // Level management
     int currentLevel = 1;
@@ -221,6 +222,8 @@ public:
     // Footstep system
     float footstepTimer = 0.0f;
     const float footstepDelay = 0.4f;
+
+    bool detectedbool = false;
 
     // Textures
     SDL_Texture* hpIconTexture = nullptr;

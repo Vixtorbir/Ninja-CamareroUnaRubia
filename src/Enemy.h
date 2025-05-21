@@ -5,6 +5,7 @@
 #include "Animation.h"
 #include "Pathfinding.h"
 #include "Timer.h"
+#include "Player.h"
 
 struct SDL_Texture;
 
@@ -24,6 +25,7 @@ public:
     bool Awake();
     bool Start();
     bool Update(float dt);
+    void SetPlayer(Player* player);
     bool CleanUp();
     void SetParameters(pugi::xml_node parameters) {
         this->parameters = parameters;
@@ -39,7 +41,7 @@ public:
     bool IsNextTileCollidable();
     bool IsPlayerInRange();
     void LoadEnemyFx();
-
+    bool aggressive = false;
 	//fx
     //centinel
 	int ninjaWalk1FxId;
@@ -94,6 +96,7 @@ public:
     int tilesMovedInSameDirection = 0;
     EnemyState state = EnemyState::PATROL; // Estado inicial
     
+    Player* player;
 
     Timer attackTimer;          
     bool isAttacking = false;   

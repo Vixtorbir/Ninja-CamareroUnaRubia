@@ -104,7 +104,7 @@ public:
 	SDL_Texture* textureBuffer = nullptr;
 	SDL_Texture* Hanzo = nullptr;
 	SDL_Texture* MenuBackgroundImage = nullptr;
-
+	bool anyAggressiveNow = false;
 	std::string tilePosDebug = "[0,0]";
 	bool once = false;
 
