@@ -330,7 +330,7 @@ bool Scene::PostUpdate()
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F3) == KEY_DOWN) {
 		SafeLoadMap("MapTemplate2_64x64.tmx", Vector2D(1408, 3845)); // Posición específica Mapa 2
 		levelIndex = 1;
-		LoadEntities(1);
+		LoadEntities(2);
 		parallax->ChangeTextures(levelIndex);
 	}
 
@@ -408,21 +408,48 @@ void Scene::FadeTransition(SDL_Renderer* renderer, bool fadeIn, float duration)
 }
 
 void Scene::LoadEntities(int sceneIndex)
-{/*
-	switch (sceneIndex)
-	{
-	case 1:
-		for (pugi::xml_node enemyNode = configParameters.child("entitiesbamboo").child("enemies").child("enemy"); enemyNode; enemyNode = enemyNode.next_sibling("enemy"))
-		{
+{
+	// Limpia las listas actuales de enemigos, torretas y bosses
+	for (auto enemy : enemyList) enemy->CleanUp();
+	enemyList.clear();
+	for (auto turret : turretList) turret->CleanUp();
+	turretList.clear();
+	for (auto boss : bossList) boss->CleanUp();
+	bossList.clear();
+
+	pugi::xml_node enemiesNode;
+
+	if (sceneIndex == 1) {
+		// Primer nivel: <entities><enemies>
+		enemiesNode = configParameters.child("entities").child("enemies");
+	}
+	else if (sceneIndex == 2) {
+		// Segundo nivel: <entitiesbamboo><enemies>
+		enemiesNode = configParameters.child("entitiesbamboo").child("enemies");
+	}
+
+	if (enemiesNode) {
+		for (pugi::xml_node enemyNode = enemiesNode.child("enemy"); enemyNode; enemyNode = enemyNode.next_sibling("enemy")) {
 			Enemy* enemy = (Enemy*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ENEMY);
 			enemy->SetParameters(enemyNode);
+			enemy->Start();
 			enemyList.push_back(enemy);
 		}
-		break;
-	
-	}*/
-	
+		for (pugi::xml_node turretNode = enemiesNode.child("turret"); turretNode; turretNode = turretNode.next_sibling("turret")) {
+			Turret* turret = (Turret*)Engine::GetInstance().entityManager->CreateEntity(EntityType::TURRET);
+			turret->SetParameters(turretNode);
+			turret->Start();
+			turretList.push_back(turret);
+		}
+		for (pugi::xml_node bossNode = enemiesNode.child("boss"); bossNode; bossNode = bossNode.next_sibling("boss")) {
+			Boss* boss = (Boss*)Engine::GetInstance().entityManager->CreateEntity(EntityType::BOSS);
+			boss->SetParameters(bossNode);
+			boss->Start();
+			bossList.push_back(boss);
+		}
+	}
 }
+
 
 // Called before quitting
 bool Scene::CleanUp()
