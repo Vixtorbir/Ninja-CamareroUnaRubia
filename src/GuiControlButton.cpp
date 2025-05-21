@@ -125,8 +125,8 @@ bool GuiControlButton::Update(float dt)
             }
 
             // Calculate position to center text within the button
-            int textX = bounds.x + (bounds.w - textW) / 2;
-            int textY = (bounds.y + 80) + (bounds.h - textH) / 2;
+            int textX = bounds.x + bounds.w - (textW);
+            int textY = bounds.y  + bounds.h - 150;
 
             // Render the text
             if (!isOptionA && !isOptionB) Engine::GetInstance().render->DrawText(text.c_str(), textX, textY, textW, textH);
