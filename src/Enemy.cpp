@@ -164,7 +164,7 @@ bool Enemy::Update(float dt)
 	{
 	case EnemyState::PATROL:
 		currentAnimation = &walkAnimation;
-
+		aggressive = false;
 		// Movimiento de patrulla
 		if (!IsNextTileCollidable() || tilesMovedInSameDirection >= 350)
 		{
@@ -185,7 +185,7 @@ bool Enemy::Update(float dt)
 
 	case EnemyState::AGGRESSIVE:
 		currentAnimation = &walkAnimation;
-
+		aggressive = true;
 		// Movimiento agresivo hacia el jugador
 		if (playerTilePos.getX() < enemyTilePos.getX() && IsNextTileCollidable())
 		{
@@ -292,6 +292,10 @@ bool Enemy::Update(float dt)
 	return true;
 }
 
+void Enemy::SetPlayer(Player* player)
+{
+	this->player = player;
+}
 
 bool Enemy::CleanUp() {
 	Engine::GetInstance().textures.get()->UnLoad(texture);
