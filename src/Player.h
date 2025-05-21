@@ -57,6 +57,7 @@ public:
     bool Start() override;
     bool Update(float dt) override;
     float Lerp(float start, float end, float factor);
+    void StealthManagement();
     bool CleanUp() override;
 
     void OnCollision(PhysBody* physA, PhysBody* physB) override;
@@ -180,7 +181,7 @@ public:
    
     // Camera control
     int camX, camY;
-    int smoothFactor = 1;
+    float smoothFactor = 0.03f;
 
     // Level management
     int currentLevel = 1;
@@ -221,6 +222,8 @@ public:
     // Footstep system
     float footstepTimer = 0.0f;
     const float footstepDelay = 0.4f;
+
+    bool detectedbool = false;
 
     // Textures
     SDL_Texture* hpIconTexture = nullptr;

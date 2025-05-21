@@ -198,6 +198,10 @@ bool Scene::Start()
 
 
  
+	for (Enemy* enemy : enemyList)
+	{
+		enemy->SetPlayer(player);
+	}
 
 
 
@@ -213,6 +217,15 @@ bool Scene::PreUpdate()
 // Called each loop iteration
 bool Scene::Update(float dt)
 {
+	for (Enemy* enemy : enemyList)
+	{
+		if (enemy->aggressive)
+		{
+			anyAggressiveNow = true;
+		}
+	}
+	if (anyAggressiveNow) player->detectedbool = true; else player->detectedbool = false;
+
 	//L03 TODO 3: Make the camera movement independent of framerate
 	float camSpeed = 1;
 	Engine::GetInstance().render->RenderMinimap(); // No parameters needed now
@@ -448,6 +461,12 @@ void Scene::LoadEntities(int sceneIndex)
 			bossList.push_back(boss);
 		}
 	}
+
+	for (Enemy* enemy : enemyList)
+	{
+		enemy->SetPlayer(player);
+	}
+
 }
 
 

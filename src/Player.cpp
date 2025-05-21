@@ -97,6 +97,9 @@ bool Player::Start() {
 }
 
 bool Player::Update(float dt) {
+
+    StealthManagement();
+
     // Update UI elements
     orbCount->SetText(std::to_string(Orbs));
     backgroundSliderImage->visible = inGame;
@@ -352,7 +355,7 @@ bool Player::Update(float dt) {
 
     // Camera follow
     if (!Engine::GetInstance().scene.get()->watchtitle) {
-        camX = -(float)position.getX() - 256 + (Engine::GetInstance().render.get()->camera.w / 2);
+        camX = -(float)position.getX() - 400  + (Engine::GetInstance().render.get()->camera.w / 2);
         camY = -(float)position.getY() + (Engine::GetInstance().render.get()->camera.h / 2);
     }
     else {
@@ -360,8 +363,8 @@ bool Player::Update(float dt) {
         camY = -(float)position.getY() + (Engine::GetInstance().render.get()->camera.h / 2);
     }
 
-    Engine::GetInstance().render.get()->camera.x += ((int)camX - Engine::GetInstance().render.get()->camera.x) * smoothFactor;
-    Engine::GetInstance().render.get()->camera.y += ((int)camY - Engine::GetInstance().render.get()->camera.y) * smoothFactor;
+    Engine::GetInstance().render.get()->camera.x += ((float)camX - Engine::GetInstance().render.get()->camera.x) * smoothFactor;
+    Engine::GetInstance().render.get()->camera.y += ((float)camY - Engine::GetInstance().render.get()->camera.y) * smoothFactor;
 
     // Draw HP icons
   /*  for (int i = 0; i < hp; ++i) {
@@ -446,6 +449,17 @@ float Player::Lerp(float start, float end, float factor) {
 	return start + factor * (end - start);
 }
 
+void Player::StealthManagement()
+{
+    if (detectedbool) {
+        detected->visible = true;
+        hidden->visible = false;
+    }
+    else {
+        detected->visible = false;
+        hidden->visible = true;
+    }
+}
 
 bool Player::CleanUp() {
     LOG("Cleanup player");
