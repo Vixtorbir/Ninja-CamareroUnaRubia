@@ -355,7 +355,10 @@ void Boss::TakeDamage(int damage) {
 bool Boss::CleanUp() {
 	Engine::GetInstance().textures.get()->UnLoad(texture);
 	Engine::GetInstance().textures.get()->UnLoad(attackTexture);
-	Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
+
+	if (pbody != nullptr) {
+		Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
+	}
 	active = false;
 	return true;
 }

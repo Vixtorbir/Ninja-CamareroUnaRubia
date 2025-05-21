@@ -38,7 +38,7 @@ enum class PlayerState {
     JUMPING,
     DASHING,
     CROUCHING,
-    ATTACKINGS,
+    ATTACKING,
     ATTACKINGH,
     WALL_SLIDING
 };
@@ -88,7 +88,7 @@ public:
 
     std::vector<InventoryItem> inventory;
 
-    // Métodos para gestionar el inventario
+    // Mï¿½todos para gestionar el inventario
     void AddItem(const InventoryItem& item);
     void RemoveItem(const std::string& itemName, int quantity = 1);
 	InventoryItem* GetItem(const std::string& itemName);
@@ -101,18 +101,19 @@ public:
     // Physics and movement
     PhysBody* pbody;
 	PhysBody* katanaAttack = nullptr;
-    Timer attackTimer;          
+    Timer attackTimer;
+    Timer attackCooldownTimer;
     bool isAttacking = false;   
     bool isCooldown = false;    
-    const float attackDuration = 0.5f; 
-    const float attackCooldown = 1.0f;
+    const float attackDuration = .1f; 
+    const float attackCooldown = .3;
     SDL_Texture* meleeAttackTexture = nullptr; 
 
     int currentAttackIndex = 0;
 
 
     float speed = 1;
-    float jumpForce = 225;
+    float jumpForce = 115;
     float wallJumpForce = 90.5f;
     float wallJumpPush = 102.0f;
     float wallClimbSpeed = -2.0f;
@@ -138,6 +139,9 @@ public:
 
     // Jump mechanics
     int hasAlreadyJumpedOnce = 0;
+	int maxJumps = 2;
+    float doubleJumpForce = 115.0f;
+    bool jumpKeyHeld = false;
     const float maxHoldTime = 1500.0f;
     const float minJumpMultiplier = 1.2f;
     const float maxJumpMultiplier = 2.0f;
@@ -155,7 +159,7 @@ public:
 
     // Health system
     int HP = MAXHP;
-    const int MAXHP = 100;
+    const int MAXHP = 1000;
     float damageCooldown = 3.0f;
     float timeSinceLastDamage = 0.0f;
     bool canTakeDamage = true;
@@ -169,13 +173,14 @@ public:
     Animation jump;
     Animation dash;
     Animation crouch;
+    Animation climb;
     Animation attack1;
     Animation attack2;
     Animation attack3;
    
     // Camera control
     int camX, camY;
-    float smoothFactor = 0.1f;
+    int smoothFactor = 1;
 
     // Level management
     int currentLevel = 1;
@@ -186,6 +191,10 @@ public:
     GuiPopup* popup = nullptr;
     GuiImage* backgroundSliderImage = nullptr;
     GuiImage* foregroundSliderImage = nullptr;
+
+    GuiImage* hidden = nullptr;
+    GuiImage* detected = nullptr;
+
     GuiSlider* HP_Slider = nullptr;
     GuiImage* orbUi = nullptr;
     Text* orbCount = nullptr;
@@ -218,7 +227,10 @@ public:
     SDL_Texture* BackgroundSliderHP = nullptr;
     SDL_Texture* ForeGroundSliderHP = nullptr;
     SDL_Texture* orbUiTexture = nullptr;
+    bool still = false;
 
+    SDL_Texture* Hidden = nullptr;
+    SDL_Texture* Detected = nullptr;
 
     // Game items
     int Orbs = 0;    

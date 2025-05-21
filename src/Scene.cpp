@@ -150,13 +150,13 @@ bool Scene::Start()
 
 
 
-	SDL_Rect startButtonPos = { 800, 300, 200, 50 };
-	SDL_Rect optionsButtonPos = { 800, 550, 200, 50 };
-	SDL_Rect exitButtonPos = { 800, 800, 200, 50 };
-	SDL_Rect vsyncCheckboxPos = { 800, 250, 200, 50 };
-	SDL_Rect fullscreenCheckboxPos = { 800, 500, 200, 50 };
-	SDL_Rect returntomenuButtonPos = { 800, 750, 200, 50 };
-	SDL_Rect returnButtonPos = { 800, 550, 200, 50 };
+	SDL_Rect startButtonPos = { 1100, 200, 400, 300 };
+	SDL_Rect optionsButtonPos = { 1100, 450, 400, 300 };
+	SDL_Rect exitButtonPos = { 1100, 700, 400, 300 };
+	SDL_Rect vsyncCheckboxPos = { 700, 150, 400, 300 };
+	SDL_Rect fullscreenCheckboxPos = { 700, 400, 400, 300 };
+	SDL_Rect returntomenuButtonPos = { 700, 650, 400, 300 };
+	SDL_Rect returnButtonPos = { 700, 450, 400, 300 };
 
 	startButton = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(
 		GuiControlType::BUTTON, 1, "Start Game", startButtonPos, this);
@@ -330,7 +330,14 @@ bool Scene::PostUpdate()
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F3) == KEY_DOWN) {
 		SafeLoadMap("MapTemplate2_64x64.tmx", Vector2D(1408, 3845)); // Posición específica Mapa 2
 		levelIndex = 1;
-		LoadEntities(1);
+		LoadEntities(2);
+		parallax->ChangeTextures(levelIndex);
+	}
+
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F4) == KEY_DOWN) {
+		SafeLoadMap("Cave.tmx", Vector2D(1536, 3200)); // Posición específica Mapa 2
+		levelIndex = 2;
+		LoadEntities(2);
 		parallax->ChangeTextures(levelIndex);
 	}
 		//Engine::GetInstance().scene.get()->player->currentLevel = 2;
@@ -402,8 +409,47 @@ void Scene::FadeTransition(SDL_Renderer* renderer, bool fadeIn, float duration)
 
 void Scene::LoadEntities(int sceneIndex)
 {
+	// Limpia las listas actuales de enemigos, torretas y bosses
+	for (auto enemy : enemyList) enemy->CleanUp();
+	enemyList.clear();
+	for (auto turret : turretList) turret->CleanUp();
+	turretList.clear();
+	for (auto boss : bossList) boss->CleanUp();
+	bossList.clear();
 
+	pugi::xml_node enemiesNode;
+
+	if (sceneIndex == 1) {
+		// Primer nivel: <entities><enemies>
+		enemiesNode = configParameters.child("entities").child("enemies");
+	}
+	else if (sceneIndex == 2) {
+		// Segundo nivel: <entitiesbamboo><enemies>
+		enemiesNode = configParameters.child("entitiesbamboo").child("enemies");
+	}
+
+	if (enemiesNode) {
+		for (pugi::xml_node enemyNode = enemiesNode.child("enemy"); enemyNode; enemyNode = enemyNode.next_sibling("enemy")) {
+			Enemy* enemy = (Enemy*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ENEMY);
+			enemy->SetParameters(enemyNode);
+			enemy->Start();
+			enemyList.push_back(enemy);
+		}
+		for (pugi::xml_node turretNode = enemiesNode.child("turret"); turretNode; turretNode = turretNode.next_sibling("turret")) {
+			Turret* turret = (Turret*)Engine::GetInstance().entityManager->CreateEntity(EntityType::TURRET);
+			turret->SetParameters(turretNode);
+			turret->Start();
+			turretList.push_back(turret);
+		}
+		for (pugi::xml_node bossNode = enemiesNode.child("boss"); bossNode; bossNode = bossNode.next_sibling("boss")) {
+			Boss* boss = (Boss*)Engine::GetInstance().entityManager->CreateEntity(EntityType::BOSS);
+			boss->SetParameters(bossNode);
+			boss->Start();
+			bossList.push_back(boss);
+		}
+	}
 }
+
 
 // Called before quitting
 bool Scene::CleanUp()
@@ -521,6 +567,7 @@ void Scene::LoadState() {
 	}
 }
 void Scene::SafeLoadMap(const char* mapName, Vector2D playerPos) {
+
 	Engine::GetInstance().map->CleanUp(); // Esto solo limpia recursos antiguos
 
 	for (const auto enemy : enemyList) {
@@ -540,6 +587,19 @@ void Scene::SafeLoadMap(const char* mapName, Vector2D playerPos) {
 	}
 
 	items.clear();
+
+	for (const auto turret : turretList) {
+		turret->CleanUp();
+	}
+
+	turretList.clear();
+
+	for (const auto boss : bossList) {
+		boss->CleanUp();
+	}
+
+	bossList.clear();
+
 
 	std::string path = configParameters.child("map").attribute("path").as_string();
 	if (!Engine::GetInstance().map->Load(path.c_str(), mapName)) {
@@ -794,8 +854,8 @@ void Scene::UpdateGameOver(float dt) {
 	//returntomenuButton->Update(dt);
 	menuBackgroundImage->Update(dt);
 
-	Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/gameplaySongPlaceholder.wav");
-	Engine::GetInstance().audio.get()->musicVolume(50);
+	//Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/gameplaySongPlaceholder.wav");
+	//Engine::GetInstance().audio.get()->musicVolume(50);
 
 }
 void Scene::UpdateLogo(float dt) {

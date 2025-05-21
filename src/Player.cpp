@@ -35,6 +35,9 @@ bool Player::Start() {
     shurikenTexture = Engine::GetInstance().textures.get()->Load("Assets/Textures/goldCoin.png");
     meleeAttackTexture = Engine::GetInstance().textures.get()->Load("Assets/Textures/meleeAttack.png");
 
+    Hidden = Engine::GetInstance().textures.get()->Load("Assets/UI/Hidden.png");
+    Detected = Engine::GetInstance().textures.get()->Load("Assets/UI/Detected.png");
+
     position.setX(parameters.attribute("x").as_int());
     position.setY(parameters.attribute("y").as_int());
     texW = parameters.attribute("w").as_int();
@@ -49,20 +52,31 @@ bool Player::Start() {
     attack1.LoadAnimations(parameters.child("animations").child("attack1"));
     attack2.LoadAnimations(parameters.child("animations").child("attack2"));
     attack3.LoadAnimations(parameters.child("animations").child("attack3"));
+    climb.LoadAnimations(parameters.child("animations").child("climb"));
+
     currentAnimation = &idle;
 
     // Physics setup
-    pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX(), (int)position.getY(), texW, texH, bodyType::DYNAMIC);
+    pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX(), (int)position.getY(), texW/2, texH-50, bodyType::DYNAMIC);
     pbody->listener = this;
     pbody->ctype = ColliderType::PLAYER;
     pbody->body->SetFixedRotation(true);
     pbody->body->SetGravityScale(5);
+	//quitale la friccion al player
+	pbody->body->SetLinearDamping(0.0f);
+	pbody->body->SetAngularDamping(0.0f);
+	
+
 
     // UI elements
     popup = (GuiPopup*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::POPUP, 1, "Press E", btPos, sceneModule);
     orbCount = (Text*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::TEXT, 1, "0", OrbCountPos, sceneModule);
     backgroundSliderImage = (GuiImage*)Engine::GetInstance().guiManager->CreateGuiImage(GuiControlType::IMAGE, 1, " ", btPos, sceneModule, BackgroundSliderHP);
     foregroundSliderImage = (GuiImage*)Engine::GetInstance().guiManager->CreateGuiImage(GuiControlType::IMAGE, 1, " ", btPos, sceneModule, ForeGroundSliderHP);
+    
+    detected = (GuiImage*)Engine::GetInstance().guiManager->CreateGuiImage(GuiControlType::IMAGE, 1, " ", btPos, sceneModule, Detected);
+    hidden = (GuiImage*)Engine::GetInstance().guiManager->CreateGuiImage(GuiControlType::IMAGE, 1, " ", btPos, sceneModule, Hidden);
+
     orbUi = (GuiImage*)Engine::GetInstance().guiManager->CreateGuiImage(GuiControlType::IMAGE, 1, " ", btPos, sceneModule, orbUiTexture);
     HP_Slider = (GuiSlider*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::HPSLIDER, 1, " ", hpPos, sceneModule);
 
@@ -134,11 +148,11 @@ bool Player::Update(float dt) {
     bool moving = movingLeft || movingRight;
     bool grounded = !isJumping && !isDashing && !touchingWall;
     isWalking = false;
-    if (movingLeft) {
+    if (movingLeft && !still) {
         velocity.x = -speed * 16;
         playerDirection = EntityDirections::LEFT;
     }
-    if (movingRight) {
+    if (movingRight && !still) {
         velocity.x = speed * 16;
         playerDirection = EntityDirections::RIGHT;
     }
@@ -162,47 +176,36 @@ bool Player::Update(float dt) {
     }
 
     // Handle jumping
-    if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN && hasAlreadyJumpedOnce == 0 && !inBubble && !crouched) {
-        isHoldingJump = true;
-        jumpHoldTimer = 0.0f;
-    }
+    bool jumpPressed = Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN;
+    bool jumpReleased = Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_UP;
 
-    if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_REPEAT && isHoldingJump && !inBubble) {
-        jumpHoldTimer += dt;
-        if (jumpHoldTimer >= maxHoldTime) {
-            float jumpStrength = jumpForce * maxJumpMultiplier;
-            pbody->body->ApplyLinearImpulseToCenter(b2Vec2(0, -jumpStrength), true);
-            hasAlreadyJumpedOnce++;
-            isHoldingJump = false;
-            isJumping = true;
-            currentState = PlayerState::JUMPING;
-            int jumpId = Engine::GetInstance().audio.get()->randomFx(jump1FxId, jump3FxId);
-            Engine::GetInstance().audio.get()->PlayFx(jumpId);
-        }
-    }
+    if (jumpPressed && !jumpKeyHeld && hasAlreadyJumpedOnce < 2 && !inBubble && !crouched) {
+        float appliedForce = (hasAlreadyJumpedOnce == 0) ? jumpForce : doubleJumpForce;
 
-    if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_UP && isHoldingJump && !inBubble) {
-        float holdPercentage = jumpHoldTimer / maxHoldTime;
-        float jumpMultiplier = minJumpMultiplier + (holdPercentage * (maxJumpMultiplier - minJumpMultiplier));
-        float jumpStrength = jumpForce * jumpMultiplier;
-        pbody->body->ApplyLinearImpulseToCenter(b2Vec2(0, -jumpStrength), true);
-        hasAlreadyJumpedOnce++;
-        isHoldingJump = false;
-        isJumping = true;
-        currentState = PlayerState::JUMPING;
-    }
+        b2Vec2 vel = pbody->body->GetLinearVelocity();
+        vel.y = 0;
+        pbody->body->SetLinearVelocity(vel);
 
-    // Double jump
-    if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN && hasAlreadyJumpedOnce == 1 && !inBubble) {
-        pbody->body->SetLinearVelocity(b2Vec2(pbody->body->GetLinearVelocity().x, 0));
-        pbody->body->ApplyLinearImpulseToCenter(b2Vec2(0, -jumpForce), true);
+        pbody->body->ApplyLinearImpulseToCenter(b2Vec2(0, -appliedForce), true);
+
+        int fxId = (hasAlreadyJumpedOnce == 0)
+            ? Engine::GetInstance().audio.get()->randomFx(jump1FxId, jump3FxId)
+            : Engine::GetInstance().audio.get()->randomFx(doubleJump1FxId, doubleJump2FxId);
+        Engine::GetInstance().audio.get()->PlayFx(fxId);
+
         hasAlreadyJumpedOnce++;
         isJumping = true;
         currentState = PlayerState::JUMPING;
-        int doubleJumpId = Engine::GetInstance().audio.get()->randomFx(doubleJump1FxId, doubleJump2FxId);
-        Engine::GetInstance().audio.get()->PlayFx(doubleJumpId);
+        jumpKeyHeld = true;
+
+        LOG("Jump count: %d", hasAlreadyJumpedOnce);
     }
 
+    if (jumpReleased) {
+        jumpKeyHeld = false;
+    }
+
+    /*
     // Wall jump
     if (touchingWall && Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_L) == KEY_DOWN) {
         float jumpDirection = (playerDirection == EntityDirections::LEFT) ? 1.0f : -1.0f;
@@ -213,14 +216,17 @@ bool Player::Update(float dt) {
         playerDirection = (playerDirection == EntityDirections::LEFT) ? EntityDirections::RIGHT : EntityDirections::LEFT;
         int doubleJumpId = Engine::GetInstance().audio.get()->randomFx(doubleJump1FxId, doubleJump2FxId);
         Engine::GetInstance().audio.get()->PlayFx(doubleJumpId);
-        currentState = PlayerState::JUMPING;
+        currentAnimation == &climb;
+
+        //currentState = PlayerState::JUMPING;
     }
 
     // Wall slide
     if (touchingWall && Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_REPEAT) {
+        currentAnimation == &climb;
         pbody->body->SetLinearVelocity(b2Vec2(0, wallClimbSpeed));
         currentState = PlayerState::WALL_SLIDING;
-    }
+    }*/
 
     // Dash
     if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_LSHIFT) == KEY_DOWN && canDash) {
@@ -271,6 +277,9 @@ bool Player::Update(float dt) {
     else if (crouched) {
         currentState = PlayerState::CROUCHING;
     }
+    else if (isAttacking) { 
+        currentState = PlayerState::ATTACKING;
+    }
     else if (touchingWall && !grounded) {
         currentState = PlayerState::WALL_SLIDING;
     }
@@ -307,6 +316,9 @@ bool Player::Update(float dt) {
             footstepTimer = 0.0f;
         }
         break;
+    case PlayerState::ATTACKING: 
+        still = true;
+        break;
     case PlayerState::IDLE:
     default:
         currentAnimation = &idle;
@@ -320,18 +332,18 @@ bool Player::Update(float dt) {
     b2Transform pbodyPos = pbody->body->GetTransform();
     position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texW - 135);
 
-    position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
+    position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - (texH / 2)-27);
 
     int renderOffsetY = 0;
     if (crouched) {
-        renderOffsetY = -65; 
+        renderOffsetY = -45; 
     }
 
     // Renderizar la textura del jugador
     Engine::GetInstance().render.get()->DrawEntity(
         texture,
         (int)position.getX(),
-        (int)position.getY() + renderOffsetY, 
+        (int)position.getY() + renderOffsetY , 
         &currentAnimation->GetCurrentFrame(),
         1, 0, 0, 0, (int)playerDirection
     );
@@ -340,16 +352,16 @@ bool Player::Update(float dt) {
 
     // Camera follow
     if (!Engine::GetInstance().scene.get()->watchtitle) {
-        camX = -(float)position.getX() + (Engine::GetInstance().render.get()->camera.w / 2);
+        camX = -(float)position.getX() - 256 + (Engine::GetInstance().render.get()->camera.w / 2);
         camY = -(float)position.getY() + (Engine::GetInstance().render.get()->camera.h / 2);
     }
     else {
-        camX = 3000 + (Engine::GetInstance().render.get()->camera.w / 2);
+        camX = 2000 + (Engine::GetInstance().render.get()->camera.w / 2);
         camY = -(float)position.getY() + (Engine::GetInstance().render.get()->camera.h / 2);
     }
 
-    Engine::GetInstance().render.get()->camera.x += (camX - Engine::GetInstance().render.get()->camera.x) * smoothFactor;
-    Engine::GetInstance().render.get()->camera.y += (camY - Engine::GetInstance().render.get()->camera.y) * smoothFactor;
+    Engine::GetInstance().render.get()->camera.x += ((int)camX - Engine::GetInstance().render.get()->camera.x) * smoothFactor;
+    Engine::GetInstance().render.get()->camera.y += ((int)camY - Engine::GetInstance().render.get()->camera.y) * smoothFactor;
 
     // Draw HP icons
   /*  for (int i = 0; i < hp; ++i) {
@@ -363,35 +375,29 @@ bool Player::Update(float dt) {
         }
     }
     
-    if (isCooldown) {
-        if (attackTimer.ReadSec() >= attackCooldown) {
-            isCooldown = false; 
-            LOG("Cooldown ended, player can attack again.");
-        }
-    }
 
     
     if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_K) == KEY_DOWN && !isAttacking && !isCooldown) {
-        PerformAttack();         
-        isAttacking = true;      
-        attackTimer.Start();     
-        LOG("Attack started.");
+        PerformAttack();
+        isAttacking = true;
+        attackTimer.Start(); 
     }
 
     if (isAttacking && attackTimer.ReadSec() >= attackDuration) {
-        isAttacking = false; 
-        isCooldown = true;   
-        attackTimer.Start(); 
-
-        
+        isAttacking = false;
+        isCooldown = true;
+        attackCooldownTimer.Start(); 
         if (katanaAttack != nullptr) {
             Engine::GetInstance().physics.get()->DeletePhysBody(katanaAttack);
             katanaAttack = nullptr;
         }
+        still = false;
 
         LOG("Attack ended, cooldown started.");
     }
-
+    if (isCooldown && attackCooldownTimer.ReadSec() >= attackCooldown) {
+        isCooldown = false;
+    }
     if (isAttacking && katanaAttack != nullptr) {
         int x, y;
         katanaAttack->GetPosition(x, y);
@@ -464,25 +470,16 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 	switch (physB->ctype)
 	{
 	case ColliderType::PLATFORM:
-		isJumping = false;
-		hasAlreadyJumpedOnce = 0;
-       /* if (physA->ctype == ColliderType::PLAYER_ATTACK) {
-            
-            activeShurikens.erase(std::remove(activeShurikens.begin(), activeShurikens.end(), physA), activeShurikens.end());
-            Engine::GetInstance().physics.get()->DeletePhysBody(physA);
-        }*/
-		break;
+		LOG("Grounded - reset jump count");
+    isJumping = false;
+    hasAlreadyJumpedOnce = 0;
+    break;
 	case ColliderType::NPC:
 		inBubble = true;
 		GuiPOPup(GuiPopups::E_Interact);
 		break;
 	case ColliderType::WALL:
-		touchingWall = true;
-        /* if (physA->ctype == ColliderType::PLAYER_ATTACK) {
-
-             activeShurikens.erase(std::remove(activeShurikens.begin(), activeShurikens.end(), physA), activeShurikens.end());
-             Engine::GetInstance().physics.get()->DeletePhysBody(physA);
-         }*/
+		
 		break;
     case ColliderType::ITEM: {
         Item* item = static_cast<Item*>(physB->listener);
@@ -510,7 +507,7 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
             
             Enemy* enemy = static_cast<Enemy*>(physB->listener);
             if (enemy != nullptr) {
-				enemy->dead = true;
+				enemy->startDying = true;
 				Engine::GetInstance().audio.get()->PlayFx(weakKatana1FxId);
 				
             }
@@ -524,6 +521,14 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 
             Engine::GetInstance().physics.get()->DeletePhysBody(physA);
         }
+
+		else if (physA->ctype == ColliderType::PLAYER_KATANA) {
+			Enemy* enemy = static_cast<Enemy*>(physB->listener);
+			if (enemy != nullptr) {
+				enemy->startDying = true;
+				Engine::GetInstance().audio.get()->PlayFx(weakKatana1FxId);
+			}
+		}
         break;
 	case ColliderType::TURRET:
 		if (physA->ctype == ColliderType::PLAYER_ATTACK) {
@@ -537,8 +542,16 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 					[physA](const Shuriken& shuriken) { return shuriken.body == physA; }),
 				activeShurikens.end()
 			);
-			Engine::GetInstance().physics.get()->DeletePhysBody(physA);
+		Engine::GetInstance().physics.get()->DeletePhysBody(physA);
 		}
+
+        else if (physA->ctype == ColliderType::PLAYER_KATANA) {
+            Turret* turret = static_cast<Turret*>(physB->listener);
+            if (turret != nullptr) {
+                turret->dead = true;
+                Engine::GetInstance().audio.get()->PlayFx(weakKatana1FxId);
+            }
+        }
 		break;
         case ColliderType::BOSS:
         if (physA->ctype == ColliderType::PLAYER_ATTACK) {
@@ -557,6 +570,13 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
             }
             else {
                 LOG("Boss is in damage cooldown, shuriken has no effect.");
+            }
+        }
+        else if (physA->ctype == ColliderType::PLAYER_KATANA) {
+            Boss* boss = static_cast<Boss*>(physB->listener);
+            if (boss != nullptr) {
+                boss->TakeDamage(1);
+                Engine::GetInstance().audio.get()->PlayFx(weakKatana1FxId);
             }
         }
         break;
@@ -579,6 +599,7 @@ void Player::OnCollisionEnd(PhysBody* physA, PhysBody* physB)
 	case ColliderType::WALL:
 		touchingWall = false;
 		break;
+
 	}
 }
 
@@ -631,7 +652,7 @@ void Player::TakeDamage(int damage) {
     if (canTakeDamage) {
         HP -= damage;
         if (HP <= 0) {
-            Die(); 
+            //Die(); 
         }
         canTakeDamage = false; 
         LOG("Player took damage! Remaining HP: %d", HP);
@@ -649,35 +670,27 @@ void Player::Die() {
 
 void Player::PerformAttack() {
     // Seleccionar la animación de ataque actual
-    switch (currentAttackIndex) {
-    case 0:
-        currentAnimation = &attack1;
-        break;
-    case 1:
-        currentAnimation = &attack2;
-        break;
-    case 2:
-        currentAnimation = &attack3;
-        break;
-    default:
-        currentAnimation = &attack1;
-        break;
-    }
+
+    currentState = PlayerState::ATTACKING;
+    
+    currentAnimation = &attack1;
+     
 
     // Configurar el área de ataque según la dirección del jugador
     if (playerDirection == EntityDirections::RIGHT) {
         katanaAttack = Engine::GetInstance().physics.get()->CreateRectangleSensor(
-            (int)position.getX() + 390, (int)position.getY() + 100, 80, 250, bodyType::STATIC
+            (int)position.getX() + 390, (int)position.getY() + 100, 80, 250, bodyType::KINEMATIC
         );
     }
     else {
         katanaAttack = Engine::GetInstance().physics.get()->CreateRectangleSensor(
-            (int)position.getX() +135, (int)position.getY() + 100, 80, 250, bodyType::STATIC
+            (int)position.getX() +135, (int)position.getY() + 100, 80, 250, bodyType::KINEMATIC
         );
     }
 
-    katanaAttack->ctype = ColliderType::PLAYER_ATTACK;
+    katanaAttack->ctype = ColliderType::PLAYER_KATANA;
     katanaAttack->listener = this;
+    katanaAttack->body->SetGravityScale(0.0f);
 
     // Avanzar al siguiente ataque (cíclico)
     currentAttackIndex = (currentAttackIndex + 1) % 3;
@@ -764,14 +777,18 @@ void Player::ChangeHitboxSize(float width, float height) {
         fixture = next;
     }
 
-    // Crear un nuevo fixture con el nuevo tamaño
-    if (height == texH / 2) {
-        // Si se está agachando, ajustar la posición hacia abajo
-        currentPosition.y += PIXEL_TO_METERS(texH / 4); // Ajustar la posición para que el hitbox quede alineado
+    // Si se está agachando, la hitbox es la mitad de alta y se sube para que los pies queden igual
+    if (crouched) {
+        width = texW / 2;
+        height = (texH - 50) / 2;
+        // Subir la posición la mitad de la diferencia de altura
+        currentPosition.y -= PIXEL_TO_METERS(((texH - 50) / 4)-2);
     }
     else {
-        // Si se está levantando, ajustar la posición hacia arriba
-        currentPosition.y -= PIXEL_TO_METERS(texH / 4); // Ajustar la posición para que el hitbox quede alineado
+        width = texW / 2;
+        height = texH - 50;
+        // Al levantarse, bajar la posición la mitad de la diferencia de altura
+        currentPosition.y += PIXEL_TO_METERS((texH - 50) / 4);
     }
 
     // Crear el nuevo cuerpo físico con el tamaño ajustado
@@ -784,10 +801,14 @@ void Player::ChangeHitboxSize(float width, float height) {
     pbody->ctype = ColliderType::PLAYER;
     pbody->body->SetFixedRotation(true);
     pbody->body->SetGravityScale(5);
+    pbody->body->SetLinearDamping(0.0f);
+    pbody->body->SetAngularDamping(0.0f);
 
     // Actualizar la posición del cuerpo físico
     pbody->body->SetTransform(currentPosition, 0);
 }
+
+
 
 
 void Player::AddItem(const InventoryItem& item) {

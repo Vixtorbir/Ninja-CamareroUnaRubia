@@ -28,6 +28,7 @@ enum class ColliderType {
 	ITEM,
 	PLATFORM,
 	PLAYER_ATTACK,
+	PLAYER_KATANA,
 	TURRET,
 	ENEMY,
 	BOSS,

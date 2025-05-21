@@ -3,13 +3,13 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "Cave.tmx",
+    "activeFile": "MapTemplate1.tmx",
     "expandedProjectPaths": [
     ],
     "fileStates": {
         "": {
             "scaleInDock": 1,
-            "scaleInEditor": 0.75
+            "scaleInEditor": 1
         },
         "BossArena.tmx": {
             "scale": 0.30337797619047613,
@@ -32,21 +32,31 @@
             "scaleInDock": 1
         },
         "Cave.tmx": {
-            "scale": 0.0625,
-            "selectedLayer": 8,
+            "expandedObjectLayers": [
+                8,
+                9
+            ],
+            "scale": 0.33,
+            "selectedLayer": 1,
             "viewCenter": {
-                "x": 7088,
-                "y": 3600
+                "x": 8001.515151515151,
+                "y": 3198.484848484849
             }
         },
         "Cave.tmx#MapMetadata": {
             "scaleInDock": 1
         },
+        "Cave.tmx#level0Tileset 128 x 128 def": {
+            "scaleInDock": 1
+        },
         "Cave.tmx#level1Tileset 128 x 128": {
             "scaleInDock": 1
         },
+        "Cave.tmx#level1Tileset 64x64": {
+            "scaleInDock": 1
+        },
         "Cave.tmx#level2CaveTileset 64 x 64": {
-            "scaleInDock": 0.5,
+            "scaleInDock": 0.25,
             "scaleInEditor": 1
         },
         "Cave.tmx#tmw_desert_spacing": {
@@ -58,19 +68,76 @@
         "Cave.tmx#wtf": {
             "scaleInDock": 1
         },
-        "MapTemplate2_64x64.tmx": {
+        "MapTemplate1.tmx": {
+            "expandedObjectLayers": [
+                8,
+                9,
+                25
+            ],
             "scale": 0.125,
-            "selectedLayer": 0,
+            "selectedLayer": -1,
             "viewCenter": {
-                "x": 11204,
-                "y": 3192
+                "x": 3756,
+                "y": 3064
+            }
+        },
+        "MapTemplate1.tmx#MapMetadata": {
+            "scaleInDock": 1
+        },
+        "MapTemplate1.tmx#Zone1": {
+            "scaleInDock": 1
+        },
+        "MapTemplate1.tmx#level0Tileset 128 x 128 def": {
+            "scaleInDock": 0.33
+        },
+        "MapTemplate1.tmx#tmw_desert_spacing": {
+            "scaleInDock": 1
+        },
+        "MapTemplate1.tmx#unidad mesura": {
+            "scaleInDock": 1
+        },
+        "MapTemplate1.tmx#wtf": {
+            "scaleInDock": 1
+        },
+        "MapTemplate1_64x64.tmx": {
+            "expandedObjectLayers": [
+                8,
+                9,
+                25
+            ],
+            "scale": 0.03125,
+            "selectedLayer": 14,
+            "viewCenter": {
+                "x": 16304,
+                "y": 3184
+            }
+        },
+        "MapTemplate1_64x64.tmx#MapMetadata": {
+            "scaleInDock": 1
+        },
+        "MapTemplate1_64x64.tmx#level0Tileset 128 x 128 def": {
+            "scaleInDock": 0.125
+        },
+        "MapTemplate1_64x64.tmx#unidad mesura": {
+            "scaleInDock": 1
+        },
+        "MapTemplate2_64x64.tmx": {
+            "expandedObjectLayers": [
+                8,
+                9
+            ],
+            "scale": 0.25,
+            "selectedLayer": 18,
+            "viewCenter": {
+                "x": 11496,
+                "y": 3202
             }
         },
         "MapTemplate2_64x64.tmx#level0Tileset 64x64": {
             "scaleInDock": 0.5
         },
         "MapTemplate2_64x64.tmx#level1Tileset 64x64": {
-            "scaleInDock": 0.5
+            "scaleInDock": 0.33
         },
         "MapTemplate2_64x64.tmx#level2CaveTileset 64x64": {
             "scaleInDock": 0.5
@@ -82,13 +149,18 @@
     "map.tileWidth": 64,
     "map.width": 200,
     "openFiles": [
-        "Cave.tmx"
+        "Cave.tmx",
+        "MapTemplate2_64x64.tmx",
+        "MapTemplate1.tmx",
+        "MapTemplate1_64x64.tmx"
     ],
     "project": "ForestTilemap.tiled-project",
     "property.type": "bool",
     "recentFiles": [
         "Cave.tmx",
         "MapTemplate2_64x64.tmx",
+        "MapTemplate1_64x64.tmx",
+        "MapTemplate1.tmx",
         "BossArena.tmx"
     ],
     "tileset.embedInMap": true,
