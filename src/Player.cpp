@@ -502,34 +502,7 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 	case ColliderType::UNKNOWN:
 		break;
 
-    case ColliderType::ENEMY:
-        if (physA->ctype == ColliderType::PLAYER_ATTACK) {
-            
-            Enemy* enemy = static_cast<Enemy*>(physB->listener);
-            if (enemy != nullptr) {
-				enemy->startDying = true;
-				Engine::GetInstance().audio.get()->PlayFx(weakKatana1FxId);
-				
-            }
-
-            
-            activeShurikens.erase(
-                std::remove_if(activeShurikens.begin(), activeShurikens.end(),
-                    [physA](const Shuriken& shuriken) { return shuriken.body == physA; }),
-                activeShurikens.end()
-            );
-
-            Engine::GetInstance().physics.get()->DeletePhysBody(physA);
-        }
-
-		else if (physA->ctype == ColliderType::PLAYER_KATANA) {
-			Enemy* enemy = static_cast<Enemy*>(physB->listener);
-			if (enemy != nullptr) {
-				enemy->startDying = true;
-				Engine::GetInstance().audio.get()->PlayFx(weakKatana1FxId);
-			}
-		}
-        break;
+    
 	case ColliderType::TURRET:
 		if (physA->ctype == ColliderType::PLAYER_ATTACK) {
 			Turret* turret = static_cast<Turret*>(physB->listener);
@@ -580,7 +553,11 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
             }
         }
         break;
-
+        case ColliderType::PUZZLE:
+			Engine::GetInstance().audio.get()->PlayFx(pickUpItemFxId);
+			Engine::GetInstance().map.get()->DeleteCollisionBodies();
+			Engine::GetInstance().physics.get()->DeletePhysBody(physB);
+			break;
 	}
 }
 
@@ -600,6 +577,34 @@ void Player::OnCollisionEnd(PhysBody* physA, PhysBody* physB)
 		touchingWall = false;
 		break;
 
+    case ColliderType::ENEMY:
+        if (physA->ctype == ColliderType::PLAYER_ATTACK) {
+
+            Enemy* enemy = static_cast<Enemy*>(physB->listener);
+            if (enemy != nullptr) {
+                enemy->startDying = true;
+                Engine::GetInstance().audio.get()->PlayFx(weakKatana1FxId);
+
+            }
+
+
+            activeShurikens.erase(
+                std::remove_if(activeShurikens.begin(), activeShurikens.end(),
+                    [physA](const Shuriken& shuriken) { return shuriken.body == physA; }),
+                activeShurikens.end()
+            );
+
+            Engine::GetInstance().physics.get()->DeletePhysBody(physA);
+        }
+
+        else if (physA->ctype == ColliderType::PLAYER_KATANA) {
+            Enemy* enemy = static_cast<Enemy*>(physB->listener);
+            if (enemy != nullptr) {
+                enemy->startDying = true;
+                Engine::GetInstance().audio.get()->PlayFx(weakKatana1FxId);
+            }
+        }
+        break;
 	}
 }
 

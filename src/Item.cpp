@@ -104,3 +104,9 @@ void Item::OnPickup(Player* player) {
 	this->active = false; // Desactivar el objeto
 }
 
+void Item::Puzzle() {
+
+	pbody->ctype = ColliderType::PUZZLE;
+
+}
+
