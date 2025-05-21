@@ -210,7 +210,7 @@ bool Enemy::Update(float dt)
 
 		if (!isAttacking && !isCooldown)
 		{
-			PerformAttack();
+			//PerformAttack();
 			isAttacking = true;
 			attackTimer.Start(); // Inicia el temporizador para el ataque
 		}

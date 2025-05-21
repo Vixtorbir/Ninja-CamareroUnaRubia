@@ -27,7 +27,9 @@ public:
 
    bool CleanUp();
 
-   void OnPickup(Player* player);  
+   void OnPickup(Player* player);
+
+   void Puzzle();
 
    void SetParameters(pugi::xml_node parameters) {  
        this->parameters = parameters;  

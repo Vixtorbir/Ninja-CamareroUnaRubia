@@ -632,7 +632,7 @@ void Scene::SafeLoadMap(const char* mapName, Vector2D playerPos) {
 	Engine::GetInstance().render->camera.y = 0;
 
 	// Crear ítem solo si es el nivel 2
-	if (std::string(mapName) == "MapTemplate2.tmx") {
+	if (std::string(mapName) == "MapTemplate2_64x64.tmx") {
 		CreateItemLvl2(mapName);
 	}
 
@@ -1032,7 +1032,7 @@ void Scene::UpdateInventory(float dt) {
 
 void Scene::CreateItemLvl2(const char* mapName)
 {
-	if (std::string(mapName) == "MapTemplate2.tmx") {
+	if (std::string(mapName) == "MapTemplate2_64x64.tmx") {
 		// Verificar si ya existe un ítem en el nivel 2
 		if (!items.empty()) {
 			LOG("El ítem ya existe en el nivel 2. No se creará otro.");
@@ -1046,6 +1046,7 @@ void Scene::CreateItemLvl2(const char* mapName)
 			items.push_back(item);
 			// L08 TODO 4: Add a physics to an item - initialize the physics body
 			item->Start();
+			item->Puzzle();
 		}
 	}
 }

@@ -138,7 +138,7 @@
 				</animations>
 			</npcHANZO>
 			<items>
-				<item name="coin" x="19840" y="3024" w="32" h="32" texture="Assets/Textures/goldCoin.png" gravity="true">
+				<item name="coin" x="20864" y="3264" w="32" h="32" texture="Assets/Textures/goldCoin.png" gravity="true">
 					<animations>
 						<idle loop="true" speed="0.5">
 							<frame x="0" y="0" w="32" h="32" />
