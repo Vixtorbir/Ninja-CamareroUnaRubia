@@ -275114,7 +275114,7 @@
    <tile/>
   </data>
  </layer>
- <objectgroup id="8" name="Floor">
+ <objectgroup id="8" name="Floor" visible="0">
   <properties>
    <property name="Draw" type="bool" value="true"/>
   </properties>
@@ -275189,7 +275189,7 @@
   <object id="884" x="1654" y="3526" width="68" height="16"/>
   <object id="885" x="1345" y="3539" width="111" height="16"/>
  </objectgroup>
- <objectgroup id="9" name="Wall">
+ <objectgroup id="9" name="Wall" visible="0">
   <properties>
    <property name="Draw" type="bool" value="true"/>
   </properties>
