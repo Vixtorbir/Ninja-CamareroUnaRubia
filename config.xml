@@ -94,7 +94,7 @@
 					</climb>
 				</animations>
 			</player>
-			<npcMENTORSHIP x="1000" y="1100" w="111" h="271" texture="Assets/Textures/npcMENTORSHIP.png" gravity="true">
+			<npcMENTORSHIP x="6900" y="3925" w="111" h="271" texture="Assets/Textures/npcMENTORSHIP.png" gravity="true">
 				<animations>
 					<idle loop="true" speed="0.5">
 						<frame x="0" y="0" w="111" h="271" />
