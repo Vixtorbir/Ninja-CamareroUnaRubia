@@ -332,23 +332,23 @@ void Enemy::ResetPath() {
 void Enemy::OnCollision(PhysBody* physA, PhysBody* physB) {
 	switch (physB->ctype) {
 	case ColliderType::PLAYER_ATTACK:
-		if (!isDying) {
-			LOG("Enemy hit by player attack!");
-			isDying = true;
-			deathTimer.Start();
-			currentAnimation = &deathAnimation;
-			pbody->body->SetLinearVelocity(b2Vec2(0, 0));
-		}
-		break;
 	case ColliderType::PLAYER_KATANA:
 		if (!isDying) {
-			LOG("Enemy hit by player katana!");
-			isDying = true;
-			deathTimer.Start();
-			currentAnimation = &deathAnimation;
-			pbody->body->SetLinearVelocity(b2Vec2(0, 0));
+			lives--;
+			LOG("Enemy hit! Lives left: %d", lives);
+			if (lives <= 0) {
+				LOG("Enemy has no more lives!");
+				isDying = true;
+				deathTimer.Start();
+				currentAnimation = &deathAnimation;
+				pbody->body->SetLinearVelocity(b2Vec2(0, 0));
+			}
+			else {
+			}
 		}
 		break;
+
+ 
 	case ColliderType::PLAYER:
 		// Si el jugador colisiona con un shuriken, aplicar daño
 		if (physA->ctype == ColliderType::ENEMY) {
