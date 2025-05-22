@@ -37,6 +37,7 @@ public:
     void OnCollisionEnd(PhysBody* physA, PhysBody* physB);
 
 public:
+    int lives = 3;
 
     bool IsNextTileCollidable();
     bool IsPlayerInRange();

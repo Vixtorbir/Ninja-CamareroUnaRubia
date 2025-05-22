@@ -3,8 +3,9 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "MapTemplate1.tmx",
+    "activeFile": "MapTemplate2_64x64.tmx",
     "expandedProjectPaths": [
+        "."
     ],
     "fileStates": {
         "": {
@@ -39,8 +40,8 @@
             "scale": 0.33,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 8001.515151515151,
-                "y": 3198.484848484849
+                "x": 8001.515151515152,
+                "y": 3198.4848484848485
             }
         },
         "Cave.tmx#MapMetadata": {
@@ -70,15 +71,15 @@
         },
         "MapTemplate1.tmx": {
             "expandedObjectLayers": [
+                25,
                 8,
-                9,
-                25
+                9
             ],
-            "scale": 0.125,
-            "selectedLayer": -1,
+            "scale": 0.03125,
+            "selectedLayer": 0,
             "viewCenter": {
-                "x": 3756,
-                "y": 3064
+                "x": 10240,
+                "y": 2608
             }
         },
         "MapTemplate1.tmx#MapMetadata": {
@@ -101,14 +102,14 @@
         },
         "MapTemplate1_64x64.tmx": {
             "expandedObjectLayers": [
+                25,
                 8,
-                9,
-                25
+                9
             ],
             "scale": 0.03125,
             "selectedLayer": 14,
             "viewCenter": {
-                "x": 16304,
+                "x": 17136,
                 "y": 3184
             }
         },
@@ -126,11 +127,11 @@
                 8,
                 9
             ],
-            "scale": 0.25,
-            "selectedLayer": 18,
+            "scale": 0.015625,
+            "selectedLayer": 11,
             "viewCenter": {
-                "x": 11496,
-                "y": 3202
+                "x": -2816,
+                "y": 9312
             }
         },
         "MapTemplate2_64x64.tmx#level0Tileset 64x64": {
@@ -158,9 +159,9 @@
     "property.type": "bool",
     "recentFiles": [
         "Cave.tmx",
-        "MapTemplate2_64x64.tmx",
         "MapTemplate1_64x64.tmx",
         "MapTemplate1.tmx",
+        "MapTemplate2_64x64.tmx",
         "BossArena.tmx"
     ],
     "tileset.embedInMap": true,

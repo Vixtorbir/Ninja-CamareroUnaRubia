@@ -136,7 +136,7 @@ bool Dialogue::Update(float dt)
 
         if (Engine::GetInstance().input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
         {
-            displayText = text; 
+            displayText = WrapText(text, bounds.w - 20, Engine::GetInstance().render->font);
             charIndex = text.length();
             fullTextDisplayed = true;
         }

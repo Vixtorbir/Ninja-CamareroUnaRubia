@@ -85,6 +85,8 @@ public:
 
     void PerformAttack();
 
+    void PerformAttack2();
+
     void ThrowShuriken();
 
     std::vector<InventoryItem> inventory;
@@ -106,7 +108,7 @@ public:
     Timer attackCooldownTimer;
     bool isAttacking = false;   
     bool isCooldown = false;    
-    const float attackDuration = .1f; 
+    const float attackDuration = .5f; 
     const float attackCooldown = .3;
     SDL_Texture* meleeAttackTexture = nullptr; 
 

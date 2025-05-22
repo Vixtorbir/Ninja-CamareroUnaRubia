@@ -54,7 +54,8 @@ public:
 	int camX, camY;
 	float smoothFactor = 0.1f;
 	//Audio fx
-
+	bool bubble = false;
+	bool inside = false;
 	// L08 TODO 5: Add physics to the player - declare a Physics body
 	PhysBody* pbody;
 	bool showcaseDialogue = false;
