@@ -140,8 +140,10 @@ void NPC::OnCollisionEnd(PhysBody* physA, PhysBody* physB)
 	switch (physB->ctype)
 	{
 	case ColliderType::PLAYER:
+		showcaseDialogue = false;
+
 		inside = false;
-		once = true; // Change from false to true
+		once = false; // Change from false to true
 		Engine::GetInstance().guiManager->ClearControlsOfType(GuiControlType::DIALOGUE);
 		break;
 	}
