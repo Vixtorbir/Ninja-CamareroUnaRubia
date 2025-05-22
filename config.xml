@@ -108,21 +108,21 @@
 					</idle>
 				</animations>
 			</npcVILLAGE2>
-			<npcISAMU x="500" y="1100" w="111" h="271" texture="Assets/Textures/player/Idle.png" gravity="true">
+			<npcISAMU x="6997" y="3950" w="111" h="271" texture="Assets/Textures/player/Idle.png" gravity="true">
 				<animations>
 					<idle loop="true" speed="0.5">
 						<frame x="0" y="0" w="111" h="271" />
 					</idle>
 				</animations>
 			</npcISAMU>
-			<npcKAEDE x="200" y="1100" w="111" h="271" texture="Assets/Textures/player/Idle.png" gravity="true">
+			<npcKAEDE x="12424" y="3950" w="111" h="271" texture="Assets/Textures/player/Idle.png" gravity="true">
 				<animations>
 					<idle loop="true" speed="0.5">
 						<frame x="0" y="0" w="111" h="271" />
 					</idle>
 				</animations>
 			</npcKAEDE>
-			<npcHANZO x="350" y="1100" w="111" h="271" texture="Assets/Textures/player/Idle.png" gravity="true">
+			<npcHANZO x="11906" y="4850" w="111" h="271" texture="Assets/Textures/player/Idle.png" gravity="true">
 				<animations>
 					<idle loop="true" speed="0.5">
 						<frame x="0" y="0" w="111" h="271" />
