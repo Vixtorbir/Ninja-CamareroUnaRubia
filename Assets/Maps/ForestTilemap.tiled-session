@@ -3,8 +3,9 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "MapTemplate1.tmx",
+    "activeFile": "MapTemplate1_64x64.tmx",
     "expandedProjectPaths": [
+        "."
     ],
     "fileStates": {
         "": {
@@ -36,11 +37,11 @@
                 8,
                 9
             ],
-            "scale": 0.33,
-            "selectedLayer": 1,
+            "scale": 0.5,
+            "selectedLayer": 6,
             "viewCenter": {
-                "x": 8001.515151515151,
-                "y": 3198.484848484849
+                "x": 8001,
+                "y": 3199
             }
         },
         "Cave.tmx#MapMetadata": {
@@ -71,14 +72,14 @@
         "MapTemplate1.tmx": {
             "expandedObjectLayers": [
                 8,
-                9,
-                25
+                25,
+                9
             ],
-            "scale": 0.125,
-            "selectedLayer": -1,
+            "scale": 0.03125,
+            "selectedLayer": 0,
             "viewCenter": {
-                "x": 3756,
-                "y": 3064
+                "x": 8928,
+                "y": 3184
             }
         },
         "MapTemplate1.tmx#MapMetadata": {
@@ -105,18 +106,18 @@
                 9,
                 25
             ],
-            "scale": 0.03125,
-            "selectedLayer": 14,
+            "scale": 0.25,
+            "selectedLayer": 9,
             "viewCenter": {
-                "x": 16304,
-                "y": 3184
+                "x": 9240,
+                "y": 4544
             }
         },
         "MapTemplate1_64x64.tmx#MapMetadata": {
             "scaleInDock": 1
         },
         "MapTemplate1_64x64.tmx#level0Tileset 128 x 128 def": {
-            "scaleInDock": 0.125
+            "scaleInDock": 0.25
         },
         "MapTemplate1_64x64.tmx#unidad mesura": {
             "scaleInDock": 1
@@ -126,11 +127,11 @@
                 8,
                 9
             ],
-            "scale": 0.25,
-            "selectedLayer": 18,
+            "scale": 0.015625,
+            "selectedLayer": 11,
             "viewCenter": {
-                "x": 11496,
-                "y": 3202
+                "x": 15936,
+                "y": 3168
             }
         },
         "MapTemplate2_64x64.tmx#level0Tileset 64x64": {
@@ -159,8 +160,8 @@
     "recentFiles": [
         "Cave.tmx",
         "MapTemplate2_64x64.tmx",
-        "MapTemplate1_64x64.tmx",
         "MapTemplate1.tmx",
+        "MapTemplate1_64x64.tmx",
         "BossArena.tmx"
     ],
     "tileset.embedInMap": true,

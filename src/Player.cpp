@@ -51,7 +51,7 @@ bool Player::Start() {
     crouch.LoadAnimations(parameters.child("animations").child("crouch"));
     attack1.LoadAnimations(parameters.child("animations").child("attack1"));
     attack2.LoadAnimations(parameters.child("animations").child("attack2"));
-    attack3.LoadAnimations(parameters.child("animations").child("attack3"));
+    attack3.LoadAnimations(parameters.child("animations").child("attack2"));
     climb.LoadAnimations(parameters.child("animations").child("climb"));
 
     currentAnimation = &idle;
@@ -146,8 +146,8 @@ bool Player::Update(float dt) {
     if (!parameters.attribute("gravity").as_bool()) velocity = b2Vec2(0, 0);
 
     // State management
-    bool movingLeft = Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT;
-    bool movingRight = Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT;
+    bool movingLeft = Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_A) == KEY_REPEAT;
+    bool movingRight = Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_D) == KEY_REPEAT;
     bool moving = movingLeft || movingRight;
     bool grounded = !isJumping && !isDashing && !touchingWall;
     isWalking = false;
@@ -161,18 +161,18 @@ bool Player::Update(float dt) {
     }
 
    
-    bool wantsToCrouch = Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT ||
-        Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_DOWN) == KEY_DOWN;
+    bool wantsToCrouch = Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_REPEAT ||
+        Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_DOWN;
 
     if (wantsToCrouch && grounded) {  // Only allow crouching when grounded
         crouched = true;
         currentState = PlayerState::CROUCHING;
-        if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_DOWN) == KEY_DOWN) {
+        if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_DOWN) {
             ChangeHitboxSize(texW, texH / 2);
             Engine::GetInstance().audio.get()->PlayFx(crouchFxId);
         }
     }
-    else if (crouched && Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_DOWN) == KEY_UP) {
+    else if (crouched && Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_UP) {
         crouched = false;
         ChangeHitboxSize(texW, texH);
         // Don't force IDLE state here - let the state priority system handle it
@@ -380,13 +380,20 @@ bool Player::Update(float dt) {
     
 
     
-    if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_K) == KEY_DOWN && !isAttacking && !isCooldown) {
+    if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_J) == KEY_DOWN && !isAttacking && !isCooldown) {
         PerformAttack();
         isAttacking = true;
-        attackTimer.Start(); 
+        attackTimer.Start();
     }
 
-    if (isAttacking && attackTimer.ReadSec() >= attackDuration) {
+    if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_K) == KEY_DOWN && !isAttacking && !isCooldown) {
+        PerformAttack2();
+        isAttacking = true;
+        attackTimer.Start();
+    }
+
+
+    if (isAttacking && attackTimer.ReadMSec() >= attackDuration * 1000) {
         isAttacking = false;
         isCooldown = true;
         attackCooldownTimer.Start(); 
@@ -398,7 +405,7 @@ bool Player::Update(float dt) {
 
         LOG("Attack ended, cooldown started.");
     }
-    if (isCooldown && attackCooldownTimer.ReadSec() >= attackCooldown) {
+    if (isCooldown && attackCooldownTimer.ReadMSec() >= attackCooldown * 1000) {
         isCooldown = false;
     }
     if (isAttacking && katanaAttack != nullptr) {
@@ -704,6 +711,52 @@ void Player::PerformAttack() {
     else {
         katanaAttack = Engine::GetInstance().physics.get()->CreateRectangleSensor(
             (int)position.getX() +135, (int)position.getY() + 100, 80, 250, bodyType::KINEMATIC
+        );
+    }
+
+    katanaAttack->ctype = ColliderType::PLAYER_KATANA;
+    katanaAttack->listener = this;
+    katanaAttack->body->SetGravityScale(0.0f);
+
+    // Avanzar al siguiente ataque (cíclico)
+    currentAttackIndex = (currentAttackIndex + 1) % 3;
+
+    // Reproducir el efecto de sonido correspondiente
+    int attackFxId;
+    switch (currentAttackIndex) {
+    case 0:
+        attackFxId = weakKatana1FxId;
+        break;
+    case 1:
+        attackFxId = weakKatana2FxId;
+        break;
+    case 2:
+        attackFxId = weakKatana3FxId;
+        break;
+    default:
+        attackFxId = weakKatana1FxId;
+        break;
+    }
+    Engine::GetInstance().audio.get()->PlayFx(attackFxId);
+}
+
+void Player::PerformAttack2() {
+    // Seleccionar la animación de ataque actual
+
+    currentState = PlayerState::ATTACKING;
+
+    currentAnimation = &attack3;
+
+
+    // Configurar el área de ataque según la dirección del jugador
+    if (playerDirection == EntityDirections::RIGHT) {
+        katanaAttack = Engine::GetInstance().physics.get()->CreateRectangleSensor(
+            (int)position.getX() + 390, (int)position.getY() + 100, 80, 250, bodyType::KINEMATIC
+        );
+    }
+    else {
+        katanaAttack = Engine::GetInstance().physics.get()->CreateRectangleSensor(
+            (int)position.getX() + 135, (int)position.getY() + 100, 80, 250, bodyType::KINEMATIC
         );
     }
 

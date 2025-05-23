@@ -90,7 +90,22 @@ bool NPC::Update(float dt)
 	Engine::GetInstance().render.get()->DrawEntity(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame(), 1, 0, 0, 0, (int)npcDirection);
 	currentAnimation->Update();
 
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_E) == KEY_DOWN && inside)
+	{
+		bubble = !bubble;
 
+	}
+	
+	if(once)
+	{
+		if (bubble) {
+			showcaseDialogue = true;
+			once = false;
+
+		}
+	}
+
+	
 	return true;
 }
 float NPC::Lerp(float start, float end, float factor) {
@@ -108,12 +123,8 @@ void NPC::OnCollision(PhysBody* physA, PhysBody* physB) {
 	switch (physB->ctype)
 	{
 	case ColliderType::PLAYER:
-		if (once)
-		{
-			showcaseDialogue = true;
-
-		}
-
+		inside = true;
+		
 		//FIX interact mapping
 		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_E) == KEY_DOWN)
 		{
@@ -129,7 +140,10 @@ void NPC::OnCollisionEnd(PhysBody* physA, PhysBody* physB)
 	switch (physB->ctype)
 	{
 	case ColliderType::PLAYER:
-		once = true; // Change from false to true
+		showcaseDialogue = false;
+
+		inside = false;
+		once = false; // Change from false to true
 		Engine::GetInstance().guiManager->ClearControlsOfType(GuiControlType::DIALOGUE);
 		break;
 	}

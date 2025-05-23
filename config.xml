@@ -60,31 +60,23 @@
 						<frame x="1536" y="768" w="512" h="256" />
 						<frame x="2048" y="768" w="512" h="256" />
 					</crouch>
-					<attack1 loop="true" speed="0.15">
+					<attack1 loop="true" speed="0.10">
 						<frame x="0" y="1536" w="512" h="256" />
 						<frame x="512" y="1536" w="512" h="256" />
 						<frame x="1024" y="1536" w="512" h="256" />
 						<frame x="1536" y="1536" w="512" h="256" />
-						<frame x="1536" y="1536" w="512" h="256" />
-						<frame x="1536" y="1536" w="512" h="256" />
-						<frame x="1536" y="1536" w="512" h="256" />
-						<frame x="1536" y="1536" w="512" h="256" />
-						<frame x="1536" y="1536" w="512" h="256" />
 						<frame x="2048" y="1536" w="512" h="256" />
-						<frame x="2048" y="1536" w="512" h="256" />
-						<frame x="2048" y="1536" w="512" h="256" />
-						<frame x="2560" y="1536" w="512" h="256" />
 						<frame x="2560" y="1536" w="512" h="256" />
 					</attack1>
-					<attack2 loop="true" speed="0.5">
-						<frame x="0" y="2048" w="512" h="256" />
-						<frame x="512" y="2048" w="512" h="256" />
-						<frame x="1024" y="2048" w="512" h="256" />
-						<frame x="1536" y="2048" w="512" h="256" />
-						<frame x="2048" y="2048" w="512" h="256" />
-						<frame x="2560" y="2048" w="512" h="256" />
+					<attack2 loop="true" speed="0.1">
+						<frame x="0" y="1792" w="512" h="256" />
+						<frame x="512" y="1792" w="512" h="256" />
+						<frame x="1024" y="1792" w="512" h="256" />
+						<frame x="1536" y="1792" w="512" h="256" />
+						<frame x="2048" y="1792" w="512" h="256" />
+						<frame x="2560" y="1792" w="512" h="256" />
 					</attack2>
-					<attack3 loop="false" speed="0.5">
+					<attack3 loop="false" speed="0.05">
 						<frame x="0" y="2560" w="512" h="256" />
 						<frame x="512" y="2560" w="512" h="256" />
 						<frame x="1024" y="2560" w="512" h="256" />
@@ -102,7 +94,7 @@
 					</climb>
 				</animations>
 			</player>
-			<npcMENTORSHIP x="1000" y="1100" w="111" h="271" texture="Assets/Textures/npcMENTORSHIP.png" gravity="true">
+			<npcMENTORSHIP x="6900" y="3925" w="111" h="271" texture="Assets/Textures/npcMENTORSHIP.png" gravity="true">
 				<animations>
 					<idle loop="true" speed="0.5">
 						<frame x="0" y="0" w="111" h="271" />
@@ -116,21 +108,21 @@
 					</idle>
 				</animations>
 			</npcVILLAGE2>
-			<npcISAMU x="500" y="1100" w="111" h="271" texture="Assets/Textures/player/Idle.png" gravity="true">
+			<npcISAMU x="6997" y="3950" w="111" h="271" texture="Assets/Textures/player/Idle.png" gravity="true">
 				<animations>
 					<idle loop="true" speed="0.5">
 						<frame x="0" y="0" w="111" h="271" />
 					</idle>
 				</animations>
 			</npcISAMU>
-			<npcKAEDE x="200" y="1100" w="111" h="271" texture="Assets/Textures/player/Idle.png" gravity="true">
+			<npcKAEDE x="12424" y="3950" w="111" h="271" texture="Assets/Textures/player/Idle.png" gravity="true">
 				<animations>
 					<idle loop="true" speed="0.5">
 						<frame x="0" y="0" w="111" h="271" />
 					</idle>
 				</animations>
 			</npcKAEDE>
-			<npcHANZO x="350" y="1100" w="111" h="271" texture="Assets/Textures/player/Idle.png" gravity="true">
+			<npcHANZO x="11906" y="4850" w="111" h="271" texture="Assets/Textures/player/Idle.png" gravity="true">
 				<animations>
 					<idle loop="true" speed="0.5">
 						<frame x="0" y="0" w="111" h="271" />
