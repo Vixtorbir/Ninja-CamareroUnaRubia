@@ -56,6 +56,7 @@ public:
 	int RayCast(int x1, int y1, int x2, int y2, float& normal_x, float& normal_y) const;
 
 public:
+	bool isOneWay = false;
 	int width = 0;
 	int height = 0;
 	b2Body* body;
