@@ -334,26 +334,33 @@ bool Scene::PostUpdate()
 		ret = false;
 
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F2) == KEY_DOWN) {
-		SafeLoadMap("MapTemplate1_64x64.tmx", Vector2D(6400, 3968)); // Posición específica Mapa 1
+		SafeLoadMap("MapTemplate1_64x64.tmx", Vector2D(13552, 3940)); // Posición específica Mapa 1
 		levelIndex = 0;
 		parallax->ChangeTextures(levelIndex);
-
+        Engine::GetInstance().scene.get()->player->loadLevel1 = false;
+		Engine::GetInstance().scene.get()->player->currentLevel = 1;
 	}
-		//Engine::GetInstance().scene.get()->player->currentLevel = 1;
+	   
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F3) == KEY_DOWN) {
 		SafeLoadMap("MapTemplate2_64x64.tmx", Vector2D(1408, 3845)); // Posición específica Mapa 2
 		levelIndex = 1;
 		LoadEntities(2);
 		parallax->ChangeTextures(levelIndex);
+		Engine::GetInstance().scene.get()->player->loadLevel2 = false;
+		Engine::GetInstance().scene.get()->player->currentLevel = 2;
 	}
 
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F4) == KEY_DOWN) {
-		SafeLoadMap("Cave.tmx", Vector2D(1536, 3200)); // Posición específica Mapa 2
+		SafeLoadMap("Cave.tmx", Vector2D(6269, 1860)); // Posición específica Mapa 2
 		levelIndex = 2;
 		LoadEntities(2);
 		parallax->ChangeTextures(levelIndex);
+		Engine::GetInstance().scene.get()->player->loadLevel3 = false;
+		Engine::GetInstance().scene.get()->player->currentLevel = 3;
+
+		
 	}
-		//Engine::GetInstance().scene.get()->player->currentLevel = 2;
+		
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F6) == KEY_DOWN)
 		LoadState();
 
@@ -365,7 +372,7 @@ bool Scene::PostUpdate()
 		FadeTransition(Engine::GetInstance().render.get()->renderer, false, 1.0f);
 		Engine::GetInstance().map->CleanUp(); // Esto solo limpia recursos antiguos
 
-		SafeLoadMap("MapTemplate1_64x64.tmx", Vector2D(6400, 3968));
+		SafeLoadMap("MapTemplate1_64x64.tmx", Vector2D(16280, 4720));
 
 		Engine::GetInstance().scene.get()->player->loadLevel1 = false;
 		Engine::GetInstance().scene.get()->player->currentLevel = 1;
@@ -381,6 +388,18 @@ bool Scene::PostUpdate()
 
 		Engine::GetInstance().scene.get()->player->loadLevel2 = false;
 		Engine::GetInstance().scene.get()->player->currentLevel = 2;
+
+	}
+
+	if (Engine::GetInstance().scene.get()->player->loadLevel3) {
+
+		FadeTransition(Engine::GetInstance().render.get()->renderer, false, 1.0f);
+		Engine::GetInstance().map->CleanUp(); // Esto solo limpia recursos antiguos
+
+		SafeLoadMap("Cave.tmx", Vector2D(6269, 1860));
+
+		Engine::GetInstance().scene.get()->player->loadLevel3 = false;
+		Engine::GetInstance().scene.get()->player->currentLevel = 3;
 
 	}
 

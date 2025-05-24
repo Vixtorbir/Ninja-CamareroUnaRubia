@@ -189,6 +189,7 @@ public:
     int currentLevel = 1;
     bool loadLevel1 = false;
     bool loadLevel2 = false;
+    bool loadLevel3 = false;
 
     // UI Elements
     GuiPopup* popup = nullptr;

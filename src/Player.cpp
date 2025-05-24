@@ -372,9 +372,14 @@ bool Player::Update(float dt) {
     }*/
 
     // Level transitions
-    if (GetPosition().getX() >= 20480 && GetPosition().getY() >= 4320 && currentLevel == 1) {
+    if (GetPosition().getX() >= 16280 && GetPosition().getY() >= 4720 && currentLevel == 1) {
         if (loadLevel2 == false) {
             loadLevel2 = true;
+        }
+    }
+    if (GetPosition().getX() >= 21764 && GetPosition().getY() >= 3176 && currentLevel == 2) {
+        if (loadLevel3 == false) {
+            loadLevel3 = true;
         }
     }
     
@@ -514,7 +519,7 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 
             // Desactivar el objeto en el mundo
 			Engine::GetInstance().render.get()->DrawText(("Picked up: " + item->name).c_str(), 600, 200, 750, 255); // Mensaje en pantalla
-			Engine::GetInstance().physics.get()->DeletePhysBody(physB); 
+            item->CleanUp();
             item->active = false;
         }
         break;
@@ -854,7 +859,12 @@ void Player::ChangeHitboxSize(float width, float height) {
         width = texW / 2;
         height = (texH - 50) / 2;
         // Subir la posición la mitad de la diferencia de altura
-        currentPosition.y -= PIXEL_TO_METERS(((texH - 50) / 4)-2);
+        currentPosition.y -= PIXEL_TO_METERS(((texH - 50) / 4) - 2);
+
+        // --- AQUI AÑADE EL AJUSTE PARA EL NIVEL 2 ---
+        if (currentLevel == 3) {
+            currentPosition.y -= PIXEL_TO_METERS(40); // Ajusta 20 píxeles hacia arriba (puedes cambiar el valor)
+        }
     }
     else {
         width = texW / 2;
@@ -879,7 +889,6 @@ void Player::ChangeHitboxSize(float width, float height) {
     // Actualizar la posición del cuerpo físico
     pbody->body->SetTransform(currentPosition, 0);
 }
-
 
 
 
