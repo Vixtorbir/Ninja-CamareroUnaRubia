@@ -119,7 +119,7 @@ bool Scene::Start()
 
 	logo = Engine::GetInstance().textures->Load("Assets/UI/logo.png");
 	logoFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/ExtraFx/logoFx.ogg");
-	MenuBackgroundImage = Engine::GetInstance().textures.get()->Load("Assets/UI/Menu.png");
+	MenuBackgroundImage = Engine::GetInstance().textures.get()->Load("Assets/UI/TitleScreenWTitle.png");
 	mapBackgroundUI = Engine::GetInstance().textures.get()->Load("Assets/UI/MapBackgroundUI.png");
 	SDL_Rect btPos00 = { 0, 0, 0,0 };
 	mapBackgroundUIImage = (GuiImage*)Engine::GetInstance().guiManager->CreateGuiImage(GuiControlType::IMAGE, 1, "MyButton", btPos00, this, mapBackgroundUI);
@@ -661,7 +661,7 @@ void Scene::UpdateMainMenu(float dt) {
 	}
 	if (!menuBackgroundImage) {
 
-		MenuBackgroundImage = Engine::GetInstance().textures.get()->Load("Assets/UI/Menu.png");
+		MenuBackgroundImage = Engine::GetInstance().textures.get()->Load("Assets/UI/TitleScreenWTitle.png");
 	}
 	
 
@@ -867,7 +867,7 @@ void Scene::UpdateGameOver(float dt) {
 	}*/
 	if (!menuBackgroundImage) {
 
-		MenuBackgroundImage = Engine::GetInstance().textures.get()->Load("Assets/UI/Menu.png");
+		MenuBackgroundImage = Engine::GetInstance().textures.get()->Load("Assets/UI/TitleScreenWTitle.png");
 	}
 	//returntomenuButton->Start();
 	//returntomenuButton->Update(dt);
@@ -898,7 +898,7 @@ void Scene::UpdateOptions(float dt)
 	
 	if (!menuBackgroundImage) {
 
-		MenuBackgroundImage = Engine::GetInstance().textures.get()->Load("Assets/UI/Menu.png");
+		MenuBackgroundImage = Engine::GetInstance().textures.get()->Load("Assets/UI/TitleScreenWTitle.png");
 	}
 	if (!fullscreenCheckbox) {
 		SDL_Rect fullscreenCheckboxPos = { 800, 500, 200, 50 };
