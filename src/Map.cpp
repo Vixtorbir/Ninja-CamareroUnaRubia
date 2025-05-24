@@ -257,7 +257,17 @@ bool Map::Load(std::string path, std::string fileName)
                 object->width = objectNode.attribute("width").as_float();
                 object->height = objectNode.attribute("height").as_float();
                 objectGroup->objects.push_back(object);
-
+                bool isOneWay = false;
+                pugi::xml_node propertiesNode = objectNode.child("properties");
+                if (propertiesNode) {
+                    for (pugi::xml_node prop = propertiesNode.child("property"); prop; prop = prop.next_sibling("property")) {
+                        std::string propName = prop.attribute("name").as_string();
+                        if (propName == "oneway" && prop.attribute("value").as_bool()) {
+                            isOneWay = true;
+                            break;
+                        }
+                    }
+                }
                 // Crear colisiones
                 PhysBody* platform = Engine::GetInstance().physics->CreateRectangle(
                     object->x + object->width / 2,
@@ -265,7 +275,7 @@ bool Map::Load(std::string path, std::string fileName)
                     object->width, object->height,
                     bodyType::STATIC
                 );
-
+                platform->isOneWay = isOneWay;
                 if (objectGroup->name == "Floor") {
                     platform->ctype = ColliderType::PLATFORM;
 					collisionBodies.push_back(platform);

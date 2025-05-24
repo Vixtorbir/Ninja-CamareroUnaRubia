@@ -608,7 +608,7 @@ void Player::OnCollisionEnd(PhysBody* physA, PhysBody* physB)
 
             Enemy* enemy = static_cast<Enemy*>(physB->listener);
             if (enemy != nullptr) {
-                enemy->startDying = true;
+                enemy->lives--;
                 Engine::GetInstance().audio.get()->PlayFx(weakKatana1FxId);
 
             }
@@ -619,8 +619,7 @@ void Player::OnCollisionEnd(PhysBody* physA, PhysBody* physB)
                     [physA](const Shuriken& shuriken) { return shuriken.body == physA; }),
                 activeShurikens.end()
             );
-
-            Engine::GetInstance().physics.get()->DeletePhysBody(physA);
+            //Engine::GetInstance().physics.get()->DeletePhysBody(physA);
         }
 
         else if (physA->ctype == ColliderType::PLAYER_KATANA) {
