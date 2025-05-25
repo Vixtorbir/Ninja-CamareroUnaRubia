@@ -387,7 +387,7 @@ bool Player::Update(float dt) {
             loadLevel3 = true;
             Engine::GetInstance().scene.get()->loadThingsOfMaps(2);
             Engine::GetInstance().audio.get()->StopMusic();
-            Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/gameplaySongPlaceholder.wav");
+            Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/gameplaySongPlaceholder.ogg");
         }
     }
     if (GetPosition().getX() >= 14720 && GetPosition().getY() >= 4860 && currentLevel == 3) {
@@ -403,7 +403,7 @@ bool Player::Update(float dt) {
 
             loadLevel1 = true;
             Engine::GetInstance().audio.get()->StopMusic();
-            Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/gameplaySongPlaceholder.wav");
+            Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/gameplaySongPlaceholder.ogg");
         }
     }
     if (GetPosition().getX() >= 8600 && GetPosition().getY() <= 268 && currentLevel == 3) {
@@ -412,7 +412,7 @@ bool Player::Update(float dt) {
 
             loadLevel2back = true;
             Engine::GetInstance().audio.get()->StopMusic();
-            Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/gameplaySongPlaceholder.wav");
+            Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/gameplaySongPlaceholder.ogg");
         }
     }
     

@@ -898,7 +898,7 @@ void Scene::HandleInput()
 
 				SetState(GameState::PLAYING);
 				Engine::GetInstance().audio.get()->StopMusic();
-				Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/gameplaySongPlaceholder.wav");
+				Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/gameplaySongPlaceholder.ogg");
 				startButton->visible=false;
 				optionsButton->visible=false;
 				exitButton->visible = false;
@@ -1095,7 +1095,7 @@ void Scene::UpdateLogo(float dt) {
 	FadeTransition(Engine::GetInstance().render.get()->renderer, logo, .1f);
 	
 	SetState(GameState::MAIN_MENU);
-	Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/titleSongPlaceholder.wav");
+	Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/titleSongPlaceholder.ogg");
 	Engine::GetInstance().audio.get()->musicVolume(50);
 	
 
