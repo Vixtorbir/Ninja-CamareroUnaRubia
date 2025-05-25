@@ -161,7 +161,7 @@ public:
     float targetDashVelocity = 0.0f;
 
     // Health system
-    int HP = MAXHP;
+    int HP = 4;
     const int MAXHP = 1000;
     float damageCooldown = 3.0f;
     float timeSinceLastDamage = 0.0f;

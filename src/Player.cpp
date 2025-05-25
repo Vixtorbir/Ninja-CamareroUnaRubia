@@ -261,6 +261,7 @@ bool Player::Update(float dt) {
             currentState = grounded ? PlayerState::IDLE : PlayerState::JUMPING;
         }
     }
+    HP_Slider->SetSliderBarInnerSize(HP * 50);
 
     // Damage cooldown
     if (!canTakeDamage) {
@@ -706,7 +707,7 @@ void Player::TakeDamage(int damage) {
     if (canTakeDamage) {
         HP -= damage;
         if (HP <= 0) {
-            //Die(); 
+            Die(); 
         }
         canTakeDamage = false; 
         LOG("Player took damage! Remaining HP: %d", HP);

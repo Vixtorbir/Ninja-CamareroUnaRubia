@@ -11,7 +11,8 @@ public:
 
     void SetSliderBarSize(int width, int height);
 
-    void SetSliderBarInnerSize(int width, int height);
+    void SetSliderBarInnerSize(int width);
+
 
     bool Update(float dt);
     bool Draw(std::shared_ptr<Render> render);
