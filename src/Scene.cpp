@@ -353,7 +353,7 @@ bool Scene::PostUpdate()
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F4) == KEY_DOWN) {
 		SafeLoadMap("Cave.tmx", Vector2D(6269, 1860)); // Posición 
 		levelIndex = 2;
-		LoadEntities(2);
+		LoadEntities(3);
 		parallax->ChangeTextures(levelIndex);
 		Engine::GetInstance().scene.get()->player->loadLevel3 = false;
 		Engine::GetInstance().scene.get()->player->currentLevel = 3;
@@ -364,7 +364,7 @@ bool Scene::PostUpdate()
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F9) == KEY_DOWN) {
 		SafeLoadMap("BossArena.tmx", Vector2D(2623, 1726));
 		levelIndex = 3;
-		//LoadEntities(2);
+		LoadEntities(4);
 		parallax->ChangeTextures(levelIndex);
 		Engine::GetInstance().scene.get()->player->loadLevel4 = false;
 		Engine::GetInstance().scene.get()->player->currentLevel = 4;
@@ -471,6 +471,12 @@ void Scene::LoadEntities(int sceneIndex)
 	turretList.clear();
 	for (auto boss : bossList) boss->CleanUp();
 	bossList.clear();
+	// Limpia la lista de items
+	for (auto item : items) item->CleanUp();
+	items.clear();
+	// Limpia la lista de NPCs
+	for (auto npc : npcs) npc->CleanUp();
+	npcs.clear();
 
 	pugi::xml_node enemiesNode;
 
@@ -481,6 +487,18 @@ void Scene::LoadEntities(int sceneIndex)
 	else if (sceneIndex == 2) {
 		// Segundo nivel: <entitiesbamboo><enemies>
 		enemiesNode = configParameters.child("entitiesbamboo").child("enemies");
+	}
+	else if (sceneIndex == 3) {
+		// Tercer nivel: <entitiescave><enemies>
+		enemiesNode = configParameters.child("entitiescave").child("enemies");
+	}
+	else if (sceneIndex == 4) {
+		// Cuarto nivel: <entitiesboss><enemies>
+		enemiesNode = configParameters.child("entitiesboss").child("enemies");
+	}
+	else {
+		LOG("Invalid scene index for loading entities.");
+		return;
 	}
 
 	if (enemiesNode) {
