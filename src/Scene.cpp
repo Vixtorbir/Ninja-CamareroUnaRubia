@@ -124,6 +124,7 @@ bool Scene::Start()
 	logo = Engine::GetInstance().textures->Load("Assets/UI/logo.png");
 	logoFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/ExtraFx/logoFx.ogg");
 	MenuBackgroundImage = Engine::GetInstance().textures.get()->Load("Assets/UI/TitleScreenWTitle.png");
+	BackgroundImage = Engine::GetInstance().textures.get()->Load("Assets/UI/TitleScreen.png");
 	mapBackgroundUI = Engine::GetInstance().textures.get()->Load("Assets/UI/MapBackgroundUI.png");
 	SDL_Rect btPos00 = { 0, 0, 0,0 };
 	mapBackgroundUIImage = (GuiImage*)Engine::GetInstance().guiManager->CreateGuiImage(GuiControlType::IMAGE, 1, "MyButton", btPos00, this, mapBackgroundUI);
@@ -215,6 +216,8 @@ bool Scene::Start()
 
 	MenuBackgroundImage = Engine::GetInstance().textures.get()->Load("Assets/UI/TitleScreenWTitle.png");
 	menuBackgroundImage->visible = true;
+
+
  
 	for (Enemy* enemy : enemyList)
 	{
@@ -911,13 +914,14 @@ void Scene::HandleInput()
 		//returntomenuButton->CleanUp();
 	}
 	if (exitButton != nullptr) {
-		if (exitButton->isClicked == true&& currentState ==GameState::PAUSED) {
+		if (exitButton->isClicked == true&&( currentState ==GameState::PAUSED||currentState==GameState::GAME_OVER)) {
 			SetState(GameState::MAIN_MENU);
 			exitButton->visible = false;
 			returnButton->visible = false;
 			menuBackgroundImage->visible = false;
 			exitButton->isClicked = false;
 		}
+
 	}
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_P) == KEY_DOWN)
 	{
@@ -987,7 +991,11 @@ void Scene::HandleInput()
 			SetState(GameState::INVENTORY);
 		}
 	}
-
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_G) == KEY_DOWN) {
+		if (currentState == GameState::PLAYING) {
+			SetState(GameState::GAME_OVER);
+		}
+	}
 }
 
 
@@ -1029,24 +1037,13 @@ void Scene::UpdatePaused(float dt) {
 }
 
 void Scene::UpdateGameOver(float dt) {
-	
+	exitButton->isClicked = false;
+	menuBackgroundImage->visible = false;
 	Engine::GetInstance().render.get()->DrawText("GAME OVER", 600, 200, 750, 255);
-	/*if (!returntomenuButton) {
-		
-		SDL_Rect returntomenuButtonPos = { 800, 550, 200, 50 };
-		returntomenuButton = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(
-			GuiControlType::BUTTON, 5, "Return To Menu", returntomenuButtonPos, this);
-	}*/
-	if (!menuBackgroundImage) {
+	exitButton->visible = true;
+	exitButton->Update(dt);
 
-		MenuBackgroundImage = Engine::GetInstance().textures.get()->Load("Assets/UI/TitleScreenWTitle.png");
-	}
-	//returntomenuButton->Start();
-	//returntomenuButton->Update(dt);
-	menuBackgroundImage->Update(dt);
 
-	//Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/gameplaySongPlaceholder.wav");
-	//Engine::GetInstance().audio.get()->musicVolume(50);
 
 }
 void Scene::UpdateLogo(float dt) {
