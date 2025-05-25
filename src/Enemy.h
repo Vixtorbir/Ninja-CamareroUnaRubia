@@ -6,6 +6,9 @@
 #include "Pathfinding.h"
 #include "Timer.h"
 #include "Player.h"
+#include "GuiControl.h"
+#include "GuiImage.h"
+
 
 struct SDL_Texture;
 
@@ -72,8 +75,8 @@ public:
    
     void PerformAttack();
     Timer deathTimer;
-    bool isDying = false; // Controls if the death animation is playing
-    float deathDuration = 1.5f; // You can tweak this
+    bool isDying = false;
+    float deathDuration = .1f; 
     bool IsPlayerInAttackRange();
     void CheckAttackCollision();
     bool IsPlayerInLineOfSight();
@@ -96,7 +99,9 @@ public:
     int direction = 0;
     int tilesMovedInSameDirection = 0;
     EnemyState state = EnemyState::PATROL; // Estado inicial
-    
+    SDL_Texture* redTexture = nullptr;
+    GuiImage* redImage = nullptr;
+
     Player* player;
 
     Timer attackTimer;          
@@ -105,6 +110,7 @@ public:
     const float attackDuration = 1.0f; 
     const float attackCooldown = 3.0f; 
     PhysBody* attackBody = nullptr;
+    Module* sceneModule = nullptr;
 
 	bool startDying = false;
 };
