@@ -128,6 +128,15 @@ bool Scene::Start()
 	SDL_Rect btPos00 = { 0, 0, 0,0 };
 	mapBackgroundUIImage = (GuiImage*)Engine::GetInstance().guiManager->CreateGuiImage(GuiControlType::IMAGE, 1, "MyButton", btPos00, this, mapBackgroundUI);
 	mapBackgroundUIImage->visible = false;
+
+	birdFxID = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/BgSounds/bird chirp.ogg");
+	birdTimer = 500;
+	cricketFxID = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/BgSounds/crickets.ogg");
+	cricketTimer = 400;
+	bushFxID = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/BgSounds/bush ratle.ogg");
+	bushTimer = 300;
+	windFxID = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/BgSounds/wind blow.ogg");
+	windTimer = 360;
 	// Inicializar el estado de la pantalla de presentaci�n
 
 	SetState(GameState::LOGO);
@@ -330,6 +339,72 @@ bool Scene::Update(float dt)
 		break;
 	}
 
+	// fx
+	switch (player->currentLevel)
+	{
+	case 1:
+		if (windTimer == 0)
+		{
+			Engine::GetInstance().audio.get()->VolumeFx(windFxID, 100);
+			Engine::GetInstance().audio.get()->PlayFx(windFxID);
+			
+			windTimer = 360;
+		}
+		else
+		{
+			windTimer--;
+		}
+
+		if (cricketTimer == 0)
+		{
+			Engine::GetInstance().audio.get()->PlayFx(cricketFxID);
+			cricketTimer = 600;
+		}
+		else
+		{
+			cricketTimer--;
+		}
+		
+		break;
+	case 2:
+		if (birdTimer == 0)
+		{
+			Engine::GetInstance().audio.get()->PlayFx(birdFxID);
+			
+			birdTimer = 1200;
+		}
+		else
+		{
+			birdTimer--;
+		}
+
+		if (cricketTimer == 0)
+		{
+			Engine::GetInstance().audio.get()->PlayFx(cricketFxID);
+			cricketTimer = 600;
+		}
+		else
+		{
+			cricketTimer--;
+		}
+		if (bushTimer == 0)
+		{
+			Engine::GetInstance().audio.get()->PlayFx(bushFxID);
+			bushTimer = 420;
+		}
+		else
+		{
+			bushTimer--;
+		}
+		break;
+	case 3:
+		break;
+	case 4:
+		break;
+	default: 
+		break;
+	}
+
 	return true;
 }
 
@@ -396,6 +471,7 @@ bool Scene::PostUpdate()
 
 		Engine::GetInstance().scene.get()->player->loadLevel1 = false;
 		Engine::GetInstance().scene.get()->player->currentLevel = 1;
+		
 
 	}
 
@@ -778,8 +854,6 @@ void Scene::HandleInput()
 			{
 
 				SetState(GameState::PLAYING);
-				Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/gameplaySongPlaceholder.wav");
-				Engine::GetInstance().audio.get()->musicVolume(50);
 				startButton->visible=false;
 				optionsButton->visible=false;
 				exitButton->visible = false;
