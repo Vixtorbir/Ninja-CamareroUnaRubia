@@ -341,8 +341,9 @@ void Enemy::OnCollision(PhysBody* physA, PhysBody* physB) {
 	case ColliderType::PLAYER_KATANA:
 		if (!isDying) {
 			b2Vec2 playerPos = player->GetPhysicalyPosition(); 
-
+/*
 			ApplyKnockbackFrom(playerPos, 1000); 
+			*/
 			lives--;
 			LOG("Enemy hit! Lives left: %d", lives);
 			if (lives <= 0) {
