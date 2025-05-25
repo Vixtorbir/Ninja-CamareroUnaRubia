@@ -39,8 +39,9 @@ bool Boss::Start() {
 
 	// Cargar animaciones
 	idle.LoadAnimations(parameters.child("animations").child("idle"));
+	walk.LoadAnimations(parameters.child("animations").child("walk"));
 	attackAnimation.LoadAnimations(parameters.child("animations").child("attack"));
-	currentAnimation = &idle;
+	currentAnimation = &walk;
 
 	// Agregar física al enemigo
 	pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX(), (int)position.getY(), texW, texH, bodyType::DYNAMIC);
@@ -139,6 +140,7 @@ bool Boss::Update(float dt)
 				if (IsPlayerInAttackRange())
 				{
 					state = BossState::ATTACK;
+					currentAnimation = &attackAnimation;
 				}
 				else
 				{
@@ -148,6 +150,8 @@ bool Boss::Update(float dt)
 			else
 			{
 				state = BossState::PATROL;
+				currentAnimation = &walk;
+				
 			}
 		}
 
