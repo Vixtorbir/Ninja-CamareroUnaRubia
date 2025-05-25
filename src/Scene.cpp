@@ -897,6 +897,8 @@ void Scene::HandleInput()
 			{
 
 				SetState(GameState::PLAYING);
+				Engine::GetInstance().audio.get()->StopMusic();
+				Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/gameplaySongPlaceholder.wav");
 				startButton->visible=false;
 				optionsButton->visible=false;
 				exitButton->visible = false;

@@ -403,7 +403,7 @@ bool Player::Update(float dt) {
 
             loadLevel1 = true;
             Engine::GetInstance().audio.get()->StopMusic();
-            Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/bgforest music japan.ogg");
+            Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/gameplaySongPlaceholder.wav");
         }
     }
     if (GetPosition().getX() >= 8600 && GetPosition().getY() <= 268 && currentLevel == 3) {
@@ -411,6 +411,8 @@ bool Player::Update(float dt) {
             Engine::GetInstance().scene.get()->loadThingsOfMaps(2);
 
             loadLevel2back = true;
+            Engine::GetInstance().audio.get()->StopMusic();
+            Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/gameplaySongPlaceholder.wav");
         }
     }
     
