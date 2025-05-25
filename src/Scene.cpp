@@ -411,7 +411,47 @@ bool Scene::Update(float dt)
 	return true;
 }
 
+void Scene::loadThingsOfMaps(int index)
+{
 
+	switch (index)
+	{
+	case(0):
+		SafeLoadMap("MapTemplate1_64x64.tmx", Vector2D(13552, 3940)); // Posición 
+		levelIndex = 0;
+		parallax->ChangeTextures(levelIndex);
+		Engine::GetInstance().scene.get()->player->loadLevel1 = false;
+		Engine::GetInstance().scene.get()->player->currentLevel = 1;
+		break;
+	case(1):
+		SafeLoadMap("MapTemplate2_64x64.tmx", Vector2D(1783, 3172)); // Posición 
+		levelIndex = 1;
+		LoadEntities(2);
+		parallax->ChangeTextures(levelIndex);
+		Engine::GetInstance().scene.get()->player->loadLevel2 = false;
+		Engine::GetInstance().scene.get()->player->currentLevel = 2;
+		break;
+	case(2):
+		SafeLoadMap("Cave.tmx", Vector2D(6269, 1860)); // Posición 
+		levelIndex = 2;
+		LoadEntities(3);
+		parallax->ChangeTextures(levelIndex);
+		Engine::GetInstance().scene.get()->player->loadLevel3 = false;
+		Engine::GetInstance().scene.get()->player->currentLevel = 3;
+
+		break;
+	case(3):
+		SafeLoadMap("BossArena.tmx", Vector2D(2623, 1726));
+		levelIndex = 3;
+		LoadEntities(4);
+		parallax->ChangeTextures(levelIndex);
+		Engine::GetInstance().scene.get()->player->loadLevel4 = false;
+		Engine::GetInstance().scene.get()->player->currentLevel = 4;
+
+		break;
+
+	}
+}
 // Called each loop iteration
 bool Scene::PostUpdate()
 {
