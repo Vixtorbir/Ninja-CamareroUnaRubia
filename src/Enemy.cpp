@@ -181,11 +181,11 @@ bool Enemy::Update(float dt)
 
 		if (direction == 1)
 		{
-			pbody->body->SetLinearVelocity(b2Vec2(-2, 0));
+			pbody->body->SetLinearVelocity(b2Vec2(-4, 0));
 		}
 		else
 		{
-			pbody->body->SetLinearVelocity(b2Vec2(2, 0));
+			pbody->body->SetLinearVelocity(b2Vec2(4, 0));
 		}
 		tilesMovedInSameDirection++;
 		break;
@@ -196,12 +196,12 @@ bool Enemy::Update(float dt)
 		// Movimiento agresivo hacia el jugador
 		if (playerTilePos.getX() < enemyTilePos.getX() && IsNextTileCollidable())
 		{
-			pbody->body->SetLinearVelocity(b2Vec2(-2, 0));
+			pbody->body->SetLinearVelocity(b2Vec2(-6, 0));
 			direction = 0;
 		}
 		else if (playerTilePos.getX() > enemyTilePos.getX() && IsNextTileCollidable())
 		{
-			pbody->body->SetLinearVelocity(b2Vec2(2, 0));
+			pbody->body->SetLinearVelocity(b2Vec2(6, 0));
 			direction = 1;
 		}
 		else
@@ -340,6 +340,9 @@ void Enemy::OnCollision(PhysBody* physA, PhysBody* physB) {
 	case ColliderType::PLAYER_ATTACK:
 	case ColliderType::PLAYER_KATANA:
 		if (!isDying) {
+			b2Vec2 playerPos = player->GetPhysicalyPosition(); 
+
+			ApplyKnockbackFrom(playerPos, 1000); 
 			lives--;
 			LOG("Enemy hit! Lives left: %d", lives);
 			if (lives <= 0) {
@@ -554,7 +557,20 @@ bool Enemy::IsPlayerInLineOfSight() {
 	return false;
 }
 
+void Enemy::ApplyKnockbackFrom(b2Vec2 sourcePosition, float strength)
+{
+	if (!pbody || !pbody->body) return;
 
+	b2Vec2 enemyPos = pbody->body->GetPosition();
+	b2Vec2 sourcePos = b2Vec2((sourcePosition.x), (sourcePosition.y));
+
+	b2Vec2 knockbackDir = enemyPos - sourcePos;
+	knockbackDir.Normalize();
+
+	b2Vec2 impulse = b2Vec2(knockbackDir.x * (float)strength, 0);
+
+	pbody->body->ApplyLinearImpulseToCenter(impulse, true);
+}
 
 void Enemy::DrawLineOfSight() {
 	Vector2D enemyPos = GetPosition();
@@ -576,8 +592,3 @@ void Enemy::DrawLineOfSight() {
 		SDL_RenderDrawRect(renderer, &rect);
 	}
 }
-
-
-
-
-

@@ -80,6 +80,7 @@ public:
     bool IsPlayerInAttackRange();
     void CheckAttackCollision();
     bool IsPlayerInLineOfSight();
+    void ApplyKnockbackFrom(b2Vec2 sourcePosition, float strength);
     void DrawLineOfSight();
 
     SDL_Texture* texture;

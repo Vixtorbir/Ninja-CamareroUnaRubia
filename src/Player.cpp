@@ -678,6 +678,11 @@ Vector2D Player::GetPosition() {
 	Vector2D pos = Vector2D(METERS_TO_PIXELS(bodyPos.x), METERS_TO_PIXELS(bodyPos.y));
 	return pos;
 }
+b2Vec2 Player::GetPhysicalyPosition() {
+    b2Vec2 bodyPos = pbody->body->GetTransform().p;
+
+    return bodyPos;
+}
 void Player::LoadPlayerFx()
 {
 	

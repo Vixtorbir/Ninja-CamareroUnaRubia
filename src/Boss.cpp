@@ -52,6 +52,7 @@ bool Boss::Start() {
 
 	// Asignar gravedad al enemigo
 	pbody->body->SetFixedRotation(true);
+	pbody->body->SetGravityScale(25.0f);
 
 	// Establecer la gravedad del cuerpo
 	if (!parameters.attribute("gravity").as_bool()) pbody->body->SetGravityScale(0);
@@ -101,8 +102,7 @@ bool Boss::Update(float dt)
 		{
 			pbody->body->SetLinearVelocity(b2Vec2(0, 0));
 			b2Transform pbodyPos = pbody->body->GetTransform();
-			position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 6);
-			position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 6);
+
 
 			Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
 			currentAnimation->Update();
@@ -124,8 +124,7 @@ bool Boss::Update(float dt)
 		{
 			pbody->body->SetLinearVelocity(b2Vec2(0, 0));
 			b2Transform pbodyPos = pbody->body->GetTransform();
-			position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 6);
-			position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 6);
+
 
 			Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
 			currentAnimation->Update();
@@ -263,8 +262,8 @@ bool Boss::Update(float dt)
 
 		// Actualizar posición del enemigo desde la física
 		b2Transform pbodyPos = pbody->body->GetTransform();
-		position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texW / 6);
-		position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 6);
+		position.setX(METERS_TO_PIXELS(pbodyPos.p.x)-275);
+		position.setY(METERS_TO_PIXELS(pbodyPos.p.y)-110);
 
 		// Dibujar textura y animación
 		Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());

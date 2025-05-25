@@ -160,7 +160,7 @@
 				</testItem>
 			</items>
 			<enemies>
-				<enemy name="ninja" x="934" y="9798" w="128" h="512" texture="Assets/Animations/EnemyAnims/NormalNinjaSpritesheet.png" gravity="true">
+				<enemy name="ninja" x="1254" y="10102" w="128" h="512" texture="Assets/Animations/EnemyAnims/NormalNinjaSpritesheet.png" gravity="true">
 					<animations>
 						<idle loop="true" speed="0.085">
 							<frame x="0" y="0" w="512" h="256" />
@@ -195,7 +195,7 @@
 						</die>
 					</animations>
 				</enemy>
-				<enemy name="ninja" x="934" y="9798" w="256" h="512" texture="Assets/Animations/EnemyAnims/NormalNinjaSpritesheet.png" gravity="true">
+				<enemy name="ninja" x="1254" y="10102" w="256" h="512" texture="Assets/Animations/EnemyAnims/NormalNinjaSpritesheet.png" gravity="true">
 					<animations>
 						<idle loop="true" speed="0.085">
 							<frame x="0" y="0" w="512" h="256" />
@@ -353,7 +353,7 @@
 		</entitiesbamboo>
 		<entitiescave>
 			<enemies>
-				<enemy name="ninja" x="10628" y="868" w="256" h="512" texture="Assets/Animations/EnemyAnims/NormalNinjaSpritesheet.png" gravity="true">
+				<enemy name="ninja" x="10628" y="868" w="128" h="512" texture="Assets/Animations/EnemyAnims/NormalNinjaSpritesheet.png" gravity="true">
 					<animations>
 						<idle loop="true" speed="0.085">
 							<frame x="0" y="0" w="512" h="256" />
@@ -383,7 +383,7 @@
 						</attack>
 					</animations>
 				</enemy>
-				<enemy name="ninja" x="8560" y="1524" w="256" h="512" texture="Assets/Animations/EnemyAnims/NormalNinjaSpritesheet.png" gravity="true">
+				<enemy name="ninja" x="8560" y="1524" w="128" h="512" texture="Assets/Animations/EnemyAnims/NormalNinjaSpritesheet.png" gravity="true">
 					<animations>
 						<idle loop="true" speed="0.085">
 							<frame x="0" y="0" w="512" h="256" />
@@ -413,7 +413,7 @@
 						</attack>
 					</animations>
 				</enemy>
-				<enemy name="ninja" x="6796" y="2184" w="256" h="512" texture="Assets/Animations/EnemyAnims/NormalNinjaSpritesheet.png" gravity="true">
+				<enemy name="ninja" x="6796" y="2184" w="128" h="512" texture="Assets/Animations/EnemyAnims/NormalNinjaSpritesheet.png" gravity="true">
 					<animations>
 						<idle loop="true" speed="0.085">
 							<frame x="0" y="0" w="512" h="256" />
@@ -443,7 +443,7 @@
 						</attack>
 					</animations>
 				</enemy>
-				<enemy name="ninja" x="6000" y="2256" w="256" h="512" texture="Assets/Animations/EnemyAnims/NormalNinjaSpritesheet.png" gravity="true">
+				<enemy name="ninja" x="6000" y="2256" w="128" h="512" texture="Assets/Animations/EnemyAnims/NormalNinjaSpritesheet.png" gravity="true">
 					<animations>
 						<idle loop="true" speed="0.085">
 							<frame x="0" y="0" w="512" h="256" />
@@ -473,7 +473,7 @@
 						</attack>
 					</animations>
 				</enemy>
-				<enemy name="ninja" x="1836" y="3380" w="256" h="512" texture="Assets/Animations/EnemyAnims/NormalNinjaSpritesheet.png" gravity="true">
+				<enemy name="ninja" x="1836" y="3380" w="128" h="512" texture="Assets/Animations/EnemyAnims/NormalNinjaSpritesheet.png" gravity="true">
 					<animations>
 						<idle loop="true" speed="0.085">
 							<frame x="0" y="0" w="512" h="256" />
@@ -503,7 +503,7 @@
 						</attack>
 					</animations>
 				</enemy>
-				<enemy name="ninja" x="2592" y="3520" w="256" h="512" texture="Assets/Animations/EnemyAnims/NormalNinjaSpritesheet.png" gravity="true">
+				<enemy name="ninja" x="2592" y="3520" w="128" h="512" texture="Assets/Animations/EnemyAnims/NormalNinjaSpritesheet.png" gravity="true">
 					<animations>
 						<idle loop="true" speed="0.085">
 							<frame x="0" y="0" w="512" h="256" />
@@ -533,7 +533,7 @@
 						</attack>
 					</animations>
 				</enemy>
-				<enemy name="ninja" x="9548" y="3168" w="256" h="512" texture="Assets/Animations/EnemyAnims/NormalNinjaSpritesheet.png" gravity="true">
+				<enemy name="ninja" x="9548" y="3168" w="128" h="512" texture="Assets/Animations/EnemyAnims/NormalNinjaSpritesheet.png" gravity="true">
 					<animations>
 						<idle loop="true" speed="0.085">
 							<frame x="0" y="0" w="512" h="256" />
@@ -563,7 +563,7 @@
 						</attack>
 					</animations>
 				</enemy>
-				<enemy name="ninja" x="10312" y="4544" w="256" h="512" texture="Assets/Animations/EnemyAnims/NormalNinjaSpritesheet.png" gravity="true">
+				<enemy name="ninja" x="10312" y="4544" w="128" h="512" texture="Assets/Animations/EnemyAnims/NormalNinjaSpritesheet.png" gravity="true">
 					<animations>
 						<idle loop="true" speed="0.085">
 							<frame x="0" y="0" w="512" h="256" />
@@ -593,7 +593,7 @@
 						</attack>
 					</animations>
 				</enemy>
-				<enemy name="ninja" x="9364" y="4556" w="256" h="512" texture="Assets/Animations/EnemyAnims/NormalNinjaSpritesheet.png" gravity="true">
+				<enemy name="ninja" x="9364" y="4556" w="128" h="512" texture="Assets/Animations/EnemyAnims/NormalNinjaSpritesheet.png" gravity="true">
 					<animations>
 						<idle loop="true" speed="0.085">
 							<frame x="0" y="0" w="512" h="256" />
@@ -623,7 +623,7 @@
 						</attack>
 					</animations>
 				</enemy>
-				<enemy name="ninja" x="8232" y="4868" w="256" h="512" texture="Assets/Animations/EnemyAnims/NormalNinjaSpritesheet.png" gravity="true">
+				<enemy name="ninja" x="8232" y="4868" w="128" h="512" texture="Assets/Animations/EnemyAnims/NormalNinjaSpritesheet.png" gravity="true">
 					<animations>
 						<idle loop="true" speed="0.085">
 							<frame x="0" y="0" w="512" h="256" />
@@ -653,7 +653,7 @@
 						</attack>
 					</animations>
 				</enemy>
-				<enemy name="ninja" x="6260" y="4964" w="256" h="512" texture="Assets/Animations/EnemyAnims/NormalNinjaSpritesheet.png" gravity="true">
+				<enemy name="ninja" x="6260" y="4964" w="128" h="512" texture="Assets/Animations/EnemyAnims/NormalNinjaSpritesheet.png" gravity="true">
 					<animations>
 						<idle loop="true" speed="0.085">
 							<frame x="0" y="0" w="512" h="256" />
@@ -683,7 +683,7 @@
 						</attack>
 					</animations>
 				</enemy>
-				<turret name="turret" x="500" y="1047" w="111" h="271" texture="Assets/Textures/enemy/Idle.png" gravity="true">
+				<turret name="turret" x="500" y="1047" w="128" h="512" texture="Assets/Textures/enemy/Idle.png" gravity="true">
 					<animations>
 						<idle loop="true" speed="0.5">
 							<frame x="0" y="0" w="32" h="32" />
@@ -702,7 +702,7 @@
 		</entitiescave>
 		<entitiesboss>
 			<enemies>
-				<boss name="boss" x="2624" y="1544" w="50" h="100" texture="Assets/Animations/EnemyAnims/BossSpritesheet.png" gravity="true">
+				<boss name="boss" x="2624" y="1544" w="64" h="128" texture="Assets/Animations/EnemyAnims/BossSpritesheet.png" gravity="true">
 					<animations>
 						<idle loop="true" speed="0.085">
 							<frame x="0" y="0" w="512" h="256" />

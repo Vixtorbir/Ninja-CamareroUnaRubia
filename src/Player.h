@@ -65,6 +65,7 @@ public:
 
     void SetPosition(Vector2D pos);
     Vector2D GetPosition();
+    b2Vec2 GetPhysicalyPosition();
     void ChangeHitboxSize(float width, float height);
 
     void GuiPOPup(GuiPopups guiPopup);
