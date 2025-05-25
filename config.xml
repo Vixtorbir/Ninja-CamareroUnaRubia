@@ -18,7 +18,7 @@
 	<scene>
 		<map path="Assets/Maps/" name="MapTemplate1_64x64.tmx" />
 		<entities>
-			<player x="6668" y="3959" w="128" h="256" texture="Assets/Animations/PlayerAnims/renSpritesheet.png" gravity="true">
+			<player x="3802" y="2928" w="128" h="256" texture="Assets/Animations/PlayerAnims/renSpritesheet.png" gravity="true">
 				<animations>
 					<idle loop="true" speed="0.085">
 						<frame x="0" y="0" w="512" h="256" />
@@ -144,14 +144,14 @@
 						</idle>
 					</animations>
 				</item>
-				<testItem name="Health Potion" effect="1" description="Consume with H" icon="Assets/Textures/goldCoin.png" x="1300" y="1050" w="32" h="32" texture="Assets/Textures/goldCoin.png" gravity="true">
+				<testItem name="Health Potion" effect="1" description="Consume with H" icon="Assets/Textures/health.png" x="12450" y="3884" w="32" h="32" texture="Assets/Textures/goldCoin.png" gravity="true">
 					<animations>
 						<idle loop="true" speed="0.5">
 							<frame x="0" y="0" w="32" h="32" />
 						</idle>
 					</animations>
 				</testItem>
-				<testItem name="Mana Potion" effect="2" description="Consume with J" icon="Assets/Textures/goldCoin.png" x="1400" y="1050" w="32" h="32" texture="Assets/Textures/goldCoin.png" gravity="true">
+				<testItem name="Mana Potion" effect="2" description="Consume with J" icon="Assets/Textures/manamana.png" x="7200" y="5000" w="32" h="32" texture="Assets/Textures/goldCoin.png" gravity="true">
 					<animations>
 						<idle loop="true" speed="0.5">
 							<frame x="0" y="0" w="32" h="32" />

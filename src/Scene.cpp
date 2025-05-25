@@ -611,12 +611,6 @@ void Scene::LoadEntities(int sceneIndex)
 	turretList.clear();
 	for (auto boss : bossList) boss->CleanUp();
 	bossList.clear();
-	// Limpia la lista de items
-	for (auto item : items) item->CleanUp();
-	items.clear();
-	// Limpia la lista de NPCs
-	for (auto npc : npcs) npc->CleanUp();
-	npcs.clear();
 
 	pugi::xml_node enemiesNode;
 
