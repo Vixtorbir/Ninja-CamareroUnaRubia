@@ -47,8 +47,8 @@ bool Render::Awake()
 	{
 		camera.w = Engine::GetInstance().window.get()->width * scale;
 		camera.h = Engine::GetInstance().window.get()->height * scale;
-		camera.x = 0;
-		camera.y = 0;
+		camera.x = 6668;
+		camera.y = 3959;
 	}
 
 	//initialise the SDL_ttf library
@@ -74,7 +74,8 @@ bool Render::Start()
 	minimapZoom = 0.05f;  // Show 5x more area than the main camera
 	minimapEnabled = true;
 
-
+	camera.x = 6668;
+	camera.y = 3959;
 	LOG("render start");
 	// back background
 	SDL_RenderGetViewport(renderer, &viewport);

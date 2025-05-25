@@ -21,10 +21,12 @@ Player::Player() : Entity(EntityType::PLAYER)
 Player::~Player() {}
 
 bool Player::Awake() {
+
     return true;
 }
 
 bool Player::Start() {
+
     // Initialize parameters
     texture = Engine::GetInstance().textures.get()->Load(parameters.attribute("texture").as_string());
 
