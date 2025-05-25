@@ -408,6 +408,8 @@ bool Player::Update(float dt) {
     }
     if (GetPosition().getX() >= 8600 && GetPosition().getY() <= 268 && currentLevel == 3) {
         if (loadLevel2back == false) {
+            Engine::GetInstance().scene.get()->loadThingsOfMaps(2);
+
             loadLevel2back = true;
         }
     }

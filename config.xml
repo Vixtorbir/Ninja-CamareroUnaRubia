@@ -259,7 +259,7 @@
 		</entities>
 		<entitiesbamboo>
 			<enemies>
-				<enemy name="ninja" x="2368" y="3968" w="256" h="512" texture="Assets/Animations/EnemyAnims/NormalNinjaSpritesheet.png" gravity="true">
+				<enemy name="ninja" x="2368" y="3968" w="128" h="512" texture="Assets/Animations/EnemyAnims/NormalNinjaSpritesheet.png" gravity="true">
 					<animations>
 						<idle loop="true" speed="0.085">
 							<frame x="0" y="0" w="512" h="256" />
@@ -289,7 +289,7 @@
 						</attack>
 					</animations>
 				</enemy>
-				<enemy name="ninja" x="2700" y="3968" w="256" h="512" texture="Assets/Animations/EnemyAnims/NormalNinjaSpritesheet.png" gravity="true">
+				<enemy name="ninja" x="2700" y="3968" w="128" h="512" texture="Assets/Animations/EnemyAnims/NormalNinjaSpritesheet.png" gravity="true">
 					<animations>
 						<idle loop="true" speed="0.085">
 							<frame x="0" y="0" w="512" h="256" />
@@ -319,7 +319,7 @@
 						</attack>
 					</animations>
 				</enemy>
-				<turret name="range" x="2100" y="3968" w="256" h="512" texture="Assets/Animations/EnemyAnims/ShootNinjaSpritesheet.png" gravity="true">
+				<turret name="range" x="2100" y="3968" w="128" h="512" texture="Assets/Animations/EnemyAnims/ShootNinjaSpritesheet.png" gravity="true">
 					<animations>
 						<idle loop="true" speed="0.085">
 							<frame x="0" y="0" w="512" h="256" />
