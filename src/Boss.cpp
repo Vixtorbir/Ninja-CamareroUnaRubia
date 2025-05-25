@@ -145,6 +145,7 @@ bool Boss::Update(float dt)
 				else
 				{
 					state = BossState::AGGRESSIVE;
+					currentAnimation = &walk;
 				}
 			}
 			else
@@ -251,8 +252,8 @@ bool Boss::Update(float dt)
 
 			int textureWidth = 104;
 			int textureHeight = 128;
-			int renderX = x - textureWidth / 2;
-			int renderY = y - textureHeight / 2;
+			int renderX = x - textureWidth / 6;
+			int renderY = y - textureHeight / 6;
 
 			Engine::GetInstance().render.get()->DrawTexture(attackTexture, renderX, renderY);
 		}

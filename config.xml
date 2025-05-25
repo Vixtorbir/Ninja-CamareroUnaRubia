@@ -702,7 +702,7 @@
 		</entitiescave>
 		<entitiesboss>
 			<enemies>
-				<boss name="boss" x="2624" y="1544" w="100" h="100" texture="Assets/Animations/EnemyAnims/BossSpritesheet.png" gravity="true">
+				<boss name="boss" x="2624" y="1544" w="50" h="100" texture="Assets/Animations/EnemyAnims/BossSpritesheet.png" gravity="true">
 					<animations>
 						<idle loop="true" speed="0.085">
 							<frame x="0" y="0" w="512" h="256" />
