@@ -362,7 +362,7 @@ bool Scene::PostUpdate()
 	}
 
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F9) == KEY_DOWN) {
-		SafeLoadMap("BossArena.tmx", Vector2D(1678, 830));
+		SafeLoadMap("BossArena.tmx", Vector2D(2623, 1726));
 		levelIndex = 3;
 		//LoadEntities(2);
 		parallax->ChangeTextures(levelIndex);
@@ -419,7 +419,7 @@ bool Scene::PostUpdate()
 		FadeTransition(Engine::GetInstance().render.get()->renderer, false, 1.0f);
 		Engine::GetInstance().map->CleanUp(); // Esto solo limpia recursos antiguos
 
-		SafeLoadMap("BossArena.tmx", Vector2D(1678, 830));
+		SafeLoadMap("BossArena.tmx", Vector2D(2623, 1726));
 
 		Engine::GetInstance().scene.get()->player->loadLevel4 = false;
 		Engine::GetInstance().scene.get()->player->currentLevel = 4;

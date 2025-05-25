@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "BossArena.tmx",
+    "activeFile": "Cave.tmx",
     "expandedProjectPaths": [
         "."
     ],
@@ -13,17 +13,24 @@
             "scaleInEditor": 1
         },
         "BossArena.tmx": {
-            "scale": 0.0625,
-            "selectedLayer": 3,
+            "expandedObjectLayers": [
+                9,
+                8
+            ],
+            "scale": 0.25,
+            "selectedLayer": 7,
             "viewCenter": {
-                "x": 1432,
-                "y": 792
+                "x": 2406,
+                "y": 670
             }
         },
         "BossArena.tmx#MapMetadata": {
             "scaleInDock": 1
         },
         "BossArena.tmx#Zone1": {
+            "scaleInDock": 1
+        },
+        "BossArena.tmx#level2CaveTileset 128 x 128": {
             "scaleInDock": 1
         },
         "BossArena.tmx#tmw_desert_spacing": {
@@ -37,11 +44,11 @@
                 9,
                 8
             ],
-            "scale": 0.75,
+            "scale": 0.5,
             "selectedLayer": 12,
             "viewCenter": {
-                "x": 8000.666666666666,
-                "y": 3199.333333333333
+                "x": 8001,
+                "y": 2895
             }
         },
         "Cave.tmx#MapMetadata": {
@@ -102,9 +109,9 @@
         },
         "MapTemplate1_64x64.tmx": {
             "expandedObjectLayers": [
+                25,
                 9,
-                8,
-                25
+                8
             ],
             "scale": 0.015625,
             "selectedLayer": 14,
@@ -158,10 +165,10 @@
     "project": "ForestTilemap.tiled-project",
     "property.type": "bool",
     "recentFiles": [
-        "Cave.tmx",
-        "MapTemplate2_64x64.tmx",
-        "MapTemplate1_64x64.tmx",
         "BossArena.tmx",
+        "MapTemplate1_64x64.tmx",
+        "MapTemplate2_64x64.tmx",
+        "Cave.tmx",
         "MapTemplate1.tmx"
     ],
     "tileset.embedInMap": true,
