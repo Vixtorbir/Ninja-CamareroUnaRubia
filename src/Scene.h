@@ -50,6 +50,8 @@ public:
 	// Called each loop iteration
 	bool Update(float dt);
 
+	void loadThingsOfMaps(int index);
+
 	void LoadMap1();
 	void LoadMap2();
 	// Called before all Updates
