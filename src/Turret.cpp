@@ -44,6 +44,7 @@ bool Turret::Start() {
     pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX() + 256, (int)position.getY(), texW, texH - 200, bodyType::DYNAMIC);
     pbody->ctype = ColliderType::TURRET; // Asignar el tipo de colisionador
     pbody->listener = this;
+    pbody->body->SetFixedRotation(true);
 
     
     shootTimer.Start();

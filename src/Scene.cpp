@@ -604,43 +604,45 @@ void Scene::FadeTransition(SDL_Renderer* renderer, bool fadeIn, float duration)
 
 void Scene::LoadEntities(int sceneIndex)
 {
-	// Limpia las listas actuales de enemigos, torretas y bosses
+	// Limpia las listas actuales de enemigos, torretas, bosses, items y npcs
 	for (auto enemy : enemyList) enemy->CleanUp();
 	enemyList.clear();
 	for (auto turret : turretList) turret->CleanUp();
 	turretList.clear();
 	for (auto boss : bossList) boss->CleanUp();
 	bossList.clear();
-	// Limpia la lista de items
-	for (auto item : items) item->CleanUp();
-	items.clear();
-	// Limpia la lista de NPCs
-	for (auto npc : npcs) npc->CleanUp();
-	npcs.clear();
+
 
 	pugi::xml_node enemiesNode;
+	pugi::xml_node itemsNode;
+	pugi::xml_node npcsNode;
 
 	if (sceneIndex == 1) {
-		// Primer nivel: <entities><enemies>
 		enemiesNode = configParameters.child("entities").child("enemies");
+		itemsNode = configParameters.child("entities").child("items");
+		npcsNode = configParameters.child("entities");
 	}
 	else if (sceneIndex == 2) {
-		// Segundo nivel: <entitiesbamboo><enemies>
 		enemiesNode = configParameters.child("entitiesbamboo").child("enemies");
+		itemsNode = configParameters.child("entitiesbamboo").child("items");
+		npcsNode = configParameters.child("entitiesbamboo");
 	}
 	else if (sceneIndex == 3) {
-		// Tercer nivel: <entitiescave><enemies>
 		enemiesNode = configParameters.child("entitiescave").child("enemies");
+		itemsNode = configParameters.child("entitiescave").child("items");
+		npcsNode = configParameters.child("entitiescave");
 	}
 	else if (sceneIndex == 4) {
-		// Cuarto nivel: <entitiesboss><enemies>
 		enemiesNode = configParameters.child("entitiesboss").child("enemies");
+		itemsNode = configParameters.child("entitiesboss").child("items");
+		npcsNode = configParameters.child("entitiesboss");
 	}
 	else {
 		LOG("Invalid scene index for loading entities.");
 		return;
 	}
 
+	// Enemigos, torretas y bosses
 	if (enemiesNode) {
 		for (pugi::xml_node enemyNode = enemiesNode.child("enemy"); enemyNode; enemyNode = enemyNode.next_sibling("enemy")) {
 			Enemy* enemy = (Enemy*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ENEMY);
@@ -662,14 +664,56 @@ void Scene::LoadEntities(int sceneIndex)
 		}
 	}
 
+	// Items normales y testItems
+	if (itemsNode) {
+		for (pugi::xml_node itemNode = itemsNode.child("item"); itemNode; itemNode = itemNode.next_sibling("item")) {
+			Item* item = (Item*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ITEM);
+			item->SetParameters(itemNode);
+			item->Start(); 
+			item->Puzzle();
+			items.push_back(item);
+		}
+		for (pugi::xml_node testItemNode = itemsNode.child("testItem"); testItemNode; testItemNode = testItemNode.next_sibling("testItem")) {
+			Item* item = (Item*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ITEM);
+			item->SetParameters(testItemNode);
+			item->Start();
+			items.push_back(item);
+		}
+	}
+
+	// NPCs (busca todos los nodos npcX)
+	if (npcsNode) {
+		for (pugi::xml_node npcNode = npcsNode.child("npcMENTORSHIP"); npcNode; npcNode = npcNode.next_sibling("npcMENTORSHIP")) {
+			NPC* npc = (NPC*)Engine::GetInstance().entityManager->CreateNamedCharacter(EntityType::NPC, DialogueEngine::MENTORSHIP);
+			npc->SetParameters(npcNode);
+			npc->Start();
+			npcs.push_back(npc);
+		}
+		for (pugi::xml_node npcNode = npcsNode.child("npcISAMU"); npcNode; npcNode = npcNode.next_sibling("npcISAMU")) {
+			NPC* npc = (NPC*)Engine::GetInstance().entityManager->CreateNamedCharacter(EntityType::NPC, DialogueEngine::ISAMU);
+			npc->SetParameters(npcNode);
+			npc->Start();
+			npcs.push_back(npc);
+		}
+		for (pugi::xml_node npcNode = npcsNode.child("npcKAEDE"); npcNode; npcNode = npcNode.next_sibling("npcKAEDE")) {
+			NPC* npc = (NPC*)Engine::GetInstance().entityManager->CreateNamedCharacter(EntityType::NPC, DialogueEngine::KAEDE);
+			npc->SetParameters(npcNode);
+			npc->Start();
+			npcs.push_back(npc);
+		}
+		for (pugi::xml_node npcNode = npcsNode.child("npcHANZO"); npcNode; npcNode = npcNode.next_sibling("npcHANZO")) {
+			NPC* npc = (NPC*)Engine::GetInstance().entityManager->CreateNamedCharacter(EntityType::NPC, DialogueEngine::HANZO);
+			npc->SetParameters(npcNode);
+			npc->Start();
+			npcs.push_back(npc);
+		}
+	}
+
 	for (Enemy* enemy : enemyList)
 	{
 		enemy->SetPlayer(player);
-		
 		enemy->sceneModule = this;
-		
 	}
-
 }
 
 

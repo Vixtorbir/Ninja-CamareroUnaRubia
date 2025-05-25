@@ -18,9 +18,9 @@
 	<scene>
 		<map path="Assets/Maps/" name="MapTemplate1_64x64.tmx" />
 		<entities>
-			<player x="6668" y="3959" w="128" h="256" texture="Assets/Animations/PlayerAnims/renSpritesheet.png" gravity="true">
+			<player x="3802" y="2928" w="128" h="256" texture="Assets/Animations/PlayerAnims/renSpritesheet.png" gravity="true">
 				<animations>
-					<idle loop="true" speed="0.085">
+					<idle loop="true" speed="0.065">
 						<frame x="0" y="0" w="512" h="256" />
 						<frame x="512" y="0" w="512" h="256" />
 						<frame x="1024" y="0" w="512" h="256" />
@@ -137,21 +137,21 @@
 				</animations>
 			</npcSOLDIER3>
 			<items>
-				<item name="coin" x="2400" y="1336" w="32" h="32" texture="Assets/Textures/goldCoin.png" gravity="true">
+				<item name="coin" x="2400" y="1336" w="32" h="32" texture="Assets/Textures/sopa.png" gravity="true">
 					<animations>
 						<idle loop="true" speed="0.5">
 							<frame x="0" y="0" w="32" h="32" />
 						</idle>
 					</animations>
 				</item>
-				<testItem name="Health Potion" effect="1" description="Consume with H" icon="Assets/Textures/goldCoin.png" x="1300" y="1050" w="32" h="32" texture="Assets/Textures/goldCoin.png" gravity="true">
+				<testItem name="Health Potion" effect="1" description="Consume with H" icon="Assets/Textures/health.png" x="12450" y="3884" w="32" h="32" texture="Assets/Textures/health.png" gravity="true">
 					<animations>
 						<idle loop="true" speed="0.5">
 							<frame x="0" y="0" w="32" h="32" />
 						</idle>
 					</animations>
 				</testItem>
-				<testItem name="Mana Potion" effect="2" description="Consume with J" icon="Assets/Textures/goldCoin.png" x="1400" y="1050" w="32" h="32" texture="Assets/Textures/goldCoin.png" gravity="true">
+				<testItem name="Mana Potion" effect="2" description="Consume with J" icon="Assets/Textures/manamana.png" x="7200" y="5000" w="32" h="32" texture="Assets/Textures/manamana.png" gravity="true">
 					<animations>
 						<idle loop="true" speed="0.5">
 							<frame x="0" y="0" w="32" h="32" />
@@ -289,7 +289,127 @@
 						</attack>
 					</animations>
 				</enemy>
-				<enemy name="ninja" x="2700" y="3968" w="128" h="512" texture="Assets/Animations/EnemyAnims/NormalNinjaSpritesheet.png" gravity="true">
+				<enemy name="ninja" x="6924" y="2620" w="128" h="512" texture="Assets/Animations/EnemyAnims/NormalNinjaSpritesheet.png" gravity="true">
+					<animations>
+						<idle loop="true" speed="0.085">
+							<frame x="0" y="0" w="512" h="256" />
+							<frame x="512" y="0" w="512" h="256" />
+							<frame x="1024" y="0" w="512" h="256" />
+							<frame x="1536" y="0" w="512" h="256" />
+							<frame x="2048" y="0" w="512" h="256" />
+							<frame x="2560" y="0" w="512" h="256" />
+						</idle>
+						<walk loop="true" speed="0.15">
+							<frame x="0" y="256" w="512" h="256" />
+							<frame x="512" y="256" w="512" h="256" />
+							<frame x="1024" y="256" w="512" h="256" />
+							<frame x="1536" y="256" w="512" h="256" />
+							<frame x="2048" y="256" w="512" h="256" />
+							<frame x="2560" y="256" w="512" h="256" />
+							<frame x="3072" y="256" w="512" h="256" />
+						</walk>
+						<attack loop="true" speed="0.1">
+							<frame x="0" y="512" w="512" h="256" />
+							<frame x="512" y="512" w="512" h="256" />
+							<frame x="1024" y="512" w="512" h="256" />
+							<frame x="1536" y="512" w="512" h="256" />
+							<frame x="2048" y="512" w="512" h="256" />
+							<frame x="2560" y="512" w="512" h="256" />
+							<frame x="3072" y="512" w="512" h="256" />
+						</attack>
+					</animations>
+				</enemy>
+				<enemy name="ninja" x="2826" y="1436" w="128" h="512" texture="Assets/Animations/EnemyAnims/NormalNinjaSpritesheet.png" gravity="true">
+					<animations>
+						<idle loop="true" speed="0.085">
+							<frame x="0" y="0" w="512" h="256" />
+							<frame x="512" y="0" w="512" h="256" />
+							<frame x="1024" y="0" w="512" h="256" />
+							<frame x="1536" y="0" w="512" h="256" />
+							<frame x="2048" y="0" w="512" h="256" />
+							<frame x="2560" y="0" w="512" h="256" />
+						</idle>
+						<walk loop="true" speed="0.15">
+							<frame x="0" y="256" w="512" h="256" />
+							<frame x="512" y="256" w="512" h="256" />
+							<frame x="1024" y="256" w="512" h="256" />
+							<frame x="1536" y="256" w="512" h="256" />
+							<frame x="2048" y="256" w="512" h="256" />
+							<frame x="2560" y="256" w="512" h="256" />
+							<frame x="3072" y="256" w="512" h="256" />
+						</walk>
+						<attack loop="true" speed="0.1">
+							<frame x="0" y="512" w="512" h="256" />
+							<frame x="512" y="512" w="512" h="256" />
+							<frame x="1024" y="512" w="512" h="256" />
+							<frame x="1536" y="512" w="512" h="256" />
+							<frame x="2048" y="512" w="512" h="256" />
+							<frame x="2560" y="512" w="512" h="256" />
+							<frame x="3072" y="512" w="512" h="256" />
+						</attack>
+					</animations>
+				</enemy>
+				<enemy name="ninja" x="8652" y="2840" w="128" h="512" texture="Assets/Animations/EnemyAnims/NormalNinjaSpritesheet.png" gravity="true">
+					<animations>
+						<idle loop="true" speed="0.085">
+							<frame x="0" y="0" w="512" h="256" />
+							<frame x="512" y="0" w="512" h="256" />
+							<frame x="1024" y="0" w="512" h="256" />
+							<frame x="1536" y="0" w="512" h="256" />
+							<frame x="2048" y="0" w="512" h="256" />
+							<frame x="2560" y="0" w="512" h="256" />
+						</idle>
+						<walk loop="true" speed="0.15">
+							<frame x="0" y="256" w="512" h="256" />
+							<frame x="512" y="256" w="512" h="256" />
+							<frame x="1024" y="256" w="512" h="256" />
+							<frame x="1536" y="256" w="512" h="256" />
+							<frame x="2048" y="256" w="512" h="256" />
+							<frame x="2560" y="256" w="512" h="256" />
+							<frame x="3072" y="256" w="512" h="256" />
+						</walk>
+						<attack loop="true" speed="0.1">
+							<frame x="0" y="512" w="512" h="256" />
+							<frame x="512" y="512" w="512" h="256" />
+							<frame x="1024" y="512" w="512" h="256" />
+							<frame x="1536" y="512" w="512" h="256" />
+							<frame x="2048" y="512" w="512" h="256" />
+							<frame x="2560" y="512" w="512" h="256" />
+							<frame x="3072" y="512" w="512" h="256" />
+						</attack>
+					</animations>
+				</enemy>
+				<enemy name="ninja" x="7236" y="4528" w="128" h="512" texture="Assets/Animations/EnemyAnims/NormalNinjaSpritesheet.png" gravity="true">
+					<animations>
+						<idle loop="true" speed="0.085">
+							<frame x="0" y="0" w="512" h="256" />
+							<frame x="512" y="0" w="512" h="256" />
+							<frame x="1024" y="0" w="512" h="256" />
+							<frame x="1536" y="0" w="512" h="256" />
+							<frame x="2048" y="0" w="512" h="256" />
+							<frame x="2560" y="0" w="512" h="256" />
+						</idle>
+						<walk loop="true" speed="0.15">
+							<frame x="0" y="256" w="512" h="256" />
+							<frame x="512" y="256" w="512" h="256" />
+							<frame x="1024" y="256" w="512" h="256" />
+							<frame x="1536" y="256" w="512" h="256" />
+							<frame x="2048" y="256" w="512" h="256" />
+							<frame x="2560" y="256" w="512" h="256" />
+							<frame x="3072" y="256" w="512" h="256" />
+						</walk>
+						<attack loop="true" speed="0.1">
+							<frame x="0" y="512" w="512" h="256" />
+							<frame x="512" y="512" w="512" h="256" />
+							<frame x="1024" y="512" w="512" h="256" />
+							<frame x="1536" y="512" w="512" h="256" />
+							<frame x="2048" y="512" w="512" h="256" />
+							<frame x="2560" y="512" w="512" h="256" />
+							<frame x="3072" y="512" w="512" h="256" />
+						</attack>
+					</animations>
+				</enemy>
+				<enemy name="ninja" x="14676" y="3556" w="128" h="512" texture="Assets/Animations/EnemyAnims/NormalNinjaSpritesheet.png" gravity="true">
 					<animations>
 						<idle loop="true" speed="0.085">
 							<frame x="0" y="0" w="512" h="256" />
@@ -320,6 +440,96 @@
 					</animations>
 				</enemy>
 				<turret name="range" x="2100" y="3968" w="128" h="512" texture="Assets/Animations/EnemyAnims/ShootNinjaSpritesheet.png" gravity="true">
+					<animations>
+						<idle loop="true" speed="0.085">
+							<frame x="0" y="0" w="512" h="256" />
+							<frame x="512" y="0" w="512" h="256" />
+							<frame x="1024" y="0" w="512" h="256" />
+							<frame x="1536" y="0" w="512" h="256" />
+							<frame x="2048" y="0" w="512" h="256" />
+							<frame x="2560" y="0" w="512" h="256" />
+						</idle>
+						<walk loop="true" speed="0.15">
+							<frame x="0" y="256" w="512" h="256" />
+							<frame x="512" y="256" w="512" h="256" />
+							<frame x="1024" y="256" w="512" h="256" />
+							<frame x="1536" y="256" w="512" h="256" />
+							<frame x="2048" y="256" w="512" h="256" />
+							<frame x="2560" y="256" w="512" h="256" />
+							<frame x="3072" y="256" w="512" h="256" />
+						</walk>
+						<attack loop="true" speed="0.1">
+							<frame x="0" y="512" w="512" h="256" />
+							<frame x="512" y="512" w="512" h="256" />
+							<frame x="1024" y="512" w="512" h="256" />
+							<frame x="1536" y="512" w="512" h="256" />
+							<frame x="2048" y="512" w="512" h="256" />
+							<frame x="2560" y="512" w="512" h="256" />
+							<frame x="3072" y="512" w="512" h="256" />
+						</attack>
+					</animations>
+				</turret>
+				<turret name="range" x="10396" y="2632" w="128" h="512" texture="Assets/Animations/EnemyAnims/ShootNinjaSpritesheet.png" gravity="true">
+					<animations>
+						<idle loop="true" speed="0.085">
+							<frame x="0" y="0" w="512" h="256" />
+							<frame x="512" y="0" w="512" h="256" />
+							<frame x="1024" y="0" w="512" h="256" />
+							<frame x="1536" y="0" w="512" h="256" />
+							<frame x="2048" y="0" w="512" h="256" />
+							<frame x="2560" y="0" w="512" h="256" />
+						</idle>
+						<walk loop="true" speed="0.15">
+							<frame x="0" y="256" w="512" h="256" />
+							<frame x="512" y="256" w="512" h="256" />
+							<frame x="1024" y="256" w="512" h="256" />
+							<frame x="1536" y="256" w="512" h="256" />
+							<frame x="2048" y="256" w="512" h="256" />
+							<frame x="2560" y="256" w="512" h="256" />
+							<frame x="3072" y="256" w="512" h="256" />
+						</walk>
+						<attack loop="true" speed="0.1">
+							<frame x="0" y="512" w="512" h="256" />
+							<frame x="512" y="512" w="512" h="256" />
+							<frame x="1024" y="512" w="512" h="256" />
+							<frame x="1536" y="512" w="512" h="256" />
+							<frame x="2048" y="512" w="512" h="256" />
+							<frame x="2560" y="512" w="512" h="256" />
+							<frame x="3072" y="512" w="512" h="256" />
+						</attack>
+					</animations>
+				</turret>
+				<turret name="range" x="5484" y="1852" w="128" h="512" texture="Assets/Animations/EnemyAnims/ShootNinjaSpritesheet.png" gravity="true">
+					<animations>
+						<idle loop="true" speed="0.085">
+							<frame x="0" y="0" w="512" h="256" />
+							<frame x="512" y="0" w="512" h="256" />
+							<frame x="1024" y="0" w="512" h="256" />
+							<frame x="1536" y="0" w="512" h="256" />
+							<frame x="2048" y="0" w="512" h="256" />
+							<frame x="2560" y="0" w="512" h="256" />
+						</idle>
+						<walk loop="true" speed="0.15">
+							<frame x="0" y="256" w="512" h="256" />
+							<frame x="512" y="256" w="512" h="256" />
+							<frame x="1024" y="256" w="512" h="256" />
+							<frame x="1536" y="256" w="512" h="256" />
+							<frame x="2048" y="256" w="512" h="256" />
+							<frame x="2560" y="256" w="512" h="256" />
+							<frame x="3072" y="256" w="512" h="256" />
+						</walk>
+						<attack loop="true" speed="0.1">
+							<frame x="0" y="512" w="512" h="256" />
+							<frame x="512" y="512" w="512" h="256" />
+							<frame x="1024" y="512" w="512" h="256" />
+							<frame x="1536" y="512" w="512" h="256" />
+							<frame x="2048" y="512" w="512" h="256" />
+							<frame x="2560" y="512" w="512" h="256" />
+							<frame x="3072" y="512" w="512" h="256" />
+						</attack>
+					</animations>
+				</turret>
+				<turret name="range" x="13564" y="1344" w="128" h="512" texture="Assets/Animations/EnemyAnims/ShootNinjaSpritesheet.png" gravity="true">
 					<animations>
 						<idle loop="true" speed="0.085">
 							<frame x="0" y="0" w="512" h="256" />
@@ -702,7 +912,7 @@
 		</entitiescave>
 		<entitiesboss>
 			<enemies>
-				<boss name="boss" x="2624" y="1544" w="64" h="128" texture="Assets/Animations/EnemyAnims/BossSpritesheet.png" gravity="true">
+				<boss name="boss" x="2624" y="1280" w="64" h="128" texture="Assets/Animations/EnemyAnims/BossSpritesheet.png" gravity="true">
 					<animations>
 						<idle loop="true" speed="0.085">
 							<frame x="0" y="0" w="512" h="256" />
