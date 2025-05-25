@@ -10,19 +10,18 @@
 	</RAIDEDVILLAGE>
 	<MENTORSHIP>
 		<dialogues size="1">
-			<dialogue1 character="Mentor" text="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum"  branching="1"/>
-			<dialogue2 character="Mentor" text="this is the option A"  branching="0"/>
-			<dialogue2 character="Mentor" text="this is the option B"  branching="0"/>
-			<options a="ok" b="no"/>
+			<dialogue1 character="Mentor" text="Welcome, traveler"  branching="0"/>
+		
 		</dialogues>
 	</MENTORSHIP>
 	<ISAMU>
 		<dialogues size="1">
 			<dialogue1 character="Isamu" text="Ah Ren! After all this years of training, let me give you some advice."  branching="0"/>
-			<dialogue2 character="Isamu" text="You see, I stood beside Ryoji once. And Hanzo. We bled under the same banner. Back then, we believed we were righteous."  branching="0"/>
-			<dialogue3 character="Isamu" text="But power corrupts even the best men. Ryoji lost himself chasing a lost cause. And Hanzo..."  branching="0"/>
-			<dialogue4 character="Isamu" text="Hanzo clutches to order so tightly, I wonder if he still remembers freedom"  branching="0"/>
-			<dialogue5 character="Isamu" text="Question everything, even those you serve. Especially them"  branching="0"/>
+			<dialogue2 character="Isamu" text="You see, I stood beside Ryoji once. And Hanzo. We bled under the same banner."  branching="0"/>
+			<dialogue3 character="Isamu" text=" Back then, we believed we were righteous. But power corrupts even the best men." branching="0"/>
+			<dialogue4 character="Isamu" text=" Ryoji lost himself chasing a lost cause. And Hanzo..."  branching="0"/>
+			<dialogue5 character="Isamu" text="Hanzo clutches to order so tightly, I wonder if he still remembers freedom"  branching="0"/>
+			<dialogue6 character="Isamu" text="Question everything, even those you serve. Especially them"  branching="0"/>
 		
 		</dialogues>
 		

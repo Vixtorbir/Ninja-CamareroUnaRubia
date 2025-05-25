@@ -115,7 +115,7 @@
 					</idle>
 				</animations>
 			</npcISAMU>
-			<npcKAEDE x="12424" y="3950" w="256" h="256" texture="Assets/Animations/NPCs/villagerB.png" gravity="true">
+			<npcKAEDE x="8200" y="5300" w="256" h="256" texture="Assets/Animations/NPCs/villagerB.png" gravity="true">
 				<animations>
 					<idle loop="true" speed="0.5">
 						<frame x="0" y="0" w="256" h="256" />
@@ -129,7 +129,7 @@
 					</idle>
 				</animations>
 			</npcHANZO>
-			<npcSOLDIER3 x="11906" y="4850" w="256" h="256" texture="Assets/Animations/NPCs/SoldierC.png" gravity="true">
+			<npcSOLDIER3 x="12804" y="3950" w="256" h="256" texture="Assets/Animations/NPCs/SoldierC.png" gravity="true">
 				<animations>
 					<idle loop="true" speed="0.5">
 						<frame x="0" y="0" w="256" h="256" />
