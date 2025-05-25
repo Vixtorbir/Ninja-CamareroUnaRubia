@@ -104,6 +104,7 @@ public:
 	SDL_Texture* textureBuffer = nullptr;
 	SDL_Texture* Hanzo = nullptr;
 	SDL_Texture* MenuBackgroundImage = nullptr;
+	SDL_Texture* BackgroundImage = nullptr;
 	bool anyAggressiveNow = false;
 	std::string tilePosDebug = "[0,0]";
 	bool once = false;
@@ -144,7 +145,7 @@ public:
 
 
 	GuiImage* menuBackgroundImage = nullptr;
-
+	GuiImage* backgroundImage = nullptr;
 	float logoTimer = 0.0f;
 	float fadeDuration = 3.0f; // Duración del fade in y fade out en segundos
 	float opacity = 0.0f;
