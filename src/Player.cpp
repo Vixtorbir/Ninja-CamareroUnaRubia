@@ -82,8 +82,7 @@ bool Player::Start() {
     orbUi = (GuiImage*)Engine::GetInstance().guiManager->CreateGuiImage(GuiControlType::IMAGE, 1, " ", btPos, sceneModule, orbUiTexture);
     HP_Slider = (GuiSlider*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::HPSLIDER, 1, " ", hpPos, sceneModule);
 
-    HP_Slider->SetSliderBarSize(200, 15);
-    HP_Slider->SetSliderBarInnerSize(100, 10);
+
 
     backgroundSliderImage->visible = false;
     foregroundSliderImage->visible = false;
