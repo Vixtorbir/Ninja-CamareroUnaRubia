@@ -91,24 +91,24 @@ bool GuiControlButton::Update(float dt)
             {
 
             case GuiControlState::NORMAL:
-                Engine::GetInstance().render->DrawTexturedRectangle(texture, bounds.x, bounds.y, 600, 400, false);
+                Engine::GetInstance().render->DrawTexturedRectangle(texture, bounds.x, bounds.y, 400, 300, false);
 
                 if (isOptionA || isOptionB)
                 {
 
-                    Engine::GetInstance().render->DrawTextWhite(text.c_str(), bounds.x, bounds.y, 150, 100);
+                    Engine::GetInstance().render->DrawTextWhite(text.c_str(), bounds.x, bounds.y, 400, 300);
 
                 }
                 break;
 
             case GuiControlState::FOCUSED:
-                Engine::GetInstance().render->DrawTexturedRectangle(textureSelected, bounds.x, bounds.y, 600, 400, false);
+                Engine::GetInstance().render->DrawTexturedRectangle(textureSelected, bounds.x, bounds.y, 400, 300, false);
 
                 break;
 
 
             case GuiControlState::PRESSED:
-                Engine::GetInstance().render->DrawTexturedRectangle(textureSelected, bounds.x, bounds.y , 600, 400, false);
+                Engine::GetInstance().render->DrawTexturedRectangle(textureSelected, bounds.x, bounds.y , 400, 300, false);
                 isClicked = true;
 
 
@@ -125,8 +125,8 @@ bool GuiControlButton::Update(float dt)
             }
 
             // Calculate position to center text within the button
-            int textX = bounds.x + bounds.w - (textW);
-            int textY = bounds.y  + bounds.h - 150;
+            int textX = bounds.x + bounds.w - (textW+150);
+            int textY = bounds.y  + bounds.h - 200;
 
             // Render the text
             if (!isOptionA && !isOptionB) Engine::GetInstance().render->DrawText(text.c_str(), textX, textY, textW, textH);
