@@ -440,7 +440,7 @@ bool Boss::IsPlayerInRange() {
 	Vector2D playerTilePos = Engine::GetInstance().map.get()->WorldToMap(playerPos.getX(), playerPos.getY());
 
 	int distance = abs(playerTilePos.getX() - enemyTilePos.getX());
-	bool isInRange = distance <= 16;
+	bool isInRange = distance <= 8;
 
 	// Verificar si el enemigo está mirando en la dirección del jugador
 	bool isFacingPlayer = (direction == 0 && playerTilePos.getX() < enemyTilePos.getX()) ||
@@ -512,7 +512,7 @@ bool Boss::IsPlayerInAttackRange() {
 	Vector2D playerTilePos = Engine::GetInstance().map.get()->WorldToMap(playerPos.getX(), playerPos.getY());
 
 	int distance = abs(playerTilePos.getX() - enemyTilePos.getX());
-	return distance <= 10;
+	return distance <= 3;
 }
 
 void Boss::LoadEnemyFx()
