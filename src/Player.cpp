@@ -389,6 +389,16 @@ bool Player::Update(float dt) {
             loadLevel4 = true;
         }
     }
+    if (GetPosition().getX() <= 732 && GetPosition().getY() >= 3968 && currentLevel == 2) {
+        if (loadLevel1 == false) {
+            loadLevel1 = true;
+        }
+    }
+    if (GetPosition().getX() >= 8600 && GetPosition().getY() <= 268 && currentLevel == 3) {
+        if (loadLevel2back == false) {
+            loadLevel2back = true;
+        }
+    }
     
 
     
