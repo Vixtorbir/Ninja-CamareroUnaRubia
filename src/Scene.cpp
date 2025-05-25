@@ -162,21 +162,25 @@ bool Scene::Start()
 	SDL_Rect startButtonPos = { 1100, 300, 400, 300 };
 	SDL_Rect optionsButtonPos = { 1100, 550, 400, 300 };
 	SDL_Rect exitButtonPos = { 1100, 800, 400, 300 };
-	SDL_Rect vsyncCheckboxPos = { 700, 150, 400, 300 };
-	SDL_Rect fullscreenCheckboxPos = { 700, 400, 400, 300 };
-	SDL_Rect returntomenuButtonPos = { 700, 650, 400, 300 };
-	SDL_Rect returnButtonPos = { 700, 450, 400, 300 };
+	SDL_Rect vsyncCheckboxPos = { 1100, 550, 400, 300 };
+	SDL_Rect fullscreenCheckboxPos = { 1100, 300, 400, 300 };
+	SDL_Rect returntomenuButtonPos = { 1100, 800, 400, 300 };
+	SDL_Rect returnButtonPos = { 1100, 550, 400, 300 };
 
 	startButton = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(
 		GuiControlType::BUTTON, 1, "                        Start Game", startButtonPos, this);
-
+	startButton->Start();
+	startButton->visible = true;
 
 	optionsButton = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(
 		GuiControlType::BUTTON, 2, "Options", optionsButtonPos, this);
-
+	optionsButton->Start();
+	optionsButton->visible = true;
 
 	exitButton = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(
 		GuiControlType::BUTTON, 3, "Exit", exitButtonPos, this);
+	exitButton->Start();
+	exitButton->visible = true;
 
 	//returntomenuButton = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(
 	//	GuiControlType::BUTTON, 1, "Return To Menu", returntomenuButtonPos, this);
@@ -205,7 +209,8 @@ bool Scene::Start()
 	returnButton->Start();
 	returnButton->visible = false;
 
-
+	MenuBackgroundImage = Engine::GetInstance().textures.get()->Load("Assets/UI/TitleScreenWTitle.png");
+	menuBackgroundImage->visible = true;
  
 	for (Enemy* enemy : enemyList)
 	{
@@ -813,10 +818,10 @@ void Scene::UpdateMainMenu(float dt) {
 	}
 	
 
-
-	startButton->Start();
-	optionsButton->Start();
-	exitButton->Start();
+	menuBackgroundImage->visible=true;
+	startButton->visible = true;
+	optionsButton->visible = true;
+	exitButton->visible = true;
 
 	menuBackgroundImage->Update(dt);
 	startButton->Update(dt);
@@ -827,7 +832,7 @@ void Scene::UpdateMainMenu(float dt) {
 
 
 	// Render the main menu text
-	Engine::GetInstance().render.get()->DrawText("MAIN MENU", 600, 40, 750, 255);
+
 
 	
 
@@ -842,14 +847,12 @@ void Scene::HandleInput()
 			{
 
 				SetState(GameState::PLAYING);
-				//Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/gameplaySongPlaceholder.wav");
-				//Engine::GetInstance().audio.get()->musicVolume(50);
-				startButton->CleanUp();
-				optionsButton->CleanUp();
+				startButton->visible=false;
+				optionsButton->visible=false;
 				exitButton->visible = false;
-				menuBackgroundImage->CleanUp();
-				startButton = nullptr;
-				optionsButton = nullptr;
+				menuBackgroundImage->visible=false;
+				startButton->isClicked = false;
+			
 				
 
 			}
@@ -865,6 +868,10 @@ void Scene::HandleInput()
 
 			if (returnButton->isClicked == true) {
 				SetState(GameState::PLAYING);
+				returnButton->visible = false;
+				menuBackgroundImage->visible = false;
+				exitButton->visible = false;
+				returnButton->isClicked = false;
 			}
 		}
 		if (currentState == GameState::GAME_OVER) {
@@ -872,9 +879,10 @@ void Scene::HandleInput()
 			if (returnButton->isClicked == true) {
 				SetState(GameState::PLAYING);
 				LoadState();
+				returnButton->isClicked = false;
 			}
 		}
-		returnButton->CleanUp();
+		returnButton->visible=false;
 
 
 
@@ -882,39 +890,45 @@ void Scene::HandleInput()
 	if (returntomenuButton != nullptr) {
 		if (currentState == GameState::GAME_OVER || currentState == GameState::OPTIONS) {
 			if (returntomenuButton->isClicked == true) {
-				SetState(GameState::MAIN_MENU);
+				
 				returntomenuButton->visible = false;
 				fullscreenCheckbox->visible = false;
 				vsyncCheckbox->visible = false;
+				SetState(GameState::MAIN_MENU);
+				returntomenuButton->isClicked = false;
 
 			}
 		}
 		//returntomenuButton->CleanUp();
 	}
-
+	if (exitButton != nullptr) {
+		if (exitButton->isClicked == true&& currentState ==GameState::PAUSED) {
+			SetState(GameState::MAIN_MENU);
+			exitButton->visible = false;
+			returnButton->visible = false;
+			menuBackgroundImage->visible = false;
+			exitButton->isClicked = false;
+		}
+	}
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_P) == KEY_DOWN)
 	{
 		if (currentState == GameState::PLAYING)
 		{
 			SetState(GameState::PAUSED);
 		}
-		else if (currentState == GameState::PAUSED)
-		{
-			SetState(GameState::PLAYING);
-		}
+	
 	}
 	if (optionsButton != nullptr) {
 
 		if (optionsButton->isClicked == true) {
 
 			SetState(GameState::OPTIONS);
-			startButton->CleanUp();
-			optionsButton->CleanUp();
+			startButton->visible=false;
+			optionsButton->visible = false;
 			exitButton->visible = false;
-			menuBackgroundImage->CleanUp();
-			startButton = nullptr;
-			optionsButton = nullptr;
-			exitButton = nullptr;
+			menuBackgroundImage->visible = false;
+			optionsButton->isClicked = false;	
+			
 
 
 		}
@@ -995,7 +1009,8 @@ void Scene::UpdatePlaying(float dt) {
 }
 
 void Scene::UpdatePaused(float dt) {
-	
+	exitButton->isClicked = false;
+	menuBackgroundImage->visible = true;	
 	returnButton->visible = true;
 	exitButton->visible = true;
 	returnButton->Update(dt);
@@ -1060,22 +1075,9 @@ void Scene::UpdateOptions(float dt)
 			GuiControlType::BUTTON, 2, "Vsync enabled", vsyncCheckboxPos, this);
 		
 	}
-	if (!fxSlider) {
-		SDL_Rect fxSliderPos = { 800, 550, 200, 50 };
-		//fxSlider = (GuiSlider*)Engine::GetInstance().guiManager->CreateGuiControl(
-		//	GuiControlType::SLIDER, 4, "", fxSliderPos, this);
 
 
-	}
-	if (!musicSlider) {
-		SDL_Rect musicSliderPos = { 800, 550, 200, 50 };
-		//musicSlider = (GuiSlider*)Engine::GetInstance().guiManager->CreateGuiControl(
-		//	GuiControlType::SLIDER, 5, "", musicSliderPos, this);
-
-
-	}
-
-
+	menuBackgroundImage->visible = true;	
 	returntomenuButton->visible = true;
 	fullscreenCheckbox->visible = true;
 	vsyncCheckbox->visible = true;
