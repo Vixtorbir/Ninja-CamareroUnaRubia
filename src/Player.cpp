@@ -849,10 +849,10 @@ void Player::ThrowShuriken() {
 
 
 void Player::ChangeHitboxSize(float width, float height) {
-    // Obtener la posición actual del cuerpo físico
+    
     b2Vec2 currentPosition = pbody->body->GetPosition();
 
-    // Destruir el fixture actual
+    
     b2Fixture* fixture = pbody->body->GetFixtureList();
     while (fixture != nullptr) {
         b2Fixture* next = fixture->GetNext();
@@ -867,9 +867,9 @@ void Player::ChangeHitboxSize(float width, float height) {
         // Subir la posición la mitad de la diferencia de altura
         currentPosition.y -= PIXEL_TO_METERS(((texH - 50) / 4) - 2);
 
-        // --- AQUI AÑADE EL AJUSTE PARA EL NIVEL 2 ---
+        // Ajuste especial para el nivel 3
         if (currentLevel == 3) {
-            currentPosition.y -= PIXEL_TO_METERS(40); // Ajusta 20 píxeles hacia arriba (puedes cambiar el valor)
+            currentPosition.y -= PIXEL_TO_METERS(40);
         }
     }
     else {
@@ -877,24 +877,31 @@ void Player::ChangeHitboxSize(float width, float height) {
         height = texH - 50;
         // Al levantarse, bajar la posición la mitad de la diferencia de altura
         currentPosition.y += PIXEL_TO_METERS((texH - 50) / 4);
+
+        // --- AJUSTE: subir la hitbox un poco al dejar de agacharse ---
+        currentPosition.y -= PIXEL_TO_METERS(100); 
     }
 
-    // Crear el nuevo cuerpo físico con el tamaño ajustado
-    pbody = Engine::GetInstance().physics.get()->CreateRectangle(
-        METERS_TO_PIXELS(currentPosition.x), METERS_TO_PIXELS(currentPosition.y), width, height, bodyType::DYNAMIC
-    );
+    
+    b2PolygonShape boxShape;
+    boxShape.SetAsBox(PIXEL_TO_METERS(width) * 0.5f, PIXEL_TO_METERS(height) * 0.5f);
 
-    // Configurar las propiedades del nuevo cuerpo físico
-    pbody->listener = this;
-    pbody->ctype = ColliderType::PLAYER;
-    pbody->body->SetFixedRotation(true);
-    pbody->body->SetGravityScale(5);
-    pbody->body->SetLinearDamping(0.0f);
-    pbody->body->SetAngularDamping(0.0f);
+    b2FixtureDef fixtureDef;
+    fixtureDef.shape = &boxShape;
+    fixtureDef.density = 1.0f;
+    fixtureDef.friction = 0.0f;
+    fixtureDef.userData.pointer = reinterpret_cast<uintptr_t>(this);
+
+    pbody->body->CreateFixture(&fixtureDef);
 
     // Actualizar la posición del cuerpo físico
     pbody->body->SetTransform(currentPosition, 0);
+
+    // Actualizar el tamaño en la clase PhysBody si lo usas
+    pbody->width = width;
+    pbody->height = height;
 }
+
 
 
 
