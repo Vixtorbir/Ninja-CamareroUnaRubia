@@ -382,6 +382,11 @@ bool Player::Update(float dt) {
             loadLevel3 = true;
         }
     }
+    if (GetPosition().getX() >= 14720 && GetPosition().getY() >= 4860 && currentLevel == 3) {
+        if (loadLevel4 == false) {
+            loadLevel4 = true;
+        }
+    }
     
 
     

@@ -334,7 +334,7 @@ bool Scene::PostUpdate()
 		ret = false;
 
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F2) == KEY_DOWN) {
-		SafeLoadMap("MapTemplate1_64x64.tmx", Vector2D(13552, 3940)); // Posición específica Mapa 1
+		SafeLoadMap("MapTemplate1_64x64.tmx", Vector2D(13552, 3940)); // Posición 
 		levelIndex = 0;
 		parallax->ChangeTextures(levelIndex);
         Engine::GetInstance().scene.get()->player->loadLevel1 = false;
@@ -342,7 +342,7 @@ bool Scene::PostUpdate()
 	}
 	   
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F3) == KEY_DOWN) {
-		SafeLoadMap("MapTemplate2_64x64.tmx", Vector2D(1408, 3845)); // Posición específica Mapa 2
+		SafeLoadMap("MapTemplate2_64x64.tmx", Vector2D(1408, 3845)); // Posición 
 		levelIndex = 1;
 		LoadEntities(2);
 		parallax->ChangeTextures(levelIndex);
@@ -351,7 +351,7 @@ bool Scene::PostUpdate()
 	}
 
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F4) == KEY_DOWN) {
-		SafeLoadMap("Cave.tmx", Vector2D(6269, 1860)); // Posición específica Mapa 2
+		SafeLoadMap("Cave.tmx", Vector2D(6269, 1860)); // Posición 
 		levelIndex = 2;
 		LoadEntities(2);
 		parallax->ChangeTextures(levelIndex);
@@ -359,6 +359,17 @@ bool Scene::PostUpdate()
 		Engine::GetInstance().scene.get()->player->currentLevel = 3;
 
 		
+	}
+
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F9) == KEY_DOWN) {
+		SafeLoadMap("BossArena.tmx", Vector2D(1678, 830));
+		levelIndex = 3;
+		//LoadEntities(2);
+		parallax->ChangeTextures(levelIndex);
+		Engine::GetInstance().scene.get()->player->loadLevel4 = false;
+		Engine::GetInstance().scene.get()->player->currentLevel = 4;
+	
+
 	}
 		
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F6) == KEY_DOWN)
@@ -400,6 +411,18 @@ bool Scene::PostUpdate()
 
 		Engine::GetInstance().scene.get()->player->loadLevel3 = false;
 		Engine::GetInstance().scene.get()->player->currentLevel = 3;
+
+	}
+
+	if (Engine::GetInstance().scene.get()->player->loadLevel4) {
+
+		FadeTransition(Engine::GetInstance().render.get()->renderer, false, 1.0f);
+		Engine::GetInstance().map->CleanUp(); // Esto solo limpia recursos antiguos
+
+		SafeLoadMap("BossArena.tmx", Vector2D(1678, 830));
+
+		Engine::GetInstance().scene.get()->player->loadLevel4 = false;
+		Engine::GetInstance().scene.get()->player->currentLevel = 4;
 
 	}
 
