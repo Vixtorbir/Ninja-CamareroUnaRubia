@@ -27,10 +27,9 @@ void GuiSlider::SetSliderBarSize(int width, int height)
     sliderBar.w = width;
     sliderBar.h = height;
 }
-void GuiSlider::SetSliderBarInnerSize(int width, int height)
+void GuiSlider::SetSliderBarInnerSize(int width)
 {
     sliderBarInner.w = width;
-    sliderBarInner.h = height;
 }
 
 bool GuiSlider::Update(float dt)
