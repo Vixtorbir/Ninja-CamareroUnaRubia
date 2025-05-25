@@ -10,6 +10,7 @@
 #include "Map.h"
 #include "EntityManager.h"
 #include "Timer.h"	
+#include "GuiManager.h"
 //#include "tracy/Tracy.hpp"
 
 Enemy::Enemy() : Entity(EntityType::ENEMY)
@@ -30,9 +31,11 @@ bool Enemy::Start() {
 	texture = Engine::GetInstance().textures.get()->Load(parameters.attribute("texture").as_string());
 	attackTexture = Engine::GetInstance().textures.get()->Load(parameters.attribute("attack_texture").as_string());
 	
-
+	SDL_Rect btPos = { 0,0,0,0 };
 	attackTexture = Engine::GetInstance().textures.get()->Load("Assets/Textures/enemyAttack.png"); 
-
+	redTexture = Engine::GetInstance().textures.get()->Load("Assets/UI/redScreen.png");
+	redImage = (GuiImage*)Engine::GetInstance().guiManager->CreateGuiImage(GuiControlType::IMAGE, 1, " ", btPos, sceneModule, redTexture);
+	redImage->visible = false;
 
 	position.setX(parameters.attribute("x").as_int());
 	position.setY(parameters.attribute("y").as_int());
@@ -74,10 +77,13 @@ bool Enemy::Update(float dt)
 
 	if (isDying)
 	{
+		redImage->visible = true;
 		currentAnimation = &deathAnimation;
 		// When timer is done, destroy enemy
-		if (deathTimer.ReadSec() >= deathDuration)
+		if (deathTimer.ReadMSec() >= deathDuration * 1000)
 		{
+			redImage->visible = false;
+
 			if (attackBody != nullptr) {
 				Engine::GetInstance().physics.get()->DeletePhysBody(attackBody);
 				attackBody = nullptr;

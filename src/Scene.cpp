@@ -106,6 +106,10 @@ bool Scene::Awake()
 	//
 
 	dialogueManager->SetModule(this);
+	for (Enemy* enemy : enemyList)
+	{
+		enemy->sceneModule = this;
+	}
 	player->sceneModule = this;
 
 	return ret;
@@ -537,6 +541,9 @@ void Scene::LoadEntities(int sceneIndex)
 	for (Enemy* enemy : enemyList)
 	{
 		enemy->SetPlayer(player);
+		
+		enemy->sceneModule = this;
+		
 	}
 
 }
