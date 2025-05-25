@@ -92,8 +92,12 @@ void Item::ApplyEffect()
 bool Item::CleanUp()
 {
 	LOG("Cleanup item");
-	Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
-	Engine::GetInstance().scene.get()->items.clear();
+	Engine::GetInstance().textures.get()->UnLoad(texture);
+
+	if (pbody != nullptr) {
+		Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
+	}
+	active = false;
 	return true;
 }
 

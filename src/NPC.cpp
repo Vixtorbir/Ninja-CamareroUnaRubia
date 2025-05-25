@@ -113,8 +113,13 @@ float NPC::Lerp(float start, float end, float factor) {
 }
 bool NPC::CleanUp()
 {
-	LOG("Cleanup player");
 	Engine::GetInstance().textures.get()->UnLoad(texture);
+	
+
+	if (pbody != nullptr) {
+		Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
+	}
+	active = false;
 	return true;
 }
 
