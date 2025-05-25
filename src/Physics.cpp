@@ -135,7 +135,7 @@ PhysBody* Physics::CreateCircle(int x, int y, int radious, bodyType type)
 
 	// Return our PhysBody class
 	return pbody;
-}
+} 
 
 PhysBody* Physics::CreateRectangleSensor(int x, int y, int width, int height, bodyType type)
 {
