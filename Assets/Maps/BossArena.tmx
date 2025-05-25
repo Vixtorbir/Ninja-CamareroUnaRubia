@@ -12,7 +12,7 @@
  <tileset firstgid="435" name="level2CaveTileset 128 x 128" tilewidth="64" tileheight="64" tilecount="1024" columns="32">
   <image source="../../../../../2o semestre/Projecto2/Art/level tilesets/level2CaveTileset 128 x 128.png" width="2048" height="2048"/>
  </tileset>
- <layer id="1" name="Map" width="80" height="40">
+ <layer id="1" name="Map" width="80" height="40" visible="0">
   <properties>
    <property name="Draw" type="bool" value="true"/>
   </properties>
@@ -3220,6 +3220,9 @@
   </data>
  </layer>
  <layer id="13" name="cave wall" width="80" height="40">
+  <properties>
+   <property name="Draw" type="bool" value="true"/>
+  </properties>
   <data>
    <tile gid="664"/>
    <tile gid="664"/>
@@ -6424,6 +6427,9 @@
   </data>
  </layer>
  <layer id="12" name="Back floor" width="80" height="40">
+  <properties>
+   <property name="Draw" type="bool" value="true"/>
+  </properties>
   <data>
    <tile/>
    <tile/>
@@ -9628,6 +9634,9 @@
   </data>
  </layer>
  <layer id="14" name="Decor" width="80" height="40">
+  <properties>
+   <property name="Draw" type="bool" value="true"/>
+  </properties>
   <data>
    <tile/>
    <tile/>
@@ -12832,6 +12841,9 @@
   </data>
  </layer>
  <layer id="11" name="Front floor" width="80" height="40">
+  <properties>
+   <property name="Draw" type="bool" value="true"/>
+  </properties>
   <data>
    <tile/>
    <tile/>
@@ -16035,7 +16047,7 @@
    <tile/>
   </data>
  </layer>
- <layer id="10" name="Buildings" width="80" height="40">
+ <layer id="10" name="Buildings" width="80" height="40" visible="0">
   <properties>
    <property name="Draw" type="bool" value="true"/>
   </properties>
