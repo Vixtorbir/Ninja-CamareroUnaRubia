@@ -41,7 +41,7 @@ bool Turret::Start() {
     currentAnimation = &idle;
 
     // Crear el cuerpo físico de la torreta
-    pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX(), (int)position.getY(), texW, texH, bodyType::STATIC);
+    pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX() + 256, (int)position.getY(), texW, texH - 200, bodyType::DYNAMIC);
     pbody->ctype = ColliderType::TURRET; // Asignar el tipo de colisionador
     pbody->listener = this;
 
@@ -122,11 +122,18 @@ bool Turret::Update(float dt) {
 
     // Dibujar la torreta
     b2Transform pbodyPos = pbody->body->GetTransform();
-    position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texW / 6);
-    position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 6);
 
     // Dibujar textura y animación
-    Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
+    position.setX(METERS_TO_PIXELS(pbodyPos.p.x) -300);
+    position.setY(METERS_TO_PIXELS(pbodyPos.p.y) -100);
+
+    Engine::GetInstance().render.get()->DrawEntity(
+        texture,
+        (int)position.getX(),
+        (int)position.getY(),
+        &currentAnimation->GetCurrentFrame(),
+        1, 0, 0, 0, -(int)1
+    );
     currentAnimation->Update();
 
     for (auto it = activeShurikens.begin(); it != activeShurikens.end(); ) {

@@ -166,6 +166,18 @@ private:
 	//music
 	int mainMenuMusicId;
 	int gameplayMusicId;
+
+	//fx timers
+
+	int birdTimer;
+	int cricketTimer;
+	int windTimer;
+    int bushTimer;
+
+	int birdFxID;
+	int cricketFxID;
+	int windFxID;
+	int bushFxID;
 	
 	int selectedItemIndex = 0;
 
