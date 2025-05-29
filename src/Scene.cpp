@@ -124,12 +124,15 @@ bool Scene::Start()
 	logo = Engine::GetInstance().textures->Load("Assets/UI/logo.png");
 	logoFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/ExtraFx/logoFx.ogg");
 	MenuBackgroundImage = Engine::GetInstance().textures.get()->Load("Assets/UI/TitleScreenWTitle.png");
-	BackgroundImage = Engine::GetInstance().textures.get()->Load("Assets/UI/TitleScreen.png");
+	BackgroundImage = Engine::GetInstance().textures.get()->Load("Assets/UI/TitleScreen.png");	
+	
+	SDL_Rect btPos00 = { 0, 0, 0,0 };
 	//load cinematic parts
-	testCinematicBg = Engine::GetInstance().textures.get()->Load("Assets/Textures/npcMENTORSHIP.png");
+	testCinematicBgText = Engine::GetInstance().textures.get()->Load("Assets/Textures/npcMENTORSHIP.png");
+	testCinematicBgUI = (GuiImage*)Engine::GetInstance().guiManager->CreateGuiImage(GuiControlType::IMAGE, 1, "MyButton", btPos00, this, testCinematicBgText);
 	//
 	mapBackgroundUI = Engine::GetInstance().textures.get()->Load("Assets/UI/MapBackgroundUI.png");
-	SDL_Rect btPos00 = { 0, 0, 0,0 };
+
 	mapBackgroundUIImage = (GuiImage*)Engine::GetInstance().guiManager->CreateGuiImage(GuiControlType::IMAGE, 1, "MyButton", btPos00, this, mapBackgroundUI);
 	mapBackgroundUIImage->visible = false;
 
@@ -945,11 +948,19 @@ void Scene::UpdateCinematic(float dt)
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
 	{
 		fadeDuration += dt;
-	    FadeTransition(Engine::GetInstance().render.get()->renderer,testCinematicBg, 2.0f);
+	    FadeTransition(Engine::GetInstance().render.get()->renderer,testCinematicBgText, 2.0f);
 
 		SetState(GameState::PLAYING);
 	}
-	Engine::GetInstance().render.get()->DrawTexture(testCinematicBg, 0, 0);
+	testCinematicBgUI->visible = true;
+
+	/*for (int i = 0; i < 180; i++)
+	{
+		testCinematicBgUI->bounds.y = (testCinematicBgUI->bounds.y + 50);
+
+	}*/
+	
+	
 	
 
 }
