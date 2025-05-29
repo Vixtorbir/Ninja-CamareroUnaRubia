@@ -126,6 +126,7 @@ bool Scene::Start()
 	MenuBackgroundImage = Engine::GetInstance().textures.get()->Load("Assets/UI/TitleScreenWTitle.png");
 	BackgroundImage = Engine::GetInstance().textures.get()->Load("Assets/UI/TitleScreen.png");
 	//load cinematic parts
+	testCinematicBg = Engine::GetInstance().textures.get()->Load("Assets/Textures/npcMENTORSHIP.png");
 	//
 	mapBackgroundUI = Engine::GetInstance().textures.get()->Load("Assets/UI/MapBackgroundUI.png");
 	SDL_Rect btPos00 = { 0, 0, 0,0 };
@@ -927,7 +928,7 @@ void Scene::UpdateMainMenu(float dt) {
 	startButton->Update(dt);
 	optionsButton->Update(dt);
 	exitButton->Update(dt);
-
+	 
 	player->inGame = false;
 
 
@@ -936,17 +937,21 @@ void Scene::UpdateMainMenu(float dt) {
 
 	
 
-
+	 
 }
 void Scene::UpdateCinematic(float dt)
 {
+	
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
 	{
+		fadeDuration += dt;
+	    FadeTransition(Engine::GetInstance().render.get()->renderer,testCinematicBg, 2.0f);
+
 		SetState(GameState::PLAYING);
 	}
-
-
+	Engine::GetInstance().render.get()->DrawTexture(testCinematicBg, 0, 0);
 	
+
 }
 void Scene::HandleInput()
 {
@@ -956,7 +961,7 @@ void Scene::HandleInput()
 			if (currentState == GameState::MAIN_MENU)
 			{
 
-				SetState(GameState::PLAYING);
+				SetState(GameState::CINEMATIC);
 				Engine::GetInstance().audio.get()->StopMusic();
 				Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/gameplaySongPlaceholder.ogg");
 				startButton->visible=false;
@@ -1155,8 +1160,8 @@ void Scene::UpdateLogo(float dt) {
 	FadeTransition(Engine::GetInstance().render.get()->renderer, logo, .1f);
 	
 	SetState(GameState::MAIN_MENU);
-	Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/titleSongPlaceholder.ogg");
-	Engine::GetInstance().audio.get()->musicVolume(50);
+	//Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/titleSongPlaceholder.ogg");
+	//Engine::GetInstance().audio.get()->musicVolume(50);
 	
 
 }

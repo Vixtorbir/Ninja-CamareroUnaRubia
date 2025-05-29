@@ -171,6 +171,8 @@ private:
 	int mainMenuMusicId;
 	int gameplayMusicId;
 
+	//cinematic scenes
+	SDL_Texture* testCinematicBg = nullptr;
 	//fx timers
 
 	int birdTimer;
