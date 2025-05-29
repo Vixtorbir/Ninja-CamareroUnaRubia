@@ -125,11 +125,14 @@ bool Scene::Start()
 	logoFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/ExtraFx/logoFx.ogg");
 	MenuBackgroundImage = Engine::GetInstance().textures.get()->Load("Assets/UI/TitleScreenWTitle.png");
 	BackgroundImage = Engine::GetInstance().textures.get()->Load("Assets/UI/TitleScreen.png");
+	//load cinematic parts
+	//
 	mapBackgroundUI = Engine::GetInstance().textures.get()->Load("Assets/UI/MapBackgroundUI.png");
 	SDL_Rect btPos00 = { 0, 0, 0,0 };
 	mapBackgroundUIImage = (GuiImage*)Engine::GetInstance().guiManager->CreateGuiImage(GuiControlType::IMAGE, 1, "MyButton", btPos00, this, mapBackgroundUI);
 	mapBackgroundUIImage->visible = false;
 
+	//Load sound fx
 	birdFxID = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/BgSounds/bird chirp.ogg");
 	birdTimer = 500;
 	cricketFxID = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/BgSounds/crickets.ogg");
@@ -319,6 +322,9 @@ bool Scene::Update(float dt)
 	{
 	case GameState::MAIN_MENU:
 		UpdateMainMenu(dt);
+		break;
+	case GameState::CINEMATIC:
+		UpdateCinematic(dt);
 		break;
 	case GameState::PLAYING:
 		UpdatePlaying(dt);
@@ -931,6 +937,16 @@ void Scene::UpdateMainMenu(float dt) {
 	
 
 
+}
+void Scene::UpdateCinematic(float dt)
+{
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
+	{
+		SetState(GameState::PLAYING);
+	}
+
+
+	
 }
 void Scene::HandleInput()
 {

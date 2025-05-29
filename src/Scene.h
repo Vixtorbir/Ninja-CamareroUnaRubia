@@ -27,7 +27,8 @@ enum class GameState {
 	PAUSED,
 	INVENTORY,
 	GAME_OVER,
-	LOGO
+	LOGO,
+	CINEMATIC
 };
 
 class Scene : public Module
@@ -91,6 +92,7 @@ public:
 	void UpdateLogo(float dt);
 	void UpdateOptions(float dt);
 	void UpdateInventory(float dt);
+	void UpdateCinematic(float dt);
 
 	void CreateItemLvl2(const char* mapName);
 
