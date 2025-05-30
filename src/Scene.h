@@ -174,6 +174,10 @@ private:
 	//cinematic scenes
 	SDL_Texture* testCinematicBgText = nullptr;
 	GuiImage* testCinematicBgUI = nullptr;
+	int moveCinCounter = 300;
+	int animsSpeed = 20;
+	int testX;
+	int testY;
 	//fx timers
 
 	int birdTimer;

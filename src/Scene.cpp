@@ -128,8 +128,10 @@ bool Scene::Start()
 	
 	SDL_Rect btPos00 = { 0, 0, 0,0 };
 	//load cinematic parts
-	testCinematicBgText = Engine::GetInstance().textures.get()->Load("Assets/Textures/npcMENTORSHIP.png");
+	testCinematicBgText = Engine::GetInstance().textures.get()->Load("Assets/UI/MapBackgroundUI.png");
 	testCinematicBgUI = (GuiImage*)Engine::GetInstance().guiManager->CreateGuiImage(GuiControlType::IMAGE, 1, "MyButton", btPos00, this, testCinematicBgText);
+	testX = player->camX;
+	testY = player->camY;
 	//
 	mapBackgroundUI = Engine::GetInstance().textures.get()->Load("Assets/UI/MapBackgroundUI.png");
 
@@ -952,13 +954,15 @@ void Scene::UpdateCinematic(float dt)
 
 		SetState(GameState::PLAYING);
 	}
-	testCinematicBgUI->visible = true;
-
-	/*for (int i = 0; i < 180; i++)
+	
+	//Engine::GetInstance().render.get()->DrawTexture(testCinematicBgText,player->camX,player->camY);
+	testY += animsSpeed * dt;
+	if (moveCinCounter > 0)
 	{
-		testCinematicBgUI->bounds.y = (testCinematicBgUI->bounds.y + 50);
-
-	}*/
+		Engine::GetInstance().render.get()->DrawTexture(testCinematicBgText, testX, (testY));
+		moveCinCounter--;
+	}
+	
 	
 	
 	
