@@ -70,10 +70,9 @@ bool Render::Start()
 		LOG("Failed to load cursor image: %s", IMG_GetError());
 	}
 	else {
-		// Hotspot is at (0, 0); adjust if needed
 		SDL_Cursor* customCursor = SDL_CreateColorCursor(cursorSurface, 0, 0);
 		SDL_SetCursor(customCursor);
-		SDL_FreeSurface(cursorSurface);  // Surface can be freed after creating the cursor
+		SDL_FreeSurface(cursorSurface); 
 	}
 	minimapTexture = SDL_CreateTexture(
 		renderer,

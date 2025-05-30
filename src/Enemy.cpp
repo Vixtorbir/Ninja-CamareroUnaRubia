@@ -213,20 +213,21 @@ bool Enemy::Update(float dt)
 	case EnemyState::ATTACK:
 		// El enemigo permanece quieto mientras ataca
 		pbody->body->SetLinearVelocity(b2Vec2(0, 0));
-		currentAnimation = &attackAnimation;
-
+		
 		if (!isAttacking && !isCooldown)
 		{
+
 			PerformAttack();
 			isAttacking = true;
 			attackTimer.Start(); // Inicia el temporizador para el ataque
 		}
+
 		break;
 
 	case EnemyState::WAIT:
 		// El enemigo se queda quieto durante 2 segundos
 		pbody->body->SetLinearVelocity(b2Vec2(0, 0));
-		if (attackTimer.ReadSec() >= 2.0f) // Espera 2 segundos
+		if (attackTimer.ReadMSec() >= 2.0 * 1000) // Espera 2 segundos
 		{
 			state = EnemyState::PATROL; // Cambia al estado de patrulla después de esperar
 			LOG("Enemy finished waiting.");
@@ -235,7 +236,7 @@ bool Enemy::Update(float dt)
 	}
 
 	// Lógica de temporizadores (fuera del switch)
-	if (isAttacking && attackTimer.ReadSec() >= attackDuration)
+	if (isAttacking && attackTimer.ReadMSec() >= attackDuration * 1000)
 	{
 		// Termina el ataque
 		isAttacking = false;
@@ -254,7 +255,7 @@ bool Enemy::Update(float dt)
 		state = EnemyState::WAIT; // Cambia al estado de espera
 	}
 
-	if (isCooldown && attackTimer.ReadSec() >= attackCooldown)
+	if (isCooldown && attackTimer.ReadMSec() >= attackCooldown * 1000)
 	{
 		// Termina el cooldown
 		isCooldown = false;

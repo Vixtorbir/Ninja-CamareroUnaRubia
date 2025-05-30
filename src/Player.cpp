@@ -147,8 +147,28 @@ bool Player::Update(float dt) {
     if (!parameters.attribute("gravity").as_bool()) velocity = b2Vec2(0, 0);
 
     // State management
-    bool movingLeft = Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_A) == KEY_REPEAT;
-    bool movingRight = Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_D) == KEY_REPEAT;
+    bool movingLeft =
+        Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_A) == KEY_REPEAT ||
+        Engine::GetInstance().input.get()->GetControllerButton(SDL_CONTROLLER_BUTTON_DPAD_LEFT) == KEY_REPEAT;
+
+    bool movingRight =
+        Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_D) == KEY_REPEAT ||
+        Engine::GetInstance().input.get()->GetControllerButton(SDL_CONTROLLER_BUTTON_DPAD_RIGHT) == KEY_REPEAT;
+
+    bool wantsToCrouch =
+        Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_REPEAT ||
+        Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_DOWN ||
+        Engine::GetInstance().input.get()->GetControllerButton(SDL_CONTROLLER_BUTTON_DPAD_DOWN) == KEY_REPEAT ||
+        Engine::GetInstance().input.get()->GetControllerButton(SDL_CONTROLLER_BUTTON_DPAD_DOWN) == KEY_DOWN;
+
+    bool jumpPressed =
+        Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN ||
+        Engine::GetInstance().input.get()->GetControllerButton(SDL_CONTROLLER_BUTTON_A) == KEY_DOWN;
+
+    bool jumpReleased =
+        Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_UP ||
+        Engine::GetInstance().input.get()->GetControllerButton(SDL_CONTROLLER_BUTTON_A) == KEY_UP;
+
     bool moving = movingLeft || movingRight;
     bool grounded = !isJumping && !isDashing && !touchingWall;
     isWalking = false;
@@ -161,27 +181,22 @@ bool Player::Update(float dt) {
         playerDirection = EntityDirections::RIGHT;
     }
 
-   
-    bool wantsToCrouch = Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_REPEAT ||
-        Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_DOWN;
 
     if (wantsToCrouch && grounded) {  // Only allow crouching when grounded
         crouched = true;
         currentState = PlayerState::CROUCHING;
-        if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_DOWN) {
+        if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_DOWN || Engine::GetInstance().input.get()->GetControllerButton(SDL_CONTROLLER_BUTTON_DPAD_DOWN) == KEY_DOWN) {
             ChangeHitboxSize(texW, texH / 2);
             Engine::GetInstance().audio.get()->PlayFx(crouchFxId);
         }
     }
-    else if (crouched && Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_UP) {
+    else if (crouched && Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_UP || Engine::GetInstance().input.get()->GetControllerButton(SDL_CONTROLLER_BUTTON_DPAD_DOWN) == KEY_UP) {
         crouched = false;
         ChangeHitboxSize(texW, texH);
         // Don't force IDLE state here - let the state priority system handle it
     }
 
     // Handle jumping
-    bool jumpPressed = Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN;
-    bool jumpReleased = Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_UP;
 
     if (jumpPressed && !jumpKeyHeld && hasAlreadyJumpedOnce < 2 && !inBubble && !crouched) {
         float appliedForce = (hasAlreadyJumpedOnce == 0) ? jumpForce : doubleJumpForce;
@@ -418,13 +433,13 @@ bool Player::Update(float dt) {
     
 
     
-    if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_J) == KEY_DOWN && !isAttacking && !isCooldown) {
+    if ((Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_J) == KEY_DOWN || Engine::GetInstance().input.get()->GetControllerButton(SDL_CONTROLLER_BUTTON_X) == KEY_DOWN )&& !isAttacking && !isCooldown) {
         PerformAttack();
         isAttacking = true;
         attackTimer.Start();
     }
 
-    if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_K) == KEY_DOWN && !isAttacking && !isCooldown) {
+    if ((Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_K) == KEY_DOWN || Engine::GetInstance().input.get()->GetControllerButton(SDL_CONTROLLER_BUTTON_Y) == KEY_DOWN) && !isAttacking && !isCooldown) {
         PerformAttack2();
         isAttacking = true;
         attackTimer.Start();
@@ -460,7 +475,7 @@ bool Player::Update(float dt) {
         Engine::GetInstance().render.get()->DrawTexture(meleeAttackTexture, renderX, renderY);
     }
 
-    if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_O) == KEY_DOWN) {
+    if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_O) == KEY_DOWN || Engine::GetInstance().input.get()->GetControllerButton(SDL_CONTROLLER_BUTTON_B) == KEY_DOWN) {
         ThrowShuriken();
     }
 

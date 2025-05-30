@@ -947,7 +947,7 @@ void Scene::UpdateMainMenu(float dt) {
 void Scene::HandleInput()
 {
 	if (startButton != nullptr) {
-		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_RETURN) == KEY_DOWN || startButton->isClicked == true)
+		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_RETURN) == KEY_DOWN || startButton->isClicked == true || Engine::GetInstance().input.get()->GetControllerButton(SDL_CONTROLLER_BUTTON_B) == KEY_DOWN)
 		{
 			if (currentState == GameState::MAIN_MENU)
 			{
@@ -1095,11 +1095,10 @@ void Scene::HandleInput()
 }
 
 
-
 void Scene::UpdatePlaying(float dt) {
 	player->inGame = true;
 
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_TAB) == KEY_DOWN)
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_TAB) == KEY_DOWN || Engine::GetInstance().input.get()->GetControllerButton(SDL_CONTROLLER_BUTTON_START) == KEY_DOWN)
 	{
 		if (canToggleMap)
 		{

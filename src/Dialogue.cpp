@@ -134,7 +134,7 @@ bool Dialogue::Update(float dt)
             Engine::GetInstance().render.get()->DrawTexture(Overlay, 480. - Engine::GetInstance().render->camera.x, 550 - Engine::GetInstance().render->camera.y, &overlayPos2);
         }
 
-        if (Engine::GetInstance().input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
+        if ((Engine::GetInstance().input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN || Engine::GetInstance().input.get()->GetControllerButton(SDL_CONTROLLER_BUTTON_A) == KEY_DOWN))
         {
             displayText = WrapText(text, bounds.w - 20, Engine::GetInstance().render->font);
             charIndex = text.length();
