@@ -84,6 +84,7 @@ public:
     void DrawLineOfSight();
 
     SDL_Texture* texture;
+
     SDL_Texture* attackTexture;
     
     const char* texturePath;
@@ -104,7 +105,9 @@ public:
     GuiImage* redImage = nullptr;
 
     Player* player;
-
+    bool flashRed = false;
+    Timer flashTimer;
+    float flashDuration = 0.1f;
     Timer attackTimer;          
     bool isAttacking = false;   
     bool isCooldown = false;    

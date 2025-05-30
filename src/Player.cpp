@@ -36,6 +36,7 @@ bool Player::Start() {
     orbUiTexture = Engine::GetInstance().textures.get()->Load("Assets/UI/OrbUi.png");
     shurikenTexture = Engine::GetInstance().textures.get()->Load("Assets/Textures/goldCoin.png");
     meleeAttackTexture = Engine::GetInstance().textures.get()->Load("Assets/Textures/meleeAttack.png");
+    missionTexture = Engine::GetInstance().textures.get()->Load("Assets/Textures/mission.png");
 
     Hidden = Engine::GetInstance().textures.get()->Load("Assets/UI/Hidden.png");
     Detected = Engine::GetInstance().textures.get()->Load("Assets/UI/Detected.png");
@@ -78,6 +79,7 @@ bool Player::Start() {
     
     detected = (GuiImage*)Engine::GetInstance().guiManager->CreateGuiImage(GuiControlType::IMAGE, 1, " ", btPos, sceneModule, Detected);
     hidden = (GuiImage*)Engine::GetInstance().guiManager->CreateGuiImage(GuiControlType::IMAGE, 1, " ", btPos, sceneModule, Hidden);
+    missionImage = (GuiImage*)Engine::GetInstance().guiManager->CreateGuiImage(GuiControlType::IMAGE, 1, " ", btPos, sceneModule, missionTexture);
 
     orbUi = (GuiImage*)Engine::GetInstance().guiManager->CreateGuiImage(GuiControlType::IMAGE, 1, " ", btPos, sceneModule, orbUiTexture);
     HP_Slider = (GuiSlider*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::HPSLIDER, 1, " ", hpPos, sceneModule);
@@ -172,11 +174,11 @@ bool Player::Update(float dt) {
     bool moving = movingLeft || movingRight;
     bool grounded = !isJumping && !isDashing && !touchingWall;
     isWalking = false;
-    if (movingLeft && !still) {
+    if (movingLeft && !still && !crouched) {
         velocity.x = -speed * 16;
         playerDirection = EntityDirections::LEFT;
     }
-    if (movingRight && !still) {
+    if (movingRight && !still && !crouched) {
         velocity.x = speed * 16;
         playerDirection = EntityDirections::RIGHT;
     }

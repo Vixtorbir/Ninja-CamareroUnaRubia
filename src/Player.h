@@ -199,6 +199,8 @@ public:
     GuiPopup* popup = nullptr;
     GuiImage* backgroundSliderImage = nullptr;
     GuiImage* foregroundSliderImage = nullptr;
+    GuiImage* missionImage = nullptr;
+    SDL_Texture* missionTexture = nullptr;
 
     GuiImage* hidden = nullptr;
     GuiImage* detected = nullptr;

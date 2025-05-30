@@ -210,6 +210,7 @@ bool Render::PostUpdate()
 		SDL_RenderDrawRect(renderer, &minimapRect);
 	}
 	SDL_SetRenderDrawColor(renderer, background.r, background.g, background.g, background.a);
+	SDL_SetRenderDrawColor(renderer, 0, 0, 64, 32); SDL_RenderFillRect(renderer, NULL);
 	SDL_RenderPresent(renderer);
 	
 

@@ -343,7 +343,7 @@ void Enemy::OnCollision(PhysBody* physA, PhysBody* physB) {
 		if (!isDying) {
 			b2Vec2 playerPos = player->GetPhysicalyPosition(); 
 
-			ApplyKnockbackFrom(playerPos, 1000); 
+			ApplyKnockbackFrom(playerPos, 100); 
 			
 			lives--;
 			LOG("Enemy hit! Lives left: %d", lives);
