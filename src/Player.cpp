@@ -398,10 +398,10 @@ bool Player::Update(float dt) {
         }
     }
     if (GetPosition().getX() <= 732 && GetPosition().getY() >= 3968 && currentLevel == 2) {
-        if (loadLevel1 == false) {
+        if (loadLevel1back == false) {
             Engine::GetInstance().scene.get()->loadThingsOfMaps(1);
 
-            loadLevel1 = true;
+            loadLevel1back = true;
             Engine::GetInstance().audio.get()->StopMusic();
             Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/gameplaySongPlaceholder.wav");
         }

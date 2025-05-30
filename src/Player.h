@@ -193,6 +193,7 @@ public:
     bool loadLevel3 = false;
     bool loadLevel4 = false;
     bool loadLevel2back = false;
+    bool loadLevel1back = false;
 
     // UI Elements
     GuiPopup* popup = nullptr;

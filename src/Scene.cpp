@@ -554,6 +554,18 @@ bool Scene::PostUpdate()
 
 	}
 
+	if (Engine::GetInstance().scene.get()->player->loadLevel1back) {
+
+		FadeTransition(Engine::GetInstance().render.get()->renderer, false, 1.0f);
+		Engine::GetInstance().map->CleanUp(); // Esto solo limpia recursos antiguos
+
+		SafeLoadMap("MapTemplate1_64x64.tmx", Vector2D(15196, 4576));
+
+		Engine::GetInstance().scene.get()->player->loadLevel1back = false;
+		Engine::GetInstance().scene.get()->player->currentLevel = 1;
+
+	}
+
 	if (Engine::GetInstance().scene.get()->player->loadLevel2back) {
 
 		FadeTransition(Engine::GetInstance().render.get()->renderer, false, 1.0f);
