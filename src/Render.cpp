@@ -64,6 +64,16 @@ bool Render::Awake()
 // Called before the first frame
 bool Render::Start()
 {
+	SDL_Surface* cursorSurface = IMG_Load("Assets/Textures/goldCoin.png");
+
+	if (!cursorSurface) {
+		LOG("Failed to load cursor image: %s", IMG_GetError());
+	}
+	else {
+		SDL_Cursor* customCursor = SDL_CreateColorCursor(cursorSurface, 0, 0);
+		SDL_SetCursor(customCursor);
+		SDL_FreeSurface(cursorSurface); 
+	}
 	minimapTexture = SDL_CreateTexture(
 		renderer,
 		SDL_PIXELFORMAT_RGBA8888,

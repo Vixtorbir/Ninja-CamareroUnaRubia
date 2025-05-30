@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "Cave.tmx",
+    "activeFile": "MapTemplate1_64x64.tmx",
     "expandedProjectPaths": [
         "."
     ],
@@ -14,14 +14,14 @@
         },
         "BossArena.tmx": {
             "expandedObjectLayers": [
-                8,
-                9
+                9,
+                8
             ],
             "scale": 0.25,
             "selectedLayer": 7,
             "viewCenter": {
-                "x": 2560,
-                "y": 2002
+                "x": 2406,
+                "y": 1278
             }
         },
         "BossArena.tmx#MapMetadata": {
@@ -41,15 +41,15 @@
         },
         "Cave.tmx": {
             "expandedObjectLayers": [
-                8,
+                12,
                 9,
-                12
+                8
             ],
-            "scale": 0.75,
+            "scale": 0.0625,
             "selectedLayer": 12,
             "viewCenter": {
-                "x": 8590.666666666666,
-                "y": 138
+                "x": 6912,
+                "y": 2504
             }
         },
         "Cave.tmx#MapMetadata": {
@@ -110,15 +110,15 @@
         },
         "MapTemplate1_64x64.tmx": {
             "expandedObjectLayers": [
+                9,
                 8,
-                25,
-                9
+                25
             ],
-            "scale": 0.015625,
+            "scale": 0.5,
             "selectedLayer": 14,
             "viewCenter": {
-                "x": 14080,
-                "y": 3168
+                "x": 15084,
+                "y": 4403
             }
         },
         "MapTemplate1_64x64.tmx#MapMetadata": {
@@ -132,15 +132,14 @@
         },
         "MapTemplate2_64x64.tmx": {
             "expandedObjectLayers": [
-                8,
                 9,
-                12
+                8
             ],
-            "scale": 0.33,
+            "scale": 0.015625,
             "selectedLayer": 18,
             "viewCenter": {
-                "x": 20518.181818181816,
-                "y": 2756.060606060606
+                "x": 23488,
+                "y": 12704
             }
         },
         "MapTemplate2_64x64.tmx#level0Tileset 64x64": {
@@ -161,15 +160,16 @@
     "openFiles": [
         "Cave.tmx",
         "MapTemplate1_64x64.tmx",
-        "BossArena.tmx"
+        "BossArena.tmx",
+        "MapTemplate2_64x64.tmx"
     ],
     "project": "ForestTilemap.tiled-project",
     "property.type": "bool",
     "recentFiles": [
-        "BossArena.tmx",
-        "MapTemplate1_64x64.tmx",
         "Cave.tmx",
         "MapTemplate2_64x64.tmx",
+        "BossArena.tmx",
+        "MapTemplate1_64x64.tmx",
         "MapTemplate1.tmx"
     ],
     "tileset.embedInMap": true,

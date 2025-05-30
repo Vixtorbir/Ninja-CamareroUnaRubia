@@ -161,7 +161,7 @@ bool Scene::Start()
 	//L06 TODO 3: Call the function to load the map. 
 	Engine::GetInstance().map->Load(configParameters.child("map").attribute("path").as_string(), configParameters.child("map").attribute("name").as_string());
 
-	// Texture to highligh mouse position 
+	// Texture to highlight mouse position 
 	mouseTileTex = Engine::GetInstance().textures.get()->Load("Assets/Maps/MapMetadata.png");
 
 
@@ -280,12 +280,12 @@ bool Scene::Update(float dt)
 		mousePos.getY() - Engine::GetInstance().render.get()->camera.y / scale);
 
 	//Render a texture where the mouse is over to highlight the tile, use the texture 'mouseTileTex'
-	Vector2D highlightTile = Engine::GetInstance().map.get()->MapToWorld(mouseTile.getX(), mouseTile.getY());
-	SDL_Rect rect = { 0,0,32,32 };
-	Engine::GetInstance().render.get()->DrawTexture(mouseTileTex,
-		highlightTile.getX(),
-		highlightTile.getY(),
-		&rect);
+	//Vector2D highlightTile = Engine::GetInstance().map.get()->MapToWorld(mouseTile.getX(), mouseTile.getY());
+	//SDL_Rect rect = { 0,0,32,32 };
+	//Engine::GetInstance().render.get()->DrawTexture(mouseTileTex,
+	//	highlightTile.getX(),
+	//	highlightTile.getY(),
+	//	&rect);
 
 	// saves the tile pos for debugging purposes
 	if (mouseTile.getX() >= 0 && mouseTile.getY() >= 0 || once) {
@@ -294,11 +294,11 @@ bool Scene::Update(float dt)
 	}
 
 	//If mouse button is pressed modify enemy position
-	if (Engine::GetInstance().scene.get()->player->godMode && Engine::GetInstance().input.get()->GetMouseButtonDown(1) == KEY_REPEAT && currentState == GameState::PLAYING) {
-		
-		player->SetPosition(Vector2D(highlightTile.getX(), highlightTile.getY()));
-		
-	}
+	//if (Engine::GetInstance().scene.get()->player->godMode && Engine::GetInstance().input.get()->GetMouseButtonDown(1) == KEY_REPEAT && currentState == GameState::PLAYING) {
+	//	
+	//	player->SetPosition(Vector2D(highlightTile.getX(), highlightTile.getY()));
+	//	
+	//}
 
 	//Dialogue things
 	dialogueManager->Update();
@@ -563,6 +563,18 @@ bool Scene::PostUpdate()
 
 		Engine::GetInstance().scene.get()->player->loadLevel4 = false;
 		Engine::GetInstance().scene.get()->player->currentLevel = 4;
+
+	}
+
+	if (Engine::GetInstance().scene.get()->player->loadLevel1back) {
+
+		FadeTransition(Engine::GetInstance().render.get()->renderer, false, 1.0f);
+		Engine::GetInstance().map->CleanUp(); // Esto solo limpia recursos antiguos
+
+		SafeLoadMap("MapTemplate1_64x64.tmx", Vector2D(15196, 4576));
+
+		Engine::GetInstance().scene.get()->player->loadLevel1back = false;
+		Engine::GetInstance().scene.get()->player->currentLevel = 1;
 
 	}
 
@@ -971,7 +983,7 @@ void Scene::UpdateCinematic(float dt)
 void Scene::HandleInput()
 {
 	if (startButton != nullptr) {
-		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_RETURN) == KEY_DOWN || startButton->isClicked == true)
+		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_RETURN) == KEY_DOWN || startButton->isClicked == true || Engine::GetInstance().input.get()->GetControllerButton(SDL_CONTROLLER_BUTTON_B) == KEY_DOWN)
 		{
 			if (currentState == GameState::MAIN_MENU)
 			{
@@ -1119,11 +1131,10 @@ void Scene::HandleInput()
 }
 
 
-
 void Scene::UpdatePlaying(float dt) {
 	player->inGame = true;
 
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_TAB) == KEY_DOWN)
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_TAB) == KEY_DOWN || Engine::GetInstance().input.get()->GetControllerButton(SDL_CONTROLLER_BUTTON_START) == KEY_DOWN)
 	{
 		if (canToggleMap)
 		{

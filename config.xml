@@ -18,7 +18,7 @@
 	<scene>
 		<map path="Assets/Maps/" name="MapTemplate1_64x64.tmx" />
 		<entities>
-			<player x="3802" y="2928" w="128" h="256" texture="Assets/Animations/PlayerAnims/renSpritesheet.png" gravity="true">
+			<player x="3802" y="3016" w="128" h="256" texture="Assets/Animations/PlayerAnims/renSpritesheet.png" gravity="true">
 				<animations>
 					<idle loop="true" speed="0.065">
 						<frame x="0" y="0" w="512" h="256" />
@@ -160,7 +160,7 @@
 				</testItem>
 			</items>
 			<enemies>
-				<enemy name="ninja" x="1254" y="10102" w="128" h="512" texture="Assets/Animations/EnemyAnims/NormalNinjaSpritesheet.png" gravity="true">
+				<enemy name="ninja" x="1574" y="32762" w="128" h="512" texture="Assets/Animations/EnemyAnims/NormalNinjaSpritesheet.png" gravity="true">
 					<animations>
 						<idle loop="true" speed="0.085">
 							<frame x="0" y="0" w="512" h="256" />
@@ -195,7 +195,7 @@
 						</die>
 					</animations>
 				</enemy>
-				<enemy name="ninja" x="1254" y="10102" w="256" h="512" texture="Assets/Animations/EnemyAnims/NormalNinjaSpritesheet.png" gravity="true">
+				<enemy name="ninja" x="1574" y="32762" w="256" h="512" texture="Assets/Animations/EnemyAnims/NormalNinjaSpritesheet.png" gravity="true">
 					<animations>
 						<idle loop="true" speed="0.085">
 							<frame x="0" y="0" w="512" h="256" />

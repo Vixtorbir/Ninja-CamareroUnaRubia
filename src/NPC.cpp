@@ -90,7 +90,7 @@ bool NPC::Update(float dt)
 	Engine::GetInstance().render.get()->DrawEntity(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame(), 1, 0, 0, 0, (int)npcDirection);
 	currentAnimation->Update();
 
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_E) == KEY_DOWN && inside)
+	if ((Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_E) == KEY_DOWN || Engine::GetInstance().input.get()->GetControllerButton(SDL_CONTROLLER_BUTTON_Y) == KEY_DOWN )&& inside)
 	{
 		bubble = !bubble;
 
