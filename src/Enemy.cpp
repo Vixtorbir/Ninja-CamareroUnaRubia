@@ -341,9 +341,9 @@ void Enemy::OnCollision(PhysBody* physA, PhysBody* physB) {
 	case ColliderType::PLAYER_KATANA:
 		if (!isDying) {
 			b2Vec2 playerPos = player->GetPhysicalyPosition(); 
-/*
+
 			ApplyKnockbackFrom(playerPos, 1000); 
-			*/
+			
 			lives--;
 			LOG("Enemy hit! Lives left: %d", lives);
 			if (lives <= 0) {
@@ -568,7 +568,7 @@ void Enemy::ApplyKnockbackFrom(b2Vec2 sourcePosition, float strength)
 	b2Vec2 knockbackDir = enemyPos - sourcePos;
 	knockbackDir.Normalize();
 
-	b2Vec2 impulse = b2Vec2(knockbackDir.x * (float)strength, 0);
+	b2Vec2 impulse = b2Vec2(knockbackDir.x * (float)strength, 100);
 
 	pbody->body->ApplyLinearImpulseToCenter(impulse, true);
 }

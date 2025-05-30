@@ -152,7 +152,7 @@ bool Scene::Start()
 	//L06 TODO 3: Call the function to load the map. 
 	Engine::GetInstance().map->Load(configParameters.child("map").attribute("path").as_string(), configParameters.child("map").attribute("name").as_string());
 
-	// Texture to highligh mouse position 
+	// Texture to highlight mouse position 
 	mouseTileTex = Engine::GetInstance().textures.get()->Load("Assets/Maps/MapMetadata.png");
 
 
@@ -271,12 +271,12 @@ bool Scene::Update(float dt)
 		mousePos.getY() - Engine::GetInstance().render.get()->camera.y / scale);
 
 	//Render a texture where the mouse is over to highlight the tile, use the texture 'mouseTileTex'
-	Vector2D highlightTile = Engine::GetInstance().map.get()->MapToWorld(mouseTile.getX(), mouseTile.getY());
-	SDL_Rect rect = { 0,0,32,32 };
-	Engine::GetInstance().render.get()->DrawTexture(mouseTileTex,
-		highlightTile.getX(),
-		highlightTile.getY(),
-		&rect);
+	//Vector2D highlightTile = Engine::GetInstance().map.get()->MapToWorld(mouseTile.getX(), mouseTile.getY());
+	//SDL_Rect rect = { 0,0,32,32 };
+	//Engine::GetInstance().render.get()->DrawTexture(mouseTileTex,
+	//	highlightTile.getX(),
+	//	highlightTile.getY(),
+	//	&rect);
 
 	// saves the tile pos for debugging purposes
 	if (mouseTile.getX() >= 0 && mouseTile.getY() >= 0 || once) {
@@ -285,11 +285,11 @@ bool Scene::Update(float dt)
 	}
 
 	//If mouse button is pressed modify enemy position
-	if (Engine::GetInstance().scene.get()->player->godMode && Engine::GetInstance().input.get()->GetMouseButtonDown(1) == KEY_REPEAT && currentState == GameState::PLAYING) {
-		
-		player->SetPosition(Vector2D(highlightTile.getX(), highlightTile.getY()));
-		
-	}
+	//if (Engine::GetInstance().scene.get()->player->godMode && Engine::GetInstance().input.get()->GetMouseButtonDown(1) == KEY_REPEAT && currentState == GameState::PLAYING) {
+	//	
+	//	player->SetPosition(Vector2D(highlightTile.getX(), highlightTile.getY()));
+	//	
+	//}
 
 	//Dialogue things
 	dialogueManager->Update();
