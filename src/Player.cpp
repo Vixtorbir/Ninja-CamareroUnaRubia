@@ -319,7 +319,16 @@ bool Player::Update(float dt) {
         currentAnimation = &dash;
         break;
     case PlayerState::JUMPING:
-        currentAnimation = &jump;
+        
+        if (isAttacking)
+        {
+			currentAnimation = &attack2;
+        }
+        else {
+            currentAnimation = &jump;
+
+        }
+        
         break;
     case PlayerState::CROUCHING:
         currentAnimation = &crouch;
