@@ -213,13 +213,16 @@ bool Enemy::Update(float dt)
 	case EnemyState::ATTACK:
 		// El enemigo permanece quieto mientras ataca
 		pbody->body->SetLinearVelocity(b2Vec2(0, 0));
-		
+	
+			currentAnimation = &attackAnimation;
+
 		if (!isAttacking && !isCooldown)
 		{
 
 			PerformAttack();
 			isAttacking = true;
 			attackTimer.Start(); // Inicia el temporizador para el ataque
+
 		}
 
 		break;
@@ -241,6 +244,8 @@ bool Enemy::Update(float dt)
 		// Termina el ataque
 		isAttacking = false;
 		isCooldown = true;
+		currentAnimation = &walkAnimation;
+
 		attackTimer.Start(); // Inicia el temporizador para el cooldown
 
 		// Eliminar la hitbox del ataque
@@ -430,7 +435,6 @@ bool Enemy::IsPlayerInRange() {
 void Enemy::PerformAttack() {
 	// Detiene al enemigo
 	pbody->body->SetLinearVelocity(b2Vec2(0, 0));
-	currentAnimation = &attackAnimation;
 
 	if (attackBody == nullptr) {
 		// Determina la dirección del ataque
@@ -447,9 +451,9 @@ void Enemy::PerformAttack() {
 		attackBody->listener = this;
 	}
 
-	// Dibujar la animación de ataque
-	Engine::GetInstance().render.get()->DrawTexture(attackTexture, (int)position.getX(), (int)position.getY(), &attackAnimation.GetCurrentFrame());
-	attackAnimation.Update();
+	//// Dibujar la animación de ataque
+	//Engine::GetInstance().render.get()->DrawTexture(attackTexture, (int)position.getX(), (int)position.getY(), &attackAnimation.GetCurrentFrame());
+	//attackAnimation.Update();
 
 	LOG("Enemy is attacking!");
 }

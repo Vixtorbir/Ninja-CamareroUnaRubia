@@ -278,7 +278,7 @@
 							<frame x="2560" y="256" w="512" h="256" />
 							<frame x="3072" y="256" w="512" h="256" />
 						</walk>
-						<attack loop="true" speed="0.1">
+						<attack loop="false" speed="0.1">
 							<frame x="0" y="512" w="512" h="256" />
 							<frame x="512" y="512" w="512" h="256" />
 							<frame x="1024" y="512" w="512" h="256" />
