@@ -8,9 +8,16 @@
 #include "Player.h"
 #include "GuiControl.h"
 #include "GuiImage.h"
+#include <vector>
 
 
 struct SDL_Texture;
+
+struct BloodSplat {
+    int x, y;
+    float timer;
+};
+
 
 enum class EnemyState {
     PATROL,
@@ -116,5 +123,8 @@ public:
     PhysBody* attackBody = nullptr;
     Module* sceneModule = nullptr;
 	bool startDying = false;
+
+    std::vector<BloodSplat> bloodSplats;
+
 };
 

@@ -251,6 +251,9 @@ public:
 
     bool hasShuriken = false;
 
+    std::string pickupMessage;
+    float pickupMessageTimer = 0.0f;
+
 
 private:
 

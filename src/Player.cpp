@@ -512,6 +512,13 @@ bool Player::Update(float dt) {
         LOG("Shuriken cooldown ended. Player can shoot again.");
     }
 
+    if (pickupMessageTimer > 0.0f) {
+        pickupMessageTimer -= dt / 1000.0f; // dt está en milisegundos
+        Engine::GetInstance().render.get()->DrawText(pickupMessage.c_str(), 600, 200, 750, 255);
+    }
+
+
+
     return true;
 }
 
@@ -577,7 +584,8 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
             Orbs++;
 
             // Desactivar el objeto en el mundo
-			Engine::GetInstance().render.get()->DrawText(("Picked up: " + item->name).c_str(), 600, 200, 750, 255); // Mensaje en pantalla
+            pickupMessage = "Picked up: " + item->name + "   Press I to see inventory";
+            pickupMessageTimer = 3.0f;
             item->CleanUp();
             item->active = false;
 

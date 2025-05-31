@@ -37,6 +37,8 @@ bool Enemy::Start() {
 	redImage = (GuiImage*)Engine::GetInstance().guiManager->CreateGuiImage(GuiControlType::IMAGE, 1, " ", btPos, sceneModule, redTexture);
 	redImage->visible = false;
 
+
+
 	position.setX(parameters.attribute("x").as_int());
 	position.setY(parameters.attribute("y").as_int());
 	texW = parameters.attribute("w").as_int();
@@ -301,7 +303,25 @@ bool Enemy::Update(float dt)
 	{
 		pathfinding->DrawPath();
 	}
-}
+
+	
+	for (auto it = bloodSplats.begin(); it != bloodSplats.end(); ) {
+		float alpha = 255.0f * (it->timer /150.0f);
+		if (alpha < 0) alpha = 0;
+		SDL_Rect rect = { it->x, it->y, 45, 45 };
+		Engine::GetInstance().render.get()->DrawRectangle(rect, 255, 0, 0, (Uint8)alpha, true);
+
+		it->timer -= dt;
+		if (it->timer <= 0.0f) {
+			it = bloodSplats.erase(it);
+		}
+		else {
+			++it;
+		}
+	}
+
+	}
+
 	return true;
 }
 
@@ -352,6 +372,15 @@ void Enemy::OnCollision(PhysBody* physA, PhysBody* physB) {
 			
 			lives--;
 			LOG("Enemy hit! Lives left: %d", lives);
+
+			int ex = (int)position.getX();
+			int ey = (int)position.getY();
+			for (int i = 0; i < 3; ++i) {
+				int offsetX = rand() % 50 - 5; 
+				int offsetY = +100;
+				bloodSplats.push_back({ ex + offsetX, ey + offsetY, 125.0f });
+			}
+
 			if (lives <= 0) {
 				LOG("Enemy has no more lives!");
 				isDying = true;

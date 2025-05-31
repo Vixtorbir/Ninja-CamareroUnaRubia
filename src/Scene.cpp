@@ -414,6 +414,12 @@ bool Scene::Update(float dt)
 		break;
 	}
 
+	if (inventoryExitCooldown > 0.0f) {
+		inventoryExitCooldown -= dt / 1000.0f; // dt está en milisegundos
+		if (inventoryExitCooldown < 0.0f) inventoryExitCooldown = 0.0f;
+	}
+
+
 	return true;
 }
 
@@ -1091,8 +1097,10 @@ void Scene::HandleInput()
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_I) == KEY_DOWN) {
 		if (currentState == GameState::PLAYING) {
 			SetState(GameState::INVENTORY);
+			inventoryExitCooldown = inventoryExitCooldownDuration; 
 		}
 	}
+
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_G) == KEY_DOWN) {
 		if (currentState == GameState::PLAYING) {
 			SetState(GameState::GAME_OVER);
@@ -1277,10 +1285,11 @@ void Scene::UpdateInventory(float dt) {
 	}
 
 	// Regresar al estado de juego
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_U) == KEY_DOWN) {
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_I) == KEY_DOWN && inventoryExitCooldown <= 0.0f) {
 		SetState(GameState::PLAYING);
 		showItemInfo = false; // Ocultar información al salir del inventario
 	}
+
 }
 
 

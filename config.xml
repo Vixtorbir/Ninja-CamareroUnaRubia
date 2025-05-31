@@ -158,7 +158,7 @@
 						</idle>
 					</animations>
 				</testItem>
-				<testItem name="Shuriken" effect="3" description="Throw with O" icon="Assets/Textures/goldCoin.png" x="12550" y="3884" w="32" h="32" texture="Assets/Textures/shuriken.png" gravity="true">
+				<testItem name="Shuriken" effect="3" description="Throw with O" icon="Assets/Textures/goldCoin.png" x="12550" y="3884" w="32" h="32" texture="Assets/Textures/goldCoin.png" gravity="true">
 				<animations>
 					<idle loop="true" speed="0.5">
 						<frame x="0" y="0" w="32" h="32" />
