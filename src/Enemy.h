@@ -8,9 +8,16 @@
 #include "Player.h"
 #include "GuiControl.h"
 #include "GuiImage.h"
+#include <vector>
 
 
 struct SDL_Texture;
+
+struct BloodSplat {
+    int x, y;
+    float timer;
+};
+
 
 enum class EnemyState {
     PATROL,
@@ -84,6 +91,7 @@ public:
     void DrawLineOfSight();
 
     SDL_Texture* texture;
+
     SDL_Texture* attackTexture;
     
     const char* texturePath;
@@ -104,15 +112,19 @@ public:
     GuiImage* redImage = nullptr;
 
     Player* player;
-
+    bool flashRed = false;
+    Timer flashTimer;
+    float flashDuration = 0.1f;
     Timer attackTimer;          
     bool isAttacking = false;   
     bool isCooldown = false;    
-    const float attackDuration = 1.0f; 
-    const float attackCooldown = 3.0f; 
+    const float attackDuration = 1; 
+    const float attackCooldown = 2; 
     PhysBody* attackBody = nullptr;
     Module* sceneModule = nullptr;
-
 	bool startDying = false;
+
+    std::vector<BloodSplat> bloodSplats;
+
 };
 

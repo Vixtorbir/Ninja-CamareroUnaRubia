@@ -192,4 +192,8 @@ private:
 	
 	int selectedItemIndex = 0;
 
+	float inventoryExitCooldown = 0.0f;
+	const float inventoryExitCooldownDuration = 1.0f; 
+
+
 };

@@ -36,6 +36,7 @@ bool Player::Start() {
     orbUiTexture = Engine::GetInstance().textures.get()->Load("Assets/UI/OrbUi.png");
     shurikenTexture = Engine::GetInstance().textures.get()->Load("Assets/Textures/goldCoin.png");
     meleeAttackTexture = Engine::GetInstance().textures.get()->Load("Assets/Textures/meleeAttack.png");
+    missionTexture = Engine::GetInstance().textures.get()->Load("Assets/Textures/mission.png");
 
     Hidden = Engine::GetInstance().textures.get()->Load("Assets/UI/Hidden.png");
     Detected = Engine::GetInstance().textures.get()->Load("Assets/UI/Detected.png");
@@ -78,6 +79,7 @@ bool Player::Start() {
     
     detected = (GuiImage*)Engine::GetInstance().guiManager->CreateGuiImage(GuiControlType::IMAGE, 1, " ", btPos, sceneModule, Detected);
     hidden = (GuiImage*)Engine::GetInstance().guiManager->CreateGuiImage(GuiControlType::IMAGE, 1, " ", btPos, sceneModule, Hidden);
+    missionImage = (GuiImage*)Engine::GetInstance().guiManager->CreateGuiImage(GuiControlType::IMAGE, 1, " ", btPos, sceneModule, missionTexture);
 
     orbUi = (GuiImage*)Engine::GetInstance().guiManager->CreateGuiImage(GuiControlType::IMAGE, 1, " ", btPos, sceneModule, orbUiTexture);
     HP_Slider = (GuiSlider*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::HPSLIDER, 1, " ", hpPos, sceneModule);
@@ -172,11 +174,11 @@ bool Player::Update(float dt) {
     bool moving = movingLeft || movingRight;
     bool grounded = !isJumping && !isDashing && !touchingWall;
     isWalking = false;
-    if (movingLeft && !still) {
+    if (movingLeft && !still && !crouched) {
         velocity.x = -speed * 16;
         playerDirection = EntityDirections::LEFT;
     }
-    if (movingRight && !still) {
+    if (movingRight && !still && !crouched) {
         velocity.x = speed * 16;
         playerDirection = EntityDirections::RIGHT;
     }
@@ -317,7 +319,16 @@ bool Player::Update(float dt) {
         currentAnimation = &dash;
         break;
     case PlayerState::JUMPING:
-        currentAnimation = &jump;
+        
+        if (isAttacking)
+        {
+			currentAnimation = &attack2;
+        }
+        else {
+            currentAnimation = &jump;
+
+        }
+        
         break;
     case PlayerState::CROUCHING:
         currentAnimation = &crouch;
@@ -501,6 +512,13 @@ bool Player::Update(float dt) {
         LOG("Shuriken cooldown ended. Player can shoot again.");
     }
 
+    if (pickupMessageTimer > 0.0f) {
+        pickupMessageTimer -= dt / 1000.0f; // dt está en milisegundos
+        Engine::GetInstance().render.get()->DrawText(pickupMessage.c_str(), 600, 200, 750, 255);
+    }
+
+
+
     return true;
 }
 
@@ -566,9 +584,16 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
             Orbs++;
 
             // Desactivar el objeto en el mundo
-			Engine::GetInstance().render.get()->DrawText(("Picked up: " + item->name).c_str(), 600, 200, 750, 255); // Mensaje en pantalla
+            pickupMessage = "Picked up: " + item->name + "   Press I to see inventory";
+            pickupMessageTimer = 3.0f;
             item->CleanUp();
             item->active = false;
+
+            if (item->name == "Shuriken") {
+                hasShuriken = true;
+            }
+
+
         }
         break;
     }
@@ -857,6 +882,12 @@ void Player::ThrowShuriken() {
         LOG("Cannot throw shuriken. Cooldown active.");
         return; 
     }
+
+    if (!hasShuriken) {
+        LOG("No tienes el objeto Shuriken. No puedes lanzar shurikens.");
+        return;
+    }
+
 
     // Crear el shuriken como un sensor físico
     PhysBody* shuriken = Engine::GetInstance().physics.get()->CreateRectangleSensor(

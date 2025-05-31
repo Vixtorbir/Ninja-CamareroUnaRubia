@@ -59,6 +59,7 @@ public:
 	void SetBackgroundColor(SDL_Color color);
 
 public:
+	SDL_Texture* sceneTexture = nullptr;
 	SDL_Texture* minimapTexture;
 	SDL_Rect minimapRect;
 	float minimapZoom;

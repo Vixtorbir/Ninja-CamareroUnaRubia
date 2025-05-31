@@ -199,6 +199,8 @@ public:
     GuiPopup* popup = nullptr;
     GuiImage* backgroundSliderImage = nullptr;
     GuiImage* foregroundSliderImage = nullptr;
+    GuiImage* missionImage = nullptr;
+    SDL_Texture* missionTexture = nullptr;
 
     GuiImage* hidden = nullptr;
     GuiImage* detected = nullptr;
@@ -246,6 +248,13 @@ public:
     int Orbs = 0;    
     pugi::xml_node parameters;
     Module* sceneModule = nullptr;
+
+    bool hasShuriken = false;
+
+    std::string pickupMessage;
+    float pickupMessageTimer = 0.0f;
+
+
 private:
 
 };
