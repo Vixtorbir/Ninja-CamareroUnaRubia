@@ -281,7 +281,6 @@ bool Enemy::Update(float dt)
 
 	// Dibuja la línea de visión del enemigo
 	DrawLineOfSight();
-	particleSystem.Update(dt);
 
 	// Actualizar posición del enemigo desde la física
 	b2Transform pbodyPos = pbody->body->GetTransform();
@@ -348,7 +347,6 @@ void Enemy::OnCollision(PhysBody* physA, PhysBody* physB) {
 	case ColliderType::PLAYER_KATANA:
 		if (!isDying) {
 			b2Vec2 playerPos = player->GetPhysicalyPosition(); 
-			particleSystem.Emit(10, position.getX(), position.getY());
 
 			ApplyKnockbackFrom(playerPos, 100); 
 			
