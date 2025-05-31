@@ -151,12 +151,19 @@
 						</idle>
 					</animations>
 				</testItem>
-				<testItem name="Mana Potion" effect="2" description="Consume with J" icon="Assets/Textures/manamana.png" x="7200" y="5000" w="32" h="32" texture="Assets/Textures/manamana.png" gravity="true">
+				<testItem name="Mana Potion" effect="2" description="Consume with J" icon="Assets/Textures/manamana.png" x="12500" y="3884" w="32" h="32" texture="Assets/Textures/manamana.png" gravity="true">
 					<animations>
 						<idle loop="true" speed="0.5">
 							<frame x="0" y="0" w="32" h="32" />
 						</idle>
 					</animations>
+				</testItem>
+				<testItem name="Shuriken" effect="3" description="Throw with O" icon="Assets/Textures/goldCoin.png" x="12550" y="3884" w="32" h="32" texture="Assets/Textures/shuriken.png" gravity="true">
+				<animations>
+					<idle loop="true" speed="0.5">
+						<frame x="0" y="0" w="32" h="32" />
+					</idle>
+				</animations>
 				</testItem>
 			</items>
 			<enemies>

@@ -580,6 +580,12 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 			Engine::GetInstance().render.get()->DrawText(("Picked up: " + item->name).c_str(), 600, 200, 750, 255); // Mensaje en pantalla
             item->CleanUp();
             item->active = false;
+
+            if (item->name == "Shuriken") {
+                hasShuriken = true;
+            }
+
+
         }
         break;
     }
@@ -868,6 +874,12 @@ void Player::ThrowShuriken() {
         LOG("Cannot throw shuriken. Cooldown active.");
         return; 
     }
+
+    if (!hasShuriken) {
+        LOG("No tienes el objeto Shuriken. No puedes lanzar shurikens.");
+        return;
+    }
+
 
     // Crear el shuriken como un sensor físico
     PhysBody* shuriken = Engine::GetInstance().physics.get()->CreateRectangleSensor(

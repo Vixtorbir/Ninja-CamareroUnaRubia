@@ -248,6 +248,10 @@ public:
     int Orbs = 0;    
     pugi::xml_node parameters;
     Module* sceneModule = nullptr;
+
+    bool hasShuriken = false;
+
+
 private:
 
 };

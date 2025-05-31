@@ -302,15 +302,21 @@ bool Scene::Update(float dt)
 		}
 	}
 
-	//apply item effects
-	for (InventoryItem item : player->inventory)
+	for (size_t i = 0; i < player->inventory.size(); ++i)
 	{
+		InventoryItem& item = player->inventory[i];
 		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_H) == KEY_DOWN && item.name == "Health Potion") {
 			player->HP += 20;
-		} else if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_J) == KEY_DOWN && item.name == "Mana Potion") {
+			player->inventory.erase(player->inventory.begin() + i);
+			break; 
+		}
+		else if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_J) == KEY_DOWN && item.name == "Mana Potion") {
 			player->speed += 20;
+			player->inventory.erase(player->inventory.begin() + i);
+			break;
 		}
 	}
+
 
 
 	HandleInput();
