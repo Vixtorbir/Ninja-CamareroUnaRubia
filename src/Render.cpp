@@ -210,7 +210,7 @@ bool Render::PostUpdate()
 		SDL_RenderDrawRect(renderer, &minimapRect);
 	}
 	SDL_SetRenderDrawColor(renderer, background.r, background.g, background.g, background.a);
-	SDL_SetRenderDrawColor(renderer, 0, 0, 64, 32); SDL_RenderFillRect(renderer, NULL);
+	SDL_SetRenderDrawColor(renderer, 0, 0, 64, 16); SDL_RenderFillRect(renderer, NULL);
 	SDL_RenderPresent(renderer);
 	
 
@@ -515,7 +515,31 @@ bool Render::DrawWhiteText(const char* text, int posx, int posy, int w, int h) c
 
 	return true;
 }
+void ParticleSystem::Emit(int count, float x, float y) {
+	for (int i = 0; i < count; ++i) {
+		Particle p;
+		p.x = x;
+		p.y = y;
+		p.vx = (float)(rand() % 100 - 50) / 50.0f;  // random velocity between -1 and 1
+		p.vy = (float)(rand() % 100 - 50) / 50.0f;
+		p.life = p.maxLife = 1.0f; // 1 second lifetime
+		p.color = { 255, 255, 0, 255 }; // yellow for example
+		p.size = 5.0f;
+		particles.push_back(p);
+	}
+}
+void ParticleSystem::Update(float dt) {
+	for (auto it = particles.begin(); it != particles.end();) {
+		it->x += it->vx * dt * 100;  // move particle, scale velocity as needed
+		it->y += it->vy * dt * 100;
+		it->life -= dt;
 
+		if (it->life <= 0)
+			it = particles.erase(it);
+		else
+			++it;
+	}
+}
 bool Render::DrawTextWhite(const char* text, int posx, int posy, int w, int h) const
 {
 	SDL_Color color = { 255, 255, 255 };
@@ -535,3 +559,10 @@ bool Render::DrawTextWhite(const char* text, int posx, int posy, int w, int h) c
 	return true;
 }
 
+void ParticleSystem::Draw(Render* renderer) {
+	for (auto& p : particles) {
+		// Fade out alpha based on life left
+		Uint8 alpha = (Uint8)(255 * (p.life / p.maxLife));
+		renderer->DrawCircle((int)p.x, (int)p.y, (int)p.size, p.color.r, p.color.g, p.color.b, alpha, false);
+	}
+}

@@ -8,7 +8,7 @@
 #include "Player.h"
 #include "GuiControl.h"
 #include "GuiImage.h"
-
+#include "Render.h"
 
 struct SDL_Texture;
 
@@ -116,5 +116,7 @@ public:
     PhysBody* attackBody = nullptr;
     Module* sceneModule = nullptr;
 	bool startDying = false;
+    ParticleSystem particleSystem;
+
 };
 

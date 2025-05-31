@@ -4,6 +4,18 @@
 #include "Vector2D.h"
 #include "SDL2/SDL.h"
 #include "SDL2/SDL_ttf.h"
+#include <vector>
+
+struct Particle {
+	float x, y;
+	float vx, vy;
+	float life;         // Remaining life time in seconds
+	float maxLife;      // Total life time
+	SDL_Color color;
+	float size;
+}; 
+
+
 
 class Render : public Module
 {
@@ -74,3 +86,11 @@ public:
 
 };
 
+class ParticleSystem {
+public:
+	std::vector<Particle> particles;
+
+	void Emit(int count, float x, float y);
+	void Update(float dt);
+	void Draw(Render* renderer);  // Pass your Render object for drawing
+};

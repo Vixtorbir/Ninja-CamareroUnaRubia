@@ -238,6 +238,7 @@ bool Scene::PreUpdate()
 // Called each loop iteration
 bool Scene::Update(float dt)
 {
+	
 	for (Enemy* enemy : enemyList)
 	{
 		if (enemy->aggressive)
