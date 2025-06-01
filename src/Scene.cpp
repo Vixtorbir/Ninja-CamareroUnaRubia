@@ -975,39 +975,45 @@ void Scene::UpdateCinematic(float dt)
 {
 	Engine::GetInstance().render.get()->camera.x = 0;
 	Engine::GetInstance().render.get()->camera.y = 0;
-	if (timing == 1200)
+	switch (timing)
 	{
+	case 1200:
 		FadeIn(Engine::GetInstance().render.get()->renderer, cin1, 2.0f);
 		currentCin = cin1;
-	}
-	else if (timing == 960)
-	{   FadeOut(Engine::GetInstance().render.get()->renderer, cin1, 2.0f);
-        FadeIn(Engine::GetInstance().render.get()->renderer, cin2, 2.0f);
+		break;
+	case 960:
+		FadeOut(Engine::GetInstance().render.get()->renderer, cin1, 2.0f);
+		FadeIn(Engine::GetInstance().render.get()->renderer, cin2, 2.0f);
 		currentCin = cin2;
-	}
-	else if (timing == 840)
-	{
+		break;
+	case 840:
 		FadeOut(Engine::GetInstance().render.get()->renderer, cin2, 2.0f);
 		FadeIn(Engine::GetInstance().render.get()->renderer, cin3, 2.0f);
 		currentCin = cin3;
-	}
-	else if (timing == 720)
-	{
+		break;
+	case 720:
 		FadeOut(Engine::GetInstance().render.get()->renderer, cin3, 2.0f);
 		FadeIn(Engine::GetInstance().render.get()->renderer, cin4, 2.0f);
 		currentCin = cin4;
-	}
-	else if (timing == 512)
-	{
+		break;
+	case 512:
 		FadeOut(Engine::GetInstance().render.get()->renderer, cin4, 2.0f);
 		SetState(GameState::PLAYING);
+		Engine::GetInstance().render.get()->camera.x = player->position.getX();
+		Engine::GetInstance().render.get()->camera.y = player->position.getY();
 		Engine::GetInstance().audio.get()->StopMusic();
 		Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/gameplaySongPlaceholder.ogg");
-	}
+		break;
 
+	default:
+		break;
+	}
+	
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE))
 	{
 		SetState(GameState::PLAYING);
+		Engine::GetInstance().render.get()->camera.x = player->position.getX();
+		Engine::GetInstance().render.get()->camera.y = player->position.getY();
 		Engine::GetInstance().audio.get()->StopMusic();
 		Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/gameplaySongPlaceholder.ogg");
 	}
@@ -1015,6 +1021,7 @@ void Scene::UpdateCinematic(float dt)
 	{
 		Engine::GetInstance().render.get()->DrawTexture(currentCin, 0, 0);
 	}
+	
 	timing--;
 
 
@@ -1224,13 +1231,12 @@ void Scene::UpdateLogo(float dt) {
 	
 	fadeDuration += dt;
 	
-	FadeTransition(Engine::GetInstance().render.get()->renderer, logo, .1f);
+	FadeTransition(Engine::GetInstance().render.get()->renderer, logo, 0.5f);
 	
 	SetState(GameState::MAIN_MENU);
 	Engine::GetInstance().audio.get()->StopMusic();
 	Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/titleSongPlaceholder.ogg");
-	//Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/titleSongPlaceholder.ogg");
-	//Engine::GetInstance().audio.get()->musicVolume(50);
+	
 	
 
 }
@@ -1436,6 +1442,7 @@ void Scene::FadeTransition(SDL_Renderer* renderer, SDL_Texture* texture, float d
 			: (Uint8)(255 * (1.0f - progress));
 
 		SDL_SetTextureAlphaMod(texture, alpha);
+		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 		SDL_RenderClear(renderer);
 		SDL_RenderCopy(renderer, texture, NULL, &screenRect);
 		SDL_RenderPresent(renderer);
@@ -1465,6 +1472,7 @@ void Scene::FadeIn(SDL_Renderer* renderer, SDL_Texture* texture, float duration)
 			Uint8 alpha = (Uint8)(255 * progress);
 
 			SDL_SetTextureAlphaMod(texture, alpha);
+			SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 			SDL_RenderClear(renderer);
 			SDL_RenderCopy(renderer, texture, NULL, &screenRect);
 			SDL_RenderPresent(renderer);
@@ -1475,6 +1483,7 @@ void Scene::FadeIn(SDL_Renderer* renderer, SDL_Texture* texture, float duration)
 			SDL_Delay(16);
 		}
 		SDL_SetTextureAlphaMod(texture, 255);
+		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 		SDL_RenderClear(renderer);
 		SDL_RenderCopy(renderer, texture, NULL, &screenRect);
 		SDL_RenderPresent(renderer);
@@ -1499,6 +1508,7 @@ void Scene::FadeOut(SDL_Renderer* renderer, SDL_Texture* texture, float duration
 		Uint8 alpha = (Uint8)(255 * (1.0f - progress));
 
 		SDL_SetTextureAlphaMod(texture, alpha);
+		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 		SDL_RenderClear(renderer);
 		SDL_RenderCopy(renderer, texture, NULL, &screenRect);
 		SDL_RenderPresent(renderer);
