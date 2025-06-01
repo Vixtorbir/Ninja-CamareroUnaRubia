@@ -128,10 +128,13 @@ bool Scene::Start()
 	
 	SDL_Rect btPos00 = { 0, 0, 0,0 };
 	//load cinematic parts
-	testCinematicBgText = Engine::GetInstance().textures.get()->Load("Assets/UI/MapBackgroundUI.png");
-	testCinematicBgUI = (GuiImage*)Engine::GetInstance().guiManager->CreateGuiImage(GuiControlType::IMAGE, 1, "MyButton", btPos00, this, testCinematicBgText);
-	testX = player->camX;
-	testY = player->camY;
+	cin1 = Engine::GetInstance().textures.get()->Load("Assets/Cinematic/cinematic1.png");
+	cin2 = Engine::GetInstance().textures.get()->Load("Assets/Cinematic/cinematic2.png");
+	cin3 = Engine::GetInstance().textures.get()->Load("Assets/Cinematic/cinematic3.png");
+	cin4 = Engine::GetInstance().textures.get()->Load("Assets/Cinematic/cinematic4.png");
+	
+	/*cinX = player->camX;
+	cinY = player->camY;*/
 	//
 	mapBackgroundUI = Engine::GetInstance().textures.get()->Load("Assets/UI/MapBackgroundUI.png");
 
@@ -970,26 +973,50 @@ void Scene::UpdateMainMenu(float dt) {
 }
 void Scene::UpdateCinematic(float dt)
 {
-	
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
+	Engine::GetInstance().render.get()->camera.x = 0;
+	Engine::GetInstance().render.get()->camera.y = 0;
+	if (timing == 1200)
 	{
-		fadeDuration += dt;
-	    FadeTransition(Engine::GetInstance().render.get()->renderer,testCinematicBgText, 2.0f);
-
+		FadeIn(Engine::GetInstance().render.get()->renderer, cin1, 2.0f);
+		currentCin = cin1;
+	}
+	else if (timing == 960)
+	{   FadeOut(Engine::GetInstance().render.get()->renderer, cin1, 2.0f);
+        FadeIn(Engine::GetInstance().render.get()->renderer, cin2, 2.0f);
+		currentCin = cin2;
+	}
+	else if (timing == 840)
+	{
+		FadeOut(Engine::GetInstance().render.get()->renderer, cin2, 2.0f);
+		FadeIn(Engine::GetInstance().render.get()->renderer, cin3, 2.0f);
+		currentCin = cin3;
+	}
+	else if (timing == 720)
+	{
+		FadeOut(Engine::GetInstance().render.get()->renderer, cin3, 2.0f);
+		FadeIn(Engine::GetInstance().render.get()->renderer, cin4, 2.0f);
+		currentCin = cin4;
+	}
+	else if (timing == 512)
+	{
+		FadeOut(Engine::GetInstance().render.get()->renderer, cin4, 2.0f);
 		SetState(GameState::PLAYING);
+		Engine::GetInstance().audio.get()->StopMusic();
+		Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/gameplaySongPlaceholder.ogg");
 	}
-	
-	//Engine::GetInstance().render.get()->DrawTexture(testCinematicBgText,player->camX,player->camY);
-	testY += animsSpeed * dt;
-	if (moveCinCounter > 0)
+
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE))
 	{
-		Engine::GetInstance().render.get()->DrawTexture(testCinematicBgText, testX, (testY));
-		moveCinCounter--;
+		SetState(GameState::PLAYING);
+		Engine::GetInstance().audio.get()->StopMusic();
+		Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/gameplaySongPlaceholder.ogg");
 	}
-	
-	
-	
-	
+	if (currentCin)
+	{
+		Engine::GetInstance().render.get()->DrawTexture(currentCin, 0, 0);
+	}
+	timing--;
+
 
 }
 void Scene::HandleInput()
@@ -1002,7 +1029,7 @@ void Scene::HandleInput()
 
 				SetState(GameState::CINEMATIC);
 				Engine::GetInstance().audio.get()->StopMusic();
-				Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/gameplaySongPlaceholder.ogg");
+				/*Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/gameplaySongPlaceholder.ogg");*/
 				startButton->visible=false;
 				optionsButton->visible=false;
 				exitButton->visible = false;
@@ -1200,6 +1227,8 @@ void Scene::UpdateLogo(float dt) {
 	FadeTransition(Engine::GetInstance().render.get()->renderer, logo, .1f);
 	
 	SetState(GameState::MAIN_MENU);
+	Engine::GetInstance().audio.get()->StopMusic();
+	Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/titleSongPlaceholder.ogg");
 	//Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/titleSongPlaceholder.ogg");
 	//Engine::GetInstance().audio.get()->musicVolume(50);
 	
@@ -1410,6 +1439,72 @@ void Scene::FadeTransition(SDL_Renderer* renderer, SDL_Texture* texture, float d
 		SDL_RenderClear(renderer);
 		SDL_RenderCopy(renderer, texture, NULL, &screenRect);
 		SDL_RenderPresent(renderer);
+
+		SDL_Delay(16);
+	}
+
+
+
+}
+void Scene::FadeIn(SDL_Renderer* renderer, SDL_Texture* texture, float duration)
+{
+	Uint32 startTime = SDL_GetTicks();
+	SDL_Rect screenRect = { 0, 0, 1920, 1080 };
+
+	SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+
+	
+		while (true)
+		{
+			Uint32 elapsedTime = SDL_GetTicks() - startTime;
+			float progress = (float)elapsedTime / (duration * 1000);
+
+			if (progress > 1.0f)
+				progress = 1.0f;
+
+			Uint8 alpha = (Uint8)(255 * progress);
+
+			SDL_SetTextureAlphaMod(texture, alpha);
+			SDL_RenderClear(renderer);
+			SDL_RenderCopy(renderer, texture, NULL, &screenRect);
+			SDL_RenderPresent(renderer);
+
+			if (progress >= 1.0f)
+				break;
+
+			SDL_Delay(16);
+		}
+		SDL_SetTextureAlphaMod(texture, 255);
+		SDL_RenderClear(renderer);
+		SDL_RenderCopy(renderer, texture, NULL, &screenRect);
+		SDL_RenderPresent(renderer);
+		
+	
+}
+void Scene::FadeOut(SDL_Renderer* renderer, SDL_Texture* texture, float duration)
+{
+	Uint32 startTime = SDL_GetTicks();
+	SDL_Rect screenRect = { 0, 0, 1920, 1080 };
+
+	SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+
+	while (true)
+	{
+		Uint32 elapsedTime = SDL_GetTicks() - startTime;
+		float progress = (float)elapsedTime / (duration * 1000);
+
+		if (progress > 1.0f)
+			progress = 1.0f;
+
+		Uint8 alpha = (Uint8)(255 * (1.0f - progress));
+
+		SDL_SetTextureAlphaMod(texture, alpha);
+		SDL_RenderClear(renderer);
+		SDL_RenderCopy(renderer, texture, NULL, &screenRect);
+		SDL_RenderPresent(renderer);
+
+		if (progress >= 1.0f)
+			break;
 
 		SDL_Delay(16);
 	}

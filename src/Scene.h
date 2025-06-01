@@ -78,6 +78,8 @@ public:
 	bool OnGuiMouseClickEvent(GuiControl* control);
 
 	void FadeTransition(SDL_Renderer* renderer, SDL_Texture* texture, float duration);
+	void FadeIn(SDL_Renderer* renderer, SDL_Texture* texture, float duration);
+	void FadeOut(SDL_Renderer* renderer, SDL_Texture* texture, float duration);
 	
 	void LoadTextures();
 
@@ -172,12 +174,16 @@ private:
 	int gameplayMusicId;
 
 	//cinematic scenes
-	SDL_Texture* testCinematicBgText = nullptr;
-	GuiImage* testCinematicBgUI = nullptr;
-	int moveCinCounter = 300;
+	SDL_Texture* cin1 = nullptr;
+	SDL_Texture* cin2 = nullptr;
+	SDL_Texture* cin3 = nullptr;
+	SDL_Texture* cin4 = nullptr;
+	SDL_Texture* currentCin= nullptr;
+	int timing = 1200;
+	/*int moveCinCounter = 300;
 	int animsSpeed = 20;
-	int testX;
-	int testY;
+	int cinX;
+	int cinY;*/
 	//fx timers
 
 	int birdTimer;
