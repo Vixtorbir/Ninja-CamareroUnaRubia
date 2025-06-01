@@ -132,6 +132,9 @@ bool Scene::Start()
 	cin2 = Engine::GetInstance().textures.get()->Load("Assets/Cinematic/cinematic2.png");
 	cin3 = Engine::GetInstance().textures.get()->Load("Assets/Cinematic/cinematic3.png");
 	cin4 = Engine::GetInstance().textures.get()->Load("Assets/Cinematic/cinematic4.png");
+	cinScroll = Engine::GetInstance().textures.get()->Load("Assets/Cinematic/slideScroll.png");
+	cin1Bg = Engine::GetInstance().textures.get()->Load("Assets/Cinematic/cin1Bg.png");
+	cin1Text = Engine::GetInstance().textures.get()->Load("Assets/Cinematic/scrollText.png");
 	
 	/*cinX = player->camX;
 	cinY = player->camY;*/
@@ -975,28 +978,34 @@ void Scene::UpdateCinematic(float dt)
 {
 	Engine::GetInstance().render.get()->camera.x = 0;
 	Engine::GetInstance().render.get()->camera.y = 0;
+
+	//static fade in / outs
 	switch (timing)
 	{
-	case 1200:
-		FadeIn(Engine::GetInstance().render.get()->renderer, cin1, 2.0f);
-		currentCin = cin1;
+	case 1800:
+		FadeIn(Engine::GetInstance().render.get()->renderer, cin1Bg, 1.0f);
+		currentCin = cin1Bg;
 		break;
-	case 960:
-		FadeOut(Engine::GetInstance().render.get()->renderer, cin1, 2.0f);
+	//case 1560:
+	//	FadeIn(Engine::GetInstance().render.get()->renderer, cin1Text, 2.0f);
+	//	currentCin = cin1Text;
+	//	break;
+	case 800:
+		FadeOut(Engine::GetInstance().render.get()->renderer, cin1Bg, 2.0f);
 		FadeIn(Engine::GetInstance().render.get()->renderer, cin2, 2.0f);
 		currentCin = cin2;
 		break;
-	case 840:
+	case 512:
 		FadeOut(Engine::GetInstance().render.get()->renderer, cin2, 2.0f);
 		FadeIn(Engine::GetInstance().render.get()->renderer, cin3, 2.0f);
 		currentCin = cin3;
 		break;
-	case 720:
+	case 256:
 		FadeOut(Engine::GetInstance().render.get()->renderer, cin3, 2.0f);
 		FadeIn(Engine::GetInstance().render.get()->renderer, cin4, 2.0f);
 		currentCin = cin4;
 		break;
-	case 512:
+	case 128:
 		FadeOut(Engine::GetInstance().render.get()->renderer, cin4, 2.0f);
 		SetState(GameState::PLAYING);
 		Engine::GetInstance().render.get()->camera.x = player->position.getX();
@@ -1009,6 +1018,7 @@ void Scene::UpdateCinematic(float dt)
 		break;
 	}
 	
+	//skip cutscene
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE))
 	{
 		SetState(GameState::PLAYING);
@@ -1017,11 +1027,21 @@ void Scene::UpdateCinematic(float dt)
 		Engine::GetInstance().audio.get()->StopMusic();
 		Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/gameplaySongPlaceholder.ogg");
 	}
+	//draw cinematic
 	if (currentCin)
 	{
 		Engine::GetInstance().render.get()->DrawTexture(currentCin, 0, 0);
 	}
-	
+	//ease in / out
+	if (cinY <= 0)
+	{
+		cinY += 5;
+		Engine::GetInstance().render.get()->DrawTexture(cinScroll, 0, cinY);
+	}
+	else if(timing > 800)
+	{
+		Engine::GetInstance().render.get()->DrawTexture(cinScroll, 0, cinY);
+	}
 	timing--;
 
 

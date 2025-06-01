@@ -178,12 +178,16 @@ private:
 	SDL_Texture* cin2 = nullptr;
 	SDL_Texture* cin3 = nullptr;
 	SDL_Texture* cin4 = nullptr;
+	SDL_Texture* cinScroll = nullptr;
+	SDL_Texture* cin1Bg = nullptr;
+	SDL_Texture* cin1Text = nullptr;
 	SDL_Texture* currentCin= nullptr;
-	int timing = 1200;
+	//Animation* candleAnim;
+	int timing = 1800;
+	int cinX = 0;
+	int cinY = -1080;
 	/*int moveCinCounter = 300;
-	int animsSpeed = 20;
-	int cinX;
-	int cinY;*/
+	int animsSpeed = 20;*/
 	//fx timers
 
 	int birdTimer;
