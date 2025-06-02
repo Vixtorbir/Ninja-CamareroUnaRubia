@@ -182,6 +182,8 @@ private:
 	SDL_Texture* cin1Bg = nullptr;
 	SDL_Texture* cin1Text = nullptr;
 	SDL_Texture* currentCin= nullptr;
+	const char* currentText = nullptr;
+	
 	//Animation* candleAnim;
 	int timing = 1800;
 	int cinX = 0;

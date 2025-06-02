@@ -132,12 +132,9 @@ bool Scene::Start()
 	cin2 = Engine::GetInstance().textures.get()->Load("Assets/Cinematic/cinematic2.png");
 	cin3 = Engine::GetInstance().textures.get()->Load("Assets/Cinematic/cinematic3.png");
 	cin4 = Engine::GetInstance().textures.get()->Load("Assets/Cinematic/cinematic4.png");
-	cinScroll = Engine::GetInstance().textures.get()->Load("Assets/Cinematic/slideScroll.png");
+	cinScroll = Engine::GetInstance().textures.get()->Load("Assets/Cinematic/scrollWithText.png");
 	cin1Bg = Engine::GetInstance().textures.get()->Load("Assets/Cinematic/cin1Bg.png");
 	cin1Text = Engine::GetInstance().textures.get()->Load("Assets/Cinematic/scrollText.png");
-	
-	/*cinX = player->camX;
-	cinY = player->camY;*/
 	//
 	mapBackgroundUI = Engine::GetInstance().textures.get()->Load("Assets/UI/MapBackgroundUI.png");
 
@@ -264,7 +261,9 @@ bool Scene::Update(float dt)
 
 	//L03 TODO 3: Make the camera movement independent of framerate
 	float camSpeed = 1;
-	Engine::GetInstance().render->RenderMinimap(); // No parameters needed now
+
+	//Engine::GetInstance().render->RenderMinimap(); // No parameters needed now
+
 	/*if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
 		Engine::GetInstance().render.get()->camera.y -= ceil(camSpeed * dt);
 
@@ -363,72 +362,6 @@ bool Scene::Update(float dt)
 		UpdateOptions(dt);
 		break;
 	default:
-		break;
-	}
-
-	// fx
-	switch (player->currentLevel)
-	{
-	case 1:
-		if (windTimer == 0)
-		{
-			Engine::GetInstance().audio.get()->VolumeFx(windFxID, 100);
-			Engine::GetInstance().audio.get()->PlayFx(windFxID);
-			
-			windTimer = 360;
-		}
-		else
-		{
-			windTimer--;
-		}
-
-		if (cricketTimer == 0)
-		{
-			Engine::GetInstance().audio.get()->PlayFx(cricketFxID);
-			cricketTimer = 600;
-		}
-		else
-		{
-			cricketTimer--;
-		}
-		
-		break;
-	case 2:
-		if (birdTimer == 0)
-		{
-			Engine::GetInstance().audio.get()->PlayFx(birdFxID);
-			
-			birdTimer = 1200;
-		}
-		else
-		{
-			birdTimer--;
-		}
-
-		if (cricketTimer == 0)
-		{
-			Engine::GetInstance().audio.get()->PlayFx(cricketFxID);
-			cricketTimer = 600;
-		}
-		else
-		{
-			cricketTimer--;
-		}
-		if (bushTimer == 0)
-		{
-			Engine::GetInstance().audio.get()->PlayFx(bushFxID);
-			bushTimer = 420;
-		}
-		else
-		{
-			bushTimer--;
-		}
-		break;
-	case 3:
-		break;
-	case 4:
-		break;
-	default: 
 		break;
 	}
 
@@ -990,22 +923,26 @@ void Scene::UpdateCinematic(float dt)
 	//	FadeIn(Engine::GetInstance().render.get()->renderer, cin1Text, 2.0f);
 	//	currentCin = cin1Text;
 	//	break;
-	case 800:
-		FadeOut(Engine::GetInstance().render.get()->renderer, cin1Bg, 2.0f);
+	case 1200:
+		//FadeOut(Engine::GetInstance().render.get()->renderer, cin1Bg, 2.0f);
+		FadeOut(Engine::GetInstance().render.get()->renderer, cinScroll, 2.0f);
 		FadeIn(Engine::GetInstance().render.get()->renderer, cin2, 2.0f);
+		
 		currentCin = cin2;
 		break;
-	case 512:
+	case 1080:
 		FadeOut(Engine::GetInstance().render.get()->renderer, cin2, 2.0f);
 		FadeIn(Engine::GetInstance().render.get()->renderer, cin3, 2.0f);
+		currentText = "retrieve the Jade Damsels";
 		currentCin = cin3;
 		break;
-	case 256:
+	case 960:
 		FadeOut(Engine::GetInstance().render.get()->renderer, cin3, 2.0f);
 		FadeIn(Engine::GetInstance().render.get()->renderer, cin4, 2.0f);
+		currentText = "from Ryojis fortresses";
 		currentCin = cin4;
 		break;
-	case 128:
+	case 840:
 		FadeOut(Engine::GetInstance().render.get()->renderer, cin4, 2.0f);
 		SetState(GameState::PLAYING);
 		Engine::GetInstance().render.get()->camera.x = player->position.getX();
@@ -1031,6 +968,8 @@ void Scene::UpdateCinematic(float dt)
 	if (currentCin)
 	{
 		Engine::GetInstance().render.get()->DrawTexture(currentCin, 0, 0);
+		Engine::GetInstance().render->DrawTextWhite(currentText, 700, 800, 700,200);
+		
 	}
 	//ease in / out
 	if (cinY <= 0)
@@ -1038,10 +977,11 @@ void Scene::UpdateCinematic(float dt)
 		cinY += 5;
 		Engine::GetInstance().render.get()->DrawTexture(cinScroll, 0, cinY);
 	}
-	else if(timing > 800)
+	else if(timing >= 1000)
 	{
 		Engine::GetInstance().render.get()->DrawTexture(cinScroll, 0, cinY);
 	}
+	
 	timing--;
 
 
@@ -1201,7 +1141,7 @@ void Scene::HandleInput()
 
 void Scene::UpdatePlaying(float dt) {
 	player->inGame = true;
-
+	Engine::GetInstance().render->RenderMinimap();
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_TAB) == KEY_DOWN || Engine::GetInstance().input.get()->GetControllerButton(SDL_CONTROLLER_BUTTON_START) == KEY_DOWN)
 	{
 		if (canToggleMap)
@@ -1221,6 +1161,71 @@ void Scene::UpdatePlaying(float dt) {
 
 	player->Update(dt);
 	
+	// fx
+	switch (player->currentLevel)
+	{
+	case 1:
+		if (windTimer == 0)
+		{
+			Engine::GetInstance().audio.get()->VolumeFx(windFxID, 100);
+			Engine::GetInstance().audio.get()->PlayFx(windFxID);
+
+			windTimer = 360;
+		}
+		else
+		{
+			windTimer--;
+		}
+
+		if (cricketTimer == 0)
+		{
+			Engine::GetInstance().audio.get()->PlayFx(cricketFxID);
+			cricketTimer = 600;
+		}
+		else
+		{
+			cricketTimer--;
+		}
+
+		break;
+	case 2:
+		if (birdTimer == 0)
+		{
+			Engine::GetInstance().audio.get()->PlayFx(birdFxID);
+
+			birdTimer = 1200;
+		}
+		else
+		{
+			birdTimer--;
+		}
+
+		if (cricketTimer == 0)
+		{
+			Engine::GetInstance().audio.get()->PlayFx(cricketFxID);
+			cricketTimer = 600;
+		}
+		else
+		{
+			cricketTimer--;
+		}
+		if (bushTimer == 0)
+		{
+			Engine::GetInstance().audio.get()->PlayFx(bushFxID);
+			bushTimer = 420;
+		}
+		else
+		{
+			bushTimer--;
+		}
+		break;
+	case 3:
+		break;
+	case 4:
+		break;
+	default:
+		break;
+	}
 
 }
 

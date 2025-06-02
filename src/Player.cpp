@@ -603,7 +603,8 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 
     
 	case ColliderType::TURRET:
-		if (physA->ctype == ColliderType::PLAYER_ATTACK) {
+		if (physA->ctype == ColliderType::PLAYER_ATTACK) 
+        {
 			Turret* turret = static_cast<Turret*>(physB->listener);
 			if (turret != nullptr) {
 				turret->dead = true;
