@@ -82,7 +82,7 @@ bool Render::Start()
 	);
 	minimapRect = { 1920 - 266, 10, 256, 256 };  // Top-right corner
 	minimapZoom = 0.05f;  // Show 5x more area than the main camera
-	minimapEnabled = true;
+	minimapEnabled = false;
 
 	camera.x = 6668;
 	camera.y = 3959;
