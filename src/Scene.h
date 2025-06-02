@@ -27,7 +27,8 @@ enum class GameState {
 	PAUSED,
 	INVENTORY,
 	GAME_OVER,
-	LOGO
+	LOGO,
+	CINEMATIC
 };
 
 class Scene : public Module
@@ -77,6 +78,8 @@ public:
 	bool OnGuiMouseClickEvent(GuiControl* control);
 
 	void FadeTransition(SDL_Renderer* renderer, SDL_Texture* texture, float duration);
+	void FadeIn(SDL_Renderer* renderer, SDL_Texture* texture, float duration);
+	void FadeOut(SDL_Renderer* renderer, SDL_Texture* texture, float duration);
 	
 	void LoadTextures();
 
@@ -91,6 +94,7 @@ public:
 	void UpdateLogo(float dt);
 	void UpdateOptions(float dt);
 	void UpdateInventory(float dt);
+	void UpdateCinematic(float dt);
 
 	void CreateItemLvl2(const char* mapName);
 
@@ -169,6 +173,23 @@ private:
 	int mainMenuMusicId;
 	int gameplayMusicId;
 
+	//cinematic scenes
+	SDL_Texture* cin1 = nullptr;
+	SDL_Texture* cin2 = nullptr;
+	SDL_Texture* cin3 = nullptr;
+	SDL_Texture* cin4 = nullptr;
+	SDL_Texture* cinScroll = nullptr;
+	SDL_Texture* cin1Bg = nullptr;
+	SDL_Texture* cin1Text = nullptr;
+	SDL_Texture* currentCin= nullptr;
+	const char* currentText = nullptr;
+	
+	//Animation* candleAnim;
+	int timing = 1800;
+	int cinX = 0;
+	int cinY = -1080;
+	/*int moveCinCounter = 300;
+	int animsSpeed = 20;*/
 	//fx timers
 
 	int birdTimer;

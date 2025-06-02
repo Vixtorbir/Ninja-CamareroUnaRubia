@@ -124,12 +124,24 @@ bool Scene::Start()
 	logo = Engine::GetInstance().textures->Load("Assets/UI/logo.png");
 	logoFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/ExtraFx/logoFx.ogg");
 	MenuBackgroundImage = Engine::GetInstance().textures.get()->Load("Assets/UI/TitleScreenWTitle.png");
-	BackgroundImage = Engine::GetInstance().textures.get()->Load("Assets/UI/TitleScreen.png");
-	mapBackgroundUI = Engine::GetInstance().textures.get()->Load("Assets/UI/MapBackgroundUI.png");
+	BackgroundImage = Engine::GetInstance().textures.get()->Load("Assets/UI/TitleScreen.png");	
+	
 	SDL_Rect btPos00 = { 0, 0, 0,0 };
+	//load cinematic parts
+	cin1 = Engine::GetInstance().textures.get()->Load("Assets/Cinematic/cinematic1.png");
+	cin2 = Engine::GetInstance().textures.get()->Load("Assets/Cinematic/cinematic2.png");
+	cin3 = Engine::GetInstance().textures.get()->Load("Assets/Cinematic/cinematic3.png");
+	cin4 = Engine::GetInstance().textures.get()->Load("Assets/Cinematic/cinematic4.png");
+	cinScroll = Engine::GetInstance().textures.get()->Load("Assets/Cinematic/scrollWithText.png");
+	cin1Bg = Engine::GetInstance().textures.get()->Load("Assets/Cinematic/cin1Bg.png");
+	cin1Text = Engine::GetInstance().textures.get()->Load("Assets/Cinematic/scrollText.png");
+	//
+	mapBackgroundUI = Engine::GetInstance().textures.get()->Load("Assets/UI/MapBackgroundUI.png");
+
 	mapBackgroundUIImage = (GuiImage*)Engine::GetInstance().guiManager->CreateGuiImage(GuiControlType::IMAGE, 1, "MyButton", btPos00, this, mapBackgroundUI);
 	mapBackgroundUIImage->visible = false;
 
+	//Load sound fx
 	birdFxID = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/BgSounds/bird chirp.ogg");
 	birdTimer = 500;
 	cricketFxID = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/BgSounds/crickets.ogg");
@@ -251,7 +263,6 @@ bool Scene::Update(float dt)
 	float camSpeed = 1;
 
 
-
 	/*if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
 		Engine::GetInstance().render.get()->camera.y -= ceil(camSpeed * dt);
 
@@ -328,6 +339,9 @@ bool Scene::Update(float dt)
 	case GameState::MAIN_MENU:
 		UpdateMainMenu(dt);
 		break;
+	case GameState::CINEMATIC:
+		UpdateCinematic(dt);
+		break;
 	case GameState::PLAYING:
 		UpdatePlaying(dt);
 		break;
@@ -347,72 +361,6 @@ bool Scene::Update(float dt)
 		UpdateOptions(dt);
 		break;
 	default:
-		break;
-	}
-
-	// fx
-	switch (player->currentLevel)
-	{
-	case 1:
-		if (windTimer == 0)
-		{
-			Engine::GetInstance().audio.get()->VolumeFx(windFxID, 100);
-			Engine::GetInstance().audio.get()->PlayFx(windFxID);
-			
-			windTimer = 360;
-		}
-		else
-		{
-			windTimer--;
-		}
-
-		if (cricketTimer == 0)
-		{
-			Engine::GetInstance().audio.get()->PlayFx(cricketFxID);
-			cricketTimer = 600;
-		}
-		else
-		{
-			cricketTimer--;
-		}
-		
-		break;
-	case 2:
-		if (birdTimer == 0)
-		{
-			Engine::GetInstance().audio.get()->PlayFx(birdFxID);
-			
-			birdTimer = 1200;
-		}
-		else
-		{
-			birdTimer--;
-		}
-
-		if (cricketTimer == 0)
-		{
-			Engine::GetInstance().audio.get()->PlayFx(cricketFxID);
-			cricketTimer = 600;
-		}
-		else
-		{
-			cricketTimer--;
-		}
-		if (bushTimer == 0)
-		{
-			Engine::GetInstance().audio.get()->PlayFx(bushFxID);
-			bushTimer = 420;
-		}
-		else
-		{
-			bushTimer--;
-		}
-		break;
-	case 3:
-		break;
-	case 4:
-		break;
-	default: 
 		break;
 	}
 
@@ -947,7 +895,7 @@ void Scene::UpdateMainMenu(float dt) {
 	startButton->Update(dt);
 	optionsButton->Update(dt);
 	exitButton->Update(dt);
-
+	 
 	player->inGame = false;
 
 
@@ -955,6 +903,85 @@ void Scene::UpdateMainMenu(float dt) {
 
 
 	
+
+	 
+}
+void Scene::UpdateCinematic(float dt)
+{
+	Engine::GetInstance().render.get()->camera.x = 0;
+	Engine::GetInstance().render.get()->camera.y = 0;
+
+	//static fade in / outs
+	switch (timing)
+	{
+	case 1800:
+		FadeIn(Engine::GetInstance().render.get()->renderer, cin1Bg, 1.0f);
+		currentCin = cin1Bg;
+		break;
+	//case 1560:
+	//	FadeIn(Engine::GetInstance().render.get()->renderer, cin1Text, 2.0f);
+	//	currentCin = cin1Text;
+	//	break;
+	case 1200:
+		//FadeOut(Engine::GetInstance().render.get()->renderer, cin1Bg, 2.0f);
+		FadeOut(Engine::GetInstance().render.get()->renderer, cinScroll, 2.0f);
+		FadeIn(Engine::GetInstance().render.get()->renderer, cin2, 2.0f);
+		
+		currentCin = cin2;
+		break;
+	case 1080:
+		FadeOut(Engine::GetInstance().render.get()->renderer, cin2, 2.0f);
+		FadeIn(Engine::GetInstance().render.get()->renderer, cin3, 2.0f);
+		currentText = "retrieve the Jade Damsels";
+		currentCin = cin3;
+		break;
+	case 960:
+		FadeOut(Engine::GetInstance().render.get()->renderer, cin3, 2.0f);
+		FadeIn(Engine::GetInstance().render.get()->renderer, cin4, 2.0f);
+		currentText = "from Ryojis fortresses";
+		currentCin = cin4;
+		break;
+	case 840:
+		FadeOut(Engine::GetInstance().render.get()->renderer, cin4, 2.0f);
+		SetState(GameState::PLAYING);
+		Engine::GetInstance().render.get()->camera.x = player->position.getX();
+		Engine::GetInstance().render.get()->camera.y = player->position.getY();
+		Engine::GetInstance().audio.get()->StopMusic();
+		Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/gameplaySongPlaceholder.ogg");
+		break;
+
+	default:
+		break;
+	}
+	
+	//skip cutscene
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE))
+	{
+		SetState(GameState::PLAYING);
+		Engine::GetInstance().render.get()->camera.x = player->position.getX();
+		Engine::GetInstance().render.get()->camera.y = player->position.getY();
+		Engine::GetInstance().audio.get()->StopMusic();
+		Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/gameplaySongPlaceholder.ogg");
+	}
+	//draw cinematic
+	if (currentCin)
+	{
+		Engine::GetInstance().render.get()->DrawTexture(currentCin, 0, 0);
+		Engine::GetInstance().render->DrawTextWhite(currentText, 700, 800, 700,200);
+		
+	}
+	//ease in / out
+	if (cinY <= 0)
+	{
+		cinY += 5;
+		Engine::GetInstance().render.get()->DrawTexture(cinScroll, 0, cinY);
+	}
+	else if(timing >= 1000)
+	{
+		Engine::GetInstance().render.get()->DrawTexture(cinScroll, 0, cinY);
+	}
+	
+	timing--;
 
 
 }
@@ -966,9 +993,9 @@ void Scene::HandleInput()
 			if (currentState == GameState::MAIN_MENU)
 			{
 
-				SetState(GameState::PLAYING);
+				SetState(GameState::CINEMATIC);
 				Engine::GetInstance().audio.get()->StopMusic();
-				Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/gameplaySongPlaceholder.wav");
+				/*Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/gameplaySongPlaceholder.ogg");*/
 				startButton->visible=false;
 				optionsButton->visible=false;
 				exitButton->visible = false;
@@ -1136,6 +1163,71 @@ void Scene::UpdatePlaying(float dt) {
 
 	player->Update(dt);
 	
+	// fx
+	switch (player->currentLevel)
+	{
+	case 1:
+		if (windTimer == 0)
+		{
+			Engine::GetInstance().audio.get()->VolumeFx(windFxID, 100);
+			Engine::GetInstance().audio.get()->PlayFx(windFxID);
+
+			windTimer = 360;
+		}
+		else
+		{
+			windTimer--;
+		}
+
+		if (cricketTimer == 0)
+		{
+			Engine::GetInstance().audio.get()->PlayFx(cricketFxID);
+			cricketTimer = 600;
+		}
+		else
+		{
+			cricketTimer--;
+		}
+
+		break;
+	case 2:
+		if (birdTimer == 0)
+		{
+			Engine::GetInstance().audio.get()->PlayFx(birdFxID);
+
+			birdTimer = 1200;
+		}
+		else
+		{
+			birdTimer--;
+		}
+
+		if (cricketTimer == 0)
+		{
+			Engine::GetInstance().audio.get()->PlayFx(cricketFxID);
+			cricketTimer = 600;
+		}
+		else
+		{
+			cricketTimer--;
+		}
+		if (bushTimer == 0)
+		{
+			Engine::GetInstance().audio.get()->PlayFx(bushFxID);
+			bushTimer = 420;
+		}
+		else
+		{
+			bushTimer--;
+		}
+		break;
+	case 3:
+		break;
+	case 4:
+		break;
+	default:
+		break;
+	}
 
 }
 
@@ -1166,11 +1258,12 @@ void Scene::UpdateLogo(float dt) {
 	
 	fadeDuration += dt;
 	
-	FadeTransition(Engine::GetInstance().render.get()->renderer, logo, .1f);
+	FadeTransition(Engine::GetInstance().render.get()->renderer, logo, 0.5f);
 	
 	SetState(GameState::MAIN_MENU);
-	Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/titleSongPlaceholder.wav");
-	Engine::GetInstance().audio.get()->musicVolume(50);
+	Engine::GetInstance().audio.get()->StopMusic();
+	Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/titleSongPlaceholder.ogg");
+	
 	
 
 }
@@ -1376,9 +1469,79 @@ void Scene::FadeTransition(SDL_Renderer* renderer, SDL_Texture* texture, float d
 			: (Uint8)(255 * (1.0f - progress));
 
 		SDL_SetTextureAlphaMod(texture, alpha);
+		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 		SDL_RenderClear(renderer);
 		SDL_RenderCopy(renderer, texture, NULL, &screenRect);
 		SDL_RenderPresent(renderer);
+
+		SDL_Delay(16);
+	}
+
+
+
+}
+void Scene::FadeIn(SDL_Renderer* renderer, SDL_Texture* texture, float duration)
+{
+	Uint32 startTime = SDL_GetTicks();
+	SDL_Rect screenRect = { 0, 0, 1920, 1080 };
+
+	SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+
+	
+		while (true)
+		{
+			Uint32 elapsedTime = SDL_GetTicks() - startTime;
+			float progress = (float)elapsedTime / (duration * 1000);
+
+			if (progress > 1.0f)
+				progress = 1.0f;
+
+			Uint8 alpha = (Uint8)(255 * progress);
+
+			SDL_SetTextureAlphaMod(texture, alpha);
+			SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+			SDL_RenderClear(renderer);
+			SDL_RenderCopy(renderer, texture, NULL, &screenRect);
+			SDL_RenderPresent(renderer);
+
+			if (progress >= 1.0f)
+				break;
+
+			SDL_Delay(16);
+		}
+		SDL_SetTextureAlphaMod(texture, 255);
+		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+		SDL_RenderClear(renderer);
+		SDL_RenderCopy(renderer, texture, NULL, &screenRect);
+		SDL_RenderPresent(renderer);
+		
+	
+}
+void Scene::FadeOut(SDL_Renderer* renderer, SDL_Texture* texture, float duration)
+{
+	Uint32 startTime = SDL_GetTicks();
+	SDL_Rect screenRect = { 0, 0, 1920, 1080 };
+
+	SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+
+	while (true)
+	{
+		Uint32 elapsedTime = SDL_GetTicks() - startTime;
+		float progress = (float)elapsedTime / (duration * 1000);
+
+		if (progress > 1.0f)
+			progress = 1.0f;
+
+		Uint8 alpha = (Uint8)(255 * (1.0f - progress));
+
+		SDL_SetTextureAlphaMod(texture, alpha);
+		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+		SDL_RenderClear(renderer);
+		SDL_RenderCopy(renderer, texture, NULL, &screenRect);
+		SDL_RenderPresent(renderer);
+
+		if (progress >= 1.0f)
+			break;
 
 		SDL_Delay(16);
 	}

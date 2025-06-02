@@ -137,24 +137,24 @@
 				</animations>
 			</npcSOLDIER3>
 			<items>
-				<item name="coin" x="2400" y="1336" w="32" h="32" texture="Assets/Textures/sopa.png" gravity="true">
+				<item name="coin" x="2400" y="1336" w="64" h="64" texture="Assets/Textures/sopa.png" gravity="true">
 					<animations>
 						<idle loop="true" speed="0.5">
-							<frame x="0" y="0" w="32" h="32" />
+							<frame x="0" y="0" w="64" h="64" />
 						</idle>
 					</animations>
 				</item>
-				<testItem name="Health Potion" effect="1" description="Consume with H" icon="Assets/Textures/health.png" x="12450" y="3884" w="32" h="32" texture="Assets/Textures/health.png" gravity="true">
+				<testItem name="Health Potion" effect="1" description="Consume with H" icon="Assets/Textures/health.png" x="12450" y="3884" w="64" h="64" texture="Assets/Textures/health.png" gravity="true">
 					<animations>
 						<idle loop="true" speed="0.5">
-							<frame x="0" y="0" w="32" h="32" />
+							<frame x="0" y="0" w="64" h="64" />
 						</idle>
 					</animations>
 				</testItem>
-				<testItem name="Mana Potion" effect="2" description="Consume with J" icon="Assets/Textures/manamana.png" x="12500" y="3884" w="32" h="32" texture="Assets/Textures/manamana.png" gravity="true">
+				<testItem name="Mana Potion" effect="2" description="Consume with J" icon="Assets/Textures/manamana.png" x="12500" y="3884" w="64" h="64" texture="Assets/Textures/manamana.png" gravity="true">
 					<animations>
 						<idle loop="true" speed="0.5">
-							<frame x="0" y="0" w="32" h="32" />
+							<frame x="0" y="0" w="64" h="64" />
 						</idle>
 					</animations>
 				</testItem>
