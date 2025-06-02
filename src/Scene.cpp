@@ -1144,6 +1144,11 @@ void Scene::UpdatePlaying(float dt) {
 	Engine::GetInstance().render->RenderMinimap();
 	Engine::GetInstance().render->minimapEnabled = true;
 
+	player->missionImage->visible = true;
+	player->hidden->visible = true;
+	player->detected->visible = true;
+	player->StealthManagement();
+
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_TAB) == KEY_DOWN || Engine::GetInstance().input.get()->GetControllerButton(SDL_CONTROLLER_BUTTON_START) == KEY_DOWN)
 	{
 		if (canToggleMap)

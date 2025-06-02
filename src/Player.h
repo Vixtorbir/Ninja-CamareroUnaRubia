@@ -212,7 +212,7 @@ public:
     SDL_Rect btPos = { 960, 520, 40, 40 };
     SDL_Rect hpPos = { 0, 0, 200, 15 };
     SDL_Rect OrbPos = { 1300, 500, 100, 100 };
-    SDL_Rect OrbCountPos = { 1400, 500, 100, 100 };
+    SDL_Rect OrbCountPos = { 2000, 500, 100, 100 };
 
     // Audio FX IDs
     int jump1FxId, jump2FxId, jump3FxId;
