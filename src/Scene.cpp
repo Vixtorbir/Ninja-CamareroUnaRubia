@@ -939,7 +939,7 @@ void Scene::UpdateCinematic(float dt)
 	//	break;
 	case 1200:
 		//FadeOut(Engine::GetInstance().render.get()->renderer, cin1Bg, 2.0f);
-		FadeOut(Engine::GetInstance().render.get()->renderer, cinScroll, 1.0f);
+		FadeOut(Engine::GetInstance().render.get()->renderer, cinScroll, 2.0f);
 		FadeIn(Engine::GetInstance().render.get()->renderer, cin2, 1.0f);
 		
 		currentCin = cin2;
