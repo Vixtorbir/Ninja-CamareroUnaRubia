@@ -10,7 +10,7 @@
 	</RAIDEDVILLAGE>
 	<MENTORSHIP>
 		<dialogues size="1">
-			<dialogue1 character="Mentor" text="Welcome, traveler"  branching="0"/>
+			<dialogue1 character="Mentor" text="Ohh young one... Bring me the soup and I'll open the forest"  branching="0"/>
 		
 		</dialogues>
 	</MENTORSHIP>

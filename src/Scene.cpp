@@ -46,6 +46,7 @@ bool Scene::Awake()
 	npcMentor = (NPC*)Engine::GetInstance().entityManager->CreateNamedCharacter(EntityType::NPC, DialogueEngine::MENTORSHIP);
 	npcMentor->SetParameters(configParameters.child("entities").child("npcMENTORSHIP"));
 	npcs.push_back(npcMentor);
+	npcMentor->visible = false;
 
 	npcIsamu = (NPC*)Engine::GetInstance().entityManager->CreateNamedCharacter(EntityType::NPC, DialogueEngine::ISAMU);
 	npcIsamu->SetParameters(configParameters.child("entities").child("npcISAMU"));
@@ -384,10 +385,14 @@ void Scene::loadThingsOfMaps(int index)
 		parallax->ChangeTextures(levelIndex);
 		Engine::GetInstance().scene.get()->player->loadLevel1 = false;
 		Engine::GetInstance().scene.get()->player->currentLevel = 1;
+		npcMentor->visible = false;
+
 		break;
 	case(1):
 		SafeLoadMap("MapTemplate2_64x64.tmx", Vector2D(1783, 3172)); // Posición 
 		levelIndex = 1;
+		npcMentor->visible = true;
+
 		LoadEntities(2);
 		parallax->ChangeTextures(levelIndex);
 		Engine::GetInstance().scene.get()->player->loadLevel2 = false;
@@ -396,7 +401,10 @@ void Scene::loadThingsOfMaps(int index)
 	case(2):
 		SafeLoadMap("Cave.tmx", Vector2D(6269, 1860)); // Posición 
 		levelIndex = 2;
+		npcMentor->visible = false;
+
 		LoadEntities(3);
+
 		parallax->ChangeTextures(levelIndex);
 		Engine::GetInstance().scene.get()->player->loadLevel3 = false;
 		Engine::GetInstance().scene.get()->player->currentLevel = 3;
@@ -405,7 +413,10 @@ void Scene::loadThingsOfMaps(int index)
 	case(3):
 		SafeLoadMap("BossArena.tmx", Vector2D(2623, 1726));
 		levelIndex = 3;
+		npcMentor->visible = false;
+
 		LoadEntities(4);
+
 		parallax->ChangeTextures(levelIndex);
 		Engine::GetInstance().scene.get()->player->loadLevel4 = false;
 		Engine::GetInstance().scene.get()->player->currentLevel = 4;
@@ -817,10 +828,14 @@ void Scene::SafeLoadMap(const char* mapName, Vector2D playerPos) {
 	enemyList.clear();
 
 	for (const auto npc : npcs) {
-		npc->CleanUp();
+		if (npc->visible == true)
+		{
+			npc->CleanUp();
+
+		}
 	}
 
-	npcs.clear();
+	//npcs.clear();
 
 	for (const auto item : items) {
 		item->CleanUp();
