@@ -24,7 +24,7 @@
 	</ISAMU>
 	<KAEDE>
 		<dialogues size="1">
-			<dialogue1 character="Kaede" text="Ren! What’s it like… being chosen by Lord Hanzo?"  branching="0"/>
+			<dialogue1 character="Kaede" text="Ren, What is it like being chosen by Lord Hanzo"  branching="0"/>
 		</dialogues>
 	</KAEDE>
 	<HANZO>
