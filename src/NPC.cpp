@@ -87,8 +87,12 @@ bool NPC::Update(float dt)
 	position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texW / 2);
 	position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
 
-	Engine::GetInstance().render.get()->DrawEntity(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame(), 1, 0, 0, 0, (int)npcDirection);
-	currentAnimation->Update();
+	if (visible)
+	{
+		Engine::GetInstance().render.get()->DrawEntity(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame(), 1, 0, 0, 0, (int)npcDirection);
+		currentAnimation->Update();
+	}
+
 
 	if ((Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_E) == KEY_DOWN || Engine::GetInstance().input.get()->GetControllerButton(SDL_CONTROLLER_BUTTON_Y) == KEY_DOWN )&& inside)
 	{

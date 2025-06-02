@@ -118,8 +118,8 @@ public:
     Timer attackTimer;          
     bool isAttacking = false;   
     bool isCooldown = false;    
-    const float attackDuration = 1; 
-    const float attackCooldown = 2; 
+    const float attackDuration = .5; 
+    const float attackCooldown = .5; 
     PhysBody* attackBody = nullptr;
     Module* sceneModule = nullptr;
 	bool startDying = false;

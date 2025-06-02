@@ -64,7 +64,7 @@ public:
 	pugi::xml_node parameters;
 	Animation* currentAnimation = nullptr;
 	Animation idle;
-
+	bool visible = true;
 	DialogueEngine dialogueName;
 
 	EntityDirections npcDirection = EntityDirections::RIGHT;

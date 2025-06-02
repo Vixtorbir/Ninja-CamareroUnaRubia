@@ -36,7 +36,7 @@
 						<frame x="2560" y="256" w="512" h="256" />
 						<frame x="3072" y="256" w="512" h="256" />
 					</walk>
-					<jump loop="true" speed="0.1">
+					<jump loop="true" speed="0.05">
 						<frame x="0" y="512" w="512" h="256" />
 						<frame x="512" y="512" w="512" h="256" />
 						<frame x="1024" y="512" w="512" h="256" />
@@ -94,7 +94,7 @@
 					</climb>
 				</animations>
 			</player>
-			<npcMENTORSHIP x="5900" y="3925" w="256" h="256" texture="Assets/Animations/NPCs/mentor.png" gravity="true">
+			<npcMENTORSHIP x="19200" y="1168" w="256" h="256" texture="Assets/Animations/NPCs/mentor.png" gravity="true">
 				<animations>
 					<idle loop="true" speed="0.5">
 						<frame x="0" y="0" w="256" h="256" />
@@ -144,21 +144,21 @@
 						</idle>
 					</animations>
 				</item>
-				<testItem name="Health Potion" effect="1" description="Consume with H" icon="Assets/Textures/health.png" x="12450" y="3884" w="64" h="64" texture="Assets/Textures/health.png" gravity="true">
+				<testItem name="Health Potion" effect="1" description="Consume with H" icon="Assets/Textures/healthpotion.png" x="12700" y="3964" w="64" h="64" texture="Assets/Textures/healthpotion.png" gravity="true">
 					<animations>
 						<idle loop="true" speed="0.5">
 							<frame x="0" y="0" w="64" h="64" />
 						</idle>
 					</animations>
 				</testItem>
-				<testItem name="Mana Potion" effect="2" description="Consume with J" icon="Assets/Textures/manamana.png" x="12500" y="3884" w="64" h="64" texture="Assets/Textures/manamana.png" gravity="true">
+				<testItem name="Mana Potion" effect="2" description="Consume with J" icon="Assets/Textures/manapotion.png" x="12800" y="3964" w="64" h="64" texture="Assets/Textures/manapotion.png" gravity="true">
 					<animations>
 						<idle loop="true" speed="0.5">
 							<frame x="0" y="0" w="64" h="64" />
 						</idle>
 					</animations>
 				</testItem>
-				<testItem name="Shuriken" effect="3" description="Throw with O" icon="Assets/Textures/goldCoin.png" x="12550" y="3884" w="32" h="32" texture="Assets/Textures/goldCoin.png" gravity="true">
+				<testItem name="Shuriken" effect="3" description="Throw with O" icon="Assets/Textures/goldCoin.png" x="12900" y="3964" w="64" h="64" texture="Assets/Textures/goldCoin.png" gravity="true">
 				<animations>
 					<idle loop="true" speed="0.5">
 						<frame x="0" y="0" w="32" h="32" />
