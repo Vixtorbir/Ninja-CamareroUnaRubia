@@ -106,8 +106,9 @@ bool Player::Update(float dt) {
     // Update UI elements
     orbCount->SetText(std::to_string(Orbs));
     backgroundSliderImage->visible = inGame;
-    foregroundSliderImage->visible = inGame;
     HP_Slider->visible = inGame;
+    foregroundSliderImage->visible = inGame;
+  
 
 
     if (Engine::GetInstance().scene.get()->currentState == GameState::PAUSED) {
@@ -573,6 +574,7 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 	case ColliderType::WALL:
 		
 		break;
+  
     case ColliderType::ITEM: {
         Item* item = static_cast<Item*>(physB->listener);
         if (item != nullptr) {
@@ -704,6 +706,7 @@ void Player::OnCollisionEnd(PhysBody* physA, PhysBody* physB)
             }
         }
         break;
+    
 	}
 }
 

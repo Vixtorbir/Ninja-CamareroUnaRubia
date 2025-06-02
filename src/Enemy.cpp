@@ -69,7 +69,7 @@ bool Enemy::Start() {
 	// Inicializar pathfinding
 	pathfinding = new Pathfinding();
 	ResetPath();
-
+	LoadEnemyFx();
 	return true;
 }
 
@@ -365,7 +365,10 @@ void Enemy::OnCollision(PhysBody* physA, PhysBody* physB) {
 	switch (physB->ctype) {
 	case ColliderType::PLAYER_ATTACK:
 	case ColliderType::PLAYER_KATANA:
-		if (!isDying) {
+		if (!isDying) 
+		{
+			Engine::GetInstance().audio.get()->VolumeFx(ninjaHit1FxId, 100);
+			Engine::GetInstance().audio.get()->PlayFx(ninjaHit1FxId);
 			b2Vec2 playerPos = player->GetPhysicalyPosition(); 
 
 			ApplyKnockbackFrom(playerPos, 100); 
