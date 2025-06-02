@@ -262,7 +262,6 @@ bool Scene::Update(float dt)
 	//L03 TODO 3: Make the camera movement independent of framerate
 	float camSpeed = 1;
 
-	//Engine::GetInstance().render->RenderMinimap(); // No parameters needed now
 
 	/*if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
 		Engine::GetInstance().render.get()->camera.y -= ceil(camSpeed * dt);
@@ -1141,7 +1140,10 @@ void Scene::HandleInput()
 
 void Scene::UpdatePlaying(float dt) {
 	player->inGame = true;
+
 	Engine::GetInstance().render->RenderMinimap();
+	Engine::GetInstance().render->minimapEnabled = true;
+
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_TAB) == KEY_DOWN || Engine::GetInstance().input.get()->GetControllerButton(SDL_CONTROLLER_BUTTON_START) == KEY_DOWN)
 	{
 		if (canToggleMap)

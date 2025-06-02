@@ -20,6 +20,8 @@ public:
 	// Called before the first frame
 	bool Start();
 
+	void SetMinimapSize();
+
 	void RenderMinimap();
 
 	// Called each loop iteration
@@ -51,6 +53,8 @@ public:
 
 	bool DrawWhiteText(const char* text, int posx, int posy, int w, int h) const;
 
+	void EnableMinimap(bool enable);
+
 
 	bool DrawTextWhite(const char* text, int posx, int posy, int w, int h) const;
 	
@@ -63,7 +67,7 @@ public:
 	SDL_Texture* minimapTexture;
 	SDL_Rect minimapRect;
 	float minimapZoom;
-	bool minimapEnabled;
+	bool minimapEnabled = false;
 	float tileSizeScale;
 	SDL_Renderer* renderer;
 	SDL_Rect camera;
