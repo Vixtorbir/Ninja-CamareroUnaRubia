@@ -96,12 +96,16 @@ bool Player::Start() {
     hpIconTexture = Engine::GetInstance().textures.get()->Load("Assets/Textures/hp_icon.png");
 
     LoadPlayerFx();
+
+    missionImage->visible = false;
+    hidden->visible = false;
+    detected->visible = false;
+
     return true;
 }
 
 bool Player::Update(float dt) {
 
-    StealthManagement();
 
     // Update UI elements
     orbCount->SetText(std::to_string(Orbs));
@@ -123,6 +127,8 @@ bool Player::Update(float dt) {
     }
 
     if (Engine::GetInstance().scene.get()->currentState != GameState::PLAYING) {
+
+
         return true;
     }
 
