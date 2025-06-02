@@ -939,14 +939,14 @@ void Scene::UpdateCinematic(float dt)
 	//	break;
 	case 1200:
 		//FadeOut(Engine::GetInstance().render.get()->renderer, cin1Bg, 2.0f);
-		FadeOut(Engine::GetInstance().render.get()->renderer, cinScroll, 2.0f);
-		FadeIn(Engine::GetInstance().render.get()->renderer, cin2, 2.0f);
+		FadeOut(Engine::GetInstance().render.get()->renderer, cinScroll, 1.0f);
+		FadeIn(Engine::GetInstance().render.get()->renderer, cin2, 1.0f);
 		
 		currentCin = cin2;
 		break;
 	case 1080:
-		FadeOut(Engine::GetInstance().render.get()->renderer, cin2, 2.0f);
-		FadeIn(Engine::GetInstance().render.get()->renderer, cin3, 2.0f);
+		FadeOut(Engine::GetInstance().render.get()->renderer, cin2, 1.0f);
+		FadeIn(Engine::GetInstance().render.get()->renderer, cin3, 1.0f);
 		currentText = "retrieve the Jade Damsels";
 		currentCin = cin3;
 		break;
@@ -957,7 +957,8 @@ void Scene::UpdateCinematic(float dt)
 		currentCin = cin4;
 		break;
 	case 840:
-		FadeOut(Engine::GetInstance().render.get()->renderer, cin4, 2.0f);
+		FadeOut(Engine::GetInstance().render.get()->renderer, cin4, 1.0f);
+		Engine::GetInstance().audio.get()->StopMusic();
 		SetState(GameState::PLAYING);
 		Engine::GetInstance().render.get()->camera.x = player->position.getX();
 		Engine::GetInstance().render.get()->camera.y = player->position.getY();
@@ -972,6 +973,7 @@ void Scene::UpdateCinematic(float dt)
 	//skip cutscene
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE))
 	{
+		Engine::GetInstance().audio.get()->StopMusic();
 		SetState(GameState::PLAYING);
 		Engine::GetInstance().render.get()->camera.x = player->position.getX();
 		Engine::GetInstance().render.get()->camera.y = player->position.getY();
@@ -1010,7 +1012,8 @@ void Scene::HandleInput()
 
 				SetState(GameState::CINEMATIC);
 				Engine::GetInstance().audio.get()->StopMusic();
-				/*Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/gameplaySongPlaceholder.ogg");*/
+				Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/CinematicMusicPlaceholder.ogg");
+				Engine::GetInstance().audio.get()->musicVolume(50);
 				startButton->visible=false;
 				optionsButton->visible=false;
 				exitButton->visible = false;
