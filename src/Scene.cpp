@@ -439,6 +439,8 @@ bool Scene::PostUpdate()
 		parallax->ChangeTextures(levelIndex);
         Engine::GetInstance().scene.get()->player->loadLevel1 = false;
 		Engine::GetInstance().scene.get()->player->currentLevel = 1;
+		Engine::GetInstance().audio.get()->StopMusic();
+		Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/VillageSong.ogg");
 	}
 	   
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F3) == KEY_DOWN) {
@@ -448,6 +450,8 @@ bool Scene::PostUpdate()
 		parallax->ChangeTextures(levelIndex);
 		Engine::GetInstance().scene.get()->player->loadLevel2 = false;
 		Engine::GetInstance().scene.get()->player->currentLevel = 2;
+		Engine::GetInstance().audio.get()->StopMusic();
+		Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/BambooForestMusic.ogg");
 	}
 
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F4) == KEY_DOWN) {
@@ -457,6 +461,8 @@ bool Scene::PostUpdate()
 		parallax->ChangeTextures(levelIndex);
 		Engine::GetInstance().scene.get()->player->loadLevel3 = false;
 		Engine::GetInstance().scene.get()->player->currentLevel = 3;
+		Engine::GetInstance().audio.get()->StopMusic();
+		Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/CaveSong.ogg");
 
 		
 	}
@@ -468,6 +474,8 @@ bool Scene::PostUpdate()
 		parallax->ChangeTextures(levelIndex);
 		Engine::GetInstance().scene.get()->player->loadLevel4 = false;
 		Engine::GetInstance().scene.get()->player->currentLevel = 4;
+		Engine::GetInstance().audio.get()->StopMusic();
+		Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/CaveSong.ogg");
 	
 
 	}
@@ -487,6 +495,8 @@ bool Scene::PostUpdate()
 
 		Engine::GetInstance().scene.get()->player->loadLevel1 = false;
 		Engine::GetInstance().scene.get()->player->currentLevel = 1;
+		Engine::GetInstance().audio.get()->StopMusic();
+		Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/VillageSong.ogg");
 		
 
 	}
@@ -500,6 +510,8 @@ bool Scene::PostUpdate()
 
 		Engine::GetInstance().scene.get()->player->loadLevel2 = false;
 		Engine::GetInstance().scene.get()->player->currentLevel = 2;
+		Engine::GetInstance().audio.get()->StopMusic();
+		Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/BambooForestMusic.ogg");
 
 	}
 
@@ -512,6 +524,8 @@ bool Scene::PostUpdate()
 
 		Engine::GetInstance().scene.get()->player->loadLevel3 = false;
 		Engine::GetInstance().scene.get()->player->currentLevel = 3;
+		Engine::GetInstance().audio.get()->StopMusic();
+		Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/CaveSong.ogg");
 
 	}
 
@@ -524,6 +538,8 @@ bool Scene::PostUpdate()
 
 		Engine::GetInstance().scene.get()->player->loadLevel4 = false;
 		Engine::GetInstance().scene.get()->player->currentLevel = 4;
+		Engine::GetInstance().audio.get()->StopMusic();
+		Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/CaveSong.ogg");
 
 	}
 
@@ -536,6 +552,8 @@ bool Scene::PostUpdate()
 
 		Engine::GetInstance().scene.get()->player->loadLevel1back = false;
 		Engine::GetInstance().scene.get()->player->currentLevel = 1;
+		Engine::GetInstance().audio.get()->StopMusic();
+		Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/VillageSong.ogg");
 
 	}
 
@@ -548,6 +566,8 @@ bool Scene::PostUpdate()
 
 		Engine::GetInstance().scene.get()->player->loadLevel2back = false;
 		Engine::GetInstance().scene.get()->player->currentLevel = 2;
+		Engine::GetInstance().audio.get()->StopMusic();
+		Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/BambooForestMusic.ogg");
 
 	}
 
@@ -963,7 +983,7 @@ void Scene::UpdateCinematic(float dt)
 		Engine::GetInstance().render.get()->camera.x = player->position.getX();
 		Engine::GetInstance().render.get()->camera.y = player->position.getY();
 		Engine::GetInstance().audio.get()->StopMusic();
-		Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/gameplaySongPlaceholder.ogg");
+		Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/VillageSong.ogg");
 		break;
 
 	default:
@@ -978,7 +998,7 @@ void Scene::UpdateCinematic(float dt)
 		Engine::GetInstance().render.get()->camera.x = player->position.getX();
 		Engine::GetInstance().render.get()->camera.y = player->position.getY();
 		Engine::GetInstance().audio.get()->StopMusic();
-		Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/gameplaySongPlaceholder.ogg");
+		Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/VillageSong.ogg");
 	}
 	//draw cinematic
 	if (currentCin)

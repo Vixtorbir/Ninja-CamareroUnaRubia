@@ -412,7 +412,7 @@ bool Player::Update(float dt) {
             loadLevel2 = true;
             Engine::GetInstance().scene.get()->loadThingsOfMaps(1);
             Engine::GetInstance().audio.get()->StopMusic();
-            Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/bgforest music japan.ogg");
+            Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/BambooForestMusic.ogg");
         }
     }
     if (GetPosition().getX() >= 21764 && GetPosition().getY() >= 3176 && currentLevel == 2) {
@@ -420,7 +420,7 @@ bool Player::Update(float dt) {
             loadLevel3 = true;
             Engine::GetInstance().scene.get()->loadThingsOfMaps(2);
             Engine::GetInstance().audio.get()->StopMusic();
-            Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/gameplaySongPlaceholder.ogg");
+            Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/CaveSong.ogg");
         }
     }
     if (GetPosition().getX() >= 14720 && GetPosition().getY() >= 4860 && currentLevel == 3) {
@@ -428,6 +428,8 @@ bool Player::Update(float dt) {
 
             Engine::GetInstance().scene.get()->loadThingsOfMaps(3);
             loadLevel4 = true;
+            Engine::GetInstance().audio.get()->StopMusic();
+            Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/CaveSong.ogg");
         }
     }
     if (GetPosition().getX() <= 732 && GetPosition().getY() >= 3968 && currentLevel == 2) {
@@ -436,7 +438,7 @@ bool Player::Update(float dt) {
 
             loadLevel1back = true;
             Engine::GetInstance().audio.get()->StopMusic();
-            Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/gameplaySongPlaceholder.ogg");
+            Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/VillageSong.ogg");
         }
     }
     if (GetPosition().getX() >= 8600 && GetPosition().getY() <= 268 && currentLevel == 3) {
@@ -445,7 +447,7 @@ bool Player::Update(float dt) {
 
             loadLevel2back = true;
             Engine::GetInstance().audio.get()->StopMusic();
-            Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/gameplaySongPlaceholder.ogg");
+            Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/BambooForestMusic.ogg");
         }
     }
     
