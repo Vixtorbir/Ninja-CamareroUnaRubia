@@ -1082,6 +1082,7 @@ void Scene::HandleInput()
 				fullscreenCheckbox->visible = false;
 				vsyncCheckbox->visible = false;
 				SetState(GameState::MAIN_MENU);
+				
 				returntomenuButton->isClicked = false;
 
 			}
@@ -1091,6 +1092,8 @@ void Scene::HandleInput()
 	if (exitButton != nullptr) {
 		if (exitButton->isClicked == true&&( currentState ==GameState::PAUSED||currentState==GameState::GAME_OVER)) {
 			SetState(GameState::MAIN_MENU);
+			Engine::GetInstance().audio.get()->StopMusic();
+			Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/Title song.ogg");
 			exitButton->visible = false;
 			returnButton->visible = false;
 			menuBackgroundImage->visible = false;
@@ -1305,7 +1308,7 @@ void Scene::UpdateLogo(float dt) {
 	
 	SetState(GameState::MAIN_MENU);
 	Engine::GetInstance().audio.get()->StopMusic();
-	Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/titleSongPlaceholder.ogg");
+	Engine::GetInstance().audio.get()->PlayMusic("Assets/Audio/Music/Title song.ogg");
 	
 	
 
